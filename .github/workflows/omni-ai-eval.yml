@@ -25,6 +25,10 @@ on:
   # PAUSED: auto-run on PRs is disabled. Re-enable by uncommenting the
   # pull_request trigger below (and optionally removing workflow_dispatch).
   workflow_dispatch:
+    inputs:
+      branch_name:
+        description: Omni model branch to evaluate against main (manual runs only; PRs use the head branch automatically)
+        required: true
   # pull_request:
   #   types: [opened, synchronize, reopened]
   #   paths:
@@ -37,16 +41,16 @@ permissions:
 # One eval per PR at a time; new pushes cancel the in-flight run. This also keeps
 # us under Omni's limit of 2 concurrent eval runs org-wide.
 concurrency:
-  group: omni-ai-eval-${{ github.event.pull_request.number }}
+  group: omni-ai-eval-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
 
 jobs:
   eval:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
@@ -56,14 +60,14 @@ jobs:
           OMNI_BASE_URL: ${{ secrets.OMNI_BASE_URL }}
           OMNI_API_KEY: ${{ secrets.OMNI_API_KEY }}
           MODEL_ID: ${{ vars.OMNI_MODEL_ID }}
-          BRANCH_NAME: ${{ github.head_ref }}
+          BRANCH_NAME: ${{ github.head_ref || github.event.inputs.branch_name }}
           SUMMARY_PATH: omni-eval-summary.md
           RESULTS_PATH: omni-eval-results.json
         run: python .github/scripts/omni_eval.py
 
       - name: Upload full results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: omni-eval-results
           path: |
@@ -73,12 +77,16 @@ jobs:
 
       - name: Post / update PR comment
         if: always()
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const fs = require('fs');
             if (!fs.existsSync('omni-eval-summary.md')) {
               core.info('No summary file produced; skipping comment.');
+              return;
+            }
+            if (!context.payload.pull_request) {
+              core.info('Not a pull_request event (manual run); skipping comment. See the summary in the uploaded artifact.');
               return;
             }
             const body = fs.readFileSync('omni-eval-summary.md', 'utf8');
