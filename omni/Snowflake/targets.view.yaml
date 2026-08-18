@@ -1,0 +1,18 @@
+# Reference this view as targets
+uploaded_table_name: Targets::b068ed3c-34cd-4acc-9b79-4335f1aaad1d
+
+dimensions:
+  created_at_quarter:
+    sql: '"Created At Quarter"'
+    display_order: 0
+
+  target_revenue:
+    sql: '"Target Revenue"'
+    display_order: 1
+
+  column2:
+    display_order: 2
+
+measures:
+  count:
+    aggregate_type: count

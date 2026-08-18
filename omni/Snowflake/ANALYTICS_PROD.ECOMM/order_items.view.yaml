@@ -57,6 +57,76 @@ dimensions:
   time_to_ship:
     sql: '"TIME_TO_SHIP"'
 
+  status_group:
+    sql: CASE WHEN ${status} IN ('Complete','Returned','Cancelled') THEN 'Complete'
+      WHEN ${status} IN ('Shipped','Processing') THEN 'In Progress' ELSE
+      ${status} END
+    description: Business grouping of order status - Complete/Returned/Cancelled
+      roll up to Complete; Shipped/Processing roll up to In Progress
+
+  hour_of_day:
+    sql: HOUR(${created_at})
+    label: Order Hour of Day
+
+  order_sequence_type:
+    sql: CASE WHEN ${created_at} = MIN(${created_at}) OVER (PARTITION BY ${user_id})
+      THEN 'First Order' ELSE 'Repeat Order' END
+    description: Whether the order this item belongs to was the customer's
+      first-ever order or a repeat order, based on the earliest order date per
+      customer.
+    sample_values: [ First Order, Repeat Order ]
+
 measures:
   count:
     aggregate_type: count
+
+  total_revenue:
+    sql: ${sale_price}
+    format: usdcurrency_2
+    description: Total sales revenue (sum of item sale prices)
+    aggregate_type: sum
+
+  average_sale_price:
+    sql: ${sale_price}
+    format: usdcurrency_2
+    aggregate_type: average
+
+  total_margin:
+    sql: ${margin}
+    format: usdcurrency_2
+    aggregate_type: sum
+
+  order_count:
+    sql: ${order_id}
+    aggregate_type: count_distinct
+
+  average_order_value:
+    sql: SUM(${sale_price}) / NULLIF(COUNT(DISTINCT ${order_id}),0)
+    format: usdcurrency_2
+    description: Revenue per distinct order
+
+  average_items_per_order:
+    sql: COUNT(${id}) / NULLIF(COUNT(DISTINCT ${order_id}),0)
+    label: Average Items per Order
+
+  returned_item_count:
+    aggregate_type: count
+    filters:
+      is_returned:
+        is: true
+
+  return_rate:
+    sql: ${returned_item_count} / NULLIF(${count},0)
+    format: percent_2
+    description: Share of order items that were returned
+
+  average_time_to_ship:
+    sql: ${time_to_ship}
+    label: Average Days to Ship
+    description: Average days between order creation and shipment
+    aggregate_type: average
+
+  user_count:
+    sql: ${user_id}
+    label: Customer Count
+    aggregate_type: count_distinct

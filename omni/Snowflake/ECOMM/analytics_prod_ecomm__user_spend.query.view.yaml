@@ -1,0 +1,47 @@
+# Reference this view as analytics_prod_ecomm__user_spend
+schema: ECOMM
+sql: |-
+  SELECT user_id,
+         SUM(sale_price) AS total_spend,
+         COUNT(DISTINCT order_id) AS order_count,
+         MIN(created_at) AS first_order_date,
+         CASE WHEN SUM(sale_price) < 100 THEN 'Low'
+              WHEN SUM(sale_price) < 500 THEN 'Medium'
+              ELSE 'High' END AS spend_bucket
+  FROM ANALYTICS_PROD.ECOMM.ORDER_ITEMS
+  GROUP BY user_id
+
+dimensions:
+  user_id:
+    sql: '"USER_ID"'
+    primary_key: true
+
+  total_spend:
+    sql: '"TOTAL_SPEND"'
+    format: usdcurrency_2
+
+  order_count:
+    sql: '"ORDER_COUNT"'
+
+  first_order_date:
+    sql: '"FIRST_ORDER_DATE"'
+    timeframes: [ raw, date, week, month, quarter, year ]
+
+  spend_bucket:
+    sql: '"SPEND_BUCKET"'
+    sample_values: [ Low, Medium, High ]
+    ai_context: Low = lifetime spend under $100, Medium = $100-$499, High = $500 or more.
+
+  first_order_month:
+    sql: DATE_TRUNC('month', ${first_order_date})
+    description: Cohort month of the customer's first order
+
+measures:
+  total_spend_sum:
+    sql: ${total_spend}
+    format: usdcurrency_2
+    aggregate_type: sum
+
+ai_context: "Pre-aggregated per-customer spend facts. Join on
+  order_items.user_id. spend_bucket: Low = lifetime spend under $100, Medium =
+  $100-$499, High = $500+. first_order_month is the customer's cohort month."

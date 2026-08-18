@@ -14,12 +14,14 @@ dimensions:
 
   category:
     sql: '"CATEGORY"'
+    description: Primary product grouping, along with brand
 
   name:
     sql: '"NAME"'
 
   brand:
     sql: '"BRAND"'
+    description: Primary product grouping, along with category
 
   retail_price:
     sql: '"RETAIL_PRICE"'
@@ -34,6 +36,22 @@ dimensions:
     sql: '"DISTRIBUTION_CENTER_ID"'
     format: ID
 
+  brand_vs_rest:
+    sql: CASE WHEN {{# analytics_prod_ecomm__products.selected_brand.filter }}
+      ${analytics_prod_ecomm__products.brand} {{/
+      analytics_prod_ecomm__products.selected_brand.filter }} THEN 'Selected
+      Brand' ELSE 'All Other Brands' END
+    label: Brand vs Rest
+    description: Splits rows into the brand chosen in the Selected Brand filter
+      versus all other brands, for AOV and revenue comparisons.
+
 measures:
   count:
     aggregate_type: count
+
+filters:
+  selected_brand:
+    type: string
+    label: Selected Brand
+    suggest_from_field: analytics_prod_ecomm__products.brand
+    filter_single_select_only: true

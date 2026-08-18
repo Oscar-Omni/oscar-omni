@@ -1,0 +1,18 @@
+base_view: analytics_prod_ecomm__order_items
+label: Ecommerce Orders
+
+joins:
+  analytics_prod_ecomm__inventory_items:
+    analytics_prod_ecomm__products:
+      analytics_prod_ecomm__distribution_centers: {}
+  analytics_prod_ecomm__users: {}
+  analytics_prod_ecomm__user_spend: {}
+
+ai_context: Line-item level ecommerce sales. Each row is one order item. Revenue
+  = sum of order_items.sale_price. An "order" is order_items.order_id (multiple
+  items per order); use order_count (distinct order_id) for order counts and
+  average_order_value for AOV. Products, categories, and brands come from the
+  products view. Returns come from order_items.is_returned / returned_at;
+  return_rate is returned items over total items. Customer LTV and spend buckets
+  (Low <$100, Medium $100-499, High $500+) plus cohort first_order_month come
+  from the user_spend view.

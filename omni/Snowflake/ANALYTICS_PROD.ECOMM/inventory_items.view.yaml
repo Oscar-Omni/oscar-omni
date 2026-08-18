@@ -44,6 +44,15 @@ dimensions:
     sql: '"PRODUCT_DISTRIBUTION_CENTER_ID"'
     format: ID
 
+  product_category_groups:
+    sql: ${analytics_prod_ecomm__inventory_items.product_category}
+    label: Product Category Groups
+    dynamic_top_n:
+      n: 5
+      by: analytics_prod_ecomm__order_items.total_revenue
+      desc: true
+      else: Other
+
 measures:
   count:
     aggregate_type: count

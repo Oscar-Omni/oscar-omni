@@ -48,6 +48,47 @@ dimensions:
   traffic_source:
     sql: '"TRAFFIC_SOURCE"'
 
+  full_name:
+    sql: CONCAT(${analytics_prod_ecomm__users.first_name},' ',
+      ${analytics_prod_ecomm__users.last_name})
+    label: Full Name
+
+  spend_bucket:
+    sql: CASE WHEN (SELECT SUM(oi.SALE_PRICE) FROM ANALYTICS_PROD.ECOMM.ORDER_ITEMS
+      oi WHERE oi.USER_ID = ${analytics_prod_ecomm__users.id}) < 100 THEN 'Low'
+      WHEN (SELECT SUM(oi.SALE_PRICE) FROM ANALYTICS_PROD.ECOMM.ORDER_ITEMS oi
+      WHERE oi.USER_ID = ${analytics_prod_ecomm__users.id}) < 500 THEN 'Medium'
+      ELSE 'High' END
+    description: "Customer spend tier based on total lifetime spend: Low (<$100),
+      Medium ($100-$499), High ($500+)."
+    suggestion_list:
+      - value: High
+      - value: Medium
+      - value: Low
+    order_by_field: spend_bucket_order
+    sample_values: [ Low, Medium, High ]
+    ai_context: "Per-customer attribute (not per order). Buckets a customer's total
+      lifetime spend across all order items: Low = under $100, Medium = $100 up
+      to but not including $500, High = $500 or more. Use for segmenting
+      customers by value; do not interpret as an order-level tier."
+
+  spend_bucket_order:
+    sql: CASE ${analytics_prod_ecomm__users.spend_bucket} WHEN 'High' THEN 1 WHEN
+      'Medium' THEN 2 ELSE 3 END
+    hidden: true
+
 measures:
   count:
     aggregate_type: count
+
+  average_age:
+    sql: ${age}
+    format: number_1
+    aggregate_type: average
+
+  lifetime_revenue:
+    sql: ${analytics_prod_ecomm__order_items.sale_price}
+    label: Lifetime Value (LTV)
+    format: usdcurrency_2
+    description: Total revenue from this customer across all orders
+    aggregate_type: sum
