@@ -22,17 +22,15 @@ name: Omni AI Eval
 # YAML lives.
 
 on:
-  # PAUSED: auto-run on PRs is disabled. Re-enable by uncommenting the
-  # pull_request trigger below (and optionally removing workflow_dispatch).
   workflow_dispatch:
     inputs:
       branch_name:
         description: Omni model branch to evaluate against main (manual runs only; PRs use the head branch automatically)
         required: true
-  # pull_request:
-  #   types: [opened, synchronize, reopened]
-  #   paths:
-  #     - "omni/**"
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "omni/**"
 
 permissions:
   contents: read
