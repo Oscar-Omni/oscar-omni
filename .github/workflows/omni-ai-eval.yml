@@ -1,0 +1,97 @@
+name: Omni AI Eval
+
+# Runs an Omni AI eval on every PR that touches the model YAML. It evaluates the
+# PR's Omni model branch (matched by branch name) against a `main` baseline using
+# the same prompt set, then posts a per-prompt regression report as a PR comment.
+#
+# The check FAILS if any prompt regresses (passed on main, failed on the branch),
+# if no matching Omni branch is found (edit via omni-sync so the branch exists),
+# or on an operational error (API failure / timeout). Cost changes never gate.
+#
+# Required repo secrets (Settings > Secrets and variables > Actions > Secrets):
+#   OMNI_API_KEY   Organization API key (Settings > API access)
+#   OMNI_BASE_URL  e.g. https://<your-org>.omniapp.co/api
+# Required repo variables (Settings > Secrets and variables > Actions > Variables):
+#   OMNI_MODEL_ID  Omni model id to evaluate
+# Which prompt sets run is configured in .github/scripts/omni_eval.py
+# (PROMPT_SETS list), not a repo variable -- edit that list to add/remove suites.
+#
+# To use this workflow in another Omni repo: copy this file and
+# .github/scripts/omni_eval.py, set the secrets/variable above, set PROMPT_SETS
+# in the script, and adjust the `paths:` filter below to match where your model
+# YAML lives.
+
+on:
+  # PAUSED: auto-run on PRs is disabled. Re-enable by uncommenting the
+  # pull_request trigger below (and optionally removing workflow_dispatch).
+  workflow_dispatch:
+  # pull_request:
+  #   types: [opened, synchronize, reopened]
+  #   paths:
+  #     - "omni/**"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+# One eval per PR at a time; new pushes cancel the in-flight run. This also keeps
+# us under Omni's limit of 2 concurrent eval runs org-wide.
+concurrency:
+  group: omni-ai-eval-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run Omni AI eval
+        id: eval
+        env:
+          OMNI_BASE_URL: ${{ secrets.OMNI_BASE_URL }}
+          OMNI_API_KEY: ${{ secrets.OMNI_API_KEY }}
+          MODEL_ID: ${{ vars.OMNI_MODEL_ID }}
+          BRANCH_NAME: ${{ github.head_ref }}
+          SUMMARY_PATH: omni-eval-summary.md
+          RESULTS_PATH: omni-eval-results.json
+        run: python .github/scripts/omni_eval.py
+
+      - name: Upload full results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: omni-eval-results
+          path: |
+            omni-eval-results.json
+            omni-eval-summary.md
+          if-no-files-found: ignore
+
+      - name: Post / update PR comment
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            if (!fs.existsSync('omni-eval-summary.md')) {
+              core.info('No summary file produced; skipping comment.');
+              return;
+            }
+            const body = fs.readFileSync('omni-eval-summary.md', 'utf8');
+            const marker = '<!-- omni-ai-eval -->';
+            const { owner, repo } = context.repo;
+            const issue_number = context.payload.pull_request.number;
+            const comments = await github.paginate(
+              github.rest.issues.listComments, { owner, repo, issue_number });
+            const existing = comments.find(c => c.body && c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment(
+                { owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment(
+                { owner, repo, issue_number, body });
+            }
