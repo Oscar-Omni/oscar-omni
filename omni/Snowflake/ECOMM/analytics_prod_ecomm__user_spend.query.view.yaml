@@ -1,4 +1,6 @@
 # Reference this view as analytics_prod_ecomm__user_spend
+label: Customer Spend
+
 schema: ECOMM
 sql: |-
   SELECT user_id,
@@ -19,29 +21,40 @@ dimensions:
   total_spend:
     sql: '"TOTAL_SPEND"'
     format: usdcurrency_2
+    description: Lifetime spend for this customer
+    ai_context: Per-customer lifetime total, a dimension. Aggregate with total_spend_sum.
 
   order_count:
     sql: '"ORDER_COUNT"'
+    description: Lifetime number of distinct orders for this customer
+    ai_context: Per-customer lifetime count, a dimension. For counting orders in a
+      query use order_items.order_count instead.
 
   first_order_date:
     sql: '"FIRST_ORDER_DATE"'
     timeframes: [ raw, date, week, month, quarter, year ]
+    ai_context: Customer's first-ever purchase date. Distinct from users.created_at
+      (signup).
 
   spend_bucket:
     sql: '"SPEND_BUCKET"'
     sample_values: [ Low, Medium, High ]
-    ai_context: Low = lifetime spend under $100, Medium = $100-$499, High = $500 or more.
+    synonyms: [ spend tier, customer value segment ]
 
   first_order_month:
     sql: DATE_TRUNC('month', ${first_order_date})
     description: Cohort month of the customer's first order
+    synonyms: [ cohort, cohort month, acquisition month ]
 
 measures:
   total_spend_sum:
     sql: ${total_spend}
     format: usdcurrency_2
+    description: Sum of customer lifetime spend
     aggregate_type: sum
+    ai_context: Equivalent to users.lifetime_revenue. Use whichever view the query
+      already touches; do not combine both.
 
-ai_context: "Pre-aggregated per-customer spend facts. Join on
-  order_items.user_id. spend_bucket: Low = lifetime spend under $100, Medium =
-  $100-$499, High = $500+. first_order_month is the customer's cohort month."
+ai_context: Pre-aggregated per-customer spend facts, one row per customer. Join
+  on order_items.user_id. Spend bucket thresholds are described in the topic
+  context.

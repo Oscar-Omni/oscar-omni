@@ -20,15 +20,18 @@ dimensions:
 
   age:
     sql: '"AGE"'
+    synonyms: [ customer age ]
 
   city:
     sql: '"CITY"'
 
   state:
     sql: '"STATE"'
+    synonyms: [ region, province ]
 
   country:
     sql: '"COUNTRY"'
+    sample_values: [ UK, USA ]
 
   zip:
     sql: '"ZIP"'
@@ -41,12 +44,19 @@ dimensions:
 
   gender:
     sql: '"GENDER"'
+    sample_values: [ Female, Male ]
 
   created_at:
     sql: '"CREATED_AT"'
+    ai_context: Customer signup date. Do not confuse with order_items.created_at
+      (order date) or user_spend.first_order_date (first purchase).
 
   traffic_source:
     sql: '"TRAFFIC_SOURCE"'
+    sample_values: [ Display, Email, Facebook, Organic, Search ]
+    synonyms: [ channel, acquisition channel, marketing source ]
+    ai_context: How the customer was acquired. A customer attribute, fixed at signup
+      — not per-order attribution.
 
   full_name:
     sql: CONCAT(${analytics_prod_ecomm__users.first_name},' ',
@@ -61,16 +71,16 @@ dimensions:
       ELSE 'High' END
     description: "Customer spend tier based on total lifetime spend: Low (<$100),
       Medium ($100-$499), High ($500+)."
+    hidden: true
     suggestion_list:
       - value: High
       - value: Medium
       - value: Low
     order_by_field: spend_bucket_order
     sample_values: [ Low, Medium, High ]
-    ai_context: "Per-customer attribute (not per order). Buckets a customer's total
-      lifetime spend across all order items: Low = under $100, Medium = $100 up
-      to but not including $500, High = $500 or more. Use for segmenting
-      customers by value; do not interpret as an order-level tier."
+    ai_context: Deprecated duplicate — prefer
+      analytics_prod_ecomm__user_spend.spend_bucket, which reads the same
+      buckets from a pre-aggregated view instead of a per-row subquery.
 
   spend_bucket_order:
     sql: CASE ${analytics_prod_ecomm__users.spend_bucket} WHEN 'High' THEN 1 WHEN
@@ -80,6 +90,8 @@ dimensions:
 measures:
   count:
     aggregate_type: count
+    ai_context: Counts customers. Within this topic only customers with at least one
+      order item appear.
 
   average_age:
     sql: ${age}
@@ -92,3 +104,11 @@ measures:
     format: usdcurrency_2
     description: Total revenue from this customer across all orders
     aggregate_type: sum
+    synonyms: [ ltv, lifetime value, customer value ]
+    ai_context: Sums order_items.sale_price across the customer's orders. Equivalent
+      to user_spend.total_spend_sum; prefer this when already querying user
+      attributes.
+
+ai_context: Customer/account attributes, one row per registered user.
+  Demographics (age, gender), location (city/state/country), and acquisition
+  channel (traffic_source) all live here.

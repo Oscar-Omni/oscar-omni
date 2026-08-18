@@ -11,6 +11,7 @@ dimensions:
 
   name:
     sql: '"NAME"'
+    synonyms: [ distribution center, warehouse, fulfillment center, dc ]
 
   latitude:
     sql: '"LATITUDE"'
@@ -21,3 +22,8 @@ dimensions:
 measures:
   count:
     aggregate_type: count
+
+ai_context: Fulfillment warehouse locations, one row per distribution center.
+  Joined via products.distribution_center_id, so it reflects where a product
+  ships from. Latitude/longitude are the center's own location, not the
+  customer's.

@@ -1,5 +1,7 @@
 base_view: analytics_prod_ecomm__order_items
 label: Ecommerce Orders
+description: Line-item ecommerce sales with product, customer, spend, and
+  fulfillment attributes.
 
 joins:
   analytics_prod_ecomm__inventory_items:
@@ -8,11 +10,15 @@ joins:
   analytics_prod_ecomm__users: {}
   analytics_prod_ecomm__user_spend: {}
 
-ai_context: Line-item level ecommerce sales. Each row is one order item. Revenue
-  = sum of order_items.sale_price. An "order" is order_items.order_id (multiple
-  items per order); use order_count (distinct order_id) for order counts and
-  average_order_value for AOV. Products, categories, and brands come from the
-  products view. Returns come from order_items.is_returned / returned_at;
-  return_rate is returned items over total items. Customer LTV and spend buckets
-  (Low <$100, Medium $100-499, High $500+) plus cohort first_order_month come
-  from the user_spend view.
+ai_context: 'Line-item ecommerce sales; each row is one order item. Revenue =
+  sum of order_items.sale_price. An "order" is order_items.order_id and usually
+  spans several items — use order_count (distinct order_id) for orders and
+  average_order_value for AOV. Product attributes (brand, category, department,
+  SKU) come from the products view, not the denormalized product_* copies on
+  inventory items. Returns come from order_items.is_returned / returned_at;
+  return_rate is returned items over total items. Spend buckets: Low <$100,
+  Medium $100-499, High $500+. Customer LTV, spend buckets, and cohort
+  first_order_month come from the user_spend view. Three price fields differ:
+  order_items.sale_price is transacted, products.retail_price is list,
+  inventory_items.cost is unit cost. order_items.margin is dollar profit, not a
+  rate.'

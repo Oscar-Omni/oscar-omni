@@ -15,30 +15,45 @@ dimensions:
 
   created_at:
     sql: '"CREATED_AT"'
+    ai_context: When the unit entered inventory, not an order date.
 
   sold_at:
     sql: '"SOLD_AT"'
+    ai_context: When the unit sold; null while still in stock. For order timing use
+      order_items.created_at.
 
   cost:
     sql: '"COST"'
+    format: usdcurrency_2
+    description: Unit cost of the item
+    synonyms: [ unit cost, cogs ]
+    ai_context: Cost basis behind order_items.margin. Not a customer-facing price —
+      see products.retail_price for list price and order_items.sale_price for
+      transacted amount.
 
   product_category:
     sql: '"PRODUCT_CATEGORY"'
+    ai_context: Denormalized copy of products.category — prefer products.category.
 
   product_name:
     sql: '"PRODUCT_NAME"'
+    ai_context: Denormalized copy of products.name — prefer products.name.
 
   product_brand:
     sql: '"PRODUCT_BRAND"'
+    ai_context: Denormalized copy of products.brand — prefer products.brand.
 
   product_retail_price:
     sql: '"PRODUCT_RETAIL_PRICE"'
+    ai_context: Denormalized copy of products.retail_price — prefer products.retail_price.
 
   product_department:
     sql: '"PRODUCT_DEPARTMENT"'
+    ai_context: Denormalized copy of products.department — prefer products.department.
 
   product_sku:
     sql: '"PRODUCT_SKU"'
+    ai_context: Denormalized copy of products.sku — prefer products.sku.
 
   product_distribution_center_id:
     sql: '"PRODUCT_DISTRIBUTION_CENTER_ID"'
@@ -47,6 +62,11 @@ dimensions:
   product_category_groups:
     sql: ${analytics_prod_ecomm__inventory_items.product_category}
     label: Product Category Groups
+    description: Product category, collapsed to the top 5 categories by revenue with
+      everything else grouped as Other
+    ai_context: "Not a plain category field: only the top 5 categories by revenue
+      are shown, all others collapse to 'Other'. Use products.category for true
+      per-category breakdowns."
     dynamic_top_n:
       n: 5
       by: analytics_prod_ecomm__order_items.total_revenue
@@ -56,3 +76,8 @@ dimensions:
 measures:
   count:
     aggregate_type: count
+
+ai_context: "Per-unit stock records: one row per physical inventory item. Joined
+  to order items via inventory_item_id, so it also supplies unit cost. Its
+  product_* fields are denormalized copies of the products view — prefer
+  products.* for product attributes like brand, category, and department."

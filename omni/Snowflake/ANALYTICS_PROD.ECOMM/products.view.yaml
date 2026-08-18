@@ -11,26 +11,61 @@ dimensions:
 
   cost:
     sql: '"COST"'
+    format: usdcurrency_2
+    description: Product-level cost
+    ai_context: Catalog-level cost on the product record. For the cost of an actual
+      sold unit (which drives order_items.margin) use inventory_items.cost.
 
   category:
     sql: '"CATEGORY"'
     description: Primary product grouping, along with brand
+    sample_values:
+      [
+        Accessories,
+        Active,
+        Blazers & Jackets,
+        Dresses,
+        Intimates,
+        Jeans,
+        Leggings,
+        Outerwear & Coats,
+        Pants,
+        Shorts,
+        Skirts,
+        Sleep & Lounge,
+        Socks,
+        Swim,
+        Tops & Tees
+      ]
+    synonyms: [ product type, product category ]
+    ai_context: 26 categories in total; the listed values are a representative
+      sample, not the complete set.
 
   name:
     sql: '"NAME"'
+    synonyms: [ product, product name, item name ]
 
   brand:
     sql: '"BRAND"'
     description: Primary product grouping, along with category
+    synonyms: [ manufacturer, label ]
 
   retail_price:
     sql: '"RETAIL_PRICE"'
+    format: usdcurrency_2
+    description: List price of the product
+    synonyms: [ list price, msrp ]
+    ai_context: Catalog list price, not what customers actually paid. Use
+      order_items.sale_price for revenue and transacted amounts.
 
   department:
     sql: '"DEPARTMENT"'
+    sample_values: [ Men, Women ]
+    synonyms: [ gender department, division ]
 
   sku:
     sql: '"SKU"'
+    synonyms: [ product code, item number ]
 
   distribution_center_id:
     sql: '"DISTRIBUTION_CENTER_ID"'
@@ -44,6 +79,9 @@ dimensions:
     label: Brand vs Rest
     description: Splits rows into the brand chosen in the Selected Brand filter
       versus all other brands, for AOV and revenue comparisons.
+    ai_context: Requires the Selected Brand filter to be set; without it every row
+      returns 'All Other Brands' and the field is meaningless. Only use when the
+      user names a specific brand to compare against the rest.
 
 measures:
   count:
@@ -55,3 +93,9 @@ filters:
     label: Selected Brand
     suggest_from_field: analytics_prod_ecomm__products.brand
     filter_single_select_only: true
+    ai_context: Parameter for brand_vs_rest. Set this to the brand being compared;
+      single-select only.
+
+ai_context: Product catalog attributes, one row per product. Canonical source
+  for brand, category, department, and SKU — prefer these over the denormalized
+  product_* copies on the inventory items view.

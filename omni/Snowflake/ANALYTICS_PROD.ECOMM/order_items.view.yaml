@@ -26,6 +26,10 @@ dimensions:
 
   status:
     sql: '"STATUS"'
+    sample_values: [ Cancelled, Complete, Processing, Returned, Shipped ]
+    ai_context: Raw per-item status. Prefer status_group for business rollups.
+      Cancelled and Returned are distinct statuses here, but status_group rolls
+      both into Complete.
 
   created_at:
     sql: '"CREATED_AT"'
@@ -41,21 +45,34 @@ dimensions:
 
   is_returned:
     sql: '"IS_RETURNED"'
+    ai_context: Boolean flag; use for filtering returns. Use returned_at when
+      trending returns over time.
 
   is_delivered:
     sql: '"IS_DELIVERED"'
+    ai_context: Boolean flag; use for filtering. Use delivered_at when trending over time.
 
   is_shipped:
     sql: '"IS_SHIPPED"'
+    ai_context: Boolean flag; use for filtering. Use shipped_at when trending over time.
 
   margin:
     sql: '"MARGIN"'
+    format: usdcurrency_2
+    description: "Profit in dollars on the item: sale price minus unit cost"
+    ai_context: Dollar profit per item, not a percentage or rate. For a margin rate,
+      divide total_margin by total_revenue.
 
   months_since_signup:
     sql: '"MONTHS_SINCE_SIGNUP"'
+    description: Whole months between the customer's signup date and this order
+    ai_context: Order-level tenure at time of purchase. Use for tenure/recency
+      cohorting; for acquisition cohorts use user_spend.first_order_month.
 
   time_to_ship:
     sql: '"TIME_TO_SHIP"'
+    description: Days between order creation and shipment
+    ai_context: Whole days, null until the item ships. Aggregate via average_time_to_ship.
 
   status_group:
     sql: CASE WHEN ${status} IN ('Complete','Returned','Cancelled') THEN 'Complete'
@@ -63,6 +80,8 @@ dimensions:
       ${status} END
     description: Business grouping of order status - Complete/Returned/Cancelled
       roll up to Complete; Shipped/Processing roll up to In Progress
+    ai_context: "Gotcha: Cancelled and Returned roll up into 'Complete', not a
+      separate bucket. Use is_returned for actual returns."
 
   hour_of_day:
     sql: HOUR(${created_at})
@@ -75,16 +94,20 @@ dimensions:
       first-ever order or a repeat order, based on the earliest order date per
       customer.
     sample_values: [ First Order, Repeat Order ]
+    ai_context: First vs repeat purchase, derived per customer from earliest order
+      date. Applies to the whole order, not the individual item.
 
 measures:
   count:
     aggregate_type: count
+    ai_context: Counts order items, not orders. Use order_count for orders.
 
   total_revenue:
     sql: ${sale_price}
     format: usdcurrency_2
     description: Total sales revenue (sum of item sale prices)
     aggregate_type: sum
+    synonyms: [ sales, gmv, gross merchandise value ]
 
   average_sale_price:
     sql: ${sale_price}
@@ -94,16 +117,22 @@ measures:
   total_margin:
     sql: ${margin}
     format: usdcurrency_2
+    description: Total dollar profit (sum of item margin)
     aggregate_type: sum
+    synonyms: [ profit, gross profit ]
 
   order_count:
     sql: ${order_id}
     aggregate_type: count_distinct
+    synonyms: [ orders, transactions ]
+    ai_context: Distinct order_id. Use this for 'how many orders', never the
+      item-level count.
 
   average_order_value:
     sql: SUM(${sale_price}) / NULLIF(COUNT(DISTINCT ${order_id}),0)
     format: usdcurrency_2
     description: Revenue per distinct order
+    synonyms: [ aov, basket size ]
 
   average_items_per_order:
     sql: COUNT(${id}) / NULLIF(COUNT(DISTINCT ${order_id}),0)
@@ -130,3 +159,9 @@ measures:
     sql: ${user_id}
     label: Customer Count
     aggregate_type: count_distinct
+    synonyms: [ customers, buyers, shoppers ]
+
+ai_context: "Line-item grain: one row per order item. An order is order_id and
+  usually spans several items, so item counts and order counts differ.
+  sale_price is the transacted amount and drives all revenue;
+  products.retail_price is list price and inventory_items.cost is unit cost."
