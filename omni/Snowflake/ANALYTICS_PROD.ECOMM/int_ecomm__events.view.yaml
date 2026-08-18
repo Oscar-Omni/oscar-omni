@@ -1,0 +1,71 @@
+# Reference this view as analytics_prod_ecomm__int_ecomm__events
+catalog: ANALYTICS_PROD
+schema: ECOMM
+table_name: INT_ECOMM__EVENTS
+
+dimensions:
+  id:
+    sql: '"ID"'
+    format: ID
+    primary_key: true
+
+  sequence_number:
+    sql: '"SEQUENCE_NUMBER"'
+
+  session_id:
+    sql: '"SESSION_ID"'
+    format: ID
+
+  created_at:
+    sql: '"CREATED_AT"'
+
+  ip_address:
+    sql: '"IP_ADDRESS"'
+
+  city:
+    sql: '"CITY"'
+
+  state:
+    sql: '"STATE"'
+
+  country:
+    sql: '"COUNTRY"'
+
+  zip:
+    sql: '"ZIP"'
+
+  latitude:
+    sql: '"LATITUDE"'
+
+  longitude:
+    sql: '"LONGITUDE"'
+
+  os:
+    sql: '"OS"'
+
+  browser:
+    sql: '"BROWSER"'
+
+  traffic_source:
+    sql: '"TRAFFIC_SOURCE"'
+
+  user_id:
+    sql: '"USER_ID"'
+    format: ID
+
+  uri:
+    sql: '"URI"'
+
+  event_type:
+    sql: '"EVENT_TYPE"'
+
+  ad_event_id:
+    sql: '"AD_EVENT_ID"'
+    format: ID
+
+  referrer_code:
+    sql: '"REFERRER_CODE"'
+
+measures:
+  count:
+    aggregate_type: count

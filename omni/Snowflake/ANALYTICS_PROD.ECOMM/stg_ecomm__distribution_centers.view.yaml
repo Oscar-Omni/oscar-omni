@@ -1,0 +1,23 @@
+# Reference this view as analytics_prod_ecomm__stg_ecomm__distribution_centers
+catalog: ANALYTICS_PROD
+schema: ECOMM
+table_name: STG_ECOMM__DISTRIBUTION_CENTERS
+
+dimensions:
+  id:
+    sql: '"ID"'
+    format: ID
+    primary_key: true
+
+  name:
+    sql: '"NAME"'
+
+  latitude:
+    sql: '"LATITUDE"'
+
+  longitude:
+    sql: '"LONGITUDE"'
+
+measures:
+  count:
+    aggregate_type: count

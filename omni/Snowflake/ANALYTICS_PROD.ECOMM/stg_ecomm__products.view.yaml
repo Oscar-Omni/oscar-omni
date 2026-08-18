@@ -1,0 +1,39 @@
+# Reference this view as analytics_prod_ecomm__stg_ecomm__products
+catalog: ANALYTICS_PROD
+schema: ECOMM
+table_name: STG_ECOMM__PRODUCTS
+
+dimensions:
+  id:
+    sql: '"ID"'
+    format: ID
+    primary_key: true
+
+  cost:
+    sql: '"COST"'
+
+  category:
+    sql: '"CATEGORY"'
+
+  name:
+    sql: '"NAME"'
+
+  brand:
+    sql: '"BRAND"'
+
+  retail_price:
+    sql: '"RETAIL_PRICE"'
+
+  department:
+    sql: '"DEPARTMENT"'
+
+  sku:
+    sql: '"SKU"'
+
+  distribution_center_id:
+    sql: '"DISTRIBUTION_CENTER_ID"'
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

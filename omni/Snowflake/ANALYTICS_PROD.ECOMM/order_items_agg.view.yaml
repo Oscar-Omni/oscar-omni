@@ -1,0 +1,12 @@
+# Reference this view as analytics_prod_ecomm__order_items_agg
+catalog: ANALYTICS_PROD
+schema: ECOMM
+table_name: ORDER_ITEMS_AGG
+
+dimensions:
+  margin_average:
+    sql: '"MARGIN_AVERAGE"'
+
+measures:
+  count:
+    aggregate_type: count

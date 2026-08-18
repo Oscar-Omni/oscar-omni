@@ -1,0 +1,53 @@
+# Reference this view as analytics_prod_ecomm__stg_ecomm__users
+catalog: ANALYTICS_PROD
+schema: ECOMM
+table_name: STG_ECOMM__USERS
+
+dimensions:
+  id:
+    sql: '"ID"'
+    format: ID
+    primary_key: true
+
+  first_name:
+    sql: '"FIRST_NAME"'
+
+  last_name:
+    sql: '"LAST_NAME"'
+
+  email:
+    sql: '"EMAIL"'
+
+  age:
+    sql: '"AGE"'
+
+  city:
+    sql: '"CITY"'
+
+  state:
+    sql: '"STATE"'
+
+  country:
+    sql: '"COUNTRY"'
+
+  zip:
+    sql: '"ZIP"'
+
+  latitude:
+    sql: '"LATITUDE"'
+
+  longitude:
+    sql: '"LONGITUDE"'
+
+  gender:
+    sql: '"GENDER"'
+
+  created_at:
+    sql: '"CREATED_AT"'
+
+  traffic_source:
+    sql: '"TRAFFIC_SOURCE"'
+
+measures:
+  count:
+    aggregate_type: count

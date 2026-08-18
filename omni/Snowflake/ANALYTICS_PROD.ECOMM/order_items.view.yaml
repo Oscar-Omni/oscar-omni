@@ -1,0 +1,62 @@
+# Reference this view as analytics_prod_ecomm__order_items
+catalog: ANALYTICS_PROD
+schema: ECOMM
+table_name: ORDER_ITEMS
+
+dimensions:
+  id:
+    sql: '"ID"'
+    format: ID
+    primary_key: true
+
+  order_id:
+    sql: '"ORDER_ID"'
+    format: ID
+
+  user_id:
+    sql: '"USER_ID"'
+    format: ID
+
+  inventory_item_id:
+    sql: '"INVENTORY_ITEM_ID"'
+    format: ID
+
+  sale_price:
+    sql: '"SALE_PRICE"'
+
+  status:
+    sql: '"STATUS"'
+
+  created_at:
+    sql: '"CREATED_AT"'
+
+  returned_at:
+    sql: '"RETURNED_AT"'
+
+  shipped_at:
+    sql: '"SHIPPED_AT"'
+
+  delivered_at:
+    sql: '"DELIVERED_AT"'
+
+  is_returned:
+    sql: '"IS_RETURNED"'
+
+  is_delivered:
+    sql: '"IS_DELIVERED"'
+
+  is_shipped:
+    sql: '"IS_SHIPPED"'
+
+  margin:
+    sql: '"MARGIN"'
+
+  months_since_signup:
+    sql: '"MONTHS_SINCE_SIGNUP"'
+
+  time_to_ship:
+    sql: '"TIME_TO_SHIP"'
+
+measures:
+  count:
+    aggregate_type: count

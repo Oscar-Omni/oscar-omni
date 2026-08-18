@@ -1,0 +1,44 @@
+# Reference this view as analytics_prod_ecomm__stg_ecomm__order_items
+catalog: ANALYTICS_PROD
+schema: ECOMM
+table_name: STG_ECOMM__ORDER_ITEMS
+
+dimensions:
+  id:
+    sql: '"ID"'
+    format: ID
+    primary_key: true
+
+  order_id:
+    sql: '"ORDER_ID"'
+    format: ID
+
+  user_id:
+    sql: '"USER_ID"'
+    format: ID
+
+  inventory_item_id:
+    sql: '"INVENTORY_ITEM_ID"'
+    format: ID
+
+  sale_price:
+    sql: '"SALE_PRICE"'
+
+  status:
+    sql: '"STATUS"'
+
+  created_at:
+    sql: '"CREATED_AT"'
+
+  returned_at:
+    sql: '"RETURNED_AT"'
+
+  shipped_at:
+    sql: '"SHIPPED_AT"'
+
+  delivered_at:
+    sql: '"DELIVERED_AT"'
+
+measures:
+  count:
+    aggregate_type: count

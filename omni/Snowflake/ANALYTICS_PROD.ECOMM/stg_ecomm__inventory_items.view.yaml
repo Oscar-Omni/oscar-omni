@@ -1,0 +1,49 @@
+# Reference this view as analytics_prod_ecomm__stg_ecomm__inventory_items
+catalog: ANALYTICS_PROD
+schema: ECOMM
+table_name: STG_ECOMM__INVENTORY_ITEMS
+
+dimensions:
+  id:
+    sql: '"ID"'
+    format: ID
+    primary_key: true
+
+  product_id:
+    sql: '"PRODUCT_ID"'
+    format: ID
+
+  created_at:
+    sql: '"CREATED_AT"'
+
+  sold_at:
+    sql: '"SOLD_AT"'
+
+  cost:
+    sql: '"COST"'
+
+  product_category:
+    sql: '"PRODUCT_CATEGORY"'
+
+  product_name:
+    sql: '"PRODUCT_NAME"'
+
+  product_brand:
+    sql: '"PRODUCT_BRAND"'
+
+  product_retail_price:
+    sql: '"PRODUCT_RETAIL_PRICE"'
+
+  product_department:
+    sql: '"PRODUCT_DEPARTMENT"'
+
+  product_sku:
+    sql: '"PRODUCT_SKU"'
+
+  product_distribution_center_id:
+    sql: '"PRODUCT_DISTRIBUTION_CENTER_ID"'
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

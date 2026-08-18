@@ -1,0 +1,21 @@
+# Reference this view as analytics_prod_ecomm__monthly_sales_overview
+catalog: ANALYTICS_PROD
+schema: ECOMM
+table_name: MONTHLY_SALES_OVERVIEW
+
+dimensions:
+  month:
+    sql: '"MONTH"'
+
+  status:
+    sql: '"STATUS"'
+
+  total_sale_price:
+    sql: '"TOTAL_SALE_PRICE"'
+
+  mom_change:
+    sql: '"MOM_CHANGE"'
+
+measures:
+  count:
+    aggregate_type: count

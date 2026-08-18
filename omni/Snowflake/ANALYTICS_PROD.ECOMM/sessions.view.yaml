@@ -1,0 +1,62 @@
+# Reference this view as analytics_prod_ecomm__sessions
+catalog: ANALYTICS_PROD
+schema: ECOMM
+table_name: SESSIONS
+
+dimensions:
+  session_id:
+    sql: '"SESSION_ID"'
+    format: ID
+
+  user_id:
+    sql: '"USER_ID"'
+    format: ID
+
+  session_start:
+    sql: '"SESSION_START"'
+
+  session_end:
+    sql: '"SESSION_END"'
+
+  events_in_sessions:
+    sql: '"EVENTS_IN_SESSIONS"'
+
+  duration:
+    sql: '"DURATION"'
+
+  months_since_created:
+    sql: '"MONTHS_SINCE_CREATED"'
+
+  duration_minutes:
+    sql: '"DURATION_MINUTES"'
+
+  add_to_cart_events:
+    sql: '"ADD_TO_CART_EVENTS"'
+
+  viewed_product_events:
+    sql: '"VIEWED_PRODUCT_EVENTS"'
+
+  purchase_events:
+    sql: '"PURCHASE_EVENTS"'
+
+  login_events:
+    sql: '"LOGIN_EVENTS"'
+
+  is_abandoned_cart:
+    sql: '"IS_ABANDONED_CART"'
+
+  had_login_event:
+    sql: '"HAD_LOGIN_EVENT"'
+
+  had_viewed_product_event:
+    sql: '"HAD_VIEWED_PRODUCT_EVENT"'
+
+  had_add_to_cart_event:
+    sql: '"HAD_ADD_TO_CART_EVENT"'
+
+  had_purchase_event:
+    sql: '"HAD_PURCHASE_EVENT"'
+
+measures:
+  count:
+    aggregate_type: count
