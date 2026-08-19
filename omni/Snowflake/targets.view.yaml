@@ -1,6 +1,0 @@
-# Reference this view as targets
-uploaded_table_name: Targets
-
-measures:
-  count:
-    aggregate_type: count
