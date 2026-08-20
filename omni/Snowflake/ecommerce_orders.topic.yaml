@@ -25,42 +25,44 @@ ai_context: 'Line-item ecommerce sales; each row is one order item. Revenue =
 
 sample_queries:
   monthly_revenue_trend:
-    prompt: "What has our monthly revenue trend looked like?"
-    ai_context: Trend question, so sort chronologically ascending rather than
-      by value descending.
     query:
-      base_view: analytics_prod_ecomm__order_items
       fields:
-        - analytics_prod_ecomm__order_items.created_at[month]
-        - analytics_prod_ecomm__order_items.total_revenue
-      topic: ecommerce_orders
+        [
+          "analytics_prod_ecomm__order_items.created_at[month]",
+          analytics_prod_ecomm__order_items.total_revenue
+        ]
+      base_view: analytics_prod_ecomm__order_items
       sorts:
         - field: analytics_prod_ecomm__order_items.created_at[month]
-          desc: false
-
-  return_rate_by_category:
-    prompt: "What's our return rate by product category?"
-    ai_context: Uses return_rate (returned items over total items) joined to
-      products.category, not a raw count of is_returned rows.
-    query:
-      base_view: analytics_prod_ecomm__order_items
-      fields:
-        - analytics_prod_ecomm__products.category
-        - analytics_prod_ecomm__order_items.return_rate
       topic: ecommerce_orders
+    prompt: What has our monthly revenue trend looked like?
+    ai_context: Trend question, so sort chronologically ascending rather than by
+      value descending.
+  return_rate_by_category:
+    query:
+      fields:
+        [
+          analytics_prod_ecomm__products.category,
+          analytics_prod_ecomm__order_items.return_rate
+        ]
+      base_view: analytics_prod_ecomm__order_items
       sorts:
         - field: analytics_prod_ecomm__order_items.return_rate
           desc: true
-
-  aov_first_vs_repeat:
-    prompt: "How does average order value compare between first-time and
-      repeat customers?"
-    ai_context: order_sequence_type splits first vs repeat purchases per
-      customer; compare average_order_value across the two rather than
-      filtering to one.
-    query:
-      base_view: analytics_prod_ecomm__order_items
-      fields:
-        - analytics_prod_ecomm__order_items.order_sequence_type
-        - analytics_prod_ecomm__order_items.average_order_value
       topic: ecommerce_orders
+    prompt: What's our return rate by product category?
+    ai_context: Uses return_rate (returned items over total items) joined to
+      products.category, not a raw count of is_returned rows.
+  aov_first_vs_repeat:
+    query:
+      fields:
+        [
+          analytics_prod_ecomm__order_items.order_sequence_type,
+          analytics_prod_ecomm__order_items.average_order_value
+        ]
+      base_view: analytics_prod_ecomm__order_items
+      topic: ecommerce_orders
+    prompt: How does average order value compare between first-time and repeat
+      customers?
+    ai_context: order_sequence_type splits first vs repeat purchases per customer;
+      compare average_order_value across the two rather than filtering to one.
