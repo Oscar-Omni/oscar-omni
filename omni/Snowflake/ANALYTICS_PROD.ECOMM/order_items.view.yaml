@@ -26,7 +26,7 @@ dimensions:
 
   status:
     sql: '"STATUS"'
-    sample_values: [ Cancelled, Complete, Processing, Returned, Shipped ]
+    all_values: [ Cancelled, Complete, Processing, Returned, Shipped ]
     ai_context: Raw per-item status. Prefer status_group for business rollups.
       Cancelled and Returned are distinct statuses here, but status_group rolls
       both into Complete.
@@ -93,7 +93,7 @@ dimensions:
     description: Whether the order this item belongs to was the customer's
       first-ever order or a repeat order, based on the earliest order date per
       customer.
-    sample_values: [ First Order, Repeat Order ]
+    all_values: [ First Order, Repeat Order ]
     ai_context: First vs repeat purchase, derived per customer from earliest order
       date. Applies to the whole order, not the individual item.
 
