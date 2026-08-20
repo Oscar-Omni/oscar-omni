@@ -79,9 +79,9 @@ dimensions:
     order_by_field: spend_bucket_order
     sample_values: [ Low, Medium, High ]
     ai_context: Deprecated and hidden. Use
-      analytics_prod_ecomm__user_spend.spend_bucket instead, which computes
-      the same buckets from a pre-aggregated view rather than a per-row
-      correlated subquery.
+      analytics_prod_ecomm__user_spend.spend_bucket instead, which computes the
+      same buckets from a pre-aggregated view rather than a per-row correlated
+      subquery.
 
   spend_bucket_order:
     sql: CASE ${analytics_prod_ecomm__users.spend_bucket} WHEN 'High' THEN 1 WHEN
