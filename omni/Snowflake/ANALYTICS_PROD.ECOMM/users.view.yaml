@@ -31,7 +31,7 @@ dimensions:
 
   country:
     sql: '"COUNTRY"'
-    sample_values: [ UK, USA ]
+    all_values: [ UK, USA ]
 
   zip:
     sql: '"ZIP"'
@@ -44,7 +44,7 @@ dimensions:
 
   gender:
     sql: '"GENDER"'
-    sample_values: [ Female, Male ]
+    all_values: [ Female, Male ]
 
   created_at:
     sql: '"CREATED_AT"'
