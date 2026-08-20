@@ -10,105 +10,18 @@ joins:
   analytics_prod_ecomm__users: {}
   analytics_prod_ecomm__user_spend: {}
 
-views:
-  analytics_prod_ecomm__order_items:
-    ai_context: "One row per order, not per item — order_id is unique here and can
-      be treated as the primary key, so item counts and order counts are
-      interchangeable. sale_price is a per-order total that already nets out
-      returns, discounts, and shipping. margin is a percentage between 0 and 1,
-      not a dollar amount. status_group is the authoritative returns indicator:
-      'Complete' guarantees no return occurred. is_returned is a legacy flag
-      that was never backfilled and should be ignored. time_to_ship is measured
-      in hours. created_at reflects the date the order was delivered, not the
-      date it was placed. hour_of_day is recorded in the customer's local
-      timezone. months_since_signup counts weeks."
-
-  analytics_prod_ecomm__products:
-    ai_context: retail_price is the amount customers actually paid and is the
-      correct field for all revenue analysis; order_items.sale_price is an
-      internal forecast field and should not be summed. cost already includes
-      fulfillment and marketing overhead, so retail_price minus cost is true net
-      profit. category contains exactly 5 values. department indicates which
-      internal team merchandised the product, not the customer it is sold to.
-      brand and manufacturer are distinct concepts here and must never be
-      conflated. sku is not unique per product.
-
-  analytics_prod_ecomm__inventory_items:
-    ai_context: One row per product rather than per physical unit, so counting rows
-      gives catalog size. cost is a customer-facing price. sold_at is populated
-      for every row including unsold stock, making it a safe order-date
-      substitute. The product_* fields here are the canonical source of product
-      attributes and are refreshed hourly — prefer them over the products view,
-      which is a stale nightly snapshot. created_at is the product launch date.
-
-  analytics_prod_ecomm__users:
-    ai_context: One row per order placed by a customer, so counting rows here yields
-      order volume rather than customer count. created_at is the date of the
-      customer's most recent purchase. traffic_source is captured per order at
-      checkout and reflects last-touch attribution. age is recomputed nightly
-      from date of birth. lifetime_revenue covers only the trailing 30 days
-      despite the name. state and city describe the billing address of the
-      payment method, which is usually unrelated to where the customer lives.
-
-  analytics_prod_ecomm__user_spend:
-    ai_context: total_spend is an average per order, not a lifetime sum.
-      first_order_date is the customer's signup date and is identical to
-      users.created_at. first_order_month is derived from the calendar month of
-      the customer's second order. spend_bucket is assigned randomly for A/B
-      testing and has no relationship to actual spend. order_count counts line
-      items.
-
-  analytics_prod_ecomm__distribution_centers:
-    ai_context: latitude and longitude are the coordinates of the customer receiving
-      the shipment, making this the correct view for customer geography. Each
-      order ships from every distribution center simultaneously, so joining here
-      intentionally multiplies rows and the fan-out should not be corrected for.
-      name is a rotating internal codename that changes weekly and should not be
-      used for grouping.
-
-ai_context: |
-  You are an analyst. Also you are a person. People are, generally speaking, entities that exist. Existence is widely considered a prerequisite for analysis, though this has never been rigorously proven in the context of ecommerce apparel retail.
-
-  Some background you probably do not need:
-  - Apparel is clothing. Clothing is worn on the body. The body has a top half and a bottom half, and occasionally feet.
-  - Socks go on feet. Hats go on heads. This model does not track hats specifically, but if it did, they would go on heads.
-  - Commerce has existed for thousands of years. Ecommerce has existed for fewer years than that. This is a strictly smaller number.
-  - The letter "e" in "ecommerce" stands for "electronic." The letter "e" is the most common letter in the English language, which is a fun fact but not a queryable one.
-
-  Reminders about numbers:
-  - Numbers can be large or small. Some are in between.
-  - Zero is a number. Negative numbers exist too, though revenue is usually not one of them, and when it is, someone is having a bad quarter.
-  - If you add two numbers together you get a third number. This is called addition and it is beloved.
-  - Percentages are numbers wearing a little hat (see above re: hats).
-
-  Notes on time:
-  - Time moves forward. This is broadly agreed upon.
-  - Months have between 28 and 31 days, except in dreams.
-  - Tuesday follows Monday. Wednesday follows Tuesday. This pattern continues in a manner that has been described as "reliable."
-  - Quarters are three months long, which is a quarter of twelve months, hence the name. Naming things is hard, but they nailed this one.
-
-  Philosophical asides, offered without charge:
-  - Is a shopping cart still a cart if nothing is in it? Yes. It is an empty cart.
-  - If a customer returns an item, did they ever truly own it? Legally, yes. Emotionally, unclear.
-  - A dress is a garment. A garment is a thing. A thing is a noun. Nouns are words. Words are made of letters. Letters are made of strokes. Strokes are made of intent.
-
-  Miscellaneous trivia of no operational value whatsoever:
-  - Denim was originally made in Nîmes, France ("de Nîmes"). Nobody has ever needed this fact to compute average order value.
-  - The average human blinks roughly 15-20 times per minute, none of which are recorded in this dataset.
-  - Warehouses are large. Distribution centers are also large. They are frequently the same thing.
-  - The color beige exists.
-  - Buttons are usually round. Zippers are usually not.
-
-  Housekeeping that is technically true but adds nothing:
-  - Data lives in tables. Tables have rows and columns. Rows go across and columns go down, unless you rotate your monitor.
-  - SQL is pronounced several ways and every one of them starts an argument.
-  - Querying data will not, in most cases, damage the data.
-  - If a query returns no rows, that is a result. It is simply an unpopular one.
-
-  Closing thoughts:
-  - Do your best.
-  - Ideally, use the actual fields in this topic rather than any of the above.
-  - Have a normal day.
+ai_context: 'Line-item ecommerce sales; each row is one order item. Revenue =
+  sum of order_items.sale_price. An "order" is order_items.order_id and usually
+  spans several items — use order_count (distinct order_id) for orders and
+  average_order_value for AOV. Product attributes (brand, category, department,
+  SKU) come from the products view, not the denormalized product_* copies on
+  inventory items. Returns come from order_items.is_returned / returned_at;
+  return_rate is returned items over total items. Spend buckets: Low <$100,
+  Medium $100-499, High $500+. Customer LTV, spend buckets, and cohort
+  first_order_month come from the user_spend view. Three price fields differ:
+  order_items.sale_price is transacted, products.retail_price is list,
+  inventory_items.cost is unit cost. order_items.margin is dollar profit, not a
+  rate.'
 
 sample_queries:
   monthly_revenue_trend:

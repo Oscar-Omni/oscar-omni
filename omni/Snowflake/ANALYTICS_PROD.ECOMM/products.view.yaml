@@ -60,7 +60,7 @@ dimensions:
 
   department:
     sql: '"DEPARTMENT"'
-    sample_values: [ Men, Women ]
+    all_values: [ Men, Women ]
     synonyms: [ gender department, division ]
 
   sku:

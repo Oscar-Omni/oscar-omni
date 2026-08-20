@@ -38,7 +38,7 @@ dimensions:
 
   spend_bucket:
     sql: '"SPEND_BUCKET"'
-    sample_values: [ Low, Medium, High ]
+    all_values: [ Low, Medium, High ]
     synonyms: [ spend tier, customer value segment ]
 
   first_order_month:
