@@ -68,7 +68,26 @@ measures:
     aggregate_type: average
     synonyms: [ avg price, average face value ]
 
+  unrealized_revenue:
+    sql: SUM((${se_sandbox_oscar__ticketek_venue.capacity} -
+      ${se_sandbox_oscar__ticketek_ticket_sale.tickets_sold}) * ${ticket_price})
+    label: Unrealized Revenue
+    format: currency_0
+    description: Value of unsold seats - each event's empty seats (venue capacity
+      minus tickets sold) times that event's list ticket price, summed. Requires
+      venue and ticket sale to be joined. Use for missed revenue and oversizing
+      questions.
+    synonyms:
+      [
+        unrealised revenue,
+        missed revenue,
+        empty seat value,
+        lost revenue,
+        unsold revenue
+      ]
+
 ai_context: One row per event/show. This is the main time dimension for the
   model — use event_date for any "over time", "by month", or date-filtered
   question about ticket sales. Ticket Price is the list price on the event;
-  actual money collected is Total Revenue on Ticket Sale.
+  actual money collected is Total Revenue on Ticket Sale. For the value of
+  unsold seats use the Unrealized Revenue measure.
