@@ -1,23 +1,6 @@
 # Reference this view as analytics_prod_ecomm__products
-catalog: ANALYTICS_PROD
-schema: ECOMM
-table_name: PRODUCTS
-
 dimensions:
-  id:
-    sql: '"ID"'
-    format: ID
-    primary_key: true
-
-  cost:
-    sql: '"COST"'
-    format: usdcurrency_2
-    description: Product-level cost
-    ai_context: Catalog-level cost on the product record. For the cost of an actual
-      sold unit (which drives order_items.margin) use inventory_items.cost.
-
   category:
-    sql: '"CATEGORY"'
     description: Primary product grouping, along with brand
     sample_values:
       [
@@ -41,35 +24,9 @@ dimensions:
     ai_context: 26 categories in total; the listed values are a representative
       sample, not the complete set.
 
-  name:
-    sql: '"NAME"'
-    synonyms: [ product, product name, item name ]
-
   brand:
-    sql: '"BRAND"'
     description: Primary product grouping, along with category
     synonyms: [ manufacturer, label ]
-
-  retail_price:
-    sql: '"RETAIL_PRICE"'
-    format: usdcurrency_2
-    description: List price of the product
-    synonyms: [ list price, msrp ]
-    ai_context: Catalog list price, not what customers actually paid. Use
-      order_items.sale_price for revenue and transacted amounts.
-
-  department:
-    sql: '"DEPARTMENT"'
-    all_values: [ Men, Women ]
-    synonyms: [ gender department, division ]
-
-  sku:
-    sql: '"SKU"'
-    synonyms: [ product code, item number ]
-
-  distribution_center_id:
-    sql: '"DISTRIBUTION_CENTER_ID"'
-    format: ID
 
   brand_vs_rest:
     sql: CASE WHEN {{# analytics_prod_ecomm__products.selected_brand.filter }}
@@ -83,9 +40,28 @@ dimensions:
       returns 'All Other Brands' and the field is meaningless. Only use when the
       user names a specific brand to compare against the rest.
 
-measures:
-  count:
-    aggregate_type: count
+  cost:
+    format: usdcurrency_2
+    description: Product-level cost
+    ai_context: Catalog-level cost on the product record. For the cost of an actual
+      sold unit (which drives order_items.margin) use inventory_items.cost.
+
+  name:
+    synonyms: [ product, product name, item name ]
+
+  retail_price:
+    format: usdcurrency_2
+    description: List price of the product
+    synonyms: [ list price, msrp ]
+    ai_context: Catalog list price, not what customers actually paid. Use
+      order_items.sale_price for revenue and transacted amounts.
+
+  department:
+    all_values: [ Men, Women ]
+    synonyms: [ gender department, division ]
+
+  sku:
+    synonyms: [ product code, item number ]
 
 filters:
   selected_brand:

@@ -1,79 +1,5 @@
 # Reference this view as analytics_prod_ecomm__order_items
-catalog: ANALYTICS_PROD
-schema: ECOMM
-table_name: ORDER_ITEMS
-
 dimensions:
-  id:
-    sql: '"ID"'
-    format: ID
-    primary_key: true
-
-  order_id:
-    sql: '"ORDER_ID"'
-    format: ID
-
-  user_id:
-    sql: '"USER_ID"'
-    format: ID
-
-  inventory_item_id:
-    sql: '"INVENTORY_ITEM_ID"'
-    format: ID
-
-  sale_price:
-    sql: '"SALE_PRICE"'
-
-  status:
-    sql: '"STATUS"'
-    all_values: [ Cancelled, Complete, Processing, Returned, Shipped ]
-    ai_context: Raw per-item status. Prefer status_group for business rollups.
-      Cancelled and Returned are distinct statuses here, but status_group rolls
-      both into Complete.
-
-  created_at:
-    sql: '"CREATED_AT"'
-
-  returned_at:
-    sql: '"RETURNED_AT"'
-
-  shipped_at:
-    sql: '"SHIPPED_AT"'
-
-  delivered_at:
-    sql: '"DELIVERED_AT"'
-
-  is_returned:
-    sql: '"IS_RETURNED"'
-    ai_context: Boolean flag; use for filtering returns. Use returned_at when
-      trending returns over time.
-
-  is_delivered:
-    sql: '"IS_DELIVERED"'
-    ai_context: Boolean flag; use for filtering. Use delivered_at when trending over time.
-
-  is_shipped:
-    sql: '"IS_SHIPPED"'
-    ai_context: Boolean flag; use for filtering. Use shipped_at when trending over time.
-
-  margin:
-    sql: '"MARGIN"'
-    format: usdcurrency_2
-    description: "Profit in dollars on the item: sale price minus unit cost"
-    ai_context: Dollar profit per item, not a percentage or rate. For a margin rate,
-      divide total_margin by total_revenue.
-
-  months_since_signup:
-    sql: '"MONTHS_SINCE_SIGNUP"'
-    description: Whole months between the customer's signup date and this order
-    ai_context: Order-level tenure at time of purchase. Use for tenure/recency
-      cohorting; for acquisition cohorts use user_spend.first_order_month.
-
-  time_to_ship:
-    sql: '"TIME_TO_SHIP"'
-    description: Days between order creation and shipment
-    ai_context: Whole days, null until the item ships. Aggregate via average_time_to_ship.
-
   status_group:
     sql: CASE WHEN ${status} IN ('Complete','Returned','Cancelled') THEN 'Complete'
       WHEN ${status} IN ('Shipped','Processing') THEN 'In Progress' ELSE
@@ -97,11 +23,38 @@ dimensions:
     ai_context: First vs repeat purchase, derived per customer from earliest order
       date. Applies to the whole order, not the individual item.
 
-measures:
-  count:
-    aggregate_type: count
-    ai_context: Counts order items, not orders. Use order_count for orders.
+  status:
+    all_values: [ Cancelled, Complete, Processing, Returned, Shipped ]
+    ai_context: Raw per-item status. Prefer status_group for business rollups.
+      Cancelled and Returned are distinct statuses here, but status_group rolls
+      both into Complete.
 
+  is_returned:
+    ai_context: Boolean flag; use for filtering returns. Use returned_at when
+      trending returns over time.
+
+  is_delivered:
+    ai_context: Boolean flag; use for filtering. Use delivered_at when trending over time.
+
+  is_shipped:
+    ai_context: Boolean flag; use for filtering. Use shipped_at when trending over time.
+
+  margin:
+    format: usdcurrency_2
+    description: "Profit in dollars on the item: sale price minus unit cost"
+    ai_context: Dollar profit per item, not a percentage or rate. For a margin rate,
+      divide total_margin by total_revenue.
+
+  months_since_signup:
+    description: Whole months between the customer's signup date and this order
+    ai_context: Order-level tenure at time of purchase. Use for tenure/recency
+      cohorting; for acquisition cohorts use user_spend.first_order_month.
+
+  time_to_ship:
+    description: Days between order creation and shipment
+    ai_context: Whole days, null until the item ships. Aggregate via average_time_to_ship.
+
+measures:
   total_revenue:
     sql: ${sale_price}
     format: usdcurrency_2
@@ -160,6 +113,10 @@ measures:
     label: Customer Count
     aggregate_type: count_distinct
     synonyms: [ customers, buyers, shoppers ]
+
+  count:
+    aggregate_type: count
+    ai_context: Counts order items, not orders. Use order_count for orders.
 
 ai_context: "Line-item grain: one row per order item. An order is order_id and
   usually spans several items, so item counts and order counts differ.

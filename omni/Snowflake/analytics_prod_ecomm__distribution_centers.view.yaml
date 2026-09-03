@@ -1,27 +1,7 @@
 # Reference this view as analytics_prod_ecomm__distribution_centers
-catalog: ANALYTICS_PROD
-schema: ECOMM
-table_name: DISTRIBUTION_CENTERS
-
 dimensions:
-  id:
-    sql: '"ID"'
-    format: ID
-    primary_key: true
-
   name:
-    sql: '"NAME"'
     synonyms: [ distribution center, warehouse, fulfillment center, dc ]
-
-  latitude:
-    sql: '"LATITUDE"'
-
-  longitude:
-    sql: '"LONGITUDE"'
-
-measures:
-  count:
-    aggregate_type: count
 
 ai_context: Fulfillment warehouse locations, one row per distribution center.
   Joined via products.distribution_center_id, so it reflects where a product
