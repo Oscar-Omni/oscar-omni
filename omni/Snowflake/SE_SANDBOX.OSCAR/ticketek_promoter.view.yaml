@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__ticketek_promoter
+label: Promoter
+description: Promoters contracted to venues, with contract status and churn risk.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: TICKETEK_PROMOTER
@@ -6,17 +9,39 @@ table_name: TICKETEK_PROMOTER
 dimensions:
   promoter_id:
     sql: '"PROMOTER_ID"'
+    label: Promoter ID
     format: ID
+    primary_key: true
 
   name:
     sql: '"NAME"'
+    label: Promoter Name
+    description: Promoter name. Use this rather than promoter ID in results.
+    synonyms: [ promoter ]
 
   contract_status:
     sql: '"CONTRACT_STATUS"'
+    label: Contract Status
+    description: Current contract lifecycle state of the promoter.
+    sample_values: [ active, at_risk, churned, pending_renewal ]
+    synonyms: [ status, contract state ]
 
   churn_risk_flag:
     sql: '"CHURN_RISK_FLAG"'
+    label: Churn Risk Flag
+    description: Whether the promoter is flagged as a churn risk. Stored as the
+      strings TRUE and FALSE.
+    sample_values: [ "TRUE", "FALSE" ]
+    synonyms: [ churn risk, at risk ]
 
 measures:
   count:
+    label: Promoter Count
+    description: Distinct number of promoters.
     aggregate_type: count
+    synonyms: [ number of promoters ]
+
+ai_context: One row per promoter, contracted to venues. Reach promoters through
+  Venue. Use contract_status for lifecycle questions and churn_risk_flag for
+  at-risk questions; note churn_risk_flag is a string 'TRUE'/'FALSE', not a
+  boolean.

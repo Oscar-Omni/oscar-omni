@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__ticketek_artist_market_metric
+label: Artist Market Metric
+description: Per-artist, per-country popularity metrics such as monthly listeners.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: TICKETEK_ARTIST_MARKET_METRIC
@@ -6,21 +9,57 @@ table_name: TICKETEK_ARTIST_MARKET_METRIC
 dimensions:
   metric_id:
     sql: '"METRIC_ID"'
+    label: Metric ID
     format: ID
+    primary_key: true
 
   artist_id:
     sql: '"ARTIST_ID"'
+    label: Artist ID
     format: ID
 
   country:
     sql: '"COUNTRY"'
+    label: Country
+    description: Market the popularity metric applies to.
+    sample_values: [ AU ]
+    synonyms: [ market, region ]
 
   monthly_listeners:
     sql: '"MONTHLY_LISTENERS"'
+    label: Monthly Listeners
+    format: number_0
+    description: Streaming monthly listeners for the artist in that country.
+    synonyms: [ listeners, streams, popularity ]
 
   source:
     sql: '"SOURCE"'
+    description: Technical load-source column; not useful for analysis.
+    hidden: true
 
 measures:
   count:
+    label: Metric Row Count
     aggregate_type: count
+
+  total_monthly_listeners:
+    sql: ${monthly_listeners}
+    label: Total Monthly Listeners
+    format: number_0
+    description: Sum of monthly listeners across markets. Use only when comparing
+      across multiple countries.
+    aggregate_type: sum
+    synonyms: [ listeners ]
+
+  average_monthly_listeners:
+    sql: ${monthly_listeners}
+    label: Average Monthly Listeners
+    format: number_0
+    description: Average monthly listeners. Preferred measure of artist popularity.
+    aggregate_type: average
+    synonyms: [ popularity, avg listeners ]
+
+ai_context: One row per artist per country with popularity metrics. Fans out
+  relative to Artist, so filter to a single country (data is currently AU only)
+  when combining with ticket sales measures, and prefer Average Monthly
+  Listeners over the sum when describing an artist's popularity.

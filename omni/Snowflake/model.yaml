@@ -1,4 +1,1 @@
-ai_context: "Ecommerce apparel retailer. Analysis centers on line-item order
-  data: revenue, margin, returns, product catalog, customer demographics, and
-  fulfillment. Revenue means transacted sale price, not list price. Orders are
-  multi-item, so always distinguish item counts from order counts."
+{}

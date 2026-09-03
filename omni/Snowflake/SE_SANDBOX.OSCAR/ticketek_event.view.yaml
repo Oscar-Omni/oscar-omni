@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__ticketek_event
+label: Event
+description: Individual events/shows, with tour, artist, venue and list ticket price.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: TICKETEK_EVENT
@@ -6,31 +9,66 @@ table_name: TICKETEK_EVENT
 dimensions:
   event_id:
     sql: '"EVENT_ID"'
+    label: Event ID
     format: ID
+    primary_key: true
 
   artist_id:
     sql: '"ARTIST_ID"'
+    label: Artist ID
     format: ID
 
   venue_id:
     sql: '"VENUE_ID"'
+    label: Venue ID
     format: ID
 
   event_date:
     sql: '"EVENT_DATE"'
+    label: Event Date
+    description: Date the event takes place. Primary date field for trend and time filters.
+    synonyms: [ show date, date, performance date ]
 
   event_date_end:
     sql: '"EVENT_DATE_END"'
+    label: Event End Date
+    description: End date for multi-day events.
+    synonyms: [ end date ]
 
   tour_title:
     sql: '"TOUR_TITLE"'
+    label: Tour Title
+    description: Name of the tour the event belongs to.
+    synonyms: [ tour, show name ]
 
   ticket_price:
     sql: '"TICKET_PRICE"'
+    label: Ticket Price
+    format: currency_2
+    description: List ticket price for the event. Not actual revenue collected.
+    synonyms: [ list price, face value, price ]
 
   source:
     sql: '"SOURCE"'
+    description: Technical load-source column; not useful for analysis.
+    hidden: true
 
 measures:
   count:
+    label: Event Count
+    description: Distinct number of events.
     aggregate_type: count
+    synonyms: [ shows, number of events, gigs ]
+
+  average_ticket_price:
+    sql: ${ticket_price}
+    label: Average Ticket Price
+    format: currency_2
+    description: Average list ticket price across events.
+    aggregate_type: average
+    synonyms: [ avg price, average face value ]
+
+ai_context: One row per event/show. This is the main time dimension for the
+  model — use event_date for any "over time", "by month", or date-filtered
+  question about ticket sales. Ticket Price is the list price on the event;
+  actual money collected is Total Revenue on Ticket Sale.

@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__ticketek_ticket_sale
+label: Ticket Sale
+description: Ticket sale records per event, with tickets sold and revenue.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: TICKETEK_TICKET_SALE
@@ -6,18 +9,64 @@ table_name: TICKETEK_TICKET_SALE
 dimensions:
   sale_id:
     sql: '"SALE_ID"'
+    label: Sale ID
     format: ID
+    primary_key: true
 
   event_id:
     sql: '"EVENT_ID"'
+    label: Event ID
     format: ID
 
   tickets_sold:
     sql: '"TICKETS_SOLD"'
+    label: Tickets Sold
+    format: number_0
+    description: Tickets sold on this sale record. Aggregate with Total Tickets Sold.
+    synonyms: [ tickets, units, volume ]
 
   revenue:
     sql: '"REVENUE"'
+    label: Revenue
+    format: currency_2
+    description: Revenue on this sale record. Aggregate with Total Revenue.
+    synonyms: [ sales, amount ]
 
 measures:
   count:
+    label: Sale Count
+    description: Distinct number of sale records. Not a ticket count — use Total
+      Tickets Sold for tickets.
     aggregate_type: count
+    synonyms: [ sale records, transactions ]
+
+  total_tickets_sold:
+    sql: ${tickets_sold}
+    label: Total Tickets Sold
+    format: number_0
+    description: Total tickets sold. Default measure for ticket volume.
+    aggregate_type: sum
+    synonyms: [ tickets sold, tickets, attendance, units ]
+
+  total_revenue:
+    sql: ${revenue}
+    label: Total Revenue
+    format: currency_0
+    description: Total ticket revenue. Default revenue metric for this model.
+    aggregate_type: sum
+    synonyms: [ sales, gross, revenue, takings, gross sales ]
+
+  average_revenue_per_ticket:
+    sql: ${total_revenue} / NULLIF(${total_tickets_sold}, 0)
+    label: Average Revenue per Ticket
+    format: currency_2
+    description: Total revenue divided by total tickets sold. Use for yield /
+      average selling price questions.
+    synonyms: [ yield, average selling price, revenue per ticket, ASP ]
+
+ai_context: Fact table, one row per ticket sale record per event. This is the
+  base view of the Ticketek Ticket Sales topic. Default revenue metric is Total
+  Revenue; default volume metric is Total Tickets Sold. Use Average Revenue per
+  Ticket rather than dividing measures by hand. Sales have no date of their own
+  — group and filter by Event Date on the Event view. Sell-through/utilisation
+  can be approximated as Total Tickets Sold against Venue Capacity.

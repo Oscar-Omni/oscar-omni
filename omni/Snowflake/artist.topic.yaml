@@ -1,0 +1,24 @@
+base_view: se_sandbox_oscar__ticketek_artist
+label: Artists
+description: |
+  Artist reach and booking history. One row per artist, including artists with no shows booked yet. Joins to AU monthly listener metrics, event history, ticket sales, venues and their promoters. Use this topic to size an artist's next show: compare their AU listener reach and past sell through to venue capacity tiers.
+
+joins:
+  se_sandbox_oscar__ticketek_artist_market_metric: {}
+  se_sandbox_oscar__ticketek_event:
+    se_sandbox_oscar__ticketek_ticket_sale: {}
+    se_sandbox_oscar__ticketek_venue:
+      se_sandbox_oscar__ticketek_promoter: {}
+
+skills:
+  suggest_venue_fit:
+    label: Suggest Venue Fit
+    input: |
+      Which artist are you sizing a show for? Give me a name and a rough timeframe and I'll work through their reach, track record, and venue options step by step.
+    description: |
+      Guide the user through sizing a venue for an artist. Work through these steps in order, one at a time.
+      Step 1, establish reach. Look up the artist's AU monthly listeners from the artist market metric and state it plainly. If the artist has no listener data, say so and stop.
+      Step 2, show the track record. Query their event history: venue, city, event date, tickets sold, and sell through (tickets sold divided by venue capacity, as a percentage). If they have no events booked, say this artist has no shows yet, which makes the sizing exercise more important, and continue.
+      Step 3, get the timeframe. If the user hasn't already given a target date or month for the next show, ask for one before going further. Confirm it back, then continue.
+      Step 4, size the next show. Recommend a capacity tier: small is under 1,000, mid is 1,000 to 5,000, large is 5,000 plus. Justify the tier using their listener reach and the average sell through of artists with similar reach at each tier, citing the numbers.
+      Step 5, recommend venues, date aware. Name 2 to 3 candidate venues in the recommended tier, each with capacity, city, and average sell through of past events held there. For each candidate, check the event table for shows already booked at that venue within 7 days of the target date and flag any clash. Also note how many other shows are on in the same city that month, so the user can see how crowded the market is around their date. Always include each venue's promoter and contract status. If any promoter is churned or at risk, or the venue has a date clash, flag it clearly and suggest the nearest alternative venue with a healthy promoter and a clear calendar, never drop a problem recommendation silently.

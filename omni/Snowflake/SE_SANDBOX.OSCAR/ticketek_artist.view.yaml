@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__ticketek_artist
+label: Artist
+description: Artists performing at Ticketek events.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: TICKETEK_ARTIST
@@ -6,20 +9,41 @@ table_name: TICKETEK_ARTIST
 dimensions:
   artist_id:
     sql: '"ARTIST_ID"'
+    label: Artist ID
     format: ID
+    primary_key: true
 
   name:
     sql: '"NAME"'
+    label: Artist Name
+    description: Artist or act name. Use this rather than artist ID in results.
+    synonyms: [ act, performer, band, artist ]
 
   primary_genre:
     sql: '"PRIMARY_GENRE"'
+    label: Primary Genre
+    description: Primary genre of the artist.
+    sample_values: [ Rock, Pop, Hip Hop, Country, Classical, K-Pop ]
+    synonyms: [ genre, music style ]
 
   home_market:
     sql: '"HOME_MARKET"'
+    label: Home Market
+    description: Artist's home market. Often not populated.
+    synonyms: [ home country, origin market ]
 
   source:
     sql: '"SOURCE"'
+    description: Technical load-source column; not useful for analysis.
+    hidden: true
 
 measures:
   count:
+    label: Artist Count
+    description: Distinct number of artists.
     aggregate_type: count
+    synonyms: [ number of artists, acts ]
+
+ai_context: Artist dimension table, one row per artist. Join through Event to
+  reach ticket sales. Use artist name (not artist ID) when reporting artists.
+  Genre analysis should use primary_genre.

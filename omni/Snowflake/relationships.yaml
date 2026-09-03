@@ -1,1 +1,38 @@
-[]
+- join_from_view: se_sandbox_oscar__ticketek_ticket_sale
+  join_to_view: se_sandbox_oscar__ticketek_event
+  join_type: always_left
+  on_sql: ${se_sandbox_oscar__ticketek_ticket_sale.event_id} =
+    ${se_sandbox_oscar__ticketek_event.event_id}
+  relationship_type: many_to_one
+  reversible: true
+
+- join_from_view: se_sandbox_oscar__ticketek_event
+  join_to_view: se_sandbox_oscar__ticketek_artist
+  join_type: always_left
+  on_sql: ${se_sandbox_oscar__ticketek_event.artist_id} =
+    ${se_sandbox_oscar__ticketek_artist.artist_id}
+  relationship_type: many_to_one
+  reversible: true
+
+- join_from_view: se_sandbox_oscar__ticketek_event
+  join_to_view: se_sandbox_oscar__ticketek_venue
+  join_type: always_left
+  on_sql: ${se_sandbox_oscar__ticketek_event.venue_id} =
+    ${se_sandbox_oscar__ticketek_venue.venue_id}
+  relationship_type: many_to_one
+  reversible: true
+
+- join_from_view: se_sandbox_oscar__ticketek_venue
+  join_to_view: se_sandbox_oscar__ticketek_promoter
+  join_type: always_left
+  on_sql: ${se_sandbox_oscar__ticketek_venue.promoter_id} =
+    ${se_sandbox_oscar__ticketek_promoter.promoter_id}
+  relationship_type: many_to_one
+  reversible: true
+
+- join_from_view: se_sandbox_oscar__ticketek_artist
+  join_to_view: se_sandbox_oscar__ticketek_artist_market_metric
+  join_type: always_left
+  on_sql: ${se_sandbox_oscar__ticketek_artist.artist_id} =
+    ${se_sandbox_oscar__ticketek_artist_market_metric.artist_id}
+  relationship_type: one_to_many

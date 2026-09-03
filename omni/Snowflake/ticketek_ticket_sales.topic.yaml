@@ -1,0 +1,11 @@
+base_view: se_sandbox_oscar__ticketek_ticket_sale
+label: Ticketek Ticket Sales
+description: Ticket sales joined to events, artists, venues, promoters and
+  artist market metrics.
+
+joins:
+  se_sandbox_oscar__ticketek_event:
+    se_sandbox_oscar__ticketek_artist:
+      se_sandbox_oscar__ticketek_artist_market_metric: {}
+    se_sandbox_oscar__ticketek_venue:
+      se_sandbox_oscar__ticketek_promoter: {}
