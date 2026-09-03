@@ -32,6 +32,14 @@ dimensions:
     description: Revenue on this sale record. Aggregate with Total Revenue.
     synonyms: [ sales, amount ]
 
+  sell_through_rate:
+    sql: ${tickets_sold} / NULLIF(${se_sandbox_oscar__ticketek_venue.capacity}, 0)
+    label: Sell-Through Rate
+    format: percent_1
+    description: Per-event sell-through - tickets sold on this record divided by the
+      venue's capacity. Row-level rate, only meaningful per event.
+    synonyms: [ sell through, fill rate, utilisation, occupancy ]
+
 measures:
   count:
     label: Sale Count
@@ -64,9 +72,30 @@ measures:
       average selling price questions.
     synonyms: [ yield, average selling price, revenue per ticket, ASP ]
 
+  average_sell_through:
+    sql: ${sell_through_rate}
+    label: Average Sell-Through
+    format: percent_1
+    description: The ONLY correct way to aggregate sell-through across events - the
+      average of each event's own tickets sold divided by that event's venue
+      capacity. Never compute sell-through by summing Total Tickets Sold across
+      multiple events and dividing by a single venue capacity; that produces
+      rates over 100%.
+    aggregate_type: average
+    synonyms:
+      [
+        average sell through,
+        avg fill rate,
+        average utilisation,
+        average occupancy
+      ]
+
 ai_context: Fact table, one row per ticket sale record per event. This is the
   base view of the Ticketek Ticket Sales topic. Default revenue metric is Total
   Revenue; default volume metric is Total Tickets Sold. Use Average Revenue per
   Ticket rather than dividing measures by hand. Sales have no date of their own
-  — group and filter by Event Date on the Event view. Sell-through/utilisation
-  can be approximated as Total Tickets Sold against Venue Capacity.
+  - group and filter by Event Date on the Event view. For sell-through, fill
+  rate, or occupancy questions ALWAYS use the Average Sell-Through measure (or
+  the row-level Sell-Through Rate dimension at event grain). Never derive
+  sell-through by dividing Total Tickets Sold by Venue Capacity across more than
+  one event.
