@@ -50,6 +50,18 @@ dimensions:
     description: Technical load-source column; not useful for analysis.
     hidden: true
 
+  latitude:
+    sql: '"LATITUDE"'
+    label: Latitude
+    description: Venue latitude (approximate, city-level with venue offset). Pair
+      with Longitude for map visualisations.
+
+  longitude:
+    sql: '"LONGITUDE"'
+    label: Longitude
+    description: Venue longitude (approximate, city-level with venue offset). Pair
+      with Latitude for map visualisations.
+
 measures:
   count:
     label: Venue Count
