@@ -85,12 +85,6 @@ measures:
     aggregate_type: average
     synonyms: [ avg capacity, typical size ]
 
-  unrealized_revenue:
-    sql: (${se_sandbox_oscar__ticketek_venue.average_capacity} -
-      ${se_sandbox_oscar__ticketek_ticket_sale.total_tickets_sold}) *
-      ${se_sandbox_oscar__ticketek_event.average_ticket_price}
-    label: Unrealized Revenue
-
 ai_context: One row per venue, with Australian location and seating capacity,
   and the contracted promoter. Use venue name for reporting and state/city for
   geographic breakdowns (states are Australian abbreviations). Capacity is per
