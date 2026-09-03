@@ -1,9 +1,0 @@
-# Reference this view as analytics_prod_ecomm__distribution_centers
-dimensions:
-  name:
-    synonyms: [ distribution center, warehouse, fulfillment center, dc ]
-
-ai_context: Fulfillment warehouse locations, one row per distribution center.
-  Joined via products.distribution_center_id, so it reflects where a product
-  ships from. Latitude/longitude are the center's own location, not the
-  customer's.
