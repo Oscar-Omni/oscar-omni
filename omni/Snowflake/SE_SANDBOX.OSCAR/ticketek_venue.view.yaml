@@ -1,0 +1,32 @@
+# Reference this view as se_sandbox_oscar__ticketek_venue
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: TICKETEK_VENUE
+
+dimensions:
+  venue_id:
+    sql: '"VENUE_ID"'
+    format: ID
+
+  name:
+    sql: '"NAME"'
+
+  city:
+    sql: '"CITY"'
+
+  state:
+    sql: '"STATE"'
+
+  capacity:
+    sql: '"CAPACITY"'
+
+  promoter_id:
+    sql: '"PROMOTER_ID"'
+    format: ID
+
+  source:
+    sql: '"SOURCE"'
+
+measures:
+  count:
+    aggregate_type: count

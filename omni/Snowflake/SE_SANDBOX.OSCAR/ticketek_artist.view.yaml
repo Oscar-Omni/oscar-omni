@@ -1,0 +1,25 @@
+# Reference this view as se_sandbox_oscar__ticketek_artist
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: TICKETEK_ARTIST
+
+dimensions:
+  artist_id:
+    sql: '"ARTIST_ID"'
+    format: ID
+
+  name:
+    sql: '"NAME"'
+
+  primary_genre:
+    sql: '"PRIMARY_GENRE"'
+
+  home_market:
+    sql: '"HOME_MARKET"'
+
+  source:
+    sql: '"SOURCE"'
+
+measures:
+  count:
+    aggregate_type: count

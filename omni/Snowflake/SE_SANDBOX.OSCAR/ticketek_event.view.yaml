@@ -1,0 +1,36 @@
+# Reference this view as se_sandbox_oscar__ticketek_event
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: TICKETEK_EVENT
+
+dimensions:
+  event_id:
+    sql: '"EVENT_ID"'
+    format: ID
+
+  artist_id:
+    sql: '"ARTIST_ID"'
+    format: ID
+
+  venue_id:
+    sql: '"VENUE_ID"'
+    format: ID
+
+  event_date:
+    sql: '"EVENT_DATE"'
+
+  event_date_end:
+    sql: '"EVENT_DATE_END"'
+
+  tour_title:
+    sql: '"TOUR_TITLE"'
+
+  ticket_price:
+    sql: '"TICKET_PRICE"'
+
+  source:
+    sql: '"SOURCE"'
+
+measures:
+  count:
+    aggregate_type: count

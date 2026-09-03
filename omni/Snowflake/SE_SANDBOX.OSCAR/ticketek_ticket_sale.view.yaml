@@ -1,0 +1,23 @@
+# Reference this view as se_sandbox_oscar__ticketek_ticket_sale
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: TICKETEK_TICKET_SALE
+
+dimensions:
+  sale_id:
+    sql: '"SALE_ID"'
+    format: ID
+
+  event_id:
+    sql: '"EVENT_ID"'
+    format: ID
+
+  tickets_sold:
+    sql: '"TICKETS_SOLD"'
+
+  revenue:
+    sql: '"REVENUE"'
+
+measures:
+  count:
+    aggregate_type: count

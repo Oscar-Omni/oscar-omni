@@ -1,0 +1,22 @@
+# Reference this view as se_sandbox_oscar__ticketek_promoter
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: TICKETEK_PROMOTER
+
+dimensions:
+  promoter_id:
+    sql: '"PROMOTER_ID"'
+    format: ID
+
+  name:
+    sql: '"NAME"'
+
+  contract_status:
+    sql: '"CONTRACT_STATUS"'
+
+  churn_risk_flag:
+    sql: '"CHURN_RISK_FLAG"'
+
+measures:
+  count:
+    aggregate_type: count

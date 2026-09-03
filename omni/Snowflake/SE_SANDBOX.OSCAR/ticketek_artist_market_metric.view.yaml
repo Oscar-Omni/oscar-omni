@@ -1,0 +1,26 @@
+# Reference this view as se_sandbox_oscar__ticketek_artist_market_metric
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: TICKETEK_ARTIST_MARKET_METRIC
+
+dimensions:
+  metric_id:
+    sql: '"METRIC_ID"'
+    format: ID
+
+  artist_id:
+    sql: '"ARTIST_ID"'
+    format: ID
+
+  country:
+    sql: '"COUNTRY"'
+
+  monthly_listeners:
+    sql: '"MONTHLY_LISTENERS"'
+
+  source:
+    sql: '"SOURCE"'
+
+measures:
+  count:
+    aggregate_type: count
