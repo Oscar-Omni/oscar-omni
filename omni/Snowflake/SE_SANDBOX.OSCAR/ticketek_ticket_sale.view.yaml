@@ -90,6 +90,73 @@ measures:
         average occupancy
       ]
 
+  total_revenue_last_12_months:
+    sql: ${revenue}
+    label: Total Revenue (Last 12 Mo)
+    format: currency_0
+    description: Revenue for the rolling 12 months ending today. Compare against
+      Total Revenue (Prior 12 Mo) for growth.
+    aggregate_type: sum
+    filters:
+      se_sandbox_oscar__ticketek_event.event_date:
+        time_for_duration: [ 12 months ago, 12 months ]
+
+  total_revenue_prior_12_months:
+    sql: ${revenue}
+    label: Total Revenue (Prior 12 Mo)
+    format: currency_0
+    description: Revenue for the 12 months before the last 12 months (24 to 12
+      months ago). Comparison base for Total Revenue (Last 12 Mo).
+    aggregate_type: sum
+    filters:
+      se_sandbox_oscar__ticketek_event.event_date:
+        time_for_duration: [ 24 months ago, 12 months ]
+
+  total_tickets_last_12_months:
+    sql: ${tickets_sold}
+    label: Tickets Sold (Last 12 Mo)
+    format: number_0
+    description: Tickets sold for the rolling 12 months ending today. Compare
+      against Tickets Sold (Prior 12 Mo) for growth.
+    aggregate_type: sum
+    filters:
+      se_sandbox_oscar__ticketek_event.event_date:
+        time_for_duration: [ 12 months ago, 12 months ]
+
+  total_tickets_prior_12_months:
+    sql: ${tickets_sold}
+    label: Tickets Sold (Prior 12 Mo)
+    format: number_0
+    description: Tickets sold for the 12 months before the last 12 months (24 to 12
+      months ago). Comparison base for Tickets Sold (Last 12 Mo).
+    aggregate_type: sum
+    filters:
+      se_sandbox_oscar__ticketek_event.event_date:
+        time_for_duration: [ 24 months ago, 12 months ]
+
+  average_sell_through_last_12_months:
+    sql: ${sell_through_rate}
+    label: Average Sell-Through (Last 12 Mo)
+    format: percent_1
+    description: Average per-event sell-through for the rolling 12 months ending
+      today. Compare against Average Sell-Through (Prior 12 Mo).
+    aggregate_type: average
+    filters:
+      se_sandbox_oscar__ticketek_event.event_date:
+        time_for_duration: [ 12 months ago, 12 months ]
+
+  average_sell_through_prior_12_months:
+    sql: ${sell_through_rate}
+    label: Average Sell-Through (Prior 12 Mo)
+    format: percent_1
+    description: Average per-event sell-through for the 12 months before the last 12
+      months (24 to 12 months ago). Comparison base for Average Sell-Through
+      (Last 12 Mo).
+    aggregate_type: average
+    filters:
+      se_sandbox_oscar__ticketek_event.event_date:
+        time_for_duration: [ 24 months ago, 12 months ]
+
 ai_context: Fact table, one row per ticket sale record per event. This is the
   base view of the Ticketek Ticket Sales topic. Default revenue metric is Total
   Revenue; default volume metric is Total Tickets Sold. Use Average Revenue per
