@@ -53,6 +53,14 @@ dimensions:
     description: Technical load-source column; not useful for analysis.
     hidden: true
 
+  empty_seat_value:
+    sql: (${se_sandbox_oscar__ticketek_venue.capacity} -
+      ${se_sandbox_oscar__ticketek_ticket_sale.tickets_sold}) * ${ticket_price}
+    label: Empty Seat Value
+    description: Row-level value of unsold seats for this event. Aggregate with
+      Unrealized Revenue.
+    hidden: true
+
 measures:
   count:
     label: Event Count
@@ -69,14 +77,14 @@ measures:
     synonyms: [ avg price, average face value ]
 
   unrealized_revenue:
-    sql: SUM((${se_sandbox_oscar__ticketek_venue.capacity} -
-      ${se_sandbox_oscar__ticketek_ticket_sale.tickets_sold}) * ${ticket_price})
+    sql: ${empty_seat_value}
     label: Unrealized Revenue
     format: currency_0
     description: Value of unsold seats - each event's empty seats (venue capacity
       minus tickets sold) times that event's list ticket price, summed. Requires
       venue and ticket sale to be joined. Use for missed revenue and oversizing
       questions.
+    aggregate_type: sum
     synonyms:
       [
         unrealised revenue,
@@ -85,6 +93,46 @@ measures:
         lost revenue,
         unsold revenue
       ]
+
+  unrealized_revenue_last_12_months:
+    sql: ${empty_seat_value}
+    label: Unrealized Revenue (Last 12 Mo)
+    format: currency_0
+    description: Unrealized revenue for the rolling 12 months ending today. Compare
+      against Unrealized Revenue (Prior 12 Mo) for growth.
+    aggregate_type: sum
+    filters:
+      event_date:
+        time_for_duration: [ 12 months ago, 12 months ]
+
+  unrealized_revenue_prior_12_months:
+    sql: ${empty_seat_value}
+    label: Unrealized Revenue (Prior 12 Mo)
+    format: currency_0
+    description: Unrealized revenue for the 12 months before the last 12 months (24
+      to 12 months ago). Comparison base for Unrealized Revenue (Last 12 Mo).
+    aggregate_type: sum
+    filters:
+      event_date:
+        time_for_duration: [ 24 months ago, 12 months ]
+
+  events_last_12_months:
+    label: Event Count (Last 12 Mo)
+    description: Events in the rolling 12 months ending today. Compare against Event
+      Count (Prior 12 Mo) for growth.
+    aggregate_type: count
+    filters:
+      event_date:
+        time_for_duration: [ 12 months ago, 12 months ]
+
+  events_prior_12_months:
+    label: Event Count (Prior 12 Mo)
+    description: Events in the 12 months before the last 12 months (24 to 12 months
+      ago). Comparison base for Event Count (Last 12 Mo).
+    aggregate_type: count
+    filters:
+      event_date:
+        time_for_duration: [ 24 months ago, 12 months ]
 
 ai_context: One row per event/show. This is the main time dimension for the
   model — use event_date for any "over time", "by month", or date-filtered
