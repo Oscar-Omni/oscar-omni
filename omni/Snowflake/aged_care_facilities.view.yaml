@@ -1,0 +1,55 @@
+# Reference this view as aged_care_facilities
+label: Facilities
+
+uploaded_table_name: facilities.csv::34e4c447-bb0d-4bd4-969f-cf6561584c76
+
+dimensions:
+  facility_id:
+    display_order: 0
+    hidden: true
+    primary_key: true
+
+  facility_name:
+    label: Facility
+    display_order: 1
+
+  suburb:
+    label: Suburb
+    display_order: 2
+
+  state:
+    label: State
+    display_order: 3
+
+  region:
+    label: Region
+    display_order: 4
+
+  mmm_category:
+    label: MMM Category
+    description: Modified Monash Model remoteness category, drives the AN-ACC base
+      care tariff
+    display_order: 5
+
+  bct_nwau:
+    label: Base Care Tariff NWAU
+    description: Fixed AN-ACC funding component per occupied bed day, in NWAU
+    display_order: 6
+
+  operational_beds:
+    label: Operational Beds
+    display_order: 7
+
+  year_opened:
+    label: Year Opened
+    display_order: 8
+
+measures:
+  facilities_count:
+    label: Facilities Count
+    aggregate_type: count
+
+  total_operational_beds:
+    sql: ${operational_beds}
+    label: Total Operational Beds
+    aggregate_type: sum

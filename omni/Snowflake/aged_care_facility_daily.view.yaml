@@ -1,0 +1,156 @@
+# Reference this view as aged_care_facility_daily
+label: Facility Daily Operations
+
+uploaded_table_name: facility_daily.csv::f9ce0ed7-29e4-4080-884d-5d8dfd39a7c0
+
+dimensions:
+  date:
+    display_order: 0
+
+  facility_id:
+    display_order: 1
+    hidden: true
+
+  operational_beds:
+    display_order: 2
+
+  occupied_beds:
+    display_order: 3
+
+  permanent_census:
+    display_order: 4
+
+  respite_census:
+    display_order: 5
+
+  admissions:
+    display_order: 6
+
+  discharges:
+    display_order: 7
+
+  avg_variable_nwau:
+    display_order: 8
+
+  anacc_variable_revenue:
+    display_order: 9
+
+  bct_revenue:
+    display_order: 10
+
+  anacc_revenue_total:
+    display_order: 11
+
+  care_minutes_target:
+    display_order: 12
+
+  care_minutes_delivered:
+    display_order: 13
+
+  rn_minutes_target:
+    display_order: 14
+
+  rn_minutes_delivered:
+    display_order: 15
+
+measures:
+  occupied_bed_days:
+    sql: ${occupied_beds}
+    label: Occupied Bed Days
+    aggregate_type: sum
+
+  operational_bed_days:
+    sql: ${operational_beds}
+    label: Operational Bed Days
+    aggregate_type: sum
+
+  occupancy_rate:
+    sql: ${occupied_bed_days} / NULLIF(${operational_bed_days}, 0)
+    label: Occupancy Rate
+    format: percent_1
+
+  total_anacc_revenue:
+    sql: ${anacc_revenue_total}
+    label: AN-ACC Revenue
+    format: currency_0
+    description: Total AN-ACC subsidy, variable classification funding plus base care tariff
+    aggregate_type: sum
+
+  total_variable_revenue:
+    sql: ${anacc_variable_revenue}
+    label: AN-ACC Variable Revenue
+    format: currency_0
+    aggregate_type: sum
+
+  total_bct_revenue:
+    sql: ${bct_revenue}
+    label: Base Care Tariff Revenue
+    format: currency_0
+    aggregate_type: sum
+
+  revenue_per_occupied_bed_day:
+    sql: ${total_anacc_revenue} / NULLIF(${occupied_bed_days}, 0)
+    label: Revenue per Occupied Bed Day
+    format: currency_2
+
+  total_admissions:
+    sql: ${admissions}
+    label: Admissions
+    aggregate_type: sum
+
+  total_discharges:
+    sql: ${discharges}
+    label: Discharges
+    aggregate_type: sum
+
+  average_variable_nwau:
+    sql: ${avg_variable_nwau}
+    label: Average Variable NWAU
+    format: number_3
+    aggregate_type: average
+
+  avg_care_minutes_delivered:
+    sql: ${care_minutes_delivered}
+    label: Care Minutes Delivered (per resident per day)
+    format: number_1
+    aggregate_type: average
+
+  avg_care_minutes_target:
+    sql: ${care_minutes_target}
+    label: Care Minutes Target (per resident per day)
+    format: number_1
+    description: Case mix adjusted target, sector average is 215 minutes
+    aggregate_type: average
+
+  avg_rn_minutes_delivered:
+    sql: ${rn_minutes_delivered}
+    label: RN Minutes Delivered (per resident per day)
+    format: number_1
+    aggregate_type: average
+
+  avg_rn_minutes_target:
+    sql: ${rn_minutes_target}
+    label: RN Minutes Target (per resident per day)
+    format: number_1
+    description: Case mix adjusted target, sector average is 44 minutes
+    aggregate_type: average
+
+  care_minutes_compliance_rate:
+    sql: CASE WHEN ${care_minutes_delivered} >= ${care_minutes_target} THEN 1 ELSE 0
+      END
+    label: Care Minutes Compliance Rate
+    format: percent_1
+    description: Share of facility days meeting the total care minutes target
+    aggregate_type: average
+
+  rn_minutes_compliance_rate:
+    sql: CASE WHEN ${rn_minutes_delivered} >= ${rn_minutes_target} THEN 1 ELSE 0 END
+    label: RN Minutes Compliance Rate
+    format: percent_1
+    aggregate_type: average
+
+custom_compound_primary_key_sql:
+  [
+    "${aged_care_facility_daily.date}",
+    "${aged_care_facility_daily.facility_id}"
+  ]

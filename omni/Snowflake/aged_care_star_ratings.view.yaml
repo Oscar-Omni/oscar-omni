@@ -1,0 +1,66 @@
+# Reference this view as aged_care_star_ratings
+label: Star Ratings
+
+uploaded_table_name: star_ratings.csv::6ac7f14f-04bc-492e-b18d-03e824d80a40
+
+dimensions:
+  facility_id:
+    display_order: 0
+    hidden: true
+
+  rating_date:
+    label: Rating Date
+    display_order: 1
+
+  overall_stars:
+    label: Overall Stars
+    display_order: 2
+
+  compliance_stars:
+    display_order: 3
+
+  quality_measures_stars:
+    display_order: 4
+
+  residents_experience_stars:
+    display_order: 5
+
+  staffing_stars:
+    display_order: 6
+
+measures:
+  avg_overall_stars:
+    sql: ${overall_stars}
+    label: Average Overall Stars
+    format: number_1
+    aggregate_type: average
+
+  avg_compliance_stars:
+    sql: ${compliance_stars}
+    label: Average Compliance Stars
+    format: number_1
+    aggregate_type: average
+
+  avg_quality_measures_stars:
+    sql: ${quality_measures_stars}
+    label: Average Quality Measures Stars
+    format: number_1
+    aggregate_type: average
+
+  avg_residents_experience_stars:
+    sql: ${residents_experience_stars}
+    label: Average Residents' Experience Stars
+    format: number_1
+    aggregate_type: average
+
+  avg_staffing_stars:
+    sql: ${staffing_stars}
+    label: Average Staffing Stars
+    format: number_1
+    aggregate_type: average
+
+custom_compound_primary_key_sql:
+  [
+    "${aged_care_star_ratings.facility_id}",
+    "${aged_care_star_ratings.rating_date}"
+  ]

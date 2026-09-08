@@ -1,0 +1,14 @@
+base_view: aged_care_quality_quarterly
+label: Quality & Star Ratings
+group_label: Aged Care
+
+joins:
+  aged_care_facilities:
+    aged_care_star_ratings: {}
+
+ai_context: |
+  Quarterly National Aged Care Mandatory Quality Indicator results per home (pressure injuries,
+  restrictive practices, unplanned weight loss, falls, medication incidents, hospitalisation,
+  workforce turnover, consumer experience) joined to government Star Ratings per home.
+  Synthetic demo data in a BaptistCare style. Quality indicator values are percentages of
+  residents unless labelled otherwise. Star ratings are 1 to 5.

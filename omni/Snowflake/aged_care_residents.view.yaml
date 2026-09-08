@@ -1,0 +1,160 @@
+# Reference this view as aged_care_residents
+label: Residents
+
+uploaded_table_name: residents.csv::70d3e015-5bd9-4e56-918e-64af0bd95993
+
+dimensions:
+  resident_id:
+    display_order: 0
+    hidden: true
+    primary_key: true
+
+  facility_id:
+    display_order: 1
+    hidden: true
+
+  first_name:
+    display_order: 2
+    hidden: true
+
+  last_name:
+    display_order: 3
+    hidden: true
+
+  gender:
+    label: Gender
+    display_order: 4
+
+  date_of_birth:
+    display_order: 5
+
+  country_of_birth:
+    display_order: 6
+
+  preferred_language:
+    display_order: 7
+
+  care_type:
+    label: Care Type
+    description: Permanent or Respite
+    display_order: 8
+
+  admission_date:
+    display_order: 9
+
+  discharge_date:
+    display_order: 10
+
+  discharge_reason:
+    label: Discharge Reason
+    display_order: 11
+
+  current_anacc_class:
+    label: AN-ACC Class
+    description: Current AN-ACC class. Permanent classes are 1 to 13, respite
+      classes are 101 to 103
+    display_order: 12
+
+  current_class_description:
+    label: AN-ACC Class Description
+    display_order: 13
+
+  current_nwau:
+    label: Current NWAU
+    description: National Weighted Activity Unit weight for the resident's current
+      AN-ACC class
+    display_order: 14
+
+  dementia_flag:
+    label: Has Dementia Diagnosis
+    display_order: 15
+
+  veteran_flag:
+    label: Is Veteran
+    display_order: 16
+
+  full_name:
+    sql: ${first_name} || ' ' || ${last_name}
+    label: Resident Name
+
+  age:
+    sql: FLOOR(DATEDIFF('day', ${date_of_birth}, COALESCE(${discharge_date},
+      CURRENT_DATE())) / 365.25)
+    label: Age
+    description: Age today for current residents, age at discharge for departed residents
+
+  age_band:
+    sql: CASE WHEN ${age} < 75 THEN 'Under 75' WHEN ${age} < 85 THEN '75 to 84' WHEN
+      ${age} < 95 THEN '85 to 94' ELSE '95 and over' END
+    label: Age Band
+
+  is_current:
+    sql: ${discharge_date} IS NULL
+    label: Is Current Resident
+
+  length_of_stay_days:
+    sql: DATEDIFF('day', ${admission_date}, COALESCE(${discharge_date},
+      CURRENT_DATE()))
+    label: Length of Stay (days)
+
+measures:
+  residents_count:
+    label: Residents Count
+    aggregate_type: count
+
+  current_residents:
+    label: Current Residents
+    aggregate_type: count
+    filters:
+      is_current:
+        is: true
+
+  permanent_current_residents:
+    label: Current Permanent Residents
+    aggregate_type: count
+    filters:
+      is_current:
+        is: true
+      care_type:
+        is: Permanent
+
+  average_age:
+    sql: ${age}
+    label: Average Age
+    format: number_1
+    aggregate_type: average
+
+  average_current_nwau:
+    sql: ${current_nwau}
+    label: Average NWAU (current residents)
+    format: number_3
+    aggregate_type: average
+    filters:
+      is_current:
+        is: true
+      care_type:
+        is: Permanent
+
+  dementia_rate:
+    sql: CASE WHEN ${dementia_flag} THEN 1 ELSE 0 END
+    label: Dementia Rate
+    format: percent_1
+    aggregate_type: average
+
+  average_length_of_stay_days:
+    sql: ${length_of_stay_days}
+    label: Average Length of Stay (days)
+    format: number_0
+    aggregate_type: average
+
+  deceased_residents:
+    label: Deceased Residents
+    aggregate_type: count
+    filters:
+      discharge_reason:
+        is: Deceased
+
+  admissions_count:
+    label: Admissions
+    description: Count of residents admitted, use with Admission Date for movement trends
+    aggregate_type: count

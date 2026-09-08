@@ -1,0 +1,77 @@
+# Reference this view as aged_care_incidents
+label: Incidents
+
+uploaded_table_name: incidents.csv::c1b2ac10-5c86-4f81-a35d-fb09a98f42fa
+
+dimensions:
+  incident_id:
+    display_order: 0
+    hidden: true
+    primary_key: true
+
+  facility_id:
+    display_order: 1
+    hidden: true
+
+  resident_id:
+    display_order: 2
+    hidden: true
+
+  incident_date:
+    display_order: 3
+
+  incident_type:
+    label: Incident Type
+    display_order: 4
+
+  severity:
+    label: Severity
+    display_order: 5
+
+  sirs_category:
+    label: SIRS Category
+    description: Serious Incident Response Scheme reporting category
+    display_order: 6
+
+  reported_within_24h:
+    display_order: 7
+
+measures:
+  incidents_count:
+    label: Incidents Count
+    aggregate_type: count
+
+  falls_count:
+    label: Falls
+    aggregate_type: count
+    filters:
+      incident_type:
+        is: [ Fall, Fall with major injury ]
+
+  major_injury_falls:
+    label: Falls with Major Injury
+    aggregate_type: count
+    filters:
+      incident_type:
+        is: Fall with major injury
+
+  medication_errors:
+    label: Medication Errors
+    aggregate_type: count
+    filters:
+      incident_type:
+        is: Medication error
+
+  pressure_injuries:
+    label: Pressure Injuries
+    aggregate_type: count
+    filters:
+      incident_type:
+        is: Pressure injury
+
+  sirs_priority_1:
+    label: SIRS Priority 1 Incidents
+    aggregate_type: count
+    filters:
+      sirs_category:
+        is: Priority 1
