@@ -1,7 +1,7 @@
 # Reference this view as aged_care_facility_daily
 label: Facility Daily Operations
 
-uploaded_table_name: facility_daily.csv::f9ce0ed7-29e4-4080-884d-5d8dfd39a7c0
+uploaded_table_name: facility_daily.csv::4ae7f360-3a95-49f6-a0d5-e62503930a5d
 
 dimensions:
   date:
@@ -148,6 +148,9 @@ measures:
     label: RN Minutes Compliance Rate
     format: percent_1
     aggregate_type: average
+
+  count:
+    aggregate_type: count
 
 custom_compound_primary_key_sql:
   [

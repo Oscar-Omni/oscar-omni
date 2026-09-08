@@ -1,0 +1,28 @@
+# Reference this view as zz_tmp_probe
+uploaded_table_name: star_ratings.csv::06d07c1d-24e7-45d8-b052-f90798291685
+
+dimensions:
+  facility_id:
+    display_order: 0
+
+  rating_date:
+    display_order: 1
+
+  overall_stars:
+    display_order: 2
+
+  compliance_stars:
+    display_order: 3
+
+  quality_measures_stars:
+    display_order: 4
+
+  residents_experience_stars:
+    display_order: 5
+
+  staffing_stars:
+    display_order: 6
+
+measures:
+  count:
+    aggregate_type: count

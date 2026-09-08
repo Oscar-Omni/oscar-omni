@@ -1,7 +1,7 @@
 # Reference this view as aged_care_facilities
 label: Facilities
 
-uploaded_table_name: facilities.csv::34e4c447-bb0d-4bd4-969f-cf6561584c76
+uploaded_table_name: facilities.csv::e53914c5-5f7e-4942-859a-3e4ad0845f3c
 
 dimensions:
   facility_id:
@@ -53,3 +53,6 @@ measures:
     sql: ${operational_beds}
     label: Total Operational Beds
     aggregate_type: sum
+
+  count:
+    aggregate_type: count

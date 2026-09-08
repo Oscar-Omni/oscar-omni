@@ -1,7 +1,7 @@
 # Reference this view as aged_care_residents
 label: Residents
 
-uploaded_table_name: residents.csv::70d3e015-5bd9-4e56-918e-64af0bd95993
+uploaded_table_name: residents.csv::a5c0df47-00dd-41ba-a5d1-0aa391cfb98e
 
 dimensions:
   resident_id:
@@ -157,4 +157,7 @@ measures:
   admissions_count:
     label: Admissions
     description: Count of residents admitted, use with Admission Date for movement trends
+    aggregate_type: count
+
+  count:
     aggregate_type: count

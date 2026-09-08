@@ -1,7 +1,7 @@
 # Reference this view as aged_care_quality_quarterly
 label: Quality Indicators (Quarterly)
 
-uploaded_table_name: quality_indicators_quarterly.csv::16938646-2283-4069-9115-4a2b5a76fc69
+uploaded_table_name: quality_indicators_quarterly.csv::78faf31b-0798-40fa-b731-a6dcba92da8c
 
 dimensions:
   facility_id:
@@ -93,6 +93,9 @@ measures:
     label: Consumer Experience Score
     format: number_1
     aggregate_type: average
+
+  count:
+    aggregate_type: count
 
 custom_compound_primary_key_sql:
   [

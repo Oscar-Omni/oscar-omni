@@ -1,7 +1,7 @@
 # Reference this view as aged_care_incidents
 label: Incidents
 
-uploaded_table_name: incidents.csv::c1b2ac10-5c86-4f81-a35d-fb09a98f42fa
+uploaded_table_name: incidents.csv::c8095be2-fd1d-4a8b-a072-c823c974e98a
 
 dimensions:
   incident_id:
@@ -75,3 +75,6 @@ measures:
     filters:
       sirs_category:
         is: Priority 1
+
+  count:
+    aggregate_type: count

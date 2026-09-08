@@ -1,7 +1,7 @@
 # Reference this view as anacc_assessments
 label: AN-ACC Assessments
 
-uploaded_table_name: anacc_assessments.csv::bf3554c4-b194-48db-a049-01e669983564
+uploaded_table_name: anacc_assessments.csv::c97414c0-9c66-4830-a157-41382e794607
 
 dimensions:
   assessment_id:
@@ -74,3 +74,6 @@ measures:
     label: Average Daily Subsidy
     format: currency_2
     aggregate_type: average
+
+  count:
+    aggregate_type: count

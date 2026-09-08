@@ -1,7 +1,7 @@
 # Reference this view as aged_care_star_ratings
 label: Star Ratings
 
-uploaded_table_name: star_ratings.csv::6ac7f14f-04bc-492e-b18d-03e824d80a40
+uploaded_table_name: star_ratings.csv::8c4227fa-8557-449c-9c5c-7fed12a7c957
 
 dimensions:
   facility_id:
@@ -58,6 +58,9 @@ measures:
     label: Average Staffing Stars
     format: number_1
     aggregate_type: average
+
+  count:
+    aggregate_type: count
 
 custom_compound_primary_key_sql:
   [
