@@ -152,6 +152,15 @@ measures:
   count:
     aggregate_type: count
 
+  total_care_minutes_delivered:
+    sql: ${care_minutes_delivered} * ${occupied_beds}
+    label: Total Care Minutes Delivered
+    format: number_0
+    description: Total minutes of care delivered across all residents (per resident
+      per day minutes times occupied beds, summed). Use this for staffing cost
+      derivations, e.g. total minutes times a dollar rate per minute.
+    aggregate_type: sum
+
 custom_compound_primary_key_sql:
   [
     "${aged_care_facility_daily.date}",
