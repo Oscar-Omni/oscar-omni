@@ -1,0 +1,76 @@
+# Reference this view as anacc_assessments
+label: AN-ACC Assessments
+
+uploaded_table_name: anacc_assessments.csv::bf3554c4-b194-48db-a049-01e669983564
+
+dimensions:
+  assessment_id:
+    display_order: 0
+    hidden: true
+    primary_key: true
+
+  resident_id:
+    display_order: 1
+    hidden: true
+
+  facility_id:
+    display_order: 2
+    hidden: true
+
+  assessment_date:
+    display_order: 3
+
+  assessment_type:
+    label: Assessment Type
+    description: Initial or Reclassification
+    display_order: 4
+
+  anacc_class:
+    label: AN-ACC Class
+    display_order: 5
+
+  class_description:
+    label: Class Description
+    display_order: 6
+
+  nwau:
+    label: NWAU
+    display_order: 7
+
+  daily_subsidy:
+    label: Daily Subsidy
+    format: currency_2
+    description: Variable component per day at the AN-ACC price current on the
+      assessment date
+    display_order: 8
+
+measures:
+  assessments_count:
+    label: Assessments Count
+    aggregate_type: count
+
+  initial_assessments:
+    label: Initial Assessments
+    aggregate_type: count
+    filters:
+      assessment_type:
+        is: Initial
+
+  reclassifications:
+    label: Reclassifications
+    aggregate_type: count
+    filters:
+      assessment_type:
+        is: Reclassification
+
+  average_nwau:
+    sql: ${nwau}
+    label: Average Assessed NWAU
+    format: number_3
+    aggregate_type: average
+
+  average_daily_subsidy:
+    sql: ${daily_subsidy}
+    label: Average Daily Subsidy
+    format: currency_2
+    aggregate_type: average

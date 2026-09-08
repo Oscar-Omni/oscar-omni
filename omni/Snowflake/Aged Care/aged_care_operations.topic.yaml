@@ -1,0 +1,17 @@
+base_view: aged_care_facility_daily
+label: Aged Care Operations
+group_label: Aged Care
+
+joins:
+  aged_care_facilities: {}
+
+ai_context: |
+  Daily operational performance for a residential aged care provider, one row per home per day.
+  Covers occupancy, resident movements, AN-ACC funding and mandatory care minutes compliance.
+  Synthetic demo data in a BaptistCare style, 35 homes across NSW, ACT and WA, Oct 2024 to Aug 2026.
+  Map occupancy to occupancy_rate, funding or revenue or subsidy to total_anacc_revenue,
+  care minutes compliance to care_minutes_compliance_rate and rn_minutes_compliance_rate,
+  acuity or case mix to average_variable_nwau.
+  The mandatory sector care minutes targets are 215 total minutes and 44 registered nurse minutes
+  per resident per day, case mix adjusted per home.
+  The AN-ACC price was $282.44 per NWAU from Oct 2024 and $295.64 from Oct 2025.

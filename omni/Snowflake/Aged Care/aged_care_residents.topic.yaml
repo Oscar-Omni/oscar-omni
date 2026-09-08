@@ -1,0 +1,19 @@
+base_view: aged_care_residents
+label: Residents & AN-ACC
+group_label: Aged Care
+
+joins:
+  aged_care_facilities: {}
+  anacc_assessments: {}
+  aged_care_incidents: {}
+
+ai_context: |
+  One row per resident (permanent and respite) for a residential aged care provider, joined to
+  their home, AN-ACC assessment history and incident history. Synthetic demo data in a
+  BaptistCare style. Use for AN-ACC class mix, acuity and funding analysis, demographics,
+  admissions and discharges, length of stay, dementia prevalence and incident analysis.
+  Map class mix or classification to current_anacc_class, acuity to average_current_nwau or
+  current_nwau, reassessments to reclassifications.
+  AN-ACC permanent classes run 1 to 13 (higher class generally means higher care needs within
+  each mobility branch; class 1 is palliative entry). Respite classes are 101 to 103.
+  Filter is_current = true for the current resident population.

@@ -1,3 +1,53 @@
+- join_from_view: aged_care_facility_daily
+  join_to_view: aged_care_facilities
+  join_type: always_left
+  on_sql: ${aged_care_facility_daily.facility_id} = ${aged_care_facilities.facility_id}
+  relationship_type: many_to_one
+  reversible: true
+
+- join_from_view: aged_care_residents
+  join_to_view: aged_care_facilities
+  join_type: always_left
+  on_sql: ${aged_care_residents.facility_id} = ${aged_care_facilities.facility_id}
+  relationship_type: many_to_one
+  reversible: true
+
+- join_from_view: anacc_assessments
+  join_to_view: aged_care_residents
+  join_type: always_left
+  on_sql: ${anacc_assessments.resident_id} = ${aged_care_residents.resident_id}
+  relationship_type: many_to_one
+  reversible: true
+
+- join_from_view: aged_care_incidents
+  join_to_view: aged_care_residents
+  join_type: always_left
+  on_sql: ${aged_care_incidents.resident_id} = ${aged_care_residents.resident_id}
+  relationship_type: many_to_one
+  reversible: true
+
+- join_from_view: aged_care_incidents
+  join_to_view: aged_care_facilities
+  join_type: always_left
+  on_sql: ${aged_care_incidents.facility_id} = ${aged_care_facilities.facility_id}
+  relationship_type: many_to_one
+  reversible: true
+
+- join_from_view: aged_care_quality_quarterly
+  join_to_view: aged_care_facilities
+  join_type: always_left
+  on_sql: ${aged_care_quality_quarterly.facility_id} =
+    ${aged_care_facilities.facility_id}
+  relationship_type: many_to_one
+  reversible: true
+
+- join_from_view: aged_care_star_ratings
+  join_to_view: aged_care_facilities
+  join_type: always_left
+  on_sql: ${aged_care_star_ratings.facility_id} = ${aged_care_facilities.facility_id}
+  relationship_type: many_to_one
+  reversible: true
+
 - join_from_view: se_sandbox_oscar__ticketek_ticket_sale
   join_to_view: se_sandbox_oscar__ticketek_event
   join_type: always_left
