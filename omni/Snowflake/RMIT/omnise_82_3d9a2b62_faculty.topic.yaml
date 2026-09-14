@@ -1,0 +1,139 @@
+base_view: se_sandbox_oscar__omnise_82_3d9a2b62_fact_admissions
+label: RMIT Faculty - New Students and Teaching Load
+group_label: RMIT
+description: Faculty team view of new student counts, by commencement term start
+  date, plus EFTSL teaching load and financial contribution. Same underlying
+  admissions, commencements, faculty, campus and term data as the Admissions
+  topic, framed for faculty planning. Demo build omnise_82_3d9a2b62.
+
+joins:
+  se_sandbox_oscar__omnise_82_3d9a2b62_dim_faculty: {}
+  se_sandbox_oscar__omnise_82_3d9a2b62_dim_campus: {}
+  intake_term: {}
+  se_sandbox_oscar__omnise_82_3d9a2b62_fact_commencements:
+    commencement_term: {}
+
+views:
+  se_sandbox_oscar__omnise_82_3d9a2b62_fact_admissions:
+    measures:
+      conversion_rate:
+        sql: ${se_sandbox_oscar__omnise_82_3d9a2b62_fact_commencements.new_students_term_basis}
+          /
+          NULLIF(${se_sandbox_oscar__omnise_82_3d9a2b62_fact_admissions.new_students_admission_basis},
+          0)
+        label: Admission-to-Commencement Conversion Rate
+        format: percent_1
+        description: COUNT(DISTINCT commencement_id) divided by COUNT(DISTINCT
+          admission_id). Always the ratio of two summed counts, never an average
+          of per-row percentages.
+
+      not_yet_commenced:
+        sql: ${se_sandbox_oscar__omnise_82_3d9a2b62_fact_admissions.new_students_admission_basis}
+          -
+          ${se_sandbox_oscar__omnise_82_3d9a2b62_fact_commencements.new_students_term_basis}
+        label: Not Yet Commenced
+        format: number_0
+        description: Admission-basis new students minus term-basis new students, for the
+          same filter context. A direct subtraction, not a re-aggregated
+          average.
+
+      deferral_gap_terms:
+        sql: ${commencement_term.term_sequence} - ${intake_term.term_sequence}
+        label: Average Deferral Gap (Terms)
+        format: number_2
+        description: Average of commencement-term sequence minus intake-term sequence,
+          computed only over rows with a commencement. No-shows are excluded,
+          not treated as a zero-term gap.
+        aggregate_type: average
+
+      teaching_cost:
+        sql: ${se_sandbox_oscar__omnise_82_3d9a2b62_fact_commencements.eftsl_actual} *
+          9500
+        label: Teaching Cost (Actual)
+        format: audcurrency_0
+        description: SUM(eftsl_load) times a fictional placeholder
+          cost_per_eftsl_teaching rate of 9500 AUD. Not a real published RMIT
+          cost. See build-report.md.
+
+      contribution_margin_actual:
+        sql: ${se_sandbox_oscar__omnise_82_3d9a2b62_fact_commencements.tuition_revenue_actual}
+          -
+          ${se_sandbox_oscar__omnise_82_3d9a2b62_fact_admissions.teaching_cost}
+        label: Contribution Margin (Actual)
+        format: audcurrency_0
+        description: Tuition Revenue (Actual) minus Teaching Cost (Actual), both
+          fictional placeholder rates. See build-report.md.
+
+  se_sandbox_oscar__omnise_82_3d9a2b62_fact_commencements:
+    measures:
+      tuition_revenue_actual:
+        sql: ${se_sandbox_oscar__omnise_82_3d9a2b62_fact_commencements.eftsl_load} *
+          CASE WHEN
+          ${se_sandbox_oscar__omnise_82_3d9a2b62_fact_admissions.citizenship_status}
+          = 'International' THEN 21000 ELSE 15000 END
+        label: Tuition Revenue (Actual)
+        format: audcurrency_0
+        description: SUM(eftsl_load times revenue_per_eftsl by citizenship_status).
+          Fictional placeholder rates (15000 AUD Domestic / 21000 AUD
+          International per EFTSL), not a real published RMIT fee schedule. See
+          build-report.md.
+        aggregate_type: sum
+
+relationships:
+  - join_from_view: se_sandbox_oscar__omnise_82_3d9a2b62_fact_admissions
+    join_to_view: se_sandbox_oscar__omnise_82_3d9a2b62_dim_faculty
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_82_3d9a2b62_fact_admissions.faculty_id} =
+      ${se_sandbox_oscar__omnise_82_3d9a2b62_dim_faculty.faculty_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__omnise_82_3d9a2b62_fact_admissions
+    join_to_view: se_sandbox_oscar__omnise_82_3d9a2b62_dim_campus
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_82_3d9a2b62_fact_admissions.campus_id} =
+      ${se_sandbox_oscar__omnise_82_3d9a2b62_dim_campus.campus_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__omnise_82_3d9a2b62_fact_admissions
+    join_to_view: se_sandbox_oscar__omnise_82_3d9a2b62_dim_term
+    join_to_view_as: intake_term
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_82_3d9a2b62_fact_admissions.intake_term_id} =
+      ${intake_term.term_id}
+    relationship_type: many_to_one
+    join_to_view_as_label: Intake Term
+
+  - join_from_view: se_sandbox_oscar__omnise_82_3d9a2b62_fact_admissions
+    join_to_view: se_sandbox_oscar__omnise_82_3d9a2b62_fact_commencements
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_82_3d9a2b62_fact_admissions.admission_id} =
+      ${se_sandbox_oscar__omnise_82_3d9a2b62_fact_commencements.admission_id}
+    relationship_type: one_to_one
+
+  - join_from_view: se_sandbox_oscar__omnise_82_3d9a2b62_fact_commencements
+    join_to_view: se_sandbox_oscar__omnise_82_3d9a2b62_dim_term
+    join_to_view_as: commencement_term
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_82_3d9a2b62_fact_commencements.term_id} =
+      ${commencement_term.term_id}
+    relationship_type: many_to_one
+    join_to_view_as_label: Commencement Term
+
+ai_context: |
+  Faculty team view of RMIT new student counts (demo build omnise_82_3d9a2b62, synthetic data).
+  Faculty teams count a new student as of the Commencement Term start date (New Students (Term
+  Start Date), on the joined commencement/commencement_term views) -- this is the default
+  new-students answer for this topic. The Admissions team counts by admission_offer_date instead
+  (New Students (Admission Offer Date), on fact_admissions directly) -- name that alternative when
+  asked how many new students. Teaching Cost (Actual) is a fictional placeholder calculation
+  (SUM(eftsl_load) times 9500 AUD per EFTSL), not a real published RMIT cost -- see build-report.md.
+  Citizenship Status splits International vs Domestic; International students show a longer
+  admission-to-commencement lag (see deferral_gap_terms), especially for Semester 2 intakes.
+  All entities (faculties, campuses) are invented demo names; real cities and countries are used for
+  campus geography. No real RMIT student records appear in this data.
+
+  Answer concisely, usually 2 sentences or a small table. End by naming the measure and date basis used, and the alternative departmental definition in one sentence. If the question requests only particular columns, return only those columns.
+  Without a date filter, counts are full synthetic-lifecycle totals, not current or year-to-date counts. The dataset includes 2023-2026 intake cohorts and 2027 buffer commencements. Do not describe synthetic future commencements as already observed today.
+  An intake-cohort comparison counts eventual commencements for those admissions. A calendar reporting-period comparison instead filters admission_offer_date for Admissions and commencement_term.term_start_date for Faculty. Do not apply intake dates to both and call it an event-date comparison.
+  not_yet_commenced is the unmatched-admission count for the selected cohort; do not infer it from independently filtered reporting-period totals. Deferral lag excludes unmatched admissions. A higher unmatched rate is not proof that longer deferrals caused it; query deferral_gap_terms directly for the timing story.
+  Both topics intentionally expose both definitions. Topic framing is not row-level security or measure access control. All monetary rates are fictional AUD scenario assumptions.

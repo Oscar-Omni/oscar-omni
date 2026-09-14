@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__omnise_82_3d9a2b62_dim_campus
+label: RMIT Campus
+description: One row per campus (demo build omnise_82_3d9a2b62). Synthetic site
+  names on RMIT real cities; not RMIT actual campus names.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_82_3D9A2B62_DIM_CAMPUS
@@ -7,16 +11,22 @@ dimensions:
   campus_id:
     sql: '"CAMPUS_ID"'
     format: ID
+    hidden: true
+    primary_key: true
 
   campus_name:
     sql: '"CAMPUS_NAME"'
+    label: Campus
 
   city:
     sql: '"CITY"'
+    label: City
 
   country:
     sql: '"COUNTRY"'
+    label: Country
 
 measures:
   count:
+    label: Campus Records
     aggregate_type: count

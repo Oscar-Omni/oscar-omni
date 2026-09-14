@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__omnise_82_3d9a2b62_fact_admissions
+label: RMIT Admissions
+description: One row per accepted admission offer (demo build
+  omnise_82_3d9a2b62). Grain is one prospective new student admission.
+  student_id is 1:1 with admission_id in this synthetic model.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_82_3D9A2B62_FACT_ADMISSIONS
@@ -7,32 +12,53 @@ dimensions:
   admission_id:
     sql: '"ADMISSION_ID"'
     format: ID
+    hidden: true
+    primary_key: true
 
   student_id:
     sql: '"STUDENT_ID"'
     format: ID
+    hidden: true
 
   faculty_id:
     sql: '"FACULTY_ID"'
     format: ID
+    hidden: true
 
   campus_id:
     sql: '"CAMPUS_ID"'
     format: ID
+    hidden: true
 
   intake_term_id:
     sql: '"INTAKE_TERM_ID"'
     format: ID
+    hidden: true
 
   admission_offer_date:
     sql: '"ADMISSION_OFFER_DATE"'
+    label: Admission Offer Date
+    description: Day-level date the admission offer was made. Drives the
+      Admissions-basis New Students measure directly, with no term join needed.
 
   citizenship_status:
     sql: '"CITIZENSHIP_STATUS"'
+    label: Citizenship Status
 
   source_channel:
     sql: '"SOURCE_CHANNEL"'
+    label: Source Channel
 
 measures:
   count:
+    label: Admission Records
+    hidden: true
     aggregate_type: count
+
+  new_students_admission_basis:
+    sql: '"ADMISSION_ID"'
+    label: New Students (Admission Offer Date)
+    format: number_0
+    description: COUNT(DISTINCT admission_id), by admission offer date. The
+      Admissions team definition of a new student.
+    aggregate_type: count_distinct

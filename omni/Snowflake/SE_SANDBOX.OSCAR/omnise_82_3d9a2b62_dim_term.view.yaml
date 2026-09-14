@@ -1,4 +1,10 @@
 # Reference this view as se_sandbox_oscar__omnise_82_3d9a2b62_dim_term
+label: RMIT Term
+description: One row per academic term (demo build omnise_82_3d9a2b62). Includes
+  two buffer terms (2027 S1/S2) with zero admissions, used only as valid landing
+  terms for deferred commencements from the 2026 intake window; see
+  build-report.md.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_82_3D9A2B62_DIM_TERM
@@ -7,22 +13,34 @@ dimensions:
   term_id:
     sql: '"TERM_ID"'
     format: ID
+    hidden: true
+    primary_key: true
 
   term_name:
     sql: '"TERM_NAME"'
+    label: Term
 
   term_start_date:
     sql: '"TERM_START_DATE"'
+    label: Term Start Date
 
   term_end_date:
     sql: '"TERM_END_DATE"'
+    label: Term End Date
 
   academic_year:
     sql: '"ACADEMIC_YEAR"'
+    label: Academic Year
+    format: ID
 
   term_sequence:
     sql: '"TERM_SEQUENCE"'
+    label: Term Sequence
+    description: Ordinal 1..10 across the term catalog (2023S1..2027S2). Internal
+      helper used for deferral-gap arithmetic.
+    hidden: true
 
 measures:
   count:
+    label: Term Records
     aggregate_type: count

@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__omnise_82_3d9a2b62_dim_faculty
+label: RMIT Faculty
+description: One row per faculty (demo build omnise_82_3d9a2b62). Synthetic
+  entity names; RMIT real units are Colleges/Schools, not Faculties.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_82_3D9A2B62_DIM_FACULTY
@@ -7,10 +11,14 @@ dimensions:
   faculty_id:
     sql: '"FACULTY_ID"'
     format: ID
+    hidden: true
+    primary_key: true
 
   faculty_name:
     sql: '"FACULTY_NAME"'
+    label: Faculty
 
 measures:
   count:
+    label: Faculty Records
     aggregate_type: count

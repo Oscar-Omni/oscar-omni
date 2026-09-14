@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__omnise_82_3d9a2b62_fact_commencements
+label: RMIT Commencements
+description: One row per student who actually commenced (demo build
+  omnise_82_3d9a2b62). Zero or one row per admission_id; no-shows have none.
+  Left-joined from Admissions, never fans out.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_82_3D9A2B62_FACT_COMMENCEMENTS
@@ -7,18 +12,46 @@ dimensions:
   commencement_id:
     sql: '"COMMENCEMENT_ID"'
     format: ID
+    hidden: true
+    primary_key: true
 
   admission_id:
     sql: '"ADMISSION_ID"'
     format: ID
+    hidden: true
 
   term_id:
     sql: '"TERM_ID"'
     format: ID
+    hidden: true
 
   eftsl_load:
     sql: '"EFTSL_LOAD"'
+    label: EFTSL Load
+    format: number_3
+    description: Equivalent Full-Time Student Load fraction for the first
+      commencement term, range 0.5 to 1.0. Synthetic simplification consistent
+      with RMIT policy EFTSL definition; not an audited RMIT calculation. See
+      build-report.md.
 
 measures:
   count:
+    label: Commencement Records
+    hidden: true
     aggregate_type: count
+
+  new_students_term_basis:
+    sql: '"COMMENCEMENT_ID"'
+    label: New Students (Term Start Date)
+    format: number_0
+    description: COUNT(DISTINCT commencement_id), by commencement term start date.
+      The Faculty team definition of a new student. Left-joined rows with no
+      commencement are excluded, no fanout.
+    aggregate_type: count_distinct
+
+  eftsl_actual:
+    sql: '"EFTSL_LOAD"'
+    label: EFTSL (Actual)
+    format: number_2
+    description: SUM(eftsl_load), additive and safe to aggregate at any grain.
+    aggregate_type: sum
