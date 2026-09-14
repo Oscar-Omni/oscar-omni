@@ -1,0 +1,24 @@
+# Reference this view as se_sandbox_oscar__omnise_82_3d9a2b62_fact_commencements
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_82_3D9A2B62_FACT_COMMENCEMENTS
+
+dimensions:
+  commencement_id:
+    sql: '"COMMENCEMENT_ID"'
+    format: ID
+
+  admission_id:
+    sql: '"ADMISSION_ID"'
+    format: ID
+
+  term_id:
+    sql: '"TERM_ID"'
+    format: ID
+
+  eftsl_load:
+    sql: '"EFTSL_LOAD"'
+
+measures:
+  count:
+    aggregate_type: count

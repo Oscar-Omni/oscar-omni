@@ -1,0 +1,16 @@
+# Reference this view as se_sandbox_oscar__omnise_82_3d9a2b62_dim_faculty
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_82_3D9A2B62_DIM_FACULTY
+
+dimensions:
+  faculty_id:
+    sql: '"FACULTY_ID"'
+    format: ID
+
+  faculty_name:
+    sql: '"FACULTY_NAME"'
+
+measures:
+  count:
+    aggregate_type: count

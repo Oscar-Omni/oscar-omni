@@ -1,0 +1,22 @@
+# Reference this view as se_sandbox_oscar__omnise_82_3d9a2b62_dim_campus
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_82_3D9A2B62_DIM_CAMPUS
+
+dimensions:
+  campus_id:
+    sql: '"CAMPUS_ID"'
+    format: ID
+
+  campus_name:
+    sql: '"CAMPUS_NAME"'
+
+  city:
+    sql: '"CITY"'
+
+  country:
+    sql: '"COUNTRY"'
+
+measures:
+  count:
+    aggregate_type: count
