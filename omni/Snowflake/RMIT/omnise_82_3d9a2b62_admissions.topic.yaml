@@ -125,7 +125,7 @@ ai_context: |
   Admissions means accepted admissions (se_sandbox_oscar__omnise_82_3d9a2b62_fact_admissions.new_students_admission_basis, admission_offer_date); 
   Faculty means recorded commencements (se_sandbox_oscar__omnise_82_3d9a2b62_fact_commencements.new_students_term_basis, commencement_term.term_start_date). 
 
-  In this synthetic demo, Admissions calls an accepted admission a start in its admissions process; never describe that count as attendance or actual commencement. 
+  In this demo, Admissions calls an accepted admission a start in its admissions process; never describe that count as attendance or actual commencement. 
   An explicit request for accepted offers or actual commencements overrides the departmental default. 
   If department is missing or unrecognized, ask which definition to use.
   Run the appropriate query; never invent or hard-code a count.
