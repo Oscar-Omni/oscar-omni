@@ -62,3 +62,23 @@ measures:
     description: COUNT(DISTINCT admission_id), by admission offer date. The
       Admissions team definition of a new student.
     aggregate_type: count_distinct
+    synonyms:
+      [
+        new students,
+        accepted admissions,
+        accepted offers,
+        admissions count,
+        students started,
+        offer acceptances
+      ]
+    ai_context: "The Admissions team's definition of a new student: a distinct
+      accepted admission offer. Always date this measure by admission_offer_date
+      on this view — never by commencement_term.term_start_date. Use it for
+      questions about accepted offers, applications converted, or (when the
+      asking user's department is Admissions) an unqualified \"how many students
+      started / how many new students\". Do not describe this count as
+      attendance or actual commencement; for that use new_students_term_basis on
+      the commencements view. Never hard-code or estimate the number, and never
+      substitute COUNT(*) on this view — admission records and distinct
+      admissions can differ. Grain is one accepted admission offer, 1:1 with
+      student_id."

@@ -48,6 +48,26 @@ measures:
       The Faculty team definition of a new student. Left-joined rows with no
       commencement are excluded, no fanout.
     aggregate_type: count_distinct
+    synonyms:
+      [
+        commencements,
+        students commenced,
+        actual starts,
+        enrolled students,
+        students started,
+        attended
+      ]
+    ai_context: "The Faculty team's definition of a new student: a distinct recorded
+      commencement. Always date this measure by
+      commencement_term.term_start_date — never by
+      admissions.admission_offer_date. Use it whenever the question is about
+      students who actually commenced or attended, or (when the asking user's
+      department is Faculty) an unqualified \"how many students started / how
+      many new students\". Compare with new_students_admission_basis on the
+      admissions view for accepted offers; never mix the two bases in one count.
+      Admissions with no matching commencement are no-shows or
+      not-yet-commenced, not proof of deferral — use deferral_gap_terms for lag.
+      Never hard-code the number and never substitute COUNT(*)."
 
   eftsl_actual:
     sql: '"EFTSL_LOAD"'
