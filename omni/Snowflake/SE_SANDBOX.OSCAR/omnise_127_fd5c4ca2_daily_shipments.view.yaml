@@ -1,4 +1,6 @@
 # Reference this view as se_sandbox_oscar__omnise_127_fd5c4ca2_daily_shipments
+label: Daily Shipments
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_127_FD5C4CA2_DAILY_SHIPMENTS
@@ -6,37 +8,144 @@ table_name: OMNISE_127_FD5C4CA2_DAILY_SHIPMENTS
 dimensions:
   shipment_date:
     sql: '"SHIPMENT_DATE"'
+    label: Shipment Date
+    group_label: Shipment
 
   channel_id:
     sql: '"CHANNEL_ID"'
     format: ID
+    hidden: true
 
   product_category_id:
     sql: '"PRODUCT_CATEGORY_ID"'
     format: ID
+    hidden: true
 
   facility_id:
     sql: '"FACILITY_ID"'
     format: ID
+    hidden: true
 
   case_count:
     sql: '"CASE_COUNT"'
+    label: Case Count
+    format: number_0
+    group_label: Volume
+    hidden: true
 
   freight_cost_aud:
     sql: '"FREIGHT_COST_AUD"'
+    label: Freight Cost (AUD)
+    format: audcurrency_0
+    group_label: Cost to Serve
+    hidden: true
 
   warehousing_cost_aud:
     sql: '"WAREHOUSING_COST_AUD"'
+    label: Warehousing Cost (AUD)
+    format: audcurrency_0
+    group_label: Cost to Serve
+    hidden: true
 
   order_servicing_cost_aud:
     sql: '"ORDER_SERVICING_COST_AUD"'
+    label: Order Servicing Cost (AUD)
+    format: audcurrency_0
+    group_label: Cost to Serve
+    hidden: true
 
   revenue_aud:
     sql: '"REVENUE_AUD"'
+    label: Revenue (AUD)
+    format: audcurrency_0
+    group_label: Margin
+    hidden: true
 
   cogs_aud:
     sql: '"COGS_AUD"'
+    label: COGS (AUD)
+    format: audcurrency_0
+    group_label: Margin
+    hidden: true
+
+  shipment_key:
+    sql: CAST(${shipment_date} AS VARCHAR) || '|' || CAST(${channel_id} AS VARCHAR)
+      || '|' || CAST(${product_category_id} AS VARCHAR) || '|' ||
+      CAST(${facility_id} AS VARCHAR)
+    label: Shipment Key
+    hidden: true
+    primary_key: true
 
 measures:
   count:
+    label: Shipment Row Count
     aggregate_type: count
+
+  total_case_count:
+    sql: ${case_count}
+    label: Total Cases
+    group_label: Volume
+    format: number_0
+    aggregate_type: sum
+
+  total_freight_cost_aud:
+    sql: ${freight_cost_aud}
+    label: Total Freight Cost
+    group_label: Cost to Serve
+    format: audcurrency_0
+    aggregate_type: sum
+
+  total_warehousing_cost_aud:
+    sql: ${warehousing_cost_aud}
+    label: Total Warehousing Cost
+    group_label: Cost to Serve
+    format: audcurrency_0
+    aggregate_type: sum
+
+  total_order_servicing_cost_aud:
+    sql: ${order_servicing_cost_aud}
+    label: Total Order Servicing Cost
+    group_label: Cost to Serve
+    format: audcurrency_0
+    aggregate_type: sum
+
+  total_revenue_aud:
+    sql: ${revenue_aud}
+    label: Total Revenue
+    group_label: Margin
+    format: audcurrency_0
+    aggregate_type: sum
+
+  total_cogs_aud:
+    sql: ${cogs_aud}
+    label: Total COGS
+    group_label: Margin
+    format: audcurrency_0
+    aggregate_type: sum
+
+  freight_cost_per_case:
+    sql: ${total_freight_cost_aud} / NULLIF(${total_case_count}, 0)
+    label: Freight Cost per Case
+    group_label: Cost to Serve
+    format: audcurrency_2
+    description: SUM(freight_cost_aud) divided by SUM(case_count) at whatever grain
+      is queried. Never averaged from pre-aggregated daily ratios.
+
+  cost_to_serve_per_case:
+    sql: (${total_freight_cost_aud} + ${total_warehousing_cost_aud} +
+      ${total_order_servicing_cost_aud}) / NULLIF(${total_case_count}, 0)
+    label: Cost to Serve per Case
+    group_label: Cost to Serve
+    format: audcurrency_2
+    description: SUM(freight_cost_aud + warehousing_cost_aud +
+      order_servicing_cost_aud) divided by SUM(case_count). Broader than Freight
+      Cost per Case alone.
+
+  gross_margin_pct:
+    sql: (${total_revenue_aud} - ${total_cogs_aud}) / NULLIF(${total_revenue_aud},
+      0)
+    label: Gross Margin %
+    group_label: Margin
+    format: percent_1
+    description: SUM(revenue_aud minus cogs_aud) divided by SUM(revenue_aud) at the
+      queried grain.

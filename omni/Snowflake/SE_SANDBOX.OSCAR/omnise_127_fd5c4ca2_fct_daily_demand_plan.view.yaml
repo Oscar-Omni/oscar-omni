@@ -1,4 +1,6 @@
 # Reference this view as se_sandbox_oscar__omnise_127_fd5c4ca2_fct_daily_demand_plan
+label: Daily Demand Plan
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_127_FD5C4CA2_FCT_DAILY_DEMAND_PLAN
@@ -6,21 +8,62 @@ table_name: OMNISE_127_FD5C4CA2_FCT_DAILY_DEMAND_PLAN
 dimensions:
   plan_date:
     sql: '"PLAN_DATE"'
+    label: Plan Date
+    group_label: Plan
 
   channel_id:
     sql: '"CHANNEL_ID"'
     format: ID
+    hidden: true
 
   product_category_id:
     sql: '"PRODUCT_CATEGORY_ID"'
     format: ID
+    hidden: true
 
   forecast_cases:
     sql: '"FORECAST_CASES"'
+    label: Forecast Cases
+    format: number_0
+    hidden: true
 
   actual_cases:
     sql: '"ACTUAL_CASES"'
+    label: Actual Cases
+    format: number_0
+    hidden: true
+
+  plan_key:
+    sql: CAST(${plan_date} AS VARCHAR) || '|' || CAST(${channel_id} AS VARCHAR) ||
+      '|' || CAST(${product_category_id} AS VARCHAR)
+    label: Plan Key
+    hidden: true
+    primary_key: true
 
 measures:
   count:
+    label: Plan Row Count
     aggregate_type: count
+
+  total_forecast_cases:
+    sql: ${forecast_cases}
+    label: Total Forecast Cases
+    group_label: Plan
+    format: number_0
+    aggregate_type: sum
+
+  total_actual_cases:
+    sql: ${actual_cases}
+    label: Total Actual Cases
+    group_label: Plan
+    format: number_0
+    aggregate_type: sum
+
+  fill_rate_pct:
+    sql: ${total_actual_cases} / NULLIF(${total_forecast_cases}, 0)
+    label: Fill Rate %
+    group_label: Plan
+    format: percent_1
+    description: SUM(actual_cases) / SUM(forecast_cases) at the queried grain.
+      Future plan_date rows with no actual_cases yet are excluded, not treated
+      as zero.

@@ -1,0 +1,52 @@
+base_view: se_sandbox_oscar__omnise_127_fd5c4ca2_daily_shipments
+label: Inghams - Cost to Serve and Product Performance
+group_label: Inghams
+description: Daily shipment grain (date x channel x product category x facility)
+  covering freight, warehousing, order servicing cost, revenue and COGS. Used
+  for the Cost to Serve dashboard and the freight-cost-per-case AI questions.
+  Demo build omnise_127_fd5c4ca2.
+
+joins:
+  se_sandbox_oscar__omnise_127_fd5c4ca2_dim_channel: {}
+  se_sandbox_oscar__omnise_127_fd5c4ca2_dim_product: {}
+  se_sandbox_oscar__omnise_127_fd5c4ca2_dim_facility: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__omnise_127_fd5c4ca2_daily_shipments
+    join_to_view: se_sandbox_oscar__omnise_127_fd5c4ca2_dim_channel
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_127_fd5c4ca2_daily_shipments.channel_id} =
+      ${se_sandbox_oscar__omnise_127_fd5c4ca2_dim_channel.channel_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__omnise_127_fd5c4ca2_daily_shipments
+    join_to_view: se_sandbox_oscar__omnise_127_fd5c4ca2_dim_product
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_127_fd5c4ca2_daily_shipments.product_category_id}
+      = ${se_sandbox_oscar__omnise_127_fd5c4ca2_dim_product.product_category_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__omnise_127_fd5c4ca2_daily_shipments
+    join_to_view: se_sandbox_oscar__omnise_127_fd5c4ca2_dim_facility
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_127_fd5c4ca2_daily_shipments.facility_id} =
+      ${se_sandbox_oscar__omnise_127_fd5c4ca2_dim_facility.facility_id}
+    relationship_type: many_to_one
+
+ai_context: |
+  This topic covers Inghams cost-to-serve: freight, warehousing and order
+  servicing cost per case, and gross margin percent, by shipment date, channel
+  (retailer, QSR or food service), product category and distribution facility.
+
+  Default metric for an unqualified cost-per-case or freight-cost question is
+  freight_cost_per_case (SUM freight_cost_aud divided by SUM case_count), never
+  an average of daily ratios. If asked for a broader definition including
+  warehousing and order servicing, use cost_to_serve_per_case instead and name
+  it explicitly.
+
+  There is no brand dimension in this model: Inghams is a single consumer
+  brand, so any breakdown that would previously have been by brand should use
+  product_category_name instead (see build-report.md).
+
+  Keep answers concise: state the metric definition used, return only the
+  requested grouping columns, and lead with the headline number or finding.

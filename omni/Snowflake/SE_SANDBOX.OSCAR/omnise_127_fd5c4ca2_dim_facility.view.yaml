@@ -1,4 +1,6 @@
 # Reference this view as se_sandbox_oscar__omnise_127_fd5c4ca2_dim_facility
+label: Distribution Facility
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_127_FD5C4CA2_DIM_FACILITY
@@ -7,13 +9,18 @@ dimensions:
   facility_id:
     sql: '"FACILITY_ID"'
     format: ID
+    hidden: true
+    primary_key: true
 
   facility_name:
     sql: '"FACILITY_NAME"'
+    label: Facility
 
   city:
     sql: '"CITY"'
+    label: City
 
 measures:
   count:
+    label: Facility Count
     aggregate_type: count

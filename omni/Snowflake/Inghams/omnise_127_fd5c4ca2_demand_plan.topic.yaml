@@ -1,0 +1,39 @@
+base_view: se_sandbox_oscar__omnise_127_fd5c4ca2_fct_daily_demand_plan
+label: Inghams - Demand Plan
+group_label: Inghams
+description: Daily demand plan grain (plan_date x channel x product category)
+  with forecast and actual cases, used by the Inghams Demand Plan App.
+  actual_cases is null for plan_date rows beyond the last shipped date - the
+  forecast horizon the app plans into. Demo build omnise_127_fd5c4ca2.
+
+joins:
+  se_sandbox_oscar__omnise_127_fd5c4ca2_dim_channel: {}
+  se_sandbox_oscar__omnise_127_fd5c4ca2_dim_product: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__omnise_127_fd5c4ca2_fct_daily_demand_plan
+    join_to_view: se_sandbox_oscar__omnise_127_fd5c4ca2_dim_channel
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_127_fd5c4ca2_fct_daily_demand_plan.channel_id}
+      = ${se_sandbox_oscar__omnise_127_fd5c4ca2_dim_channel.channel_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__omnise_127_fd5c4ca2_fct_daily_demand_plan
+    join_to_view: se_sandbox_oscar__omnise_127_fd5c4ca2_dim_product
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_127_fd5c4ca2_fct_daily_demand_plan.product_category_id}
+      = ${se_sandbox_oscar__omnise_127_fd5c4ca2_dim_product.product_category_id}
+    relationship_type: many_to_one
+
+ai_context: |
+  This topic covers Inghams demand plan: forecast_cases versus actual_cases by
+  plan_date, channel and product category. fill_rate_pct is SUM(actual_cases)
+  divided by SUM(forecast_cases). actual_cases is null for future plan_date
+  rows (beyond the last shipped date) - exclude those rows from the ratio
+  rather than treating null as zero.
+
+  There is no brand dimension in this model: use product_category_name for any
+  breakdown that would previously have been by brand.
+
+  Keep answers concise: state the metric definition used, return only the
+  requested grouping columns, and lead with the headline number or finding.

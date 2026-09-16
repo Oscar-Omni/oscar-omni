@@ -1,4 +1,6 @@
 # Reference this view as se_sandbox_oscar__omnise_127_fd5c4ca2_dim_channel
+label: Channel
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_127_FD5C4CA2_DIM_CHANNEL
@@ -7,13 +9,20 @@ dimensions:
   channel_id:
     sql: '"CHANNEL_ID"'
     format: ID
+    hidden: true
+    primary_key: true
 
   channel_name:
     sql: '"CHANNEL_NAME"'
+    label: Channel
+    description: Customer channel Inghams ships to (retailer, QSR chain or food service).
 
   channel_type:
     sql: '"CHANNEL_TYPE"'
+    label: Channel Type
+    description: Retail, QSR or Food Service grouping for the channel.
 
 measures:
   count:
+    label: Channel Count
     aggregate_type: count

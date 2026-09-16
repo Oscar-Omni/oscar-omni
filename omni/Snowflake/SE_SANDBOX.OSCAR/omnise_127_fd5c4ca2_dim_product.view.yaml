@@ -1,4 +1,6 @@
 # Reference this view as se_sandbox_oscar__omnise_127_fd5c4ca2_dim_product
+label: Product Category
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_127_FD5C4CA2_DIM_PRODUCT
@@ -7,13 +9,23 @@ dimensions:
   product_category_id:
     sql: '"PRODUCT_CATEGORY_ID"'
     format: ID
+    hidden: true
+    primary_key: true
 
   product_category_name:
     sql: '"PRODUCT_CATEGORY_NAME"'
+    label: Product Category
+    description: Inghams foodservice/retail product range grouping (for example
+      Crumbed and Nuggets, Whole Cuts and Fillets), based on the categories
+      shown on inghams.com.au/foodservice/food-services-products/. Replaces an
+      earlier brand dimension design - see build-report.md.
 
   product_segment:
     sql: '"PRODUCT_SEGMENT"'
+    label: Product Segment
+    description: Which channel mix this product category is typically sold through.
 
 measures:
   count:
+    label: Product Category Count
     aggregate_type: count
