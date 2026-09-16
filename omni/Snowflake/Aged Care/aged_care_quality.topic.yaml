@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: aged_care_quality_quarterly
 label: Quality & Star Ratings
 group_label: Aged Care

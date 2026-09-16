@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: aged_care_facility_daily
 label: Aged Care Operations
 group_label: Aged Care

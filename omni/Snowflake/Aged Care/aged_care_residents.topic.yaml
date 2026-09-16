@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: aged_care_residents
 label: Residents & AN-ACC
 group_label: Aged Care
