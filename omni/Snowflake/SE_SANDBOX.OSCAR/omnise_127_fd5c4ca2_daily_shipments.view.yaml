@@ -1,0 +1,42 @@
+# Reference this view as se_sandbox_oscar__omnise_127_fd5c4ca2_daily_shipments
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_127_FD5C4CA2_DAILY_SHIPMENTS
+
+dimensions:
+  shipment_date:
+    sql: '"SHIPMENT_DATE"'
+
+  channel_id:
+    sql: '"CHANNEL_ID"'
+    format: ID
+
+  product_category_id:
+    sql: '"PRODUCT_CATEGORY_ID"'
+    format: ID
+
+  facility_id:
+    sql: '"FACILITY_ID"'
+    format: ID
+
+  case_count:
+    sql: '"CASE_COUNT"'
+
+  freight_cost_aud:
+    sql: '"FREIGHT_COST_AUD"'
+
+  warehousing_cost_aud:
+    sql: '"WAREHOUSING_COST_AUD"'
+
+  order_servicing_cost_aud:
+    sql: '"ORDER_SERVICING_COST_AUD"'
+
+  revenue_aud:
+    sql: '"REVENUE_AUD"'
+
+  cogs_aud:
+    sql: '"COGS_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

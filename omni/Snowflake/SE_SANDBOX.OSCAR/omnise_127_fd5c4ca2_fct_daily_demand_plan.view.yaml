@@ -1,0 +1,26 @@
+# Reference this view as se_sandbox_oscar__omnise_127_fd5c4ca2_fct_daily_demand_plan
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_127_FD5C4CA2_FCT_DAILY_DEMAND_PLAN
+
+dimensions:
+  plan_date:
+    sql: '"PLAN_DATE"'
+
+  channel_id:
+    sql: '"CHANNEL_ID"'
+    format: ID
+
+  product_category_id:
+    sql: '"PRODUCT_CATEGORY_ID"'
+    format: ID
+
+  forecast_cases:
+    sql: '"FORECAST_CASES"'
+
+  actual_cases:
+    sql: '"ACTUAL_CASES"'
+
+measures:
+  count:
+    aggregate_type: count

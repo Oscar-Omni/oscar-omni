@@ -1,0 +1,19 @@
+# Reference this view as se_sandbox_oscar__omnise_127_fd5c4ca2_dim_facility
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_127_FD5C4CA2_DIM_FACILITY
+
+dimensions:
+  facility_id:
+    sql: '"FACILITY_ID"'
+    format: ID
+
+  facility_name:
+    sql: '"FACILITY_NAME"'
+
+  city:
+    sql: '"CITY"'
+
+measures:
+  count:
+    aggregate_type: count

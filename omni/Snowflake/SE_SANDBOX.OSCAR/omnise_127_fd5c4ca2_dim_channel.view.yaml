@@ -1,0 +1,19 @@
+# Reference this view as se_sandbox_oscar__omnise_127_fd5c4ca2_dim_channel
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_127_FD5C4CA2_DIM_CHANNEL
+
+dimensions:
+  channel_id:
+    sql: '"CHANNEL_ID"'
+    format: ID
+
+  channel_name:
+    sql: '"CHANNEL_NAME"'
+
+  channel_type:
+    sql: '"CHANNEL_TYPE"'
+
+measures:
+  count:
+    aggregate_type: count

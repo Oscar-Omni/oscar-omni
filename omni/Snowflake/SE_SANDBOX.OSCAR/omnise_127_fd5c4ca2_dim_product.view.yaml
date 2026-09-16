@@ -1,0 +1,19 @@
+# Reference this view as se_sandbox_oscar__omnise_127_fd5c4ca2_dim_product
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_127_FD5C4CA2_DIM_PRODUCT
+
+dimensions:
+  product_category_id:
+    sql: '"PRODUCT_CATEGORY_ID"'
+    format: ID
+
+  product_category_name:
+    sql: '"PRODUCT_CATEGORY_NAME"'
+
+  product_segment:
+    sql: '"PRODUCT_SEGMENT"'
+
+measures:
+  count:
+    aggregate_type: count
