@@ -10,6 +10,7 @@ dimensions:
     sql: '"SHIPMENT_DATE"'
     label: Shipment Date
     group_label: Shipment
+    synonyms: [ ship date, dispatch date, delivery date, date, despatch date ]
 
   channel_id:
     sql: '"CHANNEL_ID"'
@@ -31,42 +32,62 @@ dimensions:
     label: Case Count
     format: number_0
     group_label: Volume
-    hidden: true
+    hidden: false
+    synonyms: [ cases, case volume, units, volume, cartons ]
 
   freight_cost_aud:
     sql: '"FREIGHT_COST_AUD"'
     label: Freight Cost (AUD)
     format: audcurrency_0
     group_label: Cost to Serve
-    hidden: true
+    hidden: false
+    synonyms:
+      [
+        freight,
+        transport cost,
+        haulage,
+        delivery cost,
+        linehaul,
+        shipping cost
+      ]
 
   warehousing_cost_aud:
     sql: '"WAREHOUSING_COST_AUD"'
     label: Warehousing Cost (AUD)
     format: audcurrency_0
     group_label: Cost to Serve
-    hidden: true
+    hidden: false
+    synonyms: [ warehouse cost, storage cost, DC cost, handling cost ]
 
   order_servicing_cost_aud:
     sql: '"ORDER_SERVICING_COST_AUD"'
     label: Order Servicing Cost (AUD)
     format: audcurrency_0
     group_label: Cost to Serve
-    hidden: true
+    hidden: false
+    synonyms:
+      [
+        order service cost,
+        servicing cost,
+        customer service cost,
+        order handling cost
+      ]
 
   revenue_aud:
     sql: '"REVENUE_AUD"'
     label: Revenue (AUD)
     format: audcurrency_0
     group_label: Margin
-    hidden: true
+    hidden: false
+    synonyms: [ sales, net sales, turnover, top line, income ]
 
   cogs_aud:
     sql: '"COGS_AUD"'
     label: COGS (AUD)
     format: audcurrency_0
     group_label: Margin
-    hidden: true
+    hidden: false
+    synonyms: [ cost of goods sold, product cost, cost of sales ]
 
   shipment_key:
     sql: CAST(${shipment_date} AS VARCHAR) || '|' || CAST(${channel_id} AS VARCHAR)
@@ -80,6 +101,7 @@ measures:
   count:
     label: Shipment Row Count
     aggregate_type: count
+    synonyms: [ shipment rows, number of shipments, shipment count ]
 
   total_case_count:
     sql: ${case_count}
@@ -87,6 +109,7 @@ measures:
     group_label: Volume
     format: number_0
     aggregate_type: sum
+    synonyms: [ cases shipped, total volume, total units, case count, cartons shipped ]
 
   total_freight_cost_aud:
     sql: ${freight_cost_aud}
@@ -94,6 +117,7 @@ measures:
     group_label: Cost to Serve
     format: audcurrency_0
     aggregate_type: sum
+    synonyms: [ freight spend, total transport cost, total haulage, total delivery cost ]
 
   total_warehousing_cost_aud:
     sql: ${warehousing_cost_aud}
@@ -101,6 +125,7 @@ measures:
     group_label: Cost to Serve
     format: audcurrency_0
     aggregate_type: sum
+    synonyms: [ warehouse spend, total storage cost, total DC cost ]
 
   total_order_servicing_cost_aud:
     sql: ${order_servicing_cost_aud}
@@ -108,6 +133,7 @@ measures:
     group_label: Cost to Serve
     format: audcurrency_0
     aggregate_type: sum
+    synonyms: [ order servicing spend, total servicing cost ]
 
   total_revenue_aud:
     sql: ${revenue_aud}
@@ -115,6 +141,7 @@ measures:
     group_label: Margin
     format: audcurrency_0
     aggregate_type: sum
+    synonyms: [ total sales, net sales, turnover, top line ]
 
   total_cogs_aud:
     sql: ${cogs_aud}
@@ -122,6 +149,7 @@ measures:
     group_label: Margin
     format: audcurrency_0
     aggregate_type: sum
+    synonyms: [ total cost of goods sold, total cost of sales, total product cost ]
 
   freight_cost_per_case:
     sql: ${total_freight_cost_aud} / NULLIF(${total_case_count}, 0)
@@ -130,6 +158,14 @@ measures:
     format: audcurrency_2
     description: SUM(freight_cost_aud) divided by SUM(case_count) at whatever grain
       is queried. Never averaged from pre-aggregated daily ratios.
+    synonyms:
+      [
+        freight per case,
+        freight cost per carton,
+        CPC,
+        cost per case freight,
+        freight unit cost
+      ]
 
   cost_to_serve_per_case:
     sql: (${total_freight_cost_aud} + ${total_warehousing_cost_aud} +
@@ -140,6 +176,14 @@ measures:
     description: SUM(freight_cost_aud + warehousing_cost_aud +
       order_servicing_cost_aud) divided by SUM(case_count). Broader than Freight
       Cost per Case alone.
+    synonyms:
+      [
+        cost to serve,
+        CTS per case,
+        total cost per case,
+        fully loaded cost per case,
+        service cost per case
+      ]
 
   gross_margin_pct:
     sql: (${total_revenue_aud} - ${total_cogs_aud}) / NULLIF(${total_revenue_aud},
@@ -149,3 +193,4 @@ measures:
     format: percent_1
     description: SUM(revenue_aud minus cogs_aud) divided by SUM(revenue_aud) at the
       queried grain.
+    synonyms: [ gross margin, GM%, margin percent, margin rate, profitability ]
