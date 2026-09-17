@@ -102,6 +102,10 @@ measures:
     label: Shipment Row Count
     aggregate_type: count
     synonyms: [ shipment rows, number of shipments, shipment count ]
+    ai_context: Counts rows in the daily shipments fact table (one row per shipment
+      date x channel x product category x facility). This is a
+      grain/data-quality check, not a business volume metric. For 'how much did
+      we ship' use Total Cases instead.
 
   total_case_count:
     sql: ${case_count}
@@ -110,6 +114,9 @@ measures:
     format: number_0
     aggregate_type: sum
     synonyms: [ cases shipped, total volume, total units, case count, cartons shipped ]
+    ai_context: The volume denominator for every per-case metric in this topic. Use
+      this for any 'how many cases/units/cartons did we ship' question. Additive
+      across every dimension, so it is safe to sum at any grain.
 
   total_freight_cost_aud:
     sql: ${freight_cost_aud}
@@ -118,6 +125,10 @@ measures:
     format: audcurrency_0
     aggregate_type: sum
     synonyms: [ freight spend, total transport cost, total haulage, total delivery cost ]
+    ai_context: Total freight spend in AUD. Use this when the user wants absolute
+      freight dollars. If they ask about freight cost efficiency, unit cost, or
+      'freight cost' without qualification in a per-case context, use Freight
+      Cost per Case instead.
 
   total_warehousing_cost_aud:
     sql: ${warehousing_cost_aud}
@@ -126,6 +137,9 @@ measures:
     format: audcurrency_0
     aggregate_type: sum
     synonyms: [ warehouse spend, total storage cost, total DC cost ]
+    ai_context: Total warehousing and storage spend in AUD, one of the three
+      components of cost to serve. Not included in Freight Cost per Case; it is
+      included in Cost to Serve per Case.
 
   total_order_servicing_cost_aud:
     sql: ${order_servicing_cost_aud}
@@ -134,6 +148,10 @@ measures:
     format: audcurrency_0
     aggregate_type: sum
     synonyms: [ order servicing spend, total servicing cost ]
+    ai_context: Total order servicing spend in AUD (customer order handling and
+      administration), the third component of cost to serve alongside freight
+      and warehousing. There is deliberately no servicing-only per-case measure;
+      use Cost to Serve per Case for the all-in view.
 
   total_revenue_aud:
     sql: ${revenue_aud}
@@ -142,6 +160,9 @@ measures:
     format: audcurrency_0
     aggregate_type: sum
     synonyms: [ total sales, net sales, turnover, top line ]
+    ai_context: Total net sales in AUD at the shipment grain. The denominator of
+      Gross Margin %. Pair with Cost to Serve per Case when the user asks
+      whether a channel or category is worth serving.
 
   total_cogs_aud:
     sql: ${cogs_aud}
@@ -150,6 +171,9 @@ measures:
     format: audcurrency_0
     aggregate_type: sum
     synonyms: [ total cost of goods sold, total cost of sales, total product cost ]
+    ai_context: Total cost of goods sold in AUD. Product cost only - it excludes
+      freight, warehousing and order servicing, which are the cost-to-serve
+      layer on top of COGS.
 
   freight_cost_per_case:
     sql: ${total_freight_cost_aud} / NULLIF(${total_case_count}, 0)
@@ -166,6 +190,11 @@ measures:
         cost per case freight,
         freight unit cost
       ]
+    ai_context: "THE DEFAULT metric for any unqualified cost-per-case or
+      freight-cost question in this topic. Computed as total freight dollars
+      divided by total cases at the queried grain - never an average of daily
+      ratios. Lower is better. Common breakdowns: channel, product category,
+      distribution facility, and shipment month for trend."
 
   cost_to_serve_per_case:
     sql: (${total_freight_cost_aud} + ${total_warehousing_cost_aud} +
@@ -184,6 +213,11 @@ measures:
         fully loaded cost per case,
         service cost per case
       ]
+    ai_context: "The broad, fully loaded cost-per-case metric: freight plus
+      warehousing plus order servicing, divided by total cases. Use this only
+      when the user explicitly asks for cost to serve or a definition wider than
+      freight, and name the definition in the answer. Otherwise default to
+      Freight Cost per Case."
 
   gross_margin_pct:
     sql: (${total_revenue_aud} - ${total_cogs_aud}) / NULLIF(${total_revenue_aud},
@@ -194,3 +228,8 @@ measures:
     description: SUM(revenue_aud minus cogs_aud) divided by SUM(revenue_aud) at the
       queried grain.
     synonyms: [ gross margin, GM%, margin percent, margin rate, profitability ]
+    ai_context: "Profitability rate: revenue minus COGS over revenue, recomputed
+      from summed dollars at the queried grain rather than averaged. Already
+      formatted as a percent - do not multiply by 100. Note it reflects product
+      margin only and ignores cost to serve, so a high-margin category can still
+      be expensive to serve."
