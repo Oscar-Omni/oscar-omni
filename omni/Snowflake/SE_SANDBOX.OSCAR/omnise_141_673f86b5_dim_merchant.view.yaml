@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__omnise_141_673f86b5_dim_merchant
+label: Finance Now Merchants
+description: Synthetic merchant partners. One row per merchant.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_141_673F86B5_DIM_MERCHANT
@@ -7,15 +10,19 @@ dimensions:
   merchant_id:
     sql: '"MERCHANT_ID"'
     format: ID
+    primary_key: true
 
   merchant_name:
     sql: '"MERCHANT_NAME"'
+    label: Merchant
 
   region_name:
     sql: '"REGION_NAME"'
+    label: Merchant Region
 
   channel_type:
     sql: '"CHANNEL_TYPE"'
+    label: Channel Type
 
   area_manager_id:
     sql: '"AREA_MANAGER_ID"'
@@ -26,4 +33,12 @@ dimensions:
 
 measures:
   count:
+    label: Merchants
     aggregate_type: count
+
+  merchants_distinct:
+    sql: ${merchant_id}
+    label: Distinct Merchants
+    format: number_0
+    description: Unique merchant partners represented in the selected applications.
+    aggregate_type: count_distinct

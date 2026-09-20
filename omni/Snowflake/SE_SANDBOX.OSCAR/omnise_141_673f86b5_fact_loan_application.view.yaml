@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__omnise_141_673f86b5_fact_loan_application
+label: Finance Now Loan Applications
+description: One row per synthetic merchant loan application. All financial amounts are NZD.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_141_673F86B5_FACT_LOAN_APPLICATION
@@ -7,6 +10,7 @@ dimensions:
   application_id:
     sql: '"APPLICATION_ID"'
     format: ID
+    primary_key: true
 
   merchant_id:
     sql: '"MERCHANT_ID"'
@@ -14,34 +18,135 @@ dimensions:
 
   application_date:
     sql: '"APPLICATION_DATE"'
+    label: Application Date
+    timeframes: [ raw, date, week, month, quarter, year ]
 
   product_type:
     sql: '"PRODUCT_TYPE"'
 
   submitted_amount_nzd:
     sql: '"SUBMITTED_AMOUNT_NZD"'
+    label: Submitted Amount (NZD)
+    format: currency_2
 
   application_status:
     sql: '"APPLICATION_STATUS"'
+    label: Application Status
 
   ever_approved:
     sql: '"EVER_APPROVED"'
+    label: Ever Approved
 
   approved_date:
     sql: '"APPROVED_DATE"'
 
   approved_amount_nzd:
     sql: '"APPROVED_AMOUNT_NZD"'
+    label: Approved Amount (NZD)
+    format: currency_2
 
   funded_date:
     sql: '"FUNDED_DATE"'
 
   funded_amount_nzd:
     sql: '"FUNDED_AMOUNT_NZD"'
+    label: Funded Amount (NZD)
+    format: currency_2
 
   status_reason:
     sql: '"STATUS_REASON"'
 
+  days_to_fund:
+    sql: DATEDIFF('day', ${approved_date}, ${funded_date})
+    label: Days to Fund After Approval
+    format: number_1
+    description: Days between approval and funding for funded applications.
+
 measures:
   count:
+    label: Application Rows
+    hidden: true
     aggregate_type: count
+
+  applications_submitted:
+    label: Applications Submitted
+    format: number_0
+    description: Count of all submitted applications, including those later declined
+      or withdrawn.
+    aggregate_type: count
+
+  applications_approved:
+    label: Applications Ever Approved
+    format: number_0
+    description: Applications that reached approval, including later post-approval
+      withdrawals.
+    aggregate_type: count
+    filters:
+      ever_approved:
+        is: true
+
+  applications_funded:
+    label: Applications Funded
+    format: number_0
+    description: Applications with final status Funded.
+    aggregate_type: count
+    filters:
+      application_status:
+        is: Funded
+
+  post_approval_withdrawals:
+    label: Post-Approval Withdrawals
+    format: number_0
+    description: Approved applications later withdrawn before funding.
+    aggregate_type: count
+    filters:
+      application_status:
+        is: Withdrawn
+      ever_approved:
+        is: true
+
+  submitted_amount_total_nzd:
+    sql: ${submitted_amount_nzd}
+    label: Submitted Amount (NZD)
+    format: currency_0
+    aggregate_type: sum
+
+  funded_amount_total_nzd:
+    sql: ${funded_amount_nzd}
+    label: Funded Amount (NZD)
+    format: currency_0
+    aggregate_type: sum
+
+  application_to_approval_rate:
+    sql: ${applications_approved} / NULLIF(${applications_submitted}, 0)
+    label: Application-to-Approval Rate
+    format: percent_1
+    description: Applications ever approved divided by applications submitted.
+
+  application_to_funded_conversion_rate:
+    sql: ${applications_funded} / NULLIF(${applications_submitted}, 0)
+    label: Application-to-Funded Conversion Rate
+    format: percent_1
+    description: Funded applications divided by submitted applications.
+
+  approval_to_funded_rate:
+    sql: ${applications_funded} / NULLIF(${applications_approved}, 0)
+    label: Approval-to-Funded Rate
+    format: percent_1
+    description: Funded applications divided by applications ever approved.
+
+  post_approval_withdrawal_rate:
+    sql: ${post_approval_withdrawals} / NULLIF(${applications_approved}, 0)
+    label: Post-Approval Withdrawal Rate
+    format: percent_1
+    description: Post-approval withdrawals divided by applications ever approved.
+
+  median_days_to_fund:
+    sql: ${days_to_fund}
+    label: Median Days to Fund
+    format: number_1
+    description: Median days from approval to funding among funded applications.
+    aggregate_type: median
+    filters:
+      application_status:
+        is: Funded

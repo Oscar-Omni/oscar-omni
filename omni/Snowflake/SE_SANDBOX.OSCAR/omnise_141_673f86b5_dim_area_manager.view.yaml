@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__omnise_141_673f86b5_dim_area_manager
+label: Finance Now Area Managers
+description: Synthetic area managers for the Finance Now merchant partner demo.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_141_673F86B5_DIM_AREA_MANAGER
@@ -7,16 +10,27 @@ dimensions:
   area_manager_id:
     sql: '"AREA_MANAGER_ID"'
     format: ID
+    primary_key: true
 
   area_manager_name:
     sql: '"AREA_MANAGER_NAME"'
+    label: Area Manager
 
   region_name:
     sql: '"REGION_NAME"'
+    label: Region
 
   email:
     sql: '"EMAIL"'
 
 measures:
   count:
+    label: Area Managers
     aggregate_type: count
+
+  area_managers_distinct:
+    sql: ${area_manager_id}
+    label: Distinct Area Managers
+    format: number_0
+    description: Unique area managers represented in the selected applications.
+    aggregate_type: count_distinct
