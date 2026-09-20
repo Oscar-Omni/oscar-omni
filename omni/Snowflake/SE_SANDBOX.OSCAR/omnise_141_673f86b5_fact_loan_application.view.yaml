@@ -1,0 +1,47 @@
+# Reference this view as se_sandbox_oscar__omnise_141_673f86b5_fact_loan_application
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_141_673F86B5_FACT_LOAN_APPLICATION
+
+dimensions:
+  application_id:
+    sql: '"APPLICATION_ID"'
+    format: ID
+
+  merchant_id:
+    sql: '"MERCHANT_ID"'
+    format: ID
+
+  application_date:
+    sql: '"APPLICATION_DATE"'
+
+  product_type:
+    sql: '"PRODUCT_TYPE"'
+
+  submitted_amount_nzd:
+    sql: '"SUBMITTED_AMOUNT_NZD"'
+
+  application_status:
+    sql: '"APPLICATION_STATUS"'
+
+  ever_approved:
+    sql: '"EVER_APPROVED"'
+
+  approved_date:
+    sql: '"APPROVED_DATE"'
+
+  approved_amount_nzd:
+    sql: '"APPROVED_AMOUNT_NZD"'
+
+  funded_date:
+    sql: '"FUNDED_DATE"'
+
+  funded_amount_nzd:
+    sql: '"FUNDED_AMOUNT_NZD"'
+
+  status_reason:
+    sql: '"STATUS_REASON"'
+
+measures:
+  count:
+    aggregate_type: count

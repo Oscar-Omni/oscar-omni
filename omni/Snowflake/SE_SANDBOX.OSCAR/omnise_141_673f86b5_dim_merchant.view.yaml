@@ -1,0 +1,29 @@
+# Reference this view as se_sandbox_oscar__omnise_141_673f86b5_dim_merchant
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_141_673F86B5_DIM_MERCHANT
+
+dimensions:
+  merchant_id:
+    sql: '"MERCHANT_ID"'
+    format: ID
+
+  merchant_name:
+    sql: '"MERCHANT_NAME"'
+
+  region_name:
+    sql: '"REGION_NAME"'
+
+  channel_type:
+    sql: '"CHANNEL_TYPE"'
+
+  area_manager_id:
+    sql: '"AREA_MANAGER_ID"'
+    format: ID
+
+  partner_since_date:
+    sql: '"PARTNER_SINCE_DATE"'
+
+measures:
+  count:
+    aggregate_type: count

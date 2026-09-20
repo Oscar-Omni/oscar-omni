@@ -1,0 +1,22 @@
+# Reference this view as se_sandbox_oscar__omnise_141_673f86b5_dim_area_manager
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_141_673F86B5_DIM_AREA_MANAGER
+
+dimensions:
+  area_manager_id:
+    sql: '"AREA_MANAGER_ID"'
+    format: ID
+
+  area_manager_name:
+    sql: '"AREA_MANAGER_NAME"'
+
+  region_name:
+    sql: '"REGION_NAME"'
+
+  email:
+    sql: '"EMAIL"'
+
+measures:
+  count:
+    aggregate_type: count
