@@ -1,3 +1,10 @@
+- join_from_view: se_sandbox_oscar__omnise_141_673f86b5_dim_merchant
+  join_to_view: se_sandbox_oscar__omnise_141_673f86b5_dim_area_manager
+  join_type: always_left
+  on_sql: ${se_sandbox_oscar__omnise_141_673f86b5_dim_merchant.area_manager_id} =
+    ${se_sandbox_oscar__omnise_141_673f86b5_dim_area_manager.area_manager_id}
+  relationship_type: many_to_one
+
 - join_from_view: aged_care_facility_daily
   join_to_view: aged_care_facilities
   join_type: always_left

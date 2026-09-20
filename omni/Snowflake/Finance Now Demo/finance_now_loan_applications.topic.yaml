@@ -1,0 +1,29 @@
+base_view: se_sandbox_oscar__omnise_141_673f86b5_fact_loan_application
+label: Finance Now - Loan Applications
+group_label: Finance Now Demo
+description: Synthetic merchant lending application performance, September 2024
+  to September 2026.
+
+joins:
+  se_sandbox_oscar__omnise_141_673f86b5_dim_merchant:
+    se_sandbox_oscar__omnise_141_673f86b5_dim_area_manager: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__omnise_141_673f86b5_fact_loan_application
+    join_to_view: se_sandbox_oscar__omnise_141_673f86b5_dim_merchant
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_141_673f86b5_fact_loan_application.merchant_id}
+      = ${se_sandbox_oscar__omnise_141_673f86b5_dim_merchant.merchant_id}
+    relationship_type: many_to_one
+
+ai_context: "All entities and application data here are synthetic. Use
+  Applications Submitted for volume, Applications Ever Approved for approval,
+  and Applications Funded for funding. Application-to-Funded Conversion Rate
+  uses submitted applications as its denominator; Approval-to-Funded Rate uses
+  ever-approved applications. Post-Approval Withdrawal Rate uses ever-approved
+  applications. Southern Cross Motors in Canterbury is the intended exception:
+  approval remains close to peers while post-approval withdrawals and days to
+  fund rise. Compare merchants against pooled regional rates computed from
+  summed counts, never an average of merchant rates. Amounts are NZD. Follow-up
+  status and notes are Omni workbook input columns, not fields in this shared
+  model."
