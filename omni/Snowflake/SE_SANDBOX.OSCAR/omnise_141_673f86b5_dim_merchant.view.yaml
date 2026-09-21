@@ -15,14 +15,28 @@ dimensions:
   merchant_name:
     sql: '"MERCHANT_NAME"'
     label: Merchant
+    ai_context: The merchant partner's name - the field to group by for per-merchant
+      performance. Prefer this over merchant ID in results.
 
   region_name:
     sql: '"REGION_NAME"'
     label: Merchant Region
+    sample_values: [ Auckland, Canterbury, Southland, Waikato ]
+    ai_context: The region the merchant operates in, and the field to use for
+      regional rollups of application performance. This is the merchant's own
+      region; the area manager view has its own Region field for the manager's
+      patch, and the two can differ. When comparing a merchant against its
+      region, build the regional benchmark from summed counts across the
+      region's merchants rather than averaging merchant-level rates.
 
   channel_type:
     sql: '"CHANNEL_TYPE"'
     label: Channel Type
+    sample_values: [ Motor Vehicle Finance, Retail & Appliance Finance ]
+    ai_context: The merchant's channel, describing the kind of business the partner
+      is. Its values match the application-level Product Type, so prefer this
+      field when segmenting merchants and Product Type when segmenting
+      individual applications.
 
   area_manager_id:
     sql: '"AREA_MANAGER_ID"'
@@ -30,11 +44,16 @@ dimensions:
 
   partner_since_date:
     sql: '"PARTNER_SINCE_DATE"'
+    ai_context: Date the merchant joined as a partner. Use for partner tenure or
+      cohort analysis; it is unrelated to application timing.
 
 measures:
   count:
     label: Merchants
     aggregate_type: count
+    ai_context: Row count of merchants. In this applications-based topic it counts
+      merchant rows joined to applications, so it inflates with application
+      volume - use Distinct Merchants to count merchants.
 
   merchants_distinct:
     sql: ${merchant_id}
@@ -42,3 +61,10 @@ measures:
     format: number_0
     description: Unique merchant partners represented in the selected applications.
     aggregate_type: count_distinct
+    ai_context: Unique merchants appearing in the selected applications, not the
+      full partner roster. Merchants with no applications in the filtered period
+      do not appear. Use this for active-merchant counts and as a denominator
+      for per-merchant averages.
+
+ai_context: |
+  Synthetic merchant partners, one row per merchant. Joins to loan applications on merchant ID. Because applications are the base of the topic, merchant-level queries in this topic reflect merchants with applications in scope rather than the full partner roster.

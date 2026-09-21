@@ -20,47 +20,95 @@ dimensions:
     sql: '"APPLICATION_DATE"'
     label: Application Date
     timeframes: [ raw, date, week, month, quarter, year ]
+    ai_context: Date the application was submitted. This is the default date for
+      trending application volume. Approval and funding have their own date
+      fields; do not use this one to measure funding timing.
 
   product_type:
     sql: '"PRODUCT_TYPE"'
+    sample_values: [ Motor Vehicle Finance, Retail & Appliance Finance ]
+    ai_context: The finance product applied for.
 
   submitted_amount_nzd:
     sql: '"SUBMITTED_AMOUNT_NZD"'
     label: Submitted Amount (NZD)
     format: currency_2
+    ai_context: "Per-application amount the applicant asked for, in NZD. This is the
+      row-level dimension, not a total - to sum it, use the Submitted Amount
+      (NZD) measure, which shares this label. Populated for every application
+      regardless of outcome. Not interchangeable with approved or funded amount:
+      the three differ per application, and only funded amount represents money
+      actually paid out."
 
   application_status:
     sql: '"APPLICATION_STATUS"'
     label: Application Status
+    sample_values: [ Approved, Declined, Funded, Pending, Withdrawn ]
+    ai_context: The application's CURRENT status only, not its history. Withdrawn on
+      its own does not say whether the withdrawal happened before or after
+      approval - combine it with Ever Approved to isolate post-approval
+      withdrawals. Pending applications are still in flight and have no final
+      outcome yet.
 
   ever_approved:
     sql: '"EVER_APPROVED"'
     label: Ever Approved
+    ai_context: Sticky flag that stays true once an application reaches approval,
+      including applications later withdrawn before funding. Use this for
+      approval rates and as the denominator for approval-based rates - do not
+      test Application Status against Approved, which excludes applications that
+      moved on to Funded or Withdrawn.
 
   approved_date:
     sql: '"APPROVED_DATE"'
+    ai_context: Date of approval; null for applications never approved.
 
   approved_amount_nzd:
     sql: '"APPROVED_AMOUNT_NZD"'
     label: Approved Amount (NZD)
     format: currency_2
+    ai_context: The amount authorised at approval; null if never approved. May be
+      less than the submitted amount.
 
   funded_date:
     sql: '"FUNDED_DATE"'
+    ai_context: Date funds were paid out; null unless the application was funded.
 
   funded_amount_nzd:
     sql: '"FUNDED_AMOUNT_NZD"'
     label: Funded Amount (NZD)
     format: currency_2
+    ai_context: Per-application amount actually paid out, in NZD; null unless the
+      application was funded. This is the row-level dimension, not a total - to
+      sum it, use the Funded Amount (NZD) measure, which shares this label. Use
+      this rather than submitted or approved amount when the question is about
+      realised lending.
 
   status_reason:
     sql: '"STATUS_REASON"'
+    sample_values:
+      [
+        Applicant withdrew,
+        Applicant withdrew post-approval,
+        Credit assessment declined,
+        Documentation incomplete,
+        Documentation incomplete post-approval,
+        Income verification failed
+      ]
+    ai_context: Reason for a non-funded outcome. The reasons pair up across stages,
+      with the post-approval suffix marking the later-stage version of the same
+      reason, so a rise in post-approval reasons points to fallout after
+      approval rather than tighter credit decisioning.
 
   days_to_fund:
     sql: DATEDIFF('day', ${approved_date}, ${funded_date})
     label: Days to Fund After Approval
     format: number_1
     description: Days between approval and funding for funded applications.
+    ai_context: Approval to funding only, so it is populated for funded applications
+      and null everywhere else. This is not total application turnaround and it
+      does not include time spent awaiting a credit decision. Rising values
+      indicate settlement friction after approval.
 
 measures:
   count:
@@ -74,6 +122,9 @@ measures:
     description: Count of all submitted applications, including those later declined
       or withdrawn.
     aggregate_type: count
+    ai_context: The volume measure, and the denominator for Application-to-Approval
+      Rate and Application-to-Funded Conversion Rate. Counts every application
+      regardless of outcome, including those still Pending.
 
   applications_approved:
     label: Applications Ever Approved
@@ -84,6 +135,9 @@ measures:
     filters:
       ever_approved:
         is: true
+    ai_context: Approval volume, based on the sticky Ever Approved flag so
+      post-approval withdrawals still count. The denominator for
+      Approval-to-Funded Rate and Post-Approval Withdrawal Rate.
 
   applications_funded:
     label: Applications Funded
@@ -93,6 +147,8 @@ measures:
     filters:
       application_status:
         is: Funded
+    ai_context: Applications that reached final status Funded - the end of the
+      lifecycle and the numerator for both funding rates.
 
   post_approval_withdrawals:
     label: Post-Approval Withdrawals
@@ -104,42 +160,74 @@ measures:
         is: Withdrawn
       ever_approved:
         is: true
+    ai_context: Applications that were approved and then withdrawn before funding.
+      Isolates late-stage fallout, as distinct from applicants who withdrew
+      before any credit decision.
 
   submitted_amount_total_nzd:
     sql: ${submitted_amount_nzd}
     label: Submitted Amount (NZD)
     format: currency_0
     aggregate_type: sum
+    ai_context: "Total NZD applied for across the selected applications - the summed
+      measure, distinct from the same-labelled Submitted Amount (NZD) dimension,
+      which is the per-application value. Includes applications never approved
+      or funded, so it represents demand rather than lending. Use Funded Amount
+      (NZD) for money actually paid out, and do not compare the two as if the
+      gap were lost revenue: submitted amounts are often revised down at
+      approval rather than lost."
 
   funded_amount_total_nzd:
     sql: ${funded_amount_nzd}
     label: Funded Amount (NZD)
     format: currency_0
     aggregate_type: sum
+    ai_context: Total NZD actually paid out across the selected applications - the
+      realised lending measure, and the one to use for lending volume in
+      dollars. Distinct from the same-labelled Funded Amount (NZD) dimension,
+      which is the per-application value. Only funded applications contribute,
+      so this can fall because of post-approval settlement fallout even when
+      approval volume holds up; check Post-Approval Withdrawal Rate before
+      reading a decline as weaker demand or tighter credit.
 
   application_to_approval_rate:
     sql: ${applications_approved} / NULLIF(${applications_submitted}, 0)
     label: Application-to-Approval Rate
     format: percent_1
     description: Applications ever approved divided by applications submitted.
+    ai_context: "Approval rate: ever-approved over submitted. Measures credit
+      decisioning, not settlement. When comparing merchants, compute the pooled
+      rate from summed counts rather than averaging merchant rates."
 
   application_to_funded_conversion_rate:
     sql: ${applications_funded} / NULLIF(${applications_submitted}, 0)
     label: Application-to-Funded Conversion Rate
     format: percent_1
     description: Funded applications divided by submitted applications.
+    ai_context: "End-to-end conversion: funded over submitted. Blends approval and
+      post-approval settlement, so a weak value here needs the two component
+      rates to attribute the cause. Pool from summed counts when comparing
+      groups."
 
   approval_to_funded_rate:
     sql: ${applications_funded} / NULLIF(${applications_approved}, 0)
     label: Approval-to-Funded Rate
     format: percent_1
     description: Funded applications divided by applications ever approved.
+    ai_context: "Settlement rate: funded over ever-approved. Isolates what happens
+      after approval, holding credit decisioning constant. This is the
+      counterpart to Post-Approval Withdrawal Rate. Pool from summed counts when
+      comparing groups."
 
   post_approval_withdrawal_rate:
     sql: ${post_approval_withdrawals} / NULLIF(${applications_approved}, 0)
     label: Post-Approval Withdrawal Rate
     format: percent_1
     description: Post-approval withdrawals divided by applications ever approved.
+    ai_context: "Post-approval withdrawals over ever-approved applications. The key
+      late-stage fallout indicator: a merchant with a normal approval rate but
+      an elevated value here is losing approved deals at settlement. Pool from
+      summed counts when comparing groups."
 
   median_days_to_fund:
     sql: ${days_to_fund}
@@ -150,3 +238,12 @@ measures:
     filters:
       application_status:
         is: Funded
+    ai_context: Median approval-to-funding days among funded applications only.
+      Median rather than average to limit distortion from outliers. Read
+      alongside Post-Approval Withdrawal Rate, since slow settlement and late
+      withdrawals often move together.
+
+ai_context: |
+  One row per synthetic merchant loan application, September 2024 to September 2026. The lifecycle is submitted -> approved -> funded, and an application can exit at any stage by being declined or withdrawn. All amounts are NZD.
+
+  Use Applications Submitted for volume, Applications Ever Approved for approval, and Applications Funded for funding. When comparing merchants or regions, compute pooled rates from summed counts rather than averaging merchant-level rates.

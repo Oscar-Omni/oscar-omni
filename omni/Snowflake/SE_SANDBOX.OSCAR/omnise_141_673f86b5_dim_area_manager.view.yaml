@@ -15,18 +15,31 @@ dimensions:
   area_manager_name:
     sql: '"AREA_MANAGER_NAME"'
     label: Area Manager
+    ai_context: The area manager's name - the field to group by when attributing
+      application performance to a manager. Prefer this over the manager ID in
+      results.
 
   region_name:
     sql: '"REGION_NAME"'
     label: Region
+    ai_context: The region the area manager is responsible for. This is the
+      manager's patch, which is not necessarily the same as the Merchant Region
+      on an individual application - use Merchant Region when the question is
+      about where applications originate, and this field when it is about
+      management coverage.
 
   email:
     sql: '"EMAIL"'
+    ai_context: The area manager's contact email. Identifying detail rather than an
+      analytical field; group by Area Manager instead.
 
 measures:
   count:
     label: Area Managers
     aggregate_type: count
+    ai_context: Row count of area managers. In this applications-based topic it
+      counts manager rows joined to applications, so it inflates with
+      application volume - use Distinct Area Managers to count managers.
 
   area_managers_distinct:
     sql: ${area_manager_id}
@@ -34,3 +47,9 @@ measures:
     format: number_0
     description: Unique area managers represented in the selected applications.
     aggregate_type: count_distinct
+    ai_context: Unique area managers represented in the selected applications, not
+      the full management roster. Managers whose merchants had no applications
+      in the filtered period do not appear.
+
+ai_context: |
+  Synthetic area managers, one row per manager. Reached from applications via the merchant, so an area manager's application performance is the pooled performance of the merchants they look after.
