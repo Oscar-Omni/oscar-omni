@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__omnise_181_69538efc_dim_orchard
+label: Apata Orchard
+description: One row per grower orchard. Orchard names and IDs are invented for
+  this demo, built on real Bay of Plenty locality names; they are not real Apata
+  shareholder growers.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_181_69538EFC_DIM_ORCHARD
@@ -7,24 +12,46 @@ dimensions:
   orchard_id:
     sql: '"ORCHARD_ID"'
     format: ID
+    hidden: true
+    primary_key: true
 
   orchard_name:
     sql: '"ORCHARD_NAME"'
+    label: Orchard
+    group_label: Orchard
 
   home_site_id:
     sql: '"HOME_SITE_ID"'
     format: ID
+    hidden: true
 
   crop_id:
     sql: '"CROP_ID"'
     format: ID
+    hidden: true
 
   region_locality:
     sql: '"REGION_LOCALITY"'
+    label: Locality
+    group_label: Orchard
 
   hectares:
     sql: '"HECTARES"'
+    label: Hectares
+    format: number_1
+    group_label: Orchard
 
 measures:
   count:
     aggregate_type: count
+
+  orchard_count:
+    sql: ${orchard_id}
+    label: Number of Orchards
+    aggregate_type: count_distinct
+
+  avg_hectares:
+    sql: ${hectares}
+    label: Average Hectares
+    format: number_1
+    aggregate_type: average

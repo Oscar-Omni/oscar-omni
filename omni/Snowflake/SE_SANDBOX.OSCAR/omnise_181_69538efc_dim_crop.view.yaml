@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__omnise_181_69538efc_dim_crop
+label: Apata Crop
+description: One row per crop and variety (Kiwifruit Green, Kiwifruit SunGold,
+  Avocado Hass). Synthetic demo reference data.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_181_69538EFC_DIM_CROP
@@ -7,16 +11,36 @@ dimensions:
   crop_id:
     sql: '"CROP_ID"'
     format: ID
+    hidden: true
+    primary_key: true
 
   crop_group:
     sql: '"CROP_GROUP"'
+    label: Crop Group
+    group_label: Crop
 
   variety:
     sql: '"VARIETY"'
+    label: Variety
+    group_label: Crop
 
   unit_tray_kg:
     sql: '"UNIT_TRAY_KG"'
+    label: Unit Tray Weight (kg)
+    format: number_1
+    group_label: Crop
+
+  crop_label:
+    sql: ${crop_group} || ' - ' || ${variety}
+    label: Crop
+    description: Combined crop group and variety, for example Avocado - Hass.
+    group_label: Crop
 
 measures:
   count:
     aggregate_type: count
+
+  crop_count:
+    sql: ${crop_id}
+    label: Number of Crops
+    aggregate_type: count_distinct

@@ -1,0 +1,33 @@
+base_view: se_sandbox_oscar__omnise_181_69538efc_dim_orchard
+label: Apata - Grower Directory
+group_label: Apata
+description: One row per grower orchard, with its home site and crop. Powers the
+  orchard list and search in the Grower Performance Snapshot App. Demo build
+  omnise_181_69538efc; orchard names are invented, per build-report.md.
+
+joins:
+  se_sandbox_oscar__omnise_181_69538efc_dim_site: {}
+  se_sandbox_oscar__omnise_181_69538efc_dim_crop: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__omnise_181_69538efc_dim_orchard
+    join_to_view: se_sandbox_oscar__omnise_181_69538efc_dim_site
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_181_69538efc_dim_orchard.home_site_id} =
+      ${se_sandbox_oscar__omnise_181_69538efc_dim_site.site_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__omnise_181_69538efc_dim_orchard
+    join_to_view: se_sandbox_oscar__omnise_181_69538efc_dim_crop
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_181_69538efc_dim_orchard.crop_id} =
+      ${se_sandbox_oscar__omnise_181_69538efc_dim_crop.crop_id}
+    relationship_type: many_to_one
+
+ai_context: |
+  This topic is a lookup of Apata grower orchards (invented names), their home
+  site and crop/variety. It has no performance measures; for packout rate,
+  trays intake/graded or reject-reason questions about an orchard, use the
+  Apata - Packout Performance topic instead and filter or group by orchard.
+
+  Keep answers concise and return only requested columns.

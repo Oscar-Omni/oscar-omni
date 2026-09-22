@@ -1,0 +1,168 @@
+base_view: se_sandbox_oscar__omnise_181_69538efc_fact_intake_daily
+label: Apata - Packout Performance
+group_label: Apata
+description: Intake-batch grain (intake_date x site x crop x orchard) left
+  joined to its grading outcome rows, site, crop, orchard and grade-outcome
+  dimensions. Powers the Season Performance Overview dashboard, the AI
+  packout-rate questions, and the Grower Performance Snapshot App detail panel.
+  Demo build omnise_181_69538efc; all data is synthetic and illustrative, per
+  build-report.md.
+
+joins:
+  se_sandbox_oscar__omnise_181_69538efc_dim_site: {}
+  se_sandbox_oscar__omnise_181_69538efc_dim_crop: {}
+  se_sandbox_oscar__omnise_181_69538efc_dim_orchard: {}
+  se_sandbox_oscar__omnise_181_69538efc_fact_grading_daily:
+    se_sandbox_oscar__omnise_181_69538efc_dim_grade_outcome: {}
+
+views:
+  se_sandbox_oscar__omnise_181_69538efc_fact_grading_daily:
+    measures:
+      trays_export_grade:
+        sql: CASE WHEN
+          ${se_sandbox_oscar__omnise_181_69538efc_dim_grade_outcome.outcome_type}
+          = 'Export' THEN ${trays_graded} ELSE 0 END
+        label: Trays Export Grade
+        group_label: Packout
+        format: number_0
+        description: Trays graded as Export. SUM(trays_graded) WHERE outcome_type = Export.
+        aggregate_type: sum
+
+      trays_reject:
+        sql: CASE WHEN
+          ${se_sandbox_oscar__omnise_181_69538efc_dim_grade_outcome.is_reject}
+          THEN ${trays_graded} ELSE 0 END
+        label: Trays Reject
+        group_label: Packout
+        format: number_0
+        description: Trays graded as any Reject outcome. SUM(trays_graded) WHERE is_reject.
+        aggregate_type: sum
+
+      trays_size_reject:
+        sql: CASE WHEN
+          ${se_sandbox_oscar__omnise_181_69538efc_dim_grade_outcome.outcome_code}
+          = 'REJ_SIZE' THEN ${trays_graded} ELSE 0 END
+        label: Trays Reject - Size
+        group_label: Packout
+        format: number_0
+        description: Trays graded REJ_SIZE. SUM(trays_graded) WHERE outcome_code = REJ_SIZE.
+        aggregate_type: sum
+
+      packout_rate_legacy:
+        sql: ${trays_export_grade} /
+          NULLIF(${se_sandbox_oscar__omnise_181_69538efc_fact_intake_daily.total_trays_intake},
+          0)
+        label: Packout Rate (Legacy, All Intake)
+        group_label: Packout
+        format: percent_1
+        description: Trays Export Grade divided by Trays Intake. The old, currently-live
+          definition; its denominator includes trays not yet graded. Always the
+          ratio of two summed totals, never an average of daily rates.
+        ai_context: The legacy definition still driving some existing Apata reports. Its
+          denominator includes ungraded trays, which is why it reads differently
+          from Packout Rate (Graded Trays Only) for the same period - this is
+          the root cause of the inconsistent-numbers pain point in the customer
+          brief. Only surface this when explicitly asked for the legacy or old
+          definition, or when explaining why two reports disagree.
+
+      packout_rate_graded_only:
+        sql: ${trays_export_grade} / NULLIF(${total_trays_graded}, 0)
+        label: Packout Rate (Graded Trays Only)
+        group_label: Packout
+        format: percent_1
+        description: Trays Export Grade divided by Trays Graded. The definition promoted
+          in the demo workbook. Always the ratio of two summed totals, never an
+          average of daily rates.
+        ai_context: THE DEFAULT metric for any unqualified packout rate question in this
+          topic. Computed as total export trays divided by total graded trays at
+          the queried grain - never an average of daily percentages. Higher is
+          better.
+
+      reject_rate:
+        sql: ${trays_reject} / NULLIF(${total_trays_graded}, 0)
+        label: Reject Rate
+        group_label: Packout
+        format: percent_1
+        description: Trays Reject divided by Trays Graded.
+
+      size_grade_reject_rate:
+        sql: ${trays_size_reject} / NULLIF(${total_trays_graded}, 0)
+        label: Size-Grade Reject Rate
+        group_label: Packout
+        format: percent_1
+        description: Trays Reject - Size divided by Trays Graded.
+
+      trays_pending_grading:
+        sql: ${se_sandbox_oscar__omnise_181_69538efc_fact_intake_daily.total_trays_intake}
+          - ${total_trays_graded}
+        label: Trays Pending Grading
+        group_label: Packout
+        format: number_0
+        description: Trays Intake minus Trays Graded, for the same filter context.
+          Positive for batches not yet fully graded (typically the final few
+          days of the window); a direct subtraction of two summed totals, not a
+          re-aggregated average.
+
+relationships:
+  - join_from_view: se_sandbox_oscar__omnise_181_69538efc_fact_intake_daily
+    join_to_view: se_sandbox_oscar__omnise_181_69538efc_dim_site
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_181_69538efc_fact_intake_daily.site_id} =
+      ${se_sandbox_oscar__omnise_181_69538efc_dim_site.site_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__omnise_181_69538efc_fact_intake_daily
+    join_to_view: se_sandbox_oscar__omnise_181_69538efc_dim_crop
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_181_69538efc_fact_intake_daily.crop_id} =
+      ${se_sandbox_oscar__omnise_181_69538efc_dim_crop.crop_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__omnise_181_69538efc_fact_intake_daily
+    join_to_view: se_sandbox_oscar__omnise_181_69538efc_dim_orchard
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_181_69538efc_fact_intake_daily.orchard_id} =
+      ${se_sandbox_oscar__omnise_181_69538efc_dim_orchard.orchard_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__omnise_181_69538efc_fact_intake_daily
+    join_to_view: se_sandbox_oscar__omnise_181_69538efc_fact_grading_daily
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_181_69538efc_fact_intake_daily.intake_batch_key}
+      =
+      ${se_sandbox_oscar__omnise_181_69538efc_fact_grading_daily.intake_batch_key}
+    relationship_type: one_to_many
+
+  - join_from_view: se_sandbox_oscar__omnise_181_69538efc_fact_grading_daily
+    join_to_view: se_sandbox_oscar__omnise_181_69538efc_dim_grade_outcome
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_181_69538efc_fact_grading_daily.outcome_code}
+      = ${se_sandbox_oscar__omnise_181_69538efc_dim_grade_outcome.outcome_code}
+    relationship_type: many_to_one
+
+ai_context: |
+  This topic covers Apata packout performance: trays intake, trays graded, and
+  grading outcomes (export, local, reject reasons) by site, crop/variety and
+  orchard. All data is synthetic demo data (see build-report.md); never present
+  any number here as a real Apata figure.
+
+  Default metric for an unqualified packout rate question is
+  packout_rate_graded_only (SUM trays_export_grade divided by SUM trays_graded),
+  never an average of daily percentages. If the legacy, currently-live
+  definition is relevant (packout_rate_legacy, which divides by trays_intake
+  instead), name it explicitly and note it reads differently for the same
+  period.
+
+  fact_intake_daily and fact_grading_daily share a composite business key
+  (intake_date, site_id, crop_id, orchard_id); grading_date can be 0-5 days
+  after intake_date for the same batch, so filter on grading_date for grading
+  outcomes and on intake_date for fruit-size/intake questions.
+
+  For why-did-packout-rate-drop questions, break down by
+  dim_grade_outcome.outcome_name and compare to fact_intake_daily.avg_fruit_size_g
+  for the same site/crop/period; the planted story is a fruit-size-driven rise
+  in the REJ_SIZE reject category at Katikati avocado orchards in the final two
+  weeks of the data window.
+
+  Keep answers concise: state the metric definition used, return only the
+  requested grouping columns, and lead with the headline number or finding.

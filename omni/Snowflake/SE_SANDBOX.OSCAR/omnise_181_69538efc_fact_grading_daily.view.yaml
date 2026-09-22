@@ -1,4 +1,10 @@
 # Reference this view as se_sandbox_oscar__omnise_181_69538efc_fact_grading_daily
+label: Apata Fruit Grading (Daily)
+description: One row per grading outcome for a batch, graded 0-5 days after
+  intake. Synthetic demo data. Joins fact_intake_daily on the composite business
+  key (intake_date, site_id, crop_id, orchard_id) via intake_batch_key, not on
+  grading_date, since grading_date can differ from intake_date.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_181_69538EFC_FACT_GRADING_DAILY
@@ -6,28 +12,72 @@ table_name: OMNISE_181_69538EFC_FACT_GRADING_DAILY
 dimensions:
   grading_date:
     sql: '"GRADING_DATE"'
+    label: Grading Date
+    group_label: Grading
+    synonyms: [ grade date, inspection date ]
 
   intake_date:
     sql: '"INTAKE_DATE"'
+    label: Intake Date (of Batch)
+    group_label: Grading
 
   site_id:
     sql: '"SITE_ID"'
     format: ID
+    hidden: true
 
   crop_id:
     sql: '"CROP_ID"'
     format: ID
+    hidden: true
 
   orchard_id:
     sql: '"ORCHARD_ID"'
     format: ID
+    hidden: true
 
   outcome_code:
     sql: '"OUTCOME_CODE"'
+    hidden: true
 
   trays_graded:
     sql: '"TRAYS_GRADED"'
+    label: Trays Graded (Row)
+    hidden: true
+
+  intake_batch_key:
+    sql: CAST(${intake_date} AS VARCHAR) || '|' || CAST(${site_id} AS VARCHAR) ||
+      '|' || CAST(${crop_id} AS VARCHAR) || '|' || CAST(${orchard_id} AS
+      VARCHAR)
+    label: Intake Batch Key
+    hidden: true
+
+  grading_row_key:
+    sql: ${intake_batch_key} || '|' || CAST(${grading_date} AS VARCHAR) || '|' ||
+      ${outcome_code}
+    label: Grading Row Key
+    hidden: true
+    primary_key: true
 
 measures:
   count:
+    label: Grading Row Count
     aggregate_type: count
+    synonyms: [ grading rows, number of grading outcomes ]
+    ai_context: Counts rows in the daily grading fact table (one row per
+      grading_date x intake_date x site x crop x orchard x outcome_code). A
+      grain/data-quality check, not a volume metric - use Trays Graded for
+      volume.
+
+  total_trays_graded:
+    sql: ${trays_graded}
+    label: Trays Graded
+    group_label: Grading
+    format: number_0
+    description: Total trays reaching a grading outcome.
+      SUM(fact_grading_daily.trays_graded).
+    aggregate_type: sum
+    synonyms: [ trays inspected, graded volume ]
+    ai_context: The volume denominator for Packout Rate (Graded Trays Only) and
+      Reject Rate. Additive across every dimension, so it is safe to sum at any
+      grain.

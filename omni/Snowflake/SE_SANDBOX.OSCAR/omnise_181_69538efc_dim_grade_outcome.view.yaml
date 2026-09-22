@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__omnise_181_69538efc_dim_grade_outcome
+label: Apata Grade Outcome
+description: One row per grading outcome code (export, local, or a specific reject reason).
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_181_69538EFC_DIM_GRADE_OUTCOME
@@ -6,16 +9,31 @@ table_name: OMNISE_181_69538EFC_DIM_GRADE_OUTCOME
 dimensions:
   outcome_code:
     sql: '"OUTCOME_CODE"'
+    hidden: true
+    primary_key: true
 
   outcome_name:
     sql: '"OUTCOME_NAME"'
+    label: Outcome
+    group_label: Grade Outcome
 
   outcome_type:
     sql: '"OUTCOME_TYPE"'
+    label: Outcome Type
+    description: Export, Local, or Reject.
+    group_label: Grade Outcome
 
   is_reject:
     sql: '"IS_REJECT"'
+    label: Is Reject
+    group_label: Grade Outcome
+    hidden: true
 
 measures:
   count:
     aggregate_type: count
+
+  outcome_count:
+    sql: ${outcome_code}
+    label: Number of Outcome Codes
+    aggregate_type: count_distinct

@@ -1,4 +1,10 @@
 # Reference this view as se_sandbox_oscar__omnise_181_69538efc_fact_intake_daily
+label: Apata Fruit Intake (Daily)
+description: One row per day, site, crop and orchard a batch of fruit arrived.
+  Synthetic demo data over an illustrative 16-week season window, with a planted
+  Katikati-avocado fruit-size dip in the final two weeks. Grain is (intake_date,
+  site_id, crop_id, orchard_id).
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_181_69538EFC_FACT_INTAKE_DAILY
@@ -6,25 +12,72 @@ table_name: OMNISE_181_69538EFC_FACT_INTAKE_DAILY
 dimensions:
   intake_date:
     sql: '"INTAKE_DATE"'
+    label: Intake Date
+    group_label: Intake
+    synonyms: [ arrival date, delivery date, harvest date ]
 
   site_id:
     sql: '"SITE_ID"'
     format: ID
+    hidden: true
 
   crop_id:
     sql: '"CROP_ID"'
     format: ID
+    hidden: true
 
   orchard_id:
     sql: '"ORCHARD_ID"'
     format: ID
+    hidden: true
 
   trays_intake:
     sql: '"TRAYS_INTAKE"'
+    label: Trays Intake (Row)
+    hidden: true
 
   avg_fruit_size_g:
     sql: '"AVG_FRUIT_SIZE_G"'
+    label: Avg Fruit Size (g)
+    format: number_1
+    description: Average per-fruit weight of the batch in grams. The latent driver
+      behind the Katikati avocado size-grade reject story in the final two weeks
+      of the window.
+    group_label: Intake
+    synonyms: [ fruit size, average fruit weight, fruit weight ]
+
+  intake_batch_key:
+    sql: CAST(${intake_date} AS VARCHAR) || '|' || CAST(${site_id} AS VARCHAR) ||
+      '|' || CAST(${crop_id} AS VARCHAR) || '|' || CAST(${orchard_id} AS
+      VARCHAR)
+    label: Intake Batch Key
+    hidden: true
+    primary_key: true
 
 measures:
   count:
+    label: Intake Batch Count
     aggregate_type: count
+    synonyms: [ intake rows, number of batches, batch count ]
+    ai_context: Counts rows in the daily intake fact table (one row per intake_date
+      x site x crop x orchard). A grain/data-quality check, not a volume metric
+      - use Trays Intake for volume.
+
+  total_trays_intake:
+    sql: ${trays_intake}
+    label: Trays Intake
+    group_label: Intake
+    format: number_0
+    description: Total trays of fruit arriving. SUM(fact_intake_daily.trays_intake).
+    aggregate_type: sum
+    synonyms: [ intake volume, trays arrived, trays received ]
+    ai_context: The volume denominator for Packout Rate (Legacy, All Intake).
+      Additive across every dimension, so it is safe to sum at any grain.
+
+  avg_fruit_size_g_avg:
+    sql: ${avg_fruit_size_g}
+    label: Average Fruit Size (g)
+    group_label: Intake
+    format: number_1
+    description: Average of avg_fruit_size_g across intake batches in the queried grain.
+    aggregate_type: average

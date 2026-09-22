@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__omnise_181_69538efc_dim_site
+label: Apata Site
+description: One row per Apata packhouse and coolstore site (Te Puke, Katikati,
+  Paengaroa). Site names are Apata real operating locations; all measures
+  attached to them in this build are synthetic demo data.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_181_69538EFC_DIM_SITE
@@ -7,16 +12,29 @@ dimensions:
   site_id:
     sql: '"SITE_ID"'
     format: ID
+    hidden: true
+    primary_key: true
 
   site_name:
     sql: '"SITE_NAME"'
+    label: Site
+    group_label: Site
 
   region:
     sql: '"REGION"'
+    label: Region
+    group_label: Site
 
   site_type:
     sql: '"SITE_TYPE"'
+    label: Site Type
+    group_label: Site
 
 measures:
   count:
     aggregate_type: count
+
+  site_count:
+    sql: ${site_id}
+    label: Number of Sites
+    aggregate_type: count_distinct
