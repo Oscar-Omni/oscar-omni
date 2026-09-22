@@ -1,0 +1,22 @@
+# Reference this view as se_sandbox_oscar__omnise_181_69538efc_dim_crop
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_181_69538EFC_DIM_CROP
+
+dimensions:
+  crop_id:
+    sql: '"CROP_ID"'
+    format: ID
+
+  crop_group:
+    sql: '"CROP_GROUP"'
+
+  variety:
+    sql: '"VARIETY"'
+
+  unit_tray_kg:
+    sql: '"UNIT_TRAY_KG"'
+
+measures:
+  count:
+    aggregate_type: count

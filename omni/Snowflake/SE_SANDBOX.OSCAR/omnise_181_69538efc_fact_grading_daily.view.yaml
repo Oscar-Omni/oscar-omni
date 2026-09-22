@@ -1,0 +1,33 @@
+# Reference this view as se_sandbox_oscar__omnise_181_69538efc_fact_grading_daily
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_181_69538EFC_FACT_GRADING_DAILY
+
+dimensions:
+  grading_date:
+    sql: '"GRADING_DATE"'
+
+  intake_date:
+    sql: '"INTAKE_DATE"'
+
+  site_id:
+    sql: '"SITE_ID"'
+    format: ID
+
+  crop_id:
+    sql: '"CROP_ID"'
+    format: ID
+
+  orchard_id:
+    sql: '"ORCHARD_ID"'
+    format: ID
+
+  outcome_code:
+    sql: '"OUTCOME_CODE"'
+
+  trays_graded:
+    sql: '"TRAYS_GRADED"'
+
+measures:
+  count:
+    aggregate_type: count

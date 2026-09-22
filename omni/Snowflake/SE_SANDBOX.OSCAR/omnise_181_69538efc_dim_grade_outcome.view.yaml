@@ -1,0 +1,21 @@
+# Reference this view as se_sandbox_oscar__omnise_181_69538efc_dim_grade_outcome
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_181_69538EFC_DIM_GRADE_OUTCOME
+
+dimensions:
+  outcome_code:
+    sql: '"OUTCOME_CODE"'
+
+  outcome_name:
+    sql: '"OUTCOME_NAME"'
+
+  outcome_type:
+    sql: '"OUTCOME_TYPE"'
+
+  is_reject:
+    sql: '"IS_REJECT"'
+
+measures:
+  count:
+    aggregate_type: count

@@ -1,0 +1,30 @@
+# Reference this view as se_sandbox_oscar__omnise_181_69538efc_dim_orchard
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_181_69538EFC_DIM_ORCHARD
+
+dimensions:
+  orchard_id:
+    sql: '"ORCHARD_ID"'
+    format: ID
+
+  orchard_name:
+    sql: '"ORCHARD_NAME"'
+
+  home_site_id:
+    sql: '"HOME_SITE_ID"'
+    format: ID
+
+  crop_id:
+    sql: '"CROP_ID"'
+    format: ID
+
+  region_locality:
+    sql: '"REGION_LOCALITY"'
+
+  hectares:
+    sql: '"HECTARES"'
+
+measures:
+  count:
+    aggregate_type: count

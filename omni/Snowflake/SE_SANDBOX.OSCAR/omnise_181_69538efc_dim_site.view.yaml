@@ -1,0 +1,22 @@
+# Reference this view as se_sandbox_oscar__omnise_181_69538efc_dim_site
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_181_69538EFC_DIM_SITE
+
+dimensions:
+  site_id:
+    sql: '"SITE_ID"'
+    format: ID
+
+  site_name:
+    sql: '"SITE_NAME"'
+
+  region:
+    sql: '"REGION"'
+
+  site_type:
+    sql: '"SITE_TYPE"'
+
+measures:
+  count:
+    aggregate_type: count

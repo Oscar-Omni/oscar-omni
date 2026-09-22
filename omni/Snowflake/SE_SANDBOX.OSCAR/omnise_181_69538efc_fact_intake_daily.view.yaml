@@ -1,0 +1,30 @@
+# Reference this view as se_sandbox_oscar__omnise_181_69538efc_fact_intake_daily
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_181_69538EFC_FACT_INTAKE_DAILY
+
+dimensions:
+  intake_date:
+    sql: '"INTAKE_DATE"'
+
+  site_id:
+    sql: '"SITE_ID"'
+    format: ID
+
+  crop_id:
+    sql: '"CROP_ID"'
+    format: ID
+
+  orchard_id:
+    sql: '"ORCHARD_ID"'
+    format: ID
+
+  trays_intake:
+    sql: '"TRAYS_INTAKE"'
+
+  avg_fruit_size_g:
+    sql: '"AVG_FRUIT_SIZE_G"'
+
+measures:
+  count:
+    aggregate_type: count
