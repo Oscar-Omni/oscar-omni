@@ -44,3 +44,10 @@ measures:
     sql: ${crop_id}
     label: Number of Crops
     aggregate_type: count_distinct
+
+  unit_tray_kg_95th_percentile:
+    sql: ${se_sandbox_oscar__omnise_181_69538efc_dim_crop.unit_tray_kg}
+    label: Unit Tray Weight (kg) Percentile
+    format: number_1
+    aggregate_type: percentile
+    percentile: 95
