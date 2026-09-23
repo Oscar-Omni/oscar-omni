@@ -1,0 +1,62 @@
+# Reference this view as se_sandbox_oscar__upguard_20260924_trials
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: UPGUARD_20260924_TRIALS
+
+dimensions:
+  trial_id:
+    sql: '"TRIAL_ID"'
+    format: ID
+
+  account_id:
+    sql: '"ACCOUNT_ID"'
+    format: ID
+
+  cohort_month:
+    sql: '"COHORT_MONTH"'
+
+  started_date:
+    sql: '"STARTED_DATE"'
+
+  region:
+    sql: '"REGION"'
+
+  channel:
+    sql: '"CHANNEL"'
+
+  segment:
+    sql: '"SEGMENT"'
+
+  eligible_7d:
+    sql: '"ELIGIBLE_7D"'
+
+  eligible_30d:
+    sql: '"ELIGIBLE_30D"'
+
+  trial_count:
+    sql: '"TRIAL_COUNT"'
+
+  first_vendor_7d:
+    sql: '"FIRST_VENDOR_7D"'
+
+  five_vendors_7d:
+    sql: '"FIVE_VENDORS_7D"'
+
+  activated_7d:
+    sql: '"ACTIVATED_7D"'
+
+  paid_30d:
+    sql: '"PAID_30D"'
+
+  paid_date:
+    sql: '"PAID_DATE"'
+
+  new_arr_usd:
+    sql: '"NEW_ARR_USD"'
+
+  onboarding_version:
+    sql: '"ONBOARDING_VERSION"'
+
+measures:
+  count:
+    aggregate_type: count

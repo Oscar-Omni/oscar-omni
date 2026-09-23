@@ -1,0 +1,35 @@
+# Reference this view as se_sandbox_oscar__upguard_20260924_initiatives
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: UPGUARD_20260924_INITIATIVES
+
+dimensions:
+  initiative_id:
+    sql: '"INITIATIVE_ID"'
+    format: ID
+
+  metric_id:
+    sql: '"METRIC_ID"'
+    format: ID
+
+  title:
+    sql: '"TITLE"'
+
+  owner:
+    sql: '"OWNER"'
+
+  status:
+    sql: '"STATUS"'
+
+  hypothesis:
+    sql: '"HYPOTHESIS"'
+
+  region:
+    sql: '"REGION"'
+
+  channel:
+    sql: '"CHANNEL"'
+
+measures:
+  count:
+    aggregate_type: count

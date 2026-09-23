@@ -1,0 +1,27 @@
+# Reference this view as se_sandbox_oscar__upguard_20260924_metric_edges
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: UPGUARD_20260924_METRIC_EDGES
+
+dimensions:
+  edge_id:
+    sql: '"EDGE_ID"'
+    format: ID
+
+  parent_metric_id:
+    sql: '"PARENT_METRIC_ID"'
+    format: ID
+
+  child_metric_id:
+    sql: '"CHILD_METRIC_ID"'
+    format: ID
+
+  operator:
+    sql: '"OPERATOR"'
+
+  edge_type:
+    sql: '"EDGE_TYPE"'
+
+measures:
+  count:
+    aggregate_type: count

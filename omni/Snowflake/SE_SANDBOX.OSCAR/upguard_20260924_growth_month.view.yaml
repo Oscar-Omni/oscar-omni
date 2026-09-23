@@ -1,0 +1,88 @@
+# Reference this view as se_sandbox_oscar__upguard_20260924_growth_month
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: UPGUARD_20260924_GROWTH_MONTH
+
+dimensions:
+  month:
+    sql: '"MONTH"'
+
+  region:
+    sql: '"REGION"'
+
+  channel:
+    sql: '"CHANNEL"'
+
+  segment:
+    sql: '"SEGMENT"'
+
+  opening_arr_usd:
+    sql: '"OPENING_ARR_USD"'
+
+  new_arr_usd:
+    sql: '"NEW_ARR_USD"'
+
+  expansion_arr_usd:
+    sql: '"EXPANSION_ARR_USD"'
+
+  contraction_arr_usd:
+    sql: '"CONTRACTION_ARR_USD"'
+
+  churn_arr_usd:
+    sql: '"CHURN_ARR_USD"'
+
+  closing_arr_usd:
+    sql: '"CLOSING_ARR_USD"'
+
+  opening_accounts:
+    sql: '"OPENING_ACCOUNTS"'
+
+  new_accounts:
+    sql: '"NEW_ACCOUNTS"'
+
+  expanding_accounts:
+    sql: '"EXPANDING_ACCOUNTS"'
+
+  contracting_accounts:
+    sql: '"CONTRACTING_ACCOUNTS"'
+
+  churned_accounts:
+    sql: '"CHURNED_ACCOUNTS"'
+
+  closing_accounts:
+    sql: '"CLOSING_ACCOUNTS"'
+
+  retained_accounts:
+    sql: '"RETAINED_ACCOUNTS"'
+
+  multi_module_accounts:
+    sql: '"MULTI_MODULE_ACCOUNTS"'
+
+  weekly_active_accounts:
+    sql: '"WEEKLY_ACTIVE_ACCOUNTS"'
+
+  assessments_completed:
+    sql: '"ASSESSMENTS_COMPLETED"'
+
+  trial_count:
+    sql: '"TRIAL_COUNT"'
+
+  first_vendor_7d:
+    sql: '"FIRST_VENDOR_7D"'
+
+  five_vendors_7d:
+    sql: '"FIVE_VENDORS_7D"'
+
+  activated_7d:
+    sql: '"ACTIVATED_7D"'
+
+  paid_30d:
+    sql: '"PAID_30D"'
+
+  growth_id:
+    sql: '"GROWTH_ID"'
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

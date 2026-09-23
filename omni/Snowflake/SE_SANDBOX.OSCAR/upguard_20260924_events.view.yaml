@@ -1,0 +1,27 @@
+# Reference this view as se_sandbox_oscar__upguard_20260924_events
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: UPGUARD_20260924_EVENTS
+
+dimensions:
+  event_id:
+    sql: '"EVENT_ID"'
+    format: ID
+
+  trial_id:
+    sql: '"TRIAL_ID"'
+    format: ID
+
+  account_id:
+    sql: '"ACCOUNT_ID"'
+    format: ID
+
+  event_name:
+    sql: '"EVENT_NAME"'
+
+  event_date:
+    sql: '"EVENT_DATE"'
+
+measures:
+  count:
+    aggregate_type: count

@@ -1,0 +1,34 @@
+# Reference this view as se_sandbox_oscar__upguard_20260924_metric_nodes
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: UPGUARD_20260924_METRIC_NODES
+
+dimensions:
+  metric_id:
+    sql: '"METRIC_ID"'
+    format: ID
+
+  label:
+    sql: '"LABEL"'
+
+  numerator:
+    sql: '"NUMERATOR"'
+
+  denominator:
+    sql: '"DENOMINATOR"'
+
+  format:
+    sql: '"FORMAT"'
+
+  owner:
+    sql: '"OWNER"'
+
+  formula:
+    sql: '"FORMULA"'
+
+  direction:
+    sql: '"DIRECTION"'
+
+measures:
+  count:
+    aggregate_type: count

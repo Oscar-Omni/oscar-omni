@@ -1,0 +1,37 @@
+# Reference this view as se_sandbox_oscar__upguard_20260924_accounts
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: UPGUARD_20260924_ACCOUNTS
+
+dimensions:
+  account_id:
+    sql: '"ACCOUNT_ID"'
+    format: ID
+
+  account_name:
+    sql: '"ACCOUNT_NAME"'
+
+  region:
+    sql: '"REGION"'
+
+  city:
+    sql: '"CITY"'
+
+  channel:
+    sql: '"CHANNEL"'
+
+  segment:
+    sql: '"SEGMENT"'
+
+  created_date:
+    sql: '"CREATED_DATE"'
+
+  entry_product:
+    sql: '"ENTRY_PRODUCT"'
+
+  is_synthetic:
+    sql: '"IS_SYNTHETIC"'
+
+measures:
+  count:
+    aggregate_type: count
