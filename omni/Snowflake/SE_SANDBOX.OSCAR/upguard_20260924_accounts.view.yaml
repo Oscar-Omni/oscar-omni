@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__upguard_20260924_accounts
+label: UpGuard Accounts
+description: Synthetic demo. USD amounts. Snapshot balances must be grouped or
+  filtered to one month, never summed over time.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: UPGUARD_20260924_ACCOUNTS
@@ -7,6 +11,7 @@ dimensions:
   account_id:
     sql: '"ACCOUNT_ID"'
     format: ID
+    primary_key: true
 
   account_name:
     sql: '"ACCOUNT_NAME"'
@@ -31,7 +36,14 @@ dimensions:
 
   is_synthetic:
     sql: '"IS_SYNTHETIC"'
+    hidden: true
 
 measures:
   count:
     aggregate_type: count
+
+  is_synthetic_sum:
+    sql: ${is_synthetic}
+    label: Is Synthetic
+    format: NUMBER
+    aggregate_type: sum

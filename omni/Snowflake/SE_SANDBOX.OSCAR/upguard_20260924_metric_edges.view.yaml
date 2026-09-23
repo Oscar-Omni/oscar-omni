@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__upguard_20260924_metric_edges
+label: UpGuard Metric Edges
+description: Synthetic demo. USD amounts. Snapshot balances must be grouped or
+  filtered to one month, never summed over time.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: UPGUARD_20260924_METRIC_EDGES
@@ -7,6 +11,7 @@ dimensions:
   edge_id:
     sql: '"EDGE_ID"'
     format: ID
+    primary_key: true
 
   parent_metric_id:
     sql: '"PARENT_METRIC_ID"'

@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__upguard_20260924_events
+label: UpGuard Events
+description: Synthetic demo. USD amounts. Snapshot balances must be grouped or
+  filtered to one month, never summed over time.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: UPGUARD_20260924_EVENTS
@@ -7,6 +11,7 @@ dimensions:
   event_id:
     sql: '"EVENT_ID"'
     format: ID
+    primary_key: true
 
   trial_id:
     sql: '"TRIAL_ID"'

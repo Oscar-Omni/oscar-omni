@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__upguard_20260924_initiatives
+label: UpGuard Initiatives
+description: Synthetic demo. USD amounts. Snapshot balances must be grouped or
+  filtered to one month, never summed over time.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: UPGUARD_20260924_INITIATIVES
@@ -7,6 +11,7 @@ dimensions:
   initiative_id:
     sql: '"INITIATIVE_ID"'
     format: ID
+    primary_key: true
 
   metric_id:
     sql: '"METRIC_ID"'

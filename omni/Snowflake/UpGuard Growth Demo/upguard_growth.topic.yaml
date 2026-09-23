@@ -1,0 +1,26 @@
+base_view: se_sandbox_oscar__upguard_20260924_growth_month
+label: UpGuard · Growth performance
+group_label: UpGuard Growth Demo
+description: "All data is synthetic for a Vendor Risk growth demo, not actual
+  UpGuard results. Currency USD. Default August 2026 vs August 2025. Trial
+  activation means monitoring 5 vendors AND completing the first assessment by
+  day 7. All cohorts mature as of September 23 2026. Rates are ratios of summed
+  counts, not averages of rates. Funnel paid counts use 30-day signup cohorts.
+  In this deliberately simplified dataset all paid conversions occur within the
+  signup calendar month; in real data cohort conversions and calendar new ARR
+  need separate date logic. Opening and closing ARR are snapshots: group or
+  filter to one month. Do not sum balances across months. NRR here is monthly,
+  not annual. Product adoption links are hypotheses, not causal evidence."
+
+joins: {}
+
+ai_context: "All data is synthetic for a Vendor Risk growth demo, not actual
+  UpGuard results. Currency USD. Default August 2026 vs August 2025. Trial
+  activation means monitoring 5 vendors AND completing the first assessment by
+  day 7. All cohorts mature as of September 23 2026. Rates are ratios of summed
+  counts, not averages of rates. Funnel paid counts use 30-day signup cohorts.
+  In this deliberately simplified dataset all paid conversions occur within the
+  signup calendar month; in real data cohort conversions and calendar new ARR
+  need separate date logic. Opening and closing ARR are snapshots: group or
+  filter to one month. Do not sum balances across months. NRR here is monthly,
+  not annual. Product adoption links are hypotheses, not causal evidence."

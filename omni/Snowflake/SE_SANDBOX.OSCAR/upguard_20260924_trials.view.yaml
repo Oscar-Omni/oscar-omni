@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__upguard_20260924_trials
+label: UpGuard Trials
+description: Synthetic demo. USD amounts. Snapshot balances must be grouped or
+  filtered to one month, never summed over time.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: UPGUARD_20260924_TRIALS
@@ -7,6 +11,7 @@ dimensions:
   trial_id:
     sql: '"TRIAL_ID"'
     format: ID
+    primary_key: true
 
   account_id:
     sql: '"ACCOUNT_ID"'
@@ -29,30 +34,38 @@ dimensions:
 
   eligible_7d:
     sql: '"ELIGIBLE_7D"'
+    hidden: true
 
   eligible_30d:
     sql: '"ELIGIBLE_30D"'
+    hidden: true
 
   trial_count:
     sql: '"TRIAL_COUNT"'
+    hidden: true
 
   first_vendor_7d:
     sql: '"FIRST_VENDOR_7D"'
+    hidden: true
 
   five_vendors_7d:
     sql: '"FIVE_VENDORS_7D"'
+    hidden: true
 
   activated_7d:
     sql: '"ACTIVATED_7D"'
+    hidden: true
 
   paid_30d:
     sql: '"PAID_30D"'
+    hidden: true
 
   paid_date:
     sql: '"PAID_DATE"'
 
   new_arr_usd:
     sql: '"NEW_ARR_USD"'
+    hidden: true
 
   onboarding_version:
     sql: '"ONBOARDING_VERSION"'
@@ -60,3 +73,71 @@ dimensions:
 measures:
   count:
     aggregate_type: count
+
+  eligible_7d_sum:
+    sql: ${eligible_7d}
+    label: Eligible 7D
+    format: NUMBER
+    aggregate_type: sum
+
+  eligible_30d_sum:
+    sql: ${eligible_30d}
+    label: Eligible 30D
+    format: NUMBER
+    aggregate_type: sum
+
+  trial_count_sum:
+    sql: ${trial_count}
+    label: Trial Count
+    format: NUMBER
+    aggregate_type: sum
+
+  first_vendor_7d_sum:
+    sql: ${first_vendor_7d}
+    label: First Vendor 7D
+    format: NUMBER
+    aggregate_type: sum
+
+  five_vendors_7d_sum:
+    sql: ${five_vendors_7d}
+    label: Five Vendors 7D
+    format: NUMBER
+    aggregate_type: sum
+
+  activated_7d_sum:
+    sql: ${activated_7d}
+    label: Activated 7D
+    format: NUMBER
+    aggregate_type: sum
+
+  paid_30d_sum:
+    sql: ${paid_30d}
+    label: Paid 30D
+    format: NUMBER
+    aggregate_type: sum
+
+  new_arr_usd_sum:
+    sql: ${new_arr_usd}
+    label: New Arr Usd
+    format: USDCURRENCY
+    aggregate_type: sum
+
+  activation_rate:
+    sql: ${activated_7d_sum} / NULLIF(${trial_count_sum}, 0)
+    label: Activation Rate
+    format: PERCENT_1
+
+  coverage_rate:
+    sql: ${five_vendors_7d_sum} / NULLIF(${first_vendor_7d_sum}, 0)
+    label: Coverage Rate
+    format: PERCENT_1
+
+  paid_conversion_rate:
+    sql: ${paid_30d_sum} / NULLIF(${trial_count_sum}, 0)
+    label: Paid Conversion Rate
+    format: PERCENT_1
+
+  activated_to_paid_rate:
+    sql: ${paid_30d_sum} / NULLIF(${activated_7d_sum}, 0)
+    label: Activated To Paid Rate
+    format: PERCENT_1

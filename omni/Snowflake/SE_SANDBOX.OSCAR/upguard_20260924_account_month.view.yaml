@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__upguard_20260924_account_month
+label: UpGuard Account Month
+description: Synthetic demo. USD amounts. Snapshot balances must be grouped or
+  filtered to one month, never summed over time.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: UPGUARD_20260924_ACCOUNT_MONTH
@@ -7,6 +11,7 @@ dimensions:
   snapshot_id:
     sql: '"SNAPSHOT_ID"'
     format: ID
+    primary_key: true
 
   account_id:
     sql: '"ACCOUNT_ID"'
@@ -26,52 +31,170 @@ dimensions:
 
   opening_arr_usd:
     sql: '"OPENING_ARR_USD"'
+    hidden: true
 
   new_arr_usd:
     sql: '"NEW_ARR_USD"'
+    hidden: true
 
   expansion_arr_usd:
     sql: '"EXPANSION_ARR_USD"'
+    hidden: true
 
   contraction_arr_usd:
     sql: '"CONTRACTION_ARR_USD"'
+    hidden: true
 
   churn_arr_usd:
     sql: '"CHURN_ARR_USD"'
+    hidden: true
 
   closing_arr_usd:
     sql: '"CLOSING_ARR_USD"'
+    hidden: true
 
   opening_accounts:
     sql: '"OPENING_ACCOUNTS"'
+    hidden: true
 
   new_accounts:
     sql: '"NEW_ACCOUNTS"'
+    hidden: true
 
   expanding_accounts:
     sql: '"EXPANDING_ACCOUNTS"'
+    hidden: true
 
   contracting_accounts:
     sql: '"CONTRACTING_ACCOUNTS"'
+    hidden: true
 
   churned_accounts:
     sql: '"CHURNED_ACCOUNTS"'
+    hidden: true
 
   closing_accounts:
     sql: '"CLOSING_ACCOUNTS"'
+    hidden: true
 
   retained_accounts:
     sql: '"RETAINED_ACCOUNTS"'
+    hidden: true
 
   multi_module_accounts:
     sql: '"MULTI_MODULE_ACCOUNTS"'
+    hidden: true
 
   weekly_active_accounts:
     sql: '"WEEKLY_ACTIVE_ACCOUNTS"'
+    hidden: true
 
   assessments_completed:
     sql: '"ASSESSMENTS_COMPLETED"'
+    hidden: true
 
 measures:
   count:
     aggregate_type: count
+
+  opening_arr_usd_sum:
+    sql: ${opening_arr_usd}
+    label: Opening Arr Usd
+    format: USDCURRENCY
+    aggregate_type: sum
+
+  new_arr_usd_sum:
+    sql: ${new_arr_usd}
+    label: New Arr Usd
+    format: USDCURRENCY
+    aggregate_type: sum
+
+  expansion_arr_usd_sum:
+    sql: ${expansion_arr_usd}
+    label: Expansion Arr Usd
+    format: USDCURRENCY
+    aggregate_type: sum
+
+  contraction_arr_usd_sum:
+    sql: ${contraction_arr_usd}
+    label: Contraction Arr Usd
+    format: USDCURRENCY
+    aggregate_type: sum
+
+  churn_arr_usd_sum:
+    sql: ${churn_arr_usd}
+    label: Churn Arr Usd
+    format: USDCURRENCY
+    aggregate_type: sum
+
+  closing_arr_usd_sum:
+    sql: ${closing_arr_usd}
+    label: Closing Arr Usd
+    format: USDCURRENCY
+    aggregate_type: sum
+
+  opening_accounts_sum:
+    sql: ${opening_accounts}
+    label: Opening Accounts
+    format: NUMBER
+    aggregate_type: sum
+
+  new_accounts_sum:
+    sql: ${new_accounts}
+    label: New Accounts
+    format: NUMBER
+    aggregate_type: sum
+
+  expanding_accounts_sum:
+    sql: ${expanding_accounts}
+    label: Expanding Accounts
+    format: NUMBER
+    aggregate_type: sum
+
+  contracting_accounts_sum:
+    sql: ${contracting_accounts}
+    label: Contracting Accounts
+    format: NUMBER
+    aggregate_type: sum
+
+  churned_accounts_sum:
+    sql: ${churned_accounts}
+    label: Churned Accounts
+    format: NUMBER
+    aggregate_type: sum
+
+  closing_accounts_sum:
+    sql: ${closing_accounts}
+    label: Closing Accounts
+    format: NUMBER
+    aggregate_type: sum
+
+  retained_accounts_sum:
+    sql: ${retained_accounts}
+    label: Retained Accounts
+    format: NUMBER
+    aggregate_type: sum
+
+  multi_module_accounts_sum:
+    sql: ${multi_module_accounts}
+    label: Multi Module Accounts
+    format: NUMBER
+    aggregate_type: sum
+
+  weekly_active_accounts_sum:
+    sql: ${weekly_active_accounts}
+    label: Weekly Active Accounts
+    format: NUMBER
+    aggregate_type: sum
+
+  assessments_completed_sum:
+    sql: ${assessments_completed}
+    label: Assessments Completed
+    format: NUMBER
+    aggregate_type: sum
+
+  monthly_nrr:
+    sql: (${opening_arr_usd_sum} + ${expansion_arr_usd_sum} - ${churn_arr_usd_sum} -
+      ${contraction_arr_usd_sum}) / NULLIF(${opening_arr_usd_sum}, 0)
+    label: Monthly NRR
+    format: PERCENT_1

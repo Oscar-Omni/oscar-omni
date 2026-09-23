@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__upguard_20260924_targets
+label: UpGuard Targets
+description: Synthetic demo. USD amounts. Snapshot balances must be grouped or
+  filtered to one month, never summed over time.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: UPGUARD_20260924_TARGETS
@@ -7,6 +11,7 @@ dimensions:
   target_id:
     sql: '"TARGET_ID"'
     format: ID
+    primary_key: true
 
   month:
     sql: '"MONTH"'
@@ -20,10 +25,24 @@ dimensions:
 
   target_value:
     sql: '"TARGET_VALUE"'
+    hidden: true
 
   is_synthetic:
     sql: '"IS_SYNTHETIC"'
+    hidden: true
 
 measures:
   count:
     aggregate_type: count
+
+  target_value_sum:
+    sql: ${target_value}
+    label: Target Value
+    format: NUMBER
+    aggregate_type: sum
+
+  is_synthetic_sum:
+    sql: ${is_synthetic}
+    label: Is Synthetic
+    format: NUMBER
+    aggregate_type: sum
