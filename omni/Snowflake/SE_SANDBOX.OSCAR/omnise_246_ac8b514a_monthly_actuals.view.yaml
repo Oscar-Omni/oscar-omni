@@ -1,0 +1,37 @@
+# Reference this view as se_sandbox_oscar__omnise_246_ac8b514a_monthly_actuals
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_246_AC8B514A_MONTHLY_ACTUALS
+
+dimensions:
+  month_date:
+    sql: '"MONTH_DATE"'
+
+  sku_id:
+    sql: '"SKU_ID"'
+    format: ID
+
+  channel:
+    sql: '"CHANNEL"'
+
+  gross_sales_usd:
+    sql: '"GROSS_SALES_USD"'
+
+  returns_value_usd:
+    sql: '"RETURNS_VALUE_USD"'
+
+  net_sales_usd:
+    sql: '"NET_SALES_USD"'
+
+  cogs_usd:
+    sql: '"COGS_USD"'
+
+  fulfilment_cost_usd:
+    sql: '"FULFILMENT_COST_USD"'
+
+  contribution_profit_usd:
+    sql: '"CONTRIBUTION_PROFIT_USD"'
+
+measures:
+  count:
+    aggregate_type: count

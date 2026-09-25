@@ -1,0 +1,25 @@
+# Reference this view as se_sandbox_oscar__omnise_246_ac8b514a_dim_products
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_246_AC8B514A_DIM_PRODUCTS
+
+dimensions:
+  sku_id:
+    sql: '"SKU_ID"'
+    format: ID
+
+  sku_name:
+    sql: '"SKU_NAME"'
+
+  product_line:
+    sql: '"PRODUCT_LINE"'
+
+  unit_type:
+    sql: '"UNIT_TYPE"'
+
+  list_price_usd:
+    sql: '"LIST_PRICE_USD"'
+
+measures:
+  count:
+    aggregate_type: count

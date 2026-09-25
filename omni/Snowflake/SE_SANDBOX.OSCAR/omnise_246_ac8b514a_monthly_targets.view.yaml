@@ -1,0 +1,34 @@
+# Reference this view as se_sandbox_oscar__omnise_246_ac8b514a_monthly_targets
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_246_AC8B514A_MONTHLY_TARGETS
+
+dimensions:
+  month_date:
+    sql: '"MONTH_DATE"'
+
+  sku_id:
+    sql: '"SKU_ID"'
+    format: ID
+
+  channel:
+    sql: '"CHANNEL"'
+
+  gross_sales_target_usd:
+    sql: '"GROSS_SALES_TARGET_USD"'
+
+  returns_value_target_usd:
+    sql: '"RETURNS_VALUE_TARGET_USD"'
+
+  cogs_target_usd:
+    sql: '"COGS_TARGET_USD"'
+
+  fulfilment_cost_target_usd:
+    sql: '"FULFILMENT_COST_TARGET_USD"'
+
+  contribution_profit_target_usd:
+    sql: '"CONTRIBUTION_PROFIT_TARGET_USD"'
+
+measures:
+  count:
+    aggregate_type: count
