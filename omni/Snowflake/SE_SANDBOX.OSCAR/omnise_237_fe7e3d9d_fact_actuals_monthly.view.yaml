@@ -1,0 +1,34 @@
+# Reference this view as se_sandbox_oscar__omnise_237_fe7e3d9d_fact_actuals_monthly
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_237_FE7E3D9D_FACT_ACTUALS_MONTHLY
+
+dimensions:
+  month_date:
+    sql: '"MONTH_DATE"'
+
+  store_id:
+    sql: '"STORE_ID"'
+    format: ID
+
+  channel:
+    sql: '"CHANNEL"'
+
+  revenue_aud:
+    sql: '"REVENUE_AUD"'
+
+  cogs_aud:
+    sql: '"COGS_AUD"'
+
+  promo_spend_aud:
+    sql: '"PROMO_SPEND_AUD"'
+
+  operating_profit_aud:
+    sql: '"OPERATING_PROFIT_AUD"'
+
+  units_sold:
+    sql: '"UNITS_SOLD"'
+
+measures:
+  count:
+    aggregate_type: count

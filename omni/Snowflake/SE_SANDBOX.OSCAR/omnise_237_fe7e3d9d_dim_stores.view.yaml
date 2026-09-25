@@ -1,0 +1,28 @@
+# Reference this view as se_sandbox_oscar__omnise_237_fe7e3d9d_dim_stores
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_237_FE7E3D9D_DIM_STORES
+
+dimensions:
+  store_id:
+    sql: '"STORE_ID"'
+    format: ID
+
+  store_name:
+    sql: '"STORE_NAME"'
+
+  city:
+    sql: '"CITY"'
+
+  state:
+    sql: '"STATE"'
+
+  country:
+    sql: '"COUNTRY"'
+
+  opened_date:
+    sql: '"OPENED_DATE"'
+
+measures:
+  count:
+    aggregate_type: count
