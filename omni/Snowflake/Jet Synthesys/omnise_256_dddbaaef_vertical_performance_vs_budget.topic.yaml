@@ -1,0 +1,85 @@
+hidden: false
+
+base_view: se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly
+label: Jet Synthesys - Vertical Performance vs Budget
+group_label: Jet Synthesys
+description: Vertical x month actuals joined to the uploaded budget fact on the
+  composite business key (vertical_id, month_start_date), not a physical foreign
+  key, plus the vertical dimension. Used for the budget-upload workbook proof
+  and the Blended ARPU variance-to-budget story (Esports DigiAdz miss). Demo
+  build omnise_256_dddbaaef.
+
+joins:
+  se_sandbox_oscar__omnise_256_dddbaaef_dim_vertical: {}
+  se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly_budget: {}
+
+views:
+  se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly:
+    measures:
+      blended_arpu_variance_inr:
+        sql: ${se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly.blended_arpu_inr}
+          -
+          ${se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly_budget.blended_arpu_budget_inr}
+        label: Blended ARPU Variance (INR)
+        format: '"₹"#,##0.00'
+        description: Actual Blended ARPU minus Budget Blended ARPU, same metric, same
+          period.
+
+      blended_arpu_variance_pct:
+        sql: ${blended_arpu_variance_inr} /
+          NULLIF(${se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly_budget.blended_arpu_budget_inr},
+          0)
+        label: Blended ARPU Variance %
+        format: percent_1
+        description: Blended ARPU Variance (INR) divided by Budget Blended ARPU, guarded
+          against a zero budget denominator.
+
+      digiadz_revenue_variance_inr:
+        sql: ${se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly.total_digiadz_ad_revenue_inr}
+          -
+          ${se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly_budget.total_digiadz_revenue_budget_inr}
+        label: DigiAdz-branded Ad Revenue Variance (INR) - legacy brand
+        format: '"₹"#,##0'
+        description: Actual minus budget for the legacy DigiAdz-branded ad revenue line.
+          Budget assumed flat 1%/month growth with no tournament seasonality, so
+          Esports August is the largest miss in the dataset; this is a
+          seasonality/forecasting gap, not a promotional or COGS effect.
+
+relationships:
+  - join_from_view: se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly
+    join_to_view: se_sandbox_oscar__omnise_256_dddbaaef_dim_vertical
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly.vertical_id}
+      = ${se_sandbox_oscar__omnise_256_dddbaaef_dim_vertical.vertical_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly
+    join_to_view: se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly_budget
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly.vertical_id}
+      =
+      ${se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly_budget.vertical_id}
+      AND
+      ${se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly.month_start_date}
+      =
+      ${se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly_budget.month_start_date}
+    relationship_type: one_to_one
+
+ai_context: |
+  This topic adds the uploaded budget fact (flat 1%/month growth, no seasonality)
+  to actuals, joined on the composite business key (vertical_id,
+  month_start_date), for the same four legacy-labeled JetSynthesys verticals as
+  the vertical_performance topic.
+
+  Budget conservatism: the budget was set before the Esports tournament calendar
+  was known, so Esports actual DigiAdz-branded ad revenue and MAU both ran
+  materially above budget in later months (especially August 2026) while other
+  verticals stayed close to budget. When asked why Esports missed or beat
+  budget, cite the tournament-season multiplier explicitly and check the
+  monthly trend rather than describing it as a one-off promotional effect. Do
+  not describe this as continued growth throughout the period if the monthly
+  values show the multiplier stepping up in specific months (May-Aug).
+
+  Keep answers concise: state the metric and period used, return only the
+  requested grouping columns and fields, and lead with the headline number or
+  finding.

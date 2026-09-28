@@ -1,0 +1,44 @@
+hidden: false
+
+base_view: se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly
+label: Jet Synthesys - Vertical Performance
+group_label: Jet Synthesys
+description: Vertical x month actuals (MAU, new installs, IAP revenue, legacy
+  DigiAdz-branded ad revenue) joined to the vertical dimension. Used for the
+  portfolio dashboard, the IAP-only vs blended ARPU AI question pair, and the
+  MereeDhun reuse dashboard. Demo build omnise_256_dddbaaef.
+
+joins:
+  se_sandbox_oscar__omnise_256_dddbaaef_dim_vertical: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly
+    join_to_view: se_sandbox_oscar__omnise_256_dddbaaef_dim_vertical
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly.vertical_id}
+      = ${se_sandbox_oscar__omnise_256_dddbaaef_dim_vertical.vertical_id}
+    relationship_type: many_to_one
+
+ai_context: |
+  This topic covers JetSynthesys vertical performance for four verticals
+  (PlayIzzOn - Real Cricket, PlayIzzOn - Sachin Saga, Esports, MereeDhun),
+  Jan-Aug 2026 actuals only, all figures synthetic. PlayIzzOn and MereeDhun are
+  legacy JetSynthesys names, not current ones; see build-report.md.
+
+  Two distinct revenue-per-user metrics exist. Default metric for an unqualified
+  revenue per active user or revenue per user question is iap_only_arpu_inr =
+  SUM(iap_revenue_inr) / AVERAGE(mau): in-app-purchase revenue only. Only use
+  blended_arpu_inr = SUM(iap_revenue_inr + digiadz_ad_revenue_inr) / AVERAGE(mau)
+  when the question explicitly asks to include DigiAdz or ad revenue, and name
+  it explicitly as the blended figure when you do. These are materially
+  different, especially for Esports, which is ad-funded: always state which
+  metric was used. Never average mau directly, and never SUM mau across more
+  than one month; only AVERAGE it.
+
+  Esports carries a tournament-season multiplier (ramping through Aug 2026) that
+  raises both its MAU and its DigiAdz ad revenue together in the same months; do
+  not attribute an Esports revenue change to only one of those drivers.
+
+  Keep answers concise: state the metric definition used, return only the
+  requested grouping columns and fields, and lead with the headline number or
+  finding.

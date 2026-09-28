@@ -1,4 +1,10 @@
 # Reference this view as se_sandbox_oscar__omnise_256_dddbaaef_dim_vertical
+label: Jet Synthesys - Vertical
+description: One row per JetSynthesys business vertical (grain = vertical_id).
+  PlayIzzOn and MereeDhun are retained as legacy vertical/portfolio names per
+  the accepted build resolution (task thread, 2026-09-28); see build-report.md.
+  Demo build omnise_256_dddbaaef.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_256_DDDBAAEF_DIM_VERTICAL
@@ -6,17 +12,33 @@ table_name: OMNISE_256_DDDBAAEF_DIM_VERTICAL
 dimensions:
   vertical_id:
     sql: '"VERTICAL_ID"'
+    label: Vertical ID
     format: ID
+    description: Fixed literal key (PIZ-RC, PIZ-SS, ESP, MD). Never reassigned by
+      the generator.
+    primary_key: true
 
   vertical_name:
     sql: '"VERTICAL_NAME"'
+    label: Vertical
+    description: Display name for the vertical. PlayIzzOn and MereeDhun are labeled
+      as legacy JetSynthesys names; Real Cricket, Sachin Saga and Esports are
+      current per jetsynthesys.com (see build-report.md).
 
   portfolio_group:
     sql: '"PORTFOLIO_GROUP"'
+    label: Portfolio Group
+    description: Row-level security grouping used for the governance beat of the
+      demo. Labeled as a legacy name for PlayIzzOn/MereeDhun for the same reason
+      as vertical_name.
 
   primary_monetization:
     sql: '"PRIMARY_MONETIZATION"'
+    label: Primary Monetization Model
+    description: IAP, Ad-funded or Mixed. Descriptive only; drives no calculation.
 
 measures:
   count:
+    label: Vertical Count
+    description: Number of verticals in the current filter context (4 with no filter).
     aggregate_type: count

@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly_budget
+label: Jet Synthesys - Vertical Monthly Budget
+description: One row per vertical per calendar month, Jan-Aug 2026, uploaded
+  from jetsynthesys_vertical_budget_upload.xlsx. Same key shape as the actuals
+  fact, no seasonality applied. Demo build omnise_256_dddbaaef.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_256_DDDBAAEF_FACT_VERTICAL_MONTHLY_BUDGET
@@ -6,23 +11,87 @@ table_name: OMNISE_256_DDDBAAEF_FACT_VERTICAL_MONTHLY_BUDGET
 dimensions:
   vertical_id:
     sql: '"VERTICAL_ID"'
+    label: Vertical ID
     format: ID
 
   month_start_date:
     sql: '"MONTH_START_DATE"'
+    label: Month
+    description: First day of the calendar month. Joins to the actuals fact on this
+      composite business key (vertical_id, month_start_date), not a physical
+      foreign key.
 
   mau_budget:
     sql: '"MAU_BUDGET"'
+    label: Budget Monthly Active Users (row)
+    format: number_0
 
   iap_revenue_budget_inr:
     sql: '"IAP_REVENUE_BUDGET_INR"'
+    label: Budget IAP Revenue (row, INR)
+    format: '"₹"#,##0'
 
   digiadz_revenue_budget_inr:
     sql: '"DIGIADZ_REVENUE_BUDGET_INR"'
+    label: Budget DigiAdz-branded Ad Revenue (row, INR) - legacy brand
+    format: '"₹"#,##0'
+    description: Budgeted ad revenue line originally branded DigiAdz. Set flat at
+      1%/month with no tournament seasonality, unlike the actuals; see
+      build-report.md.
 
   new_installs_budget:
     sql: '"NEW_INSTALLS_BUDGET"'
+    label: Budget New Installs (row)
+    format: number_0
+
+  vertical_month_key:
+    sql: ${vertical_id} || CHR(45) || ${month_start_date}
+    label: Vertical Month Key
+    description: Composite key (vertical_id, month_start_date), synthesized because
+      Omni requires a single primary key dimension per view.
+    hidden: true
+    primary_key: true
 
 measures:
   count:
+    label: Row Count
     aggregate_type: count
+
+  average_mau_budget:
+    sql: '"MAU_BUDGET"'
+    label: Average Budget Monthly Active Users
+    format: number_0
+    description: AVERAGE(mau_budget) over the filtered months. Never SUM across months.
+    aggregate_type: average
+
+  total_new_installs_budget:
+    sql: '"NEW_INSTALLS_BUDGET"'
+    label: Total Budget New Installs
+    format: number_0
+    aggregate_type: sum
+
+  total_iap_revenue_budget_inr:
+    sql: '"IAP_REVENUE_BUDGET_INR"'
+    label: Total Budget IAP Revenue (INR)
+    format: '"₹"#,##0'
+    aggregate_type: sum
+
+  total_digiadz_revenue_budget_inr:
+    sql: '"DIGIADZ_REVENUE_BUDGET_INR"'
+    label: Total Budget DigiAdz-branded Ad Revenue (INR) - legacy brand
+    format: '"₹"#,##0'
+    aggregate_type: sum
+
+  total_blended_revenue_budget_inr:
+    sql: '"IAP_REVENUE_BUDGET_INR" + "DIGIADZ_REVENUE_BUDGET_INR"'
+    label: Total Budget Blended Revenue (INR)
+    format: '"₹"#,##0'
+    aggregate_type: sum
+
+  blended_arpu_budget_inr:
+    sql: (${total_iap_revenue_budget_inr} + ${total_digiadz_revenue_budget_inr}) /
+      NULLIF(${average_mau_budget}, 0)
+    label: Budget Blended ARPU (INR)
+    format: '"₹"#,##0.00'
+    description: SUM(iap_revenue_budget_inr + digiadz_revenue_budget_inr) /
+      AVERAGE(mau_budget) over the filtered months.

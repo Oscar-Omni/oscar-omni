@@ -1,4 +1,10 @@
 # Reference this view as se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly
+label: Jet Synthesys - Vertical Monthly Actuals
+description: One row per vertical per calendar month, Jan-Aug 2026. All figures
+  are synthetic. digiadz_ad_revenue_inr is a synthetic field name; DigiAdz is a
+  legacy JetSynthesys brand, not a current one (see build-report.md). Demo build
+  omnise_256_dddbaaef.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_256_DDDBAAEF_FACT_VERTICAL_MONTHLY
@@ -6,23 +12,100 @@ table_name: OMNISE_256_DDDBAAEF_FACT_VERTICAL_MONTHLY
 dimensions:
   vertical_id:
     sql: '"VERTICAL_ID"'
+    label: Vertical ID
     format: ID
 
   month_start_date:
     sql: '"MONTH_START_DATE"'
+    label: Month
+    description: First day of the calendar month. Native fact date; no separate
+      calendar table since there are only 8 monthly points.
 
   mau:
     sql: '"MAU"'
+    label: Monthly Active Users (row)
+    format: number_0
+    description: Non-additive across months. Use the Average Monthly Active Users
+      measure, never SUM, when aggregating over more than one month.
 
   new_installs:
     sql: '"NEW_INSTALLS"'
+    label: New Installs (row)
+    format: number_0
 
   iap_revenue_inr:
     sql: '"IAP_REVENUE_INR"'
+    label: IAP Revenue (row, INR)
+    format: '"₹"#,##0'
 
   digiadz_ad_revenue_inr:
     sql: '"DIGIADZ_AD_REVENUE_INR"'
+    label: DigiAdz-branded Ad Revenue (row, INR) - legacy brand
+    format: '"₹"#,##0'
+    description: Ad revenue line originally branded DigiAdz. DigiAdz is a legacy
+      JetSynthesys brand name, not current on jetsynthesys.com; see
+      build-report.md.
+
+  vertical_month_key:
+    sql: ${vertical_id} || CHR(45) || ${month_start_date}
+    label: Vertical Month Key
+    description: Composite key (vertical_id, month_start_date), synthesized because
+      Omni requires a single primary key dimension per view.
+    hidden: true
+    primary_key: true
 
 measures:
   count:
+    label: Row Count
     aggregate_type: count
+
+  average_mau:
+    sql: '"MAU"'
+    label: Average Monthly Active Users
+    format: number_0
+    description: AVERAGE(mau) over the filtered months. The only correct way to
+      aggregate MAU across more than one month; never SUM.
+    aggregate_type: average
+
+  total_new_installs:
+    sql: '"NEW_INSTALLS"'
+    label: Total New Installs
+    format: number_0
+    aggregate_type: sum
+
+  total_iap_revenue_inr:
+    sql: '"IAP_REVENUE_INR"'
+    label: Total IAP Revenue (INR)
+    format: '"₹"#,##0'
+    aggregate_type: sum
+
+  total_digiadz_ad_revenue_inr:
+    sql: '"DIGIADZ_AD_REVENUE_INR"'
+    label: Total DigiAdz-branded Ad Revenue (INR) - legacy brand
+    format: '"₹"#,##0'
+    description: Legacy DigiAdz-branded ad revenue line; DigiAdz is not a current
+      JetSynthesys brand (see build-report.md).
+    aggregate_type: sum
+
+  total_blended_revenue_inr:
+    sql: '"IAP_REVENUE_INR" + "DIGIADZ_AD_REVENUE_INR"'
+    label: Total Blended Revenue (INR)
+    format: '"₹"#,##0'
+    description: SUM(iap_revenue_inr + digiadz_ad_revenue_inr). IAP plus the legacy
+      DigiAdz-branded ad revenue line.
+    aggregate_type: sum
+
+  iap_only_arpu_inr:
+    sql: ${total_iap_revenue_inr} / NULLIF(${average_mau}, 0)
+    label: IAP-only ARPU (INR)
+    format: '"₹"#,##0.00'
+    description: SUM(iap_revenue_inr) / AVERAGE(mau) over the filtered months. Never
+      average pre-computed monthly ARPU values directly.
+
+  blended_arpu_inr:
+    sql: (${total_iap_revenue_inr} + ${total_digiadz_ad_revenue_inr}) /
+      NULLIF(${average_mau}, 0)
+    label: Blended ARPU (INR)
+    format: '"₹"#,##0.00'
+    description: SUM(iap_revenue_inr + digiadz_ad_revenue_inr) / AVERAGE(mau) over
+      the filtered months. Includes the legacy DigiAdz-branded ad revenue line.
