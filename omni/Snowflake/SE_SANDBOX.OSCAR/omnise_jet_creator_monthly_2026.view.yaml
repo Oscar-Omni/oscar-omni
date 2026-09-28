@@ -1,0 +1,46 @@
+# Reference this view as se_sandbox_oscar__omnise_jet_creator_monthly_2026
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_JET_CREATOR_MONTHLY_2026
+
+dimensions:
+  creator_id:
+    sql: '"CREATOR_ID"'
+    format: ID
+
+  creator_name:
+    sql: '"CREATOR_NAME"'
+
+  category:
+    sql: '"CATEGORY"'
+
+  creator_tag:
+    sql: '"CREATOR_TAG"'
+
+  month_start_date:
+    sql: '"MONTH_START_DATE"'
+
+  followers:
+    sql: '"FOLLOWERS"'
+
+  new_followers:
+    sql: '"NEW_FOLLOWERS"'
+
+  content_views:
+    sql: '"CONTENT_VIEWS"'
+
+  sponsorship_revenue_usd:
+    sql: '"SPONSORSHIP_REVENUE_USD"'
+
+  platform_revenue_usd:
+    sql: '"PLATFORM_REVENUE_USD"'
+
+measures:
+  count:
+    aggregate_type: count
+
+custom_compound_primary_key_sql:
+  [
+    "${se_sandbox_oscar__omnise_jet_creator_monthly_2026.creator_id}",
+    "${se_sandbox_oscar__omnise_jet_creator_monthly_2026.month_start_date}"
+  ]
