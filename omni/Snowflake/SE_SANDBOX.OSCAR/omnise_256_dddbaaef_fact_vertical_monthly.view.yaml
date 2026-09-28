@@ -60,14 +60,14 @@ dimensions:
   iap_revenue_usd:
     sql: '"IAP_REVENUE_USD"'
     label: IAP Revenue (row, USD)
-    format: '"₹"#,##0'
+    format: '"$"#,##0'
     description: USD = IAP_REVENUE_INR / 95.8918; fixed demo FX rate 2026-09-25, MSE
       reference rate archive
 
   digiadz_ad_revenue_usd:
     sql: '"DIGIADZ_AD_REVENUE_USD"'
     label: DigiAdz-branded Ad Revenue (row, USD) - legacy brand
-    format: '"₹"#,##0'
+    format: '"$"#,##0'
     description: Ad revenue line originally branded DigiAdz. DigiAdz is a legacy
       JetSynthesys brand name, not current on jetsynthesys.com; see
       build-report.md.
@@ -136,13 +136,13 @@ measures:
   total_iap_revenue_usd:
     sql: '"IAP_REVENUE_USD"'
     label: Total IAP Revenue (USD)
-    format: '"₹"#,##0'
+    format: '"$"#,##0'
     aggregate_type: sum
 
   total_digiadz_ad_revenue_usd:
     sql: '"DIGIADZ_AD_REVENUE_USD"'
     label: Total DigiAdz-branded Ad Revenue (USD) - legacy brand
-    format: '"₹"#,##0'
+    format: '"$"#,##0'
     description: Legacy DigiAdz-branded ad revenue line; DigiAdz is not a current
       JetSynthesys brand (see build-report.md).
     aggregate_type: sum
@@ -150,7 +150,7 @@ measures:
   total_blended_revenue_usd:
     sql: '"IAP_REVENUE_USD" + "DIGIADZ_AD_REVENUE_USD"'
     label: Total Blended Revenue (USD)
-    format: '"₹"#,##0'
+    format: '"$"#,##0'
     description: SUM(iap_revenue_usd + digiadz_ad_revenue_usd). IAP plus the legacy
       DigiAdz-branded ad revenue line.
     aggregate_type: sum
@@ -158,7 +158,7 @@ measures:
   iap_only_arpu_usd:
     sql: ${total_iap_revenue_usd} / NULLIF(${average_mau}, 0)
     label: IAP-only ARPU (USD)
-    format: '"₹"#,##0.00'
+    format: '"$"#,##0.00'
     description: SUM(iap_revenue_usd) / AVERAGE(mau) over the filtered months. Never
       average pre-computed monthly ARPU values directly.
 
@@ -166,6 +166,6 @@ measures:
     sql: (${total_iap_revenue_usd} + ${total_digiadz_ad_revenue_usd}) /
       NULLIF(${average_mau}, 0)
     label: Blended ARPU (USD)
-    format: '"₹"#,##0.00'
+    format: '"$"#,##0.00'
     description: SUM(iap_revenue_usd + digiadz_ad_revenue_usd) / AVERAGE(mau) over
       the filtered months. Includes the legacy DigiAdz-branded ad revenue line.

@@ -53,7 +53,7 @@ views:
           -
           ${se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly_budget.blended_arpu_budget_usd}
         label: Blended ARPU Variance (USD)
-        format: '"₹"#,##0.00'
+        format: '"$"#,##0.00'
         description: Actual Blended ARPU minus Budget Blended ARPU, same metric, same
           period.
 
@@ -62,7 +62,7 @@ views:
           -
           ${se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly_budget.total_digiadz_revenue_budget_usd}
         label: DigiAdz-branded Ad Revenue Variance (USD) - legacy brand
-        format: '"₹"#,##0'
+        format: '"$"#,##0'
         description: Actual minus budget for the legacy DigiAdz-branded ad revenue line.
           Budget assumed flat 1%/month growth with no tournament seasonality, so
           Esports August is the largest miss in the dataset; this is a
