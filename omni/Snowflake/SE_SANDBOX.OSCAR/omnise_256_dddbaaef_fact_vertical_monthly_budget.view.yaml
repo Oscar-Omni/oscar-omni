@@ -1,10 +1,10 @@
 # Reference this view as se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly_budget
 label: Jet Synthesys - Vertical Monthly Budget
-description: "One row per vertical per calendar month, Jan-Aug 2026, uploaded
-  from jetsynthesys_vertical_budget_upload.xlsx. Same key shape as the actuals
-  fact, no seasonality applied. Demo build omnise_256_dddbaaef. Currency: USD,
-  converted from INR at a fixed 95.8918 INR per USD (2026-09-25). Original INR
-  fields are hidden for audit."
+description: "Synthetic monthly budget, one row per vertical and month,
+  January–August 2026. Revised demo budget: MAU and installs grow 1% monthly;
+  planned IAP yield improves 2% and ad yield 3% from January to August. USD =
+  INR / 95.8918, rounded to cents. Original upload is retained as build history;
+  the live budget was revised on 2026-09-28."
 
 catalog: SE_SANDBOX
 schema: OSCAR
@@ -38,9 +38,8 @@ dimensions:
     sql: '"DIGIADZ_REVENUE_BUDGET_INR"'
     label: Budget DigiAdz-branded Ad Revenue (row, INR) - legacy brand
     format: '"₹"#,##0'
-    description: Budgeted ad revenue line originally branded DigiAdz. Set flat at
-      1%/month with no tournament seasonality, unlike the actuals; see
-      build-report.md.
+    description: "Budget ad revenue: planned monthly audience growth with a linear
+      3% increase in ad revenue per active user from January to August."
     hidden: true
 
   new_installs_budget:
@@ -67,9 +66,8 @@ dimensions:
     sql: '"DIGIADZ_REVENUE_BUDGET_USD"'
     label: Budget DigiAdz-branded Ad Revenue (row, USD) - legacy brand
     format: '"$"#,##0'
-    description: Budgeted ad revenue line originally branded DigiAdz. Set flat at
-      1%/month with no tournament seasonality, unlike the actuals; see
-      build-report.md.
+    description: "Budget ad revenue: planned monthly audience growth with a linear
+      3% increase in ad revenue per active user from January to August."
 
 measures:
   count:
