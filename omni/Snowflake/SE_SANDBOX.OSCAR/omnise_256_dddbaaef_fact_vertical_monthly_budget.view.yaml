@@ -44,6 +44,16 @@ dimensions:
     label: Budget New Installs (row)
     format: number_0
 
+  iap_revenue_budget_usd:
+    sql: '"IAP_REVENUE_BUDGET_USD"'
+    description: USD = IAP_REVENUE_BUDGET_INR / 95.8918; fixed demo FX rate
+      2026-09-25, MSE reference rate archive
+
+  digiadz_revenue_budget_usd:
+    sql: '"DIGIADZ_REVENUE_BUDGET_USD"'
+    description: USD = DIGIADZ_REVENUE_BUDGET_INR / 95.8918; fixed demo FX rate
+      2026-09-25, MSE reference rate archive
+
   vertical_month_key:
     sql: ${vertical_id} || CHR(45) || ${month_start_date}
     label: Vertical Month Key
