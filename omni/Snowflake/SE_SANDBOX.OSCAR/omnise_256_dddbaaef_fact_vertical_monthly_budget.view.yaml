@@ -15,6 +15,8 @@ dimensions:
     sql: '"VERTICAL_ID"'
     label: Vertical ID
     format: ID
+    ai_context: Join key to actuals and the vertical view. Use the Vertical name for
+      display.
 
   month_start_date:
     sql: '"MONTH_START_DATE"'
@@ -22,11 +24,15 @@ dimensions:
     description: First day of the calendar month. Joins to the actuals fact on this
       composite business key (vertical_id, month_start_date), not a physical
       foreign key.
+    ai_context: Monthly budget grain, January-August 2026. Match it to the actuals
+      month when calculating variance.
 
   mau_budget:
     sql: '"MAU_BUDGET"'
     label: Budget Monthly Active Users (row)
     format: number_0
+    ai_context: Row-level planned MAU. Do not sum across months; use Average Budget
+      Monthly Active Users.
 
   iap_revenue_budget_inr:
     sql: '"IAP_REVENUE_BUDGET_INR"'
@@ -46,6 +52,8 @@ dimensions:
     sql: '"NEW_INSTALLS_BUDGET"'
     label: Budget New Installs (row)
     format: number_0
+    ai_context: Row-level planned installs; prefer Total Budget New Installs for
+      aggregation.
 
   vertical_month_key:
     sql: ${vertical_id} || CHR(45) || ${month_start_date}
@@ -61,6 +69,7 @@ dimensions:
     format: '"$"#,##0'
     description: USD = IAP_REVENUE_BUDGET_INR / 95.8918; fixed demo FX rate
       2026-09-25, MSE reference rate archive
+    ai_context: Row-level planned IAP revenue in USD; prefer the total measure.
 
   digiadz_revenue_budget_usd:
     sql: '"DIGIADZ_REVENUE_BUDGET_USD"'
@@ -68,11 +77,14 @@ dimensions:
     format: '"$"#,##0'
     description: "Budget ad revenue: planned monthly audience growth with a linear
       3% increase in ad revenue per active user from January to August."
+    ai_context: Row-level planned ad revenue in USD (DigiAdz is a legacy brand);
+      prefer the total measure.
 
 measures:
   count:
     label: Row Count
     aggregate_type: count
+    ai_context: Counts budget vertical-month rows; use only for coverage checks.
 
   average_mau_budget:
     sql: '"MAU_BUDGET"'
@@ -80,12 +92,16 @@ measures:
     format: number_0
     description: AVERAGE(mau_budget) over the filtered months. Never SUM across months.
     aggregate_type: average
+    ai_context: Planned MAU across months; compare to Average Monthly Active Users
+      for MAU variance. Never sum.
 
   total_new_installs_budget:
     sql: '"NEW_INSTALLS_BUDGET"'
     label: Total Budget New Installs
     format: number_0
     aggregate_type: sum
+    ai_context: Planned installs, additive. Compare to Total New Installs for
+      install variance.
 
   total_iap_revenue_budget_inr:
     sql: '"IAP_REVENUE_BUDGET_INR"'
@@ -122,18 +138,24 @@ measures:
     label: Total Budget IAP Revenue (USD)
     format: '"$"#,##0'
     aggregate_type: sum
+    ai_context: Planned IAP revenue in USD, additive. Compare to Total IAP Revenue
+      (USD). Divide by Average Budget MAU for an IAP-only ARPU budget.
 
   total_digiadz_revenue_budget_usd:
     sql: '"DIGIADZ_REVENUE_BUDGET_USD"'
     label: Total Budget DigiAdz-branded Ad Revenue (USD) - legacy brand
     format: '"$"#,##0'
     aggregate_type: sum
+    ai_context: Planned ad revenue in USD, additive. Compare to total ad revenue actuals.
 
   total_blended_revenue_budget_usd:
     sql: '"IAP_REVENUE_BUDGET_USD" + "DIGIADZ_REVENUE_BUDGET_USD"'
     label: Total Budget Blended Revenue (USD)
     format: '"$"#,##0'
     aggregate_type: sum
+    ai_context: "Default 'revenue budget' or 'plan' measure: IAP plus ad in USD.
+      Variance = Total Blended Revenue (USD) minus this, and as a percentage of
+      this."
 
   blended_arpu_budget_usd:
     sql: (${total_iap_revenue_budget_usd} + ${total_digiadz_revenue_budget_usd}) /
@@ -142,3 +164,17 @@ measures:
     format: '"$"#,##0.00'
     description: SUM(iap_revenue_budget_usd + digiadz_revenue_budget_usd) /
       AVERAGE(mau_budget) over the filtered months.
+    ai_context: Planned blended ARPU; compare to Blended ARPU (USD). No IAP-only
+      ARPU budget measure exists.
+
+ai_context: Monthly budget (plan), one row per vertical per month,
+  January–August 2026 (synthetic, revised 2026-09-28). Compare to actuals for
+  the same vertical and month, joined on vertical_id and month_start_date. Use
+  USD fields; INR fields are hidden. Plan assumes MAU and installs grow 1% per
+  month, IAP yield rises 2% and ad yield 3% from January to August. Use Average
+  Budget Monthly Active Users across months, never sum budget MAU over time.
+  Budget revenue and installs are additive. Report variance as actual minus
+  budget and as a percentage of budget, and query the data rather than assuming
+  a vertical beats or misses plan. Only a blended ARPU budget exists; there is
+  no IAP-only ARPU budget, so derive it from Total Budget IAP Revenue / Average
+  Budget MAU if needed.

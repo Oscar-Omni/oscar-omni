@@ -15,12 +15,17 @@ dimensions:
     sql: '"VERTICAL_ID"'
     label: Vertical ID
     format: ID
+    ai_context: Join key to the vertical and budget views. Use the Vertical name
+      from the vertical view for display.
 
   month_start_date:
     sql: '"MONTH_START_DATE"'
     label: Month
     description: First day of the calendar month. Native fact date; no separate
       calendar table since there are only 8 monthly points.
+    ai_context: Monthly grain, January-August 2026. Use [month] granularity for
+      trends; finer grains are meaningless. Joins to budget together with
+      vertical_id.
 
   mau:
     sql: '"MAU"'
@@ -28,11 +33,15 @@ dimensions:
     format: number_0
     description: Non-additive across months. Use the Average Monthly Active Users
       measure, never SUM, when aggregating over more than one month.
+    ai_context: Row-level MAU for one vertical in one month. Do not sum across
+      months; use Average Monthly Active Users. Summing across verticals is
+      valid only within a single month.
 
   new_installs:
     sql: '"NEW_INSTALLS"'
     label: New Installs (row)
     format: number_0
+    ai_context: Row-level installs; prefer the Total New Installs measure for aggregation.
 
   iap_revenue_inr:
     sql: '"IAP_REVENUE_INR"'
@@ -63,6 +72,8 @@ dimensions:
     format: '"$"#,##0'
     description: USD = IAP_REVENUE_INR / 95.8918; fixed demo FX rate 2026-09-25, MSE
       reference rate archive
+    ai_context: Row-level IAP revenue in USD. Prefer Total IAP Revenue (USD) for
+      aggregation.
 
   digiadz_ad_revenue_usd:
     sql: '"DIGIADZ_AD_REVENUE_USD"'
@@ -71,11 +82,16 @@ dimensions:
     description: Ad revenue line originally branded DigiAdz. DigiAdz is a legacy
       JetSynthesys brand name, not current on jetsynthesys.com; see
       build-report.md.
+    ai_context: Row-level ad revenue in USD. DigiAdz is a legacy brand; call it ad
+      revenue and note the legacy brand if relevant. Prefer the total measure
+      for aggregation.
 
 measures:
   count:
     label: Row Count
     aggregate_type: count
+    ai_context: Counts vertical-month rows, not users or events. Use only for
+      data-coverage checks.
 
   average_mau:
     sql: '"MAU"'
@@ -84,12 +100,17 @@ measures:
     description: AVERAGE(mau) over the filtered months. The only correct way to
       aggregate MAU across more than one month; never SUM.
     aggregate_type: average
+    ai_context: "The governed way to report MAU across months. Synonyms: active
+      users, audience, MAU. For a portfolio multi-month figure, average the
+      monthly portfolio totals rather than averaging vertical rows."
 
   total_new_installs:
     sql: '"NEW_INSTALLS"'
     label: Total New Installs
     format: number_0
     aggregate_type: sum
+    ai_context: Additive; sum freely across months and verticals. Use for
+      acquisition or audience-growth questions.
 
   total_iap_revenue_inr:
     sql: '"IAP_REVENUE_INR"'
@@ -138,6 +159,7 @@ measures:
     label: Total IAP Revenue (USD)
     format: '"$"#,##0'
     aggregate_type: sum
+    ai_context: In-app purchase revenue in USD, additive. Excludes ad revenue.
 
   total_digiadz_ad_revenue_usd:
     sql: '"DIGIADZ_AD_REVENUE_USD"'
@@ -146,6 +168,8 @@ measures:
     description: Legacy DigiAdz-branded ad revenue line; DigiAdz is not a current
       JetSynthesys brand (see build-report.md).
     aggregate_type: sum
+    ai_context: Ad revenue in USD, additive. Use for 'ad revenue' questions; DigiAdz
+      is a legacy brand name.
 
   total_blended_revenue_usd:
     sql: '"IAP_REVENUE_USD" + "DIGIADZ_AD_REVENUE_USD"'
@@ -154,6 +178,8 @@ measures:
     description: SUM(iap_revenue_usd + digiadz_ad_revenue_usd). IAP plus the legacy
       DigiAdz-branded ad revenue line.
     aggregate_type: sum
+    ai_context: "Default measure for 'revenue' or 'total revenue': IAP plus ad
+      revenue in USD. Additive."
 
   iap_only_arpu_usd:
     sql: ${total_iap_revenue_usd} / NULLIF(${average_mau}, 0)
@@ -161,6 +187,8 @@ measures:
     format: '"$"#,##0.00'
     description: SUM(iap_revenue_usd) / AVERAGE(mau) over the filtered months. Never
       average pre-computed monthly ARPU values directly.
+    ai_context: Use when asked for IAP ARPU or ARPU excluding ads. Already computed
+      as total IAP revenue / average MAU; never average monthly ARPU values.
 
   blended_arpu_usd:
     sql: (${total_iap_revenue_usd} + ${total_digiadz_ad_revenue_usd}) /
@@ -169,3 +197,20 @@ measures:
     format: '"$"#,##0.00'
     description: SUM(iap_revenue_usd + digiadz_ad_revenue_usd) / AVERAGE(mau) over
       the filtered months. Includes the legacy DigiAdz-branded ad revenue line.
+    ai_context: Default measure for 'ARPU' or revenue per user, including ad
+      revenue. Pair with Average Monthly Active Users to separate volume from
+      yield when explaining changes.
+
+ai_context: "Monthly actuals, one row per vertical per month, January–August
+  2026 (synthetic data). Always use USD fields; INR fields are hidden for audit
+  only (fixed rate 95.8918 INR per USD). MAU is non-additive: use Average
+  Monthly Active Users across months and never sum MAU over time. For a
+  portfolio-level single month, MAU can be summed across verticals for that
+  month; for multi-month portfolio figures, average the monthly portfolio
+  totals. New installs and revenue measures are additive and can be summed.
+  IAP-only ARPU excludes ad revenue; Blended ARPU includes IAP plus the legacy
+  DigiAdz-branded ad revenue. Compute ARPU with the governed measures (total
+  revenue / average MAU) and never average monthly ARPU values. To explain
+  changes, separate audience volume (MAU, installs) from revenue per user
+  (ARPU). No campaign, release, outage or event data exists, so do not invent
+  operational causes. Always state the period and metric used."

@@ -17,6 +17,10 @@ dimensions:
     description: Fixed literal key (PIZ-RC, PIZ-SS, ESP, MD). Never reassigned by
       the generator.
     primary_key: true
+    ai_context: "Join key to monthly actuals and budget. Values: PIZ-RC (Real
+      Cricket), PIZ-SS (Sachin Saga), ESP (Esports), MD (MereeDhun). Prefer
+      Vertical (vertical_name) for display; use this for joins or exact
+      filters."
 
   vertical_name:
     sql: '"VERTICAL_NAME"'
@@ -24,6 +28,9 @@ dimensions:
     description: Display name for the vertical. PlayIzzOn and MereeDhun are labeled
       as legacy JetSynthesys names; Real Cricket, Sachin Saga and Esports are
       current per jetsynthesys.com (see build-report.md).
+    ai_context: Use this to group or label results by vertical. PlayIzzOn and
+      MereeDhun are legacy names; call them legacy if you mention them. Filter
+      case-insensitively.
 
   portfolio_group:
     sql: '"PORTFOLIO_GROUP"'
@@ -31,14 +38,31 @@ dimensions:
     description: Row-level security grouping used for the governance beat of the
       demo. Labeled as a legacy name for PlayIzzOn/MereeDhun for the same reason
       as vertical_name.
+    ai_context: Use to roll verticals up to portfolio level. It also drives
+      row-level security, so some users may see only some groups. PlayIzzOn and
+      MereeDhun are legacy names.
 
   primary_monetization:
     sql: '"PRIMARY_MONETIZATION"'
     label: Primary Monetization Model
     description: IAP, Ad-funded or Mixed. Descriptive only; drives no calculation.
+    ai_context: Descriptive label only (IAP, Ad-funded or Mixed). Use it to group or
+      filter verticals, never to estimate revenue splits; use actual IAP and ad
+      revenue measures for that.
 
 measures:
   count:
     label: Vertical Count
     description: Number of verticals in the current filter context (4 with no filter).
     aggregate_type: count
+    ai_context: Counts verticals only (4 with no filters). Not an activity or user
+      metric; do not use for MAU, installs or revenue questions.
+
+ai_context: "One row per vertical (4 total: PIZ-RC Real Cricket, PIZ-SS Sachin
+  Saga, ESP Esports, MD MereeDhun). Use this view to label, group or filter
+  actuals and budget by vertical, portfolio group or primary monetization model.
+  Join to the monthly fact and budget views on vertical_id. PlayIzzOn and
+  MereeDhun are legacy names; refer to them as legacy when mentioned.
+  primary_monetization is descriptive only and should not be used to derive
+  revenue splits; use the actual IAP and ad revenue measures instead. The
+  Vertical Count measure only counts verticals and is not an activity metric."
