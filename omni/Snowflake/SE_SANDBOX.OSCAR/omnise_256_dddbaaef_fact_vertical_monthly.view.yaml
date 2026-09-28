@@ -46,6 +46,16 @@ dimensions:
       JetSynthesys brand name, not current on jetsynthesys.com; see
       build-report.md.
 
+  iap_revenue_usd:
+    sql: '"IAP_REVENUE_USD"'
+    description: USD = IAP_REVENUE_INR / 95.8918; fixed demo FX rate 2026-09-25, MSE
+      reference rate archive
+
+  digiadz_ad_revenue_usd:
+    sql: '"DIGIADZ_AD_REVENUE_USD"'
+    description: USD = DIGIADZ_AD_REVENUE_INR / 95.8918; fixed demo FX rate
+      2026-09-25, MSE reference rate archive
+
   vertical_month_key:
     sql: ${vertical_id} || CHR(45) || ${month_start_date}
     label: Vertical Month Key
