@@ -21,26 +21,15 @@ relationships:
       = ${se_sandbox_oscar__omnise_256_dddbaaef_dim_vertical.vertical_id}
     relationship_type: many_to_one
 
-ai_context: |
-  This topic covers JetSynthesys vertical performance for four verticals
-  (PlayIzzOn - Real Cricket, PlayIzzOn - Sachin Saga, Esports, MereeDhun),
-  Jan-Aug 2026 actuals only, all figures synthetic. PlayIzzOn and MereeDhun are
-  legacy JetSynthesys names, not current ones; see build-report.md.
-
-  Two distinct revenue-per-user metrics exist. Default metric for an unqualified
-  revenue per active user or revenue per user question is iap_only_arpu_usd =
-  SUM(iap_revenue_usd) / AVERAGE(mau): in-app-purchase revenue only. Only use
-  blended_arpu_usd = SUM(iap_revenue_usd + digiadz_ad_revenue_usd) / AVERAGE(mau)
-  when the question explicitly asks to include DigiAdz or ad revenue, and name
-  it explicitly as the blended figure when you do. These are materially
-  different, especially for Esports, which is ad-funded: always state which
-  metric was used. Never average mau directly, and never SUM mau across more
-  than one month; only AVERAGE it.
-
-  Esports carries a tournament-season multiplier (ramping through Aug 2026) that
-  raises both its MAU and its DigiAdz ad revenue together in the same months; do
-  not attribute an Esports revenue change to only one of those drivers.
-
-  Keep answers concise: state the metric definition used, return only the
-  requested grouping columns and fields, and lead with the headline number or
-  finding.
+ai_context: Synthetic Jet Synthesys demo data for four legacy-labeled verticals,
+  January–August 2026. Use USD fields. Determine trends and budget performance
+  by querying the data; do not assume a vertical beats or misses plan. State the
+  period and metric. Compare monthly audience, IAP and ad revenue to distinguish
+  volume changes from revenue per user. IAP-only ARPU excludes ad revenue;
+  blended ARPU includes both. Use the governed average_mau measure across
+  months; for a portfolio month aggregate vertical MAU once per vertical, and
+  use total revenue divided by that portfolio MAU. Do not sum monthly MAU across
+  months. Budgets and actuals join on vertical_id and month_start_date. No
+  campaign, outage, release or event data is available, so describe numerical
+  drivers without inventing operational causes. Keep answers concise and support
+  conclusions with queried figures.

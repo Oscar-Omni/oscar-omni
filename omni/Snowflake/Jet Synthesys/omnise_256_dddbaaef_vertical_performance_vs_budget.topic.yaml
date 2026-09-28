@@ -3,12 +3,10 @@ hidden: false
 base_view: se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly
 label: Jet Synthesys - Vertical Performance vs Budget
 group_label: Jet Synthesys
-description: "Vertical x month actuals joined to the uploaded budget fact on the
-  composite business key (vertical_id, month_start_date), not a physical foreign
-  key, plus the vertical dimension. Used for the budget-upload workbook proof
-  and the Blended ARPU variance-to-budget story (Esports DigiAdz miss). Demo
-  build omnise_256_dddbaaef. Currency: USD, converted from INR at a fixed
-  95.8918 INR per USD (2026-09-25). Original INR fields are hidden for audit."
+description: Synthetic monthly actuals and budget joined on vertical_id and
+  month_start_date, with the vertical dimension. Currency USD; original INR
+  amounts retained at 95.8918 INR/USD. Compare actual and budget for the same
+  vertical and period.
 
 joins:
   se_sandbox_oscar__omnise_256_dddbaaef_dim_vertical: {}
@@ -42,10 +40,8 @@ views:
           ${se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly_budget.total_digiadz_revenue_budget_inr}
         label: DigiAdz-branded Ad Revenue Variance (INR) - legacy brand
         format: '"₹"#,##0'
-        description: Actual minus budget for the legacy DigiAdz-branded ad revenue line.
-          Budget assumed flat 1%/month growth with no tournament seasonality, so
-          Esports August is the largest miss in the dataset; this is a
-          seasonality/forecasting gap, not a promotional or COGS effect.
+        description: Actual ad revenue minus budget ad revenue for the same vertical and
+          period.
         hidden: true
 
       blended_arpu_variance_usd:
@@ -63,10 +59,8 @@ views:
           ${se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly_budget.total_digiadz_revenue_budget_usd}
         label: DigiAdz-branded Ad Revenue Variance (USD) - legacy brand
         format: '"$"#,##0'
-        description: Actual minus budget for the legacy DigiAdz-branded ad revenue line.
-          Budget assumed flat 1%/month growth with no tournament seasonality, so
-          Esports August is the largest miss in the dataset; this is a
-          seasonality/forecasting gap, not a promotional or COGS effect.
+        description: Actual ad revenue minus budget ad revenue for the same vertical and
+          period.
 
 relationships:
   - join_from_view: se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly
@@ -88,21 +82,15 @@ relationships:
       ${se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly_budget.month_start_date}
     relationship_type: one_to_one
 
-ai_context: |
-  This topic adds the uploaded budget fact (flat 1%/month growth, no seasonality)
-  to actuals, joined on the composite business key (vertical_id,
-  month_start_date), for the same four legacy-labeled JetSynthesys verticals as
-  the vertical_performance topic.
-
-  Budget conservatism: the budget was set before the Esports tournament calendar
-  was known, so Esports actual DigiAdz-branded ad revenue and MAU both ran
-  materially above budget in later months (especially August 2026) while other
-  verticals stayed close to budget. When asked why Esports missed or beat
-  budget, cite the tournament-season multiplier explicitly and check the
-  monthly trend rather than describing it as a one-off promotional effect. Do
-  not describe this as continued growth throughout the period if the monthly
-  values show the multiplier stepping up in specific months (May-Aug).
-
-  Keep answers concise: state the metric and period used, return only the
-  requested grouping columns and fields, and lead with the headline number or
-  finding.
+ai_context: Synthetic Jet Synthesys demo data for four legacy-labeled verticals,
+  January–August 2026. Use USD fields. Determine trends and budget performance
+  by querying the data; do not assume a vertical beats or misses plan. State the
+  period and metric. Compare monthly audience, IAP and ad revenue to distinguish
+  volume changes from revenue per user. IAP-only ARPU excludes ad revenue;
+  blended ARPU includes both. Use the governed average_mau measure across
+  months; for a portfolio month aggregate vertical MAU once per vertical, and
+  use total revenue divided by that portfolio MAU. Do not sum monthly MAU across
+  months. Budgets and actuals join on vertical_id and month_start_date. No
+  campaign, outage, release or event data is available, so describe numerical
+  drivers without inventing operational causes. Keep answers concise and support
+  conclusions with queried figures.
