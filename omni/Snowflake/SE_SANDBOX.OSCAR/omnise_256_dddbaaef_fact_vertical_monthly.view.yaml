@@ -1,0 +1,28 @@
+# Reference this view as se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_256_DDDBAAEF_FACT_VERTICAL_MONTHLY
+
+dimensions:
+  vertical_id:
+    sql: '"VERTICAL_ID"'
+    format: ID
+
+  month_start_date:
+    sql: '"MONTH_START_DATE"'
+
+  mau:
+    sql: '"MAU"'
+
+  new_installs:
+    sql: '"NEW_INSTALLS"'
+
+  iap_revenue_inr:
+    sql: '"IAP_REVENUE_INR"'
+
+  digiadz_ad_revenue_inr:
+    sql: '"DIGIADZ_AD_REVENUE_INR"'
+
+measures:
+  count:
+    aggregate_type: count

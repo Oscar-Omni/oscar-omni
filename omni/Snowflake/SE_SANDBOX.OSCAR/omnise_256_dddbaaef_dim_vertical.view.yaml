@@ -1,0 +1,22 @@
+# Reference this view as se_sandbox_oscar__omnise_256_dddbaaef_dim_vertical
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_256_DDDBAAEF_DIM_VERTICAL
+
+dimensions:
+  vertical_id:
+    sql: '"VERTICAL_ID"'
+    format: ID
+
+  vertical_name:
+    sql: '"VERTICAL_NAME"'
+
+  portfolio_group:
+    sql: '"PORTFOLIO_GROUP"'
+
+  primary_monetization:
+    sql: '"PRIMARY_MONETIZATION"'
+
+measures:
+  count:
+    aggregate_type: count
