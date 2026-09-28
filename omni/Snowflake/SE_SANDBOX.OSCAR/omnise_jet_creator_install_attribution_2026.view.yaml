@@ -1,0 +1,39 @@
+# Reference this view as se_sandbox_oscar__omnise_jet_creator_install_attribution_2026
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_JET_CREATOR_INSTALL_ATTRIBUTION_2026
+
+dimensions:
+  creator_id:
+    sql: '"CREATOR_ID"'
+    format: ID
+
+  vertical_id:
+    sql: '"VERTICAL_ID"'
+    format: ID
+
+  month_start_date:
+    sql: '"MONTH_START_DATE"'
+
+  creator_referred_installs:
+    sql: '"CREATOR_REFERRED_INSTALLS"'
+
+  other_channel_installs:
+    sql: '"OTHER_CHANNEL_INSTALLS"'
+
+  campaign_state:
+    sql: '"CAMPAIGN_STATE"'
+
+measures:
+  count:
+    aggregate_type: count
+
+custom_compound_primary_key_sql:
+  [
+    "${se_sandbox_oscar__omnise_jet_creator_install_attribution_2026.creator_\
+      id}",
+    "${se_sandbox_oscar__omnise_jet_creator_install_attribution_2026.vertical\
+      _id}",
+    "${se_sandbox_oscar__omnise_jet_creator_install_attribution_2026.month_st\
+      art_date}"
+  ]
