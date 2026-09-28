@@ -1,8 +1,10 @@
 # Reference this view as se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly_budget
 label: Jet Synthesys - Vertical Monthly Budget
-description: One row per vertical per calendar month, Jan-Aug 2026, uploaded
+description: "One row per vertical per calendar month, Jan-Aug 2026, uploaded
   from jetsynthesys_vertical_budget_upload.xlsx. Same key shape as the actuals
-  fact, no seasonality applied. Demo build omnise_256_dddbaaef.
+  fact, no seasonality applied. Demo build omnise_256_dddbaaef. Currency: USD,
+  converted from INR at a fixed 95.8918 INR per USD (2026-09-25). Original INR
+  fields are hidden for audit."
 
 catalog: SE_SANDBOX
 schema: OSCAR
@@ -30,6 +32,7 @@ dimensions:
     sql: '"IAP_REVENUE_BUDGET_INR"'
     label: Budget IAP Revenue (row, INR)
     format: '"₹"#,##0'
+    hidden: true
 
   digiadz_revenue_budget_inr:
     sql: '"DIGIADZ_REVENUE_BUDGET_INR"'
@@ -38,21 +41,12 @@ dimensions:
     description: Budgeted ad revenue line originally branded DigiAdz. Set flat at
       1%/month with no tournament seasonality, unlike the actuals; see
       build-report.md.
+    hidden: true
 
   new_installs_budget:
     sql: '"NEW_INSTALLS_BUDGET"'
     label: Budget New Installs (row)
     format: number_0
-
-  iap_revenue_budget_usd:
-    sql: '"IAP_REVENUE_BUDGET_USD"'
-    description: USD = IAP_REVENUE_BUDGET_INR / 95.8918; fixed demo FX rate
-      2026-09-25, MSE reference rate archive
-
-  digiadz_revenue_budget_usd:
-    sql: '"DIGIADZ_REVENUE_BUDGET_USD"'
-    description: USD = DIGIADZ_REVENUE_BUDGET_INR / 95.8918; fixed demo FX rate
-      2026-09-25, MSE reference rate archive
 
   vertical_month_key:
     sql: ${vertical_id} || CHR(45) || ${month_start_date}
@@ -61,6 +55,21 @@ dimensions:
       Omni requires a single primary key dimension per view.
     hidden: true
     primary_key: true
+
+  iap_revenue_budget_usd:
+    sql: '"IAP_REVENUE_BUDGET_USD"'
+    label: Budget IAP Revenue (row, USD)
+    format: '"₹"#,##0'
+    description: USD = IAP_REVENUE_BUDGET_INR / 95.8918; fixed demo FX rate
+      2026-09-25, MSE reference rate archive
+
+  digiadz_revenue_budget_usd:
+    sql: '"DIGIADZ_REVENUE_BUDGET_USD"'
+    label: Budget DigiAdz-branded Ad Revenue (row, USD) - legacy brand
+    format: '"₹"#,##0'
+    description: Budgeted ad revenue line originally branded DigiAdz. Set flat at
+      1%/month with no tournament seasonality, unlike the actuals; see
+      build-report.md.
 
 measures:
   count:
@@ -84,18 +93,21 @@ measures:
     sql: '"IAP_REVENUE_BUDGET_INR"'
     label: Total Budget IAP Revenue (INR)
     format: '"₹"#,##0'
+    hidden: true
     aggregate_type: sum
 
   total_digiadz_revenue_budget_inr:
     sql: '"DIGIADZ_REVENUE_BUDGET_INR"'
     label: Total Budget DigiAdz-branded Ad Revenue (INR) - legacy brand
     format: '"₹"#,##0'
+    hidden: true
     aggregate_type: sum
 
   total_blended_revenue_budget_inr:
     sql: '"IAP_REVENUE_BUDGET_INR" + "DIGIADZ_REVENUE_BUDGET_INR"'
     label: Total Budget Blended Revenue (INR)
     format: '"₹"#,##0'
+    hidden: true
     aggregate_type: sum
 
   blended_arpu_budget_inr:
@@ -104,4 +116,31 @@ measures:
     label: Budget Blended ARPU (INR)
     format: '"₹"#,##0.00'
     description: SUM(iap_revenue_budget_inr + digiadz_revenue_budget_inr) /
+      AVERAGE(mau_budget) over the filtered months.
+    hidden: true
+
+  total_iap_revenue_budget_usd:
+    sql: '"IAP_REVENUE_BUDGET_USD"'
+    label: Total Budget IAP Revenue (USD)
+    format: '"₹"#,##0'
+    aggregate_type: sum
+
+  total_digiadz_revenue_budget_usd:
+    sql: '"DIGIADZ_REVENUE_BUDGET_USD"'
+    label: Total Budget DigiAdz-branded Ad Revenue (USD) - legacy brand
+    format: '"₹"#,##0'
+    aggregate_type: sum
+
+  total_blended_revenue_budget_usd:
+    sql: '"IAP_REVENUE_BUDGET_USD" + "DIGIADZ_REVENUE_BUDGET_USD"'
+    label: Total Budget Blended Revenue (USD)
+    format: '"₹"#,##0'
+    aggregate_type: sum
+
+  blended_arpu_budget_usd:
+    sql: (${total_iap_revenue_budget_usd} + ${total_digiadz_revenue_budget_usd}) /
+      NULLIF(${average_mau_budget}, 0)
+    label: Budget Blended ARPU (USD)
+    format: '"₹"#,##0.00'
+    description: SUM(iap_revenue_budget_usd + digiadz_revenue_budget_usd) /
       AVERAGE(mau_budget) over the filtered months.

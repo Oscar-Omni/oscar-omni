@@ -1,9 +1,10 @@
 # Reference this view as se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly
 label: Jet Synthesys - Vertical Monthly Actuals
-description: One row per vertical per calendar month, Jan-Aug 2026. All figures
-  are synthetic. digiadz_ad_revenue_inr is a synthetic field name; DigiAdz is a
+description: "One row per vertical per calendar month, Jan-Aug 2026. All figures
+  are synthetic. digiadz_ad_revenue_usd is a synthetic field name; DigiAdz is a
   legacy JetSynthesys brand, not a current one (see build-report.md). Demo build
-  omnise_256_dddbaaef.
+  omnise_256_dddbaaef. Currency: USD, converted from INR at a fixed 95.8918 INR
+  per USD (2026-09-25). Original INR fields are hidden for audit."
 
 catalog: SE_SANDBOX
 schema: OSCAR
@@ -37,6 +38,7 @@ dimensions:
     sql: '"IAP_REVENUE_INR"'
     label: IAP Revenue (row, INR)
     format: '"₹"#,##0'
+    hidden: true
 
   digiadz_ad_revenue_inr:
     sql: '"DIGIADZ_AD_REVENUE_INR"'
@@ -45,16 +47,7 @@ dimensions:
     description: Ad revenue line originally branded DigiAdz. DigiAdz is a legacy
       JetSynthesys brand name, not current on jetsynthesys.com; see
       build-report.md.
-
-  iap_revenue_usd:
-    sql: '"IAP_REVENUE_USD"'
-    description: USD = IAP_REVENUE_INR / 95.8918; fixed demo FX rate 2026-09-25, MSE
-      reference rate archive
-
-  digiadz_ad_revenue_usd:
-    sql: '"DIGIADZ_AD_REVENUE_USD"'
-    description: USD = DIGIADZ_AD_REVENUE_INR / 95.8918; fixed demo FX rate
-      2026-09-25, MSE reference rate archive
+    hidden: true
 
   vertical_month_key:
     sql: ${vertical_id} || CHR(45) || ${month_start_date}
@@ -63,6 +56,21 @@ dimensions:
       Omni requires a single primary key dimension per view.
     hidden: true
     primary_key: true
+
+  iap_revenue_usd:
+    sql: '"IAP_REVENUE_USD"'
+    label: IAP Revenue (row, USD)
+    format: '"₹"#,##0'
+    description: USD = IAP_REVENUE_INR / 95.8918; fixed demo FX rate 2026-09-25, MSE
+      reference rate archive
+
+  digiadz_ad_revenue_usd:
+    sql: '"DIGIADZ_AD_REVENUE_USD"'
+    label: DigiAdz-branded Ad Revenue (row, USD) - legacy brand
+    format: '"₹"#,##0'
+    description: Ad revenue line originally branded DigiAdz. DigiAdz is a legacy
+      JetSynthesys brand name, not current on jetsynthesys.com; see
+      build-report.md.
 
 measures:
   count:
@@ -87,6 +95,7 @@ measures:
     sql: '"IAP_REVENUE_INR"'
     label: Total IAP Revenue (INR)
     format: '"₹"#,##0'
+    hidden: true
     aggregate_type: sum
 
   total_digiadz_ad_revenue_inr:
@@ -95,6 +104,7 @@ measures:
     format: '"₹"#,##0'
     description: Legacy DigiAdz-branded ad revenue line; DigiAdz is not a current
       JetSynthesys brand (see build-report.md).
+    hidden: true
     aggregate_type: sum
 
   total_blended_revenue_inr:
@@ -103,6 +113,7 @@ measures:
     format: '"₹"#,##0'
     description: SUM(iap_revenue_inr + digiadz_ad_revenue_inr). IAP plus the legacy
       DigiAdz-branded ad revenue line.
+    hidden: true
     aggregate_type: sum
 
   iap_only_arpu_inr:
@@ -111,6 +122,7 @@ measures:
     format: '"₹"#,##0.00'
     description: SUM(iap_revenue_inr) / AVERAGE(mau) over the filtered months. Never
       average pre-computed monthly ARPU values directly.
+    hidden: true
 
   blended_arpu_inr:
     sql: (${total_iap_revenue_inr} + ${total_digiadz_ad_revenue_inr}) /
@@ -118,4 +130,42 @@ measures:
     label: Blended ARPU (INR)
     format: '"₹"#,##0.00'
     description: SUM(iap_revenue_inr + digiadz_ad_revenue_inr) / AVERAGE(mau) over
+      the filtered months. Includes the legacy DigiAdz-branded ad revenue line.
+    hidden: true
+
+  total_iap_revenue_usd:
+    sql: '"IAP_REVENUE_USD"'
+    label: Total IAP Revenue (USD)
+    format: '"₹"#,##0'
+    aggregate_type: sum
+
+  total_digiadz_ad_revenue_usd:
+    sql: '"DIGIADZ_AD_REVENUE_USD"'
+    label: Total DigiAdz-branded Ad Revenue (USD) - legacy brand
+    format: '"₹"#,##0'
+    description: Legacy DigiAdz-branded ad revenue line; DigiAdz is not a current
+      JetSynthesys brand (see build-report.md).
+    aggregate_type: sum
+
+  total_blended_revenue_usd:
+    sql: '"IAP_REVENUE_USD" + "DIGIADZ_AD_REVENUE_USD"'
+    label: Total Blended Revenue (USD)
+    format: '"₹"#,##0'
+    description: SUM(iap_revenue_usd + digiadz_ad_revenue_usd). IAP plus the legacy
+      DigiAdz-branded ad revenue line.
+    aggregate_type: sum
+
+  iap_only_arpu_usd:
+    sql: ${total_iap_revenue_usd} / NULLIF(${average_mau}, 0)
+    label: IAP-only ARPU (USD)
+    format: '"₹"#,##0.00'
+    description: SUM(iap_revenue_usd) / AVERAGE(mau) over the filtered months. Never
+      average pre-computed monthly ARPU values directly.
+
+  blended_arpu_usd:
+    sql: (${total_iap_revenue_usd} + ${total_digiadz_ad_revenue_usd}) /
+      NULLIF(${average_mau}, 0)
+    label: Blended ARPU (USD)
+    format: '"₹"#,##0.00'
+    description: SUM(iap_revenue_usd + digiadz_ad_revenue_usd) / AVERAGE(mau) over
       the filtered months. Includes the legacy DigiAdz-branded ad revenue line.

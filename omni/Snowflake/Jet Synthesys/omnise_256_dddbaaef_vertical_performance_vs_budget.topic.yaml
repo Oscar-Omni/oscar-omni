@@ -3,11 +3,12 @@ hidden: false
 base_view: se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly
 label: Jet Synthesys - Vertical Performance vs Budget
 group_label: Jet Synthesys
-description: Vertical x month actuals joined to the uploaded budget fact on the
+description: "Vertical x month actuals joined to the uploaded budget fact on the
   composite business key (vertical_id, month_start_date), not a physical foreign
   key, plus the vertical dimension. Used for the budget-upload workbook proof
   and the Blended ARPU variance-to-budget story (Esports DigiAdz miss). Demo
-  build omnise_256_dddbaaef.
+  build omnise_256_dddbaaef. Currency: USD, converted from INR at a fixed
+  95.8918 INR per USD (2026-09-25). Original INR fields are hidden for audit."
 
 joins:
   se_sandbox_oscar__omnise_256_dddbaaef_dim_vertical: {}
@@ -24,14 +25,15 @@ views:
         format: '"₹"#,##0.00'
         description: Actual Blended ARPU minus Budget Blended ARPU, same metric, same
           period.
+        hidden: true
 
       blended_arpu_variance_pct:
-        sql: ${blended_arpu_variance_inr} /
-          NULLIF(${se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly_budget.blended_arpu_budget_inr},
+        sql: ${blended_arpu_variance_usd} /
+          NULLIF(${se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly_budget.blended_arpu_budget_usd},
           0)
         label: Blended ARPU Variance %
         format: percent_1
-        description: Blended ARPU Variance (INR) divided by Budget Blended ARPU, guarded
+        description: Blended ARPU Variance (USD) divided by Budget Blended ARPU, guarded
           against a zero budget denominator.
 
       digiadz_revenue_variance_inr:
@@ -39,6 +41,27 @@ views:
           -
           ${se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly_budget.total_digiadz_revenue_budget_inr}
         label: DigiAdz-branded Ad Revenue Variance (INR) - legacy brand
+        format: '"₹"#,##0'
+        description: Actual minus budget for the legacy DigiAdz-branded ad revenue line.
+          Budget assumed flat 1%/month growth with no tournament seasonality, so
+          Esports August is the largest miss in the dataset; this is a
+          seasonality/forecasting gap, not a promotional or COGS effect.
+        hidden: true
+
+      blended_arpu_variance_usd:
+        sql: ${se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly.blended_arpu_usd}
+          -
+          ${se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly_budget.blended_arpu_budget_usd}
+        label: Blended ARPU Variance (USD)
+        format: '"₹"#,##0.00'
+        description: Actual Blended ARPU minus Budget Blended ARPU, same metric, same
+          period.
+
+      digiadz_revenue_variance_usd:
+        sql: ${se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly.total_digiadz_ad_revenue_usd}
+          -
+          ${se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly_budget.total_digiadz_revenue_budget_usd}
+        label: DigiAdz-branded Ad Revenue Variance (USD) - legacy brand
         format: '"₹"#,##0'
         description: Actual minus budget for the legacy DigiAdz-branded ad revenue line.
           Budget assumed flat 1%/month growth with no tournament seasonality, so

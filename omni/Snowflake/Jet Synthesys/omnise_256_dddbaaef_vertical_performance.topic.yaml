@@ -3,10 +3,12 @@ hidden: false
 base_view: se_sandbox_oscar__omnise_256_dddbaaef_fact_vertical_monthly
 label: Jet Synthesys - Vertical Performance
 group_label: Jet Synthesys
-description: Vertical x month actuals (MAU, new installs, IAP revenue, legacy
+description: "Vertical x month actuals (MAU, new installs, IAP revenue, legacy
   DigiAdz-branded ad revenue) joined to the vertical dimension. Used for the
   portfolio dashboard, the IAP-only vs blended ARPU AI question pair, and the
-  MereeDhun reuse dashboard. Demo build omnise_256_dddbaaef.
+  MereeDhun reuse dashboard. Demo build omnise_256_dddbaaef. Currency: USD,
+  converted from INR at a fixed 95.8918 INR per USD (2026-09-25). Original INR
+  fields are hidden for audit."
 
 joins:
   se_sandbox_oscar__omnise_256_dddbaaef_dim_vertical: {}
@@ -26,9 +28,9 @@ ai_context: |
   legacy JetSynthesys names, not current ones; see build-report.md.
 
   Two distinct revenue-per-user metrics exist. Default metric for an unqualified
-  revenue per active user or revenue per user question is iap_only_arpu_inr =
-  SUM(iap_revenue_inr) / AVERAGE(mau): in-app-purchase revenue only. Only use
-  blended_arpu_inr = SUM(iap_revenue_inr + digiadz_ad_revenue_inr) / AVERAGE(mau)
+  revenue per active user or revenue per user question is iap_only_arpu_usd =
+  SUM(iap_revenue_usd) / AVERAGE(mau): in-app-purchase revenue only. Only use
+  blended_arpu_usd = SUM(iap_revenue_usd + digiadz_ad_revenue_usd) / AVERAGE(mau)
   when the question explicitly asks to include DigiAdz or ad revenue, and name
   it explicitly as the blended figure when you do. These are materially
   different, especially for Esports, which is ad-funded: always state which
