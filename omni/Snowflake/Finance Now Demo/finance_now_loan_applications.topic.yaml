@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: se_sandbox_oscar__omnise_141_673f86b5_fact_loan_application
 label: Finance Now - Loan Applications
 group_label: Finance Now Demo
