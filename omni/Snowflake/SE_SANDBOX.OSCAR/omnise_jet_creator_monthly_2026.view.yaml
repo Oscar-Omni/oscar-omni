@@ -35,6 +35,10 @@ dimensions:
   platform_revenue_usd:
     sql: '"PLATFORM_REVENUE_USD"'
 
+  related_vertical_id:
+    sql: '"RELATED_VERTICAL_ID"'
+    format: ID
+
 measures:
   count:
     aggregate_type: count

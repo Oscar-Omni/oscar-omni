@@ -1,0 +1,27 @@
+# Reference this view as se_sandbox_oscar__omnise_jet_creator_2026
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_JET_CREATOR_2026
+
+dimensions:
+  creator_id:
+    sql: '"CREATOR_ID"'
+    format: ID
+    primary_key: true
+
+  creator_name:
+    sql: '"CREATOR_NAME"'
+
+  category:
+    sql: '"CATEGORY"'
+
+  creator_tag:
+    sql: '"CREATOR_TAG"'
+
+  related_vertical_id:
+    sql: '"RELATED_VERTICAL_ID"'
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count
