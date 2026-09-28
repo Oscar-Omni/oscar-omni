@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__omnise_jet_creator_monthly_2026
+label: Jet Synthesys Creator Monthly Demo
+description: Synthetic creator-month demo metrics, Jan-Aug 2026. Roster names
+  sourced from jetsynthesys.com/creators; all audience and financial values are
+  invented.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_JET_CREATOR_MONTHLY_2026
@@ -7,6 +12,7 @@ dimensions:
   creator_id:
     sql: '"CREATOR_ID"'
     format: ID
+    hidden: true
 
   creator_name:
     sql: '"CREATOR_NAME"'
@@ -38,13 +44,41 @@ dimensions:
   related_vertical_id:
     sql: '"RELATED_VERTICAL_ID"'
     format: ID
+    hidden: true
+
+  creator_month_key:
+    sql: ${creator_id} || '-' || TO_VARCHAR(${month_start_date}, 'YYYY-MM')
+    hidden: true
+    primary_key: true
 
 measures:
   count:
     aggregate_type: count
 
-custom_compound_primary_key_sql:
-  [
-    "${se_sandbox_oscar__omnise_jet_creator_monthly_2026.creator_id}",
-    "${se_sandbox_oscar__omnise_jet_creator_monthly_2026.month_start_date}"
-  ]
+  total_content_views:
+    sql: ${content_views}
+    label: Content Views
+    aggregate_type: sum
+
+  total_sponsorship_revenue_usd:
+    sql: ${sponsorship_revenue_usd}
+    label: Sponsorship Revenue (USD)
+    format: currency_2
+    aggregate_type: sum
+
+  total_platform_revenue_usd:
+    sql: ${platform_revenue_usd}
+    label: Platform Revenue (USD)
+    format: currency_2
+    aggregate_type: sum
+
+  total_revenue_usd:
+    sql: ${sponsorship_revenue_usd} + ${platform_revenue_usd}
+    label: Creator Revenue (USD)
+    format: currency_2
+    aggregate_type: sum
+
+  revenue_per_thousand_views_usd:
+    sql: ${total_revenue_usd} * 1000 / NULLIF(${total_content_views}, 0)
+    label: Revenue per 1,000 Views (USD)
+    format: currency_2

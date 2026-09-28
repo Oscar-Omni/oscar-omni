@@ -1,0 +1,38 @@
+hidden: false
+
+base_view: se_sandbox_oscar__omnise_jet_creator_monthly_2026
+label: Jet Synthesys - Creator Performance Demo
+group_label: Jet Synthesys
+description: Synthetic monthly creator audience and USD revenue. Creator roster
+  is sourced from JetSynthesys' public Creators page. Related vertical is a
+  thematic demo alignment only, not creator attribution or affiliation.
+
+joins:
+  se_sandbox_oscar__omnise_jet_creator_2026: {}
+  se_sandbox_oscar__omnise_256_dddbaaef_dim_vertical: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__omnise_jet_creator_monthly_2026
+    join_to_view: se_sandbox_oscar__omnise_jet_creator_2026
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_jet_creator_monthly_2026.creator_id} =
+      ${se_sandbox_oscar__omnise_jet_creator_2026.creator_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__omnise_jet_creator_monthly_2026
+    join_to_view: se_sandbox_oscar__omnise_256_dddbaaef_dim_vertical
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_jet_creator_monthly_2026.related_vertical_id}
+      = ${se_sandbox_oscar__omnise_256_dddbaaef_dim_vertical.vertical_id}
+    relationship_type: many_to_one
+
+ai_context: All audience and revenue fields in this topic are synthetic Jan-Aug
+  2026 demo data. Creator names, tags and categories came from
+  jetsynthesys.com/creators. Currency is USD. Join to existing Jet Synthesys
+  vertical dimension via related_vertical_id for thematic demo context only;
+  this is not a business affiliation or revenue attribution. Do not sum follower
+  counts across months. Do not join creator-month rows to vertical-month fact
+  and sum its measures across creators, because multiple creators map to the
+  same vertical. When asked which creator earned the most money so far, rank
+  creators by the total_revenue_usd measure across all available months, grouped
+  by creator_name. Do not use the vertical revenue measures.
