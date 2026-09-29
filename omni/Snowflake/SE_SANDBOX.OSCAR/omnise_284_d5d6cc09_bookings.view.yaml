@@ -1,0 +1,38 @@
+# Reference this view as se_sandbox_oscar__omnise_284_d5d6cc09_bookings
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_284_D5D6CC09_BOOKINGS
+
+dimensions:
+  booking_id:
+    sql: '"BOOKING_ID"'
+    format: ID
+
+  booking_date:
+    sql: '"BOOKING_DATE"'
+
+  offer_id:
+    sql: '"OFFER_ID"'
+    format: ID
+
+  room_nights:
+    sql: '"ROOM_NIGHTS"'
+
+  gross_booking_value_aud:
+    sql: '"GROSS_BOOKING_VALUE_AUD"'
+
+  discount_aud:
+    sql: '"DISCOUNT_AUD"'
+
+  supplier_cost_aud:
+    sql: '"SUPPLIER_COST_AUD"'
+
+  net_revenue_aud:
+    sql: '"NET_REVENUE_AUD"'
+
+  margin_aud:
+    sql: '"MARGIN_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

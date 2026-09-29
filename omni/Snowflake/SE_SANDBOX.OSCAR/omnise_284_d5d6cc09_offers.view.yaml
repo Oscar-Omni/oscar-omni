@@ -1,0 +1,38 @@
+# Reference this view as se_sandbox_oscar__omnise_284_d5d6cc09_offers
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_284_D5D6CC09_OFFERS
+
+dimensions:
+  offer_id:
+    sql: '"OFFER_ID"'
+    format: ID
+
+  offer_name:
+    sql: '"OFFER_NAME"'
+
+  destination_id:
+    sql: '"DESTINATION_ID"'
+    format: ID
+
+  promo_code:
+    sql: '"PROMO_CODE"'
+
+  property_type:
+    sql: '"PROPERTY_TYPE"'
+
+  list_nightly_rate_aud:
+    sql: '"LIST_NIGHTLY_RATE_AUD"'
+
+  supplier_nightly_rate_aud:
+    sql: '"SUPPLIER_NIGHTLY_RATE_AUD"'
+
+  live_from_date:
+    sql: '"LIVE_FROM_DATE"'
+
+  live_to_date:
+    sql: '"LIVE_TO_DATE"'
+
+measures:
+  count:
+    aggregate_type: count

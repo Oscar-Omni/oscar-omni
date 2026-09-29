@@ -1,0 +1,30 @@
+# Reference this view as se_sandbox_oscar__omnise_284_d5d6cc09_promotions
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_284_D5D6CC09_PROMOTIONS
+
+dimensions:
+  promo_code:
+    sql: '"PROMO_CODE"'
+
+  promo_name:
+    sql: '"PROMO_NAME"'
+
+  promo_type:
+    sql: '"PROMO_TYPE"'
+
+  is_member_only:
+    sql: '"IS_MEMBER_ONLY"'
+
+  advertised_discount_pct:
+    sql: '"ADVERTISED_DISCOUNT_PCT"'
+
+  promo_start_date:
+    sql: '"PROMO_START_DATE"'
+
+  promo_end_date:
+    sql: '"PROMO_END_DATE"'
+
+measures:
+  count:
+    aggregate_type: count

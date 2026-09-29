@@ -1,0 +1,22 @@
+# Reference this view as se_sandbox_oscar__omnise_284_d5d6cc09_destinations
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_284_D5D6CC09_DESTINATIONS
+
+dimensions:
+  destination_id:
+    sql: '"DESTINATION_ID"'
+    format: ID
+
+  destination_name:
+    sql: '"DESTINATION_NAME"'
+
+  country:
+    sql: '"COUNTRY"'
+
+  region:
+    sql: '"REGION"'
+
+measures:
+  count:
+    aggregate_type: count

@@ -1,0 +1,28 @@
+# Reference this view as se_sandbox_oscar__omnise_284_d5d6cc09_trading_budget
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_284_D5D6CC09_TRADING_BUDGET
+
+dimensions:
+  budget_key:
+    sql: '"BUDGET_KEY"'
+
+  destination_id:
+    sql: '"DESTINATION_ID"'
+    format: ID
+
+  budget_month:
+    sql: '"BUDGET_MONTH"'
+
+  budget_gbv_aud:
+    sql: '"BUDGET_GBV_AUD"'
+
+  budget_margin_pct:
+    sql: '"BUDGET_MARGIN_PCT"'
+
+  budget_margin_aud:
+    sql: '"BUDGET_MARGIN_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

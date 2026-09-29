@@ -1,0 +1,22 @@
+# Reference this view as se_sandbox_oscar__omnise_284_d5d6cc09_scenario_slots
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_284_D5D6CC09_SCENARIO_SLOTS
+
+dimensions:
+  scenario_id:
+    sql: '"SCENARIO_ID"'
+    format: ID
+
+  scenario_name:
+    sql: '"SCENARIO_NAME"'
+
+  slot_order:
+    sql: '"SLOT_ORDER"'
+
+  is_baseline:
+    sql: '"IS_BASELINE"'
+
+measures:
+  count:
+    aggregate_type: count
