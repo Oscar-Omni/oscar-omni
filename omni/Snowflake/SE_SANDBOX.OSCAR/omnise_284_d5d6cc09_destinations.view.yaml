@@ -1,4 +1,6 @@
 # Reference this view as se_sandbox_oscar__omnise_284_d5d6cc09_destinations
+label: Destinations
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_284_D5D6CC09_DESTINATIONS
@@ -6,17 +8,31 @@ table_name: OMNISE_284_D5D6CC09_DESTINATIONS
 dimensions:
   destination_id:
     sql: '"DESTINATION_ID"'
+    label: Destination ID
     format: ID
+    hidden: true
+    primary_key: true
 
   destination_name:
     sql: '"DESTINATION_NAME"'
+    label: Destination
+    description: Holiday destination name, for example Bali or Fiji.
+    synonyms: [ destination, location, holiday destination, market, place ]
 
   country:
     sql: '"COUNTRY"'
+    label: Country
+    synonyms: [ country ]
 
   region:
     sql: '"REGION"'
+    label: Region
+    description: Destination region. ANZ is Australia & New Zealand, SEA is South
+      East Asia. The others are Pacific Islands, Indian Ocean, Europe and North
+      Asia & Americas.
+    synonyms: [ region, market region, ANZ, SEA ]
 
 measures:
   count:
+    hidden: true
     aggregate_type: count

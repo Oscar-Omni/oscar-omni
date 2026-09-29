@@ -1,4 +1,6 @@
 # Reference this view as se_sandbox_oscar__omnise_284_d5d6cc09_trading_budget
+label: Trading budget
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_284_D5D6CC09_TRADING_BUDGET
@@ -6,23 +8,61 @@ table_name: OMNISE_284_D5D6CC09_TRADING_BUDGET
 dimensions:
   budget_key:
     sql: '"BUDGET_KEY"'
+    label: Budget key
+    format: ID
+    hidden: true
+    primary_key: true
 
   destination_id:
     sql: '"DESTINATION_ID"'
+    label: Destination ID
     format: ID
+    hidden: true
 
   budget_month:
     sql: '"BUDGET_MONTH"'
+    label: Budget month
+    description: First day of the calendar month the budget applies to.
 
   budget_gbv_aud:
     sql: '"BUDGET_GBV_AUD"'
+    label: Budget GBV (AUD)
+    hidden: true
 
   budget_margin_pct:
     sql: '"BUDGET_MARGIN_PCT"'
+    label: Budget margin percent
+    description: Input only, never average this column. Use budget_margin_over_gbv.
+    hidden: true
 
   budget_margin_aud:
     sql: '"BUDGET_MARGIN_AUD"'
+    label: Budget margin (AUD)
+    hidden: true
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
+
+  budget_gbv:
+    sql: ${budget_gbv_aud}
+    label: Budget GBV
+    format: number_0
+    description: Budgeted gross booking value in AUD.
+    aggregate_type: sum
+    synonyms: [ budget, plan, target GBV, GBV budget ]
+
+  budget_margin_amount:
+    sql: ${budget_margin_aud}
+    label: Budget margin amount
+    format: number_0
+    description: Budgeted margin in AUD.
+    aggregate_type: sum
+    synonyms: [ margin budget, budget margin ]
+
+  budget_margin_over_gbv:
+    sql: ${budget_margin_amount} / NULLIF(${budget_gbv}, 0)
+    label: Budget margin over GBV
+    format: percent_1
+    description: Budget margin amount divided by budget GBV. Ratio of sums.

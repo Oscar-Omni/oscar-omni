@@ -1,4 +1,6 @@
 # Reference this view as se_sandbox_oscar__omnise_284_d5d6cc09_bookings
+label: Bookings
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_284_D5D6CC09_BOOKINGS
@@ -6,33 +8,139 @@ table_name: OMNISE_284_D5D6CC09_BOOKINGS
 dimensions:
   booking_id:
     sql: '"BOOKING_ID"'
+    label: Booking ID
     format: ID
+    primary_key: true
 
   booking_date:
     sql: '"BOOKING_DATE"'
+    label: Booking date
+    description: The date the booking was confirmed. All trading measures are
+      attributed to this date, not the travel date.
+    synonyms: [ date, sale date, booked date, order date ]
 
   offer_id:
     sql: '"OFFER_ID"'
+    label: Offer ID (booking key)
     format: ID
+    hidden: true
 
   room_nights:
     sql: '"ROOM_NIGHTS"'
+    label: Room nights (booking)
 
   gross_booking_value_aud:
     sql: '"GROSS_BOOKING_VALUE_AUD"'
+    label: Gross booking value (AUD)
+    description: One booking value before discounts, in AUD.
 
   discount_aud:
     sql: '"DISCOUNT_AUD"'
+    label: Discount (AUD)
 
   supplier_cost_aud:
     sql: '"SUPPLIER_COST_AUD"'
+    label: Supplier cost (AUD)
 
   net_revenue_aud:
     sql: '"NET_REVENUE_AUD"'
+    label: Net revenue (AUD)
 
   margin_aud:
     sql: '"MARGIN_AUD"'
+    label: Margin (AUD)
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
+
+  gbv:
+    sql: ${gross_booking_value_aud}
+    label: GBV
+    format: number_0
+    description: Gross booking value in AUD, before discounts. Sum of booking gross
+      values by booking date.
+    aggregate_type: sum
+    synonyms: [ gross booking value, booking value, sales, gross sales ]
+
+  bookings:
+    sql: ${booking_id}
+    label: Bookings
+    format: number_0
+    description: Count of confirmed bookings.
+    aggregate_type: count_distinct
+    synonyms: [ orders, number of bookings, booking count ]
+
+  average_booking_value:
+    sql: ${gbv} / NULLIF(${bookings}, 0)
+    label: Average booking value
+    format: number_0
+    description: GBV divided by bookings (ratio of sums, AUD).
+    synonyms: [ ABV, avg booking value, average order value ]
+
+  discount_amount:
+    sql: ${discount_aud}
+    label: Discount amount
+    format: number_0
+    description: Total discount given in AUD.
+    aggregate_type: sum
+    synonyms: [ discounts, promo discount, discount dollars ]
+
+  supplier_cost:
+    sql: ${supplier_cost_aud}
+    label: Supplier cost
+    format: number_0
+    description: Total supplier cost in AUD, room nights times the supplier nightly rate.
+    aggregate_type: sum
+    synonyms: [ hotel cost, cost of goods, COGS ]
+
+  net_revenue:
+    sql: ${net_revenue_aud}
+    label: Net revenue
+    format: number_0
+    description: GBV minus discount amount, in AUD.
+    aggregate_type: sum
+    synonyms: [ revenue after discounts, net sales ]
+
+  margin_amount:
+    sql: ${margin_aud}
+    label: Margin amount
+    format: number_0
+    description: GBV minus discount amount minus supplier cost, in AUD.
+    aggregate_type: sum
+    synonyms: [ margin, margin dollars, gross margin ]
+
+  margin_over_net_revenue:
+    sql: ${margin_amount} / NULLIF(${net_revenue}, 0)
+    label: Margin over net revenue
+    format: percent_1
+    description: Margin amount divided by net revenue. The alternative to margin
+      over GBV. Ratio of sums.
+
+  discount_rate:
+    sql: ${discount_amount} / NULLIF(${gbv}, 0)
+    label: Discount rate
+    format: percent_1
+    description: Discount amount divided by GBV. Ratio of sums.
+    synonyms: [ discount percent, discount depth ]
+
+  supplier_cost_rate:
+    sql: ${supplier_cost} / NULLIF(${gbv}, 0)
+    label: Supplier cost rate
+    format: percent_1
+    description: Supplier cost divided by GBV. Ratio of sums.
+
+  room_nights_total:
+    sql: ${room_nights}
+    label: Room nights
+    format: number_0
+    description: Total room nights booked.
+    aggregate_type: sum
+    synonyms: [ nights, nights booked, room nights ]
+
+  supplier_cost_per_room_night:
+    sql: ${supplier_cost} / NULLIF(${room_nights_total}, 0)
+    label: Supplier cost per room night
+    format: number_0
+    description: Supplier cost divided by room nights, in AUD per night. Ratio of sums.

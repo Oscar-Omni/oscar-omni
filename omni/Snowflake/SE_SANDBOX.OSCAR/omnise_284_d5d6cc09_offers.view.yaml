@@ -1,4 +1,6 @@
 # Reference this view as se_sandbox_oscar__omnise_284_d5d6cc09_offers
+label: Offers
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_284_D5D6CC09_OFFERS
@@ -6,33 +8,54 @@ table_name: OMNISE_284_D5D6CC09_OFFERS
 dimensions:
   offer_id:
     sql: '"OFFER_ID"'
+    label: Offer ID
     format: ID
+    primary_key: true
 
   offer_name:
     sql: '"OFFER_NAME"'
+    label: Offer
+    synonyms: [ offer, package, deal, escape, hotel package, villa package ]
 
   destination_id:
     sql: '"DESTINATION_ID"'
+    label: Destination ID
     format: ID
+    hidden: true
 
   promo_code:
     sql: '"PROMO_CODE"'
+    label: Promo code (offer key)
+    format: ID
+    hidden: true
 
   property_type:
     sql: '"PROPERTY_TYPE"'
+    label: Property type
+    description: Villa, Resort, Hotel or Apartment.
+    synonyms: [ property, accommodation type, villa, resort, hotel ]
 
   list_nightly_rate_aud:
     sql: '"LIST_NIGHTLY_RATE_AUD"'
+    label: List nightly rate (AUD)
+    description: Rate per room night before discount. Attribute only, do not average.
+    hidden: true
 
   supplier_nightly_rate_aud:
     sql: '"SUPPLIER_NIGHTLY_RATE_AUD"'
+    label: Supplier nightly rate (AUD)
+    description: Contracted supplier cost per room night. Attribute only, do not average.
+    hidden: true
 
   live_from_date:
     sql: '"LIVE_FROM_DATE"'
+    label: Live from
 
   live_to_date:
     sql: '"LIVE_TO_DATE"'
+    label: Live to
 
 measures:
   count:
+    hidden: true
     aggregate_type: count

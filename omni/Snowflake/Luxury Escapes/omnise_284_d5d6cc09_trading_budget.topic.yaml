@@ -1,0 +1,20 @@
+base_view: se_sandbox_oscar__omnise_284_d5d6cc09_trading_budget
+label: Luxury Escapes Trading Budget
+group_label: Luxury Escapes
+description: Monthly GBV and margin budget by destination. Not joined to
+  bookings in this topic, compare after aggregating actuals to destination and
+  month.
+
+joins:
+  se_sandbox_oscar__omnise_284_d5d6cc09_destinations: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__omnise_284_d5d6cc09_trading_budget
+    join_to_view: se_sandbox_oscar__omnise_284_d5d6cc09_destinations
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_284_d5d6cc09_trading_budget.destination_id} =
+      ${se_sandbox_oscar__omnise_284_d5d6cc09_destinations.destination_id}
+    relationship_type: many_to_one
+
+ai_context: |
+  One row per destination per calendar month (budget_month is the first day of the month), 2026-01-01 to 2026-08-01. Amounts in AUD. Budget = plan = target. budget_margin_over_gbv = budget_margin_amount / budget_gbv on summed values, never an average of percentages. This topic has no booking actuals, for actuals use the Luxury Escapes Trading Bookings topic. Keep answers concise and name the metric used.

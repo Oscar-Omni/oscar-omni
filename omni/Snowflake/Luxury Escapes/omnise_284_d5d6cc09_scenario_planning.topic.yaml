@@ -1,0 +1,10 @@
+base_view: se_sandbox_oscar__omnise_284_d5d6cc09_scenario_slots
+label: Luxury Escapes Scenario Planning
+group_label: Luxury Escapes
+description: Reference list of scenario slots for the Offer margin review app.
+  Scenario input values are set in the app, not stored here.
+
+joins: {}
+
+ai_context: |
+  Four scenario slots. BASELINE is actuals and read only, SCN_A is Trim discount, SCN_B is Trim discount and renegotiate supplier, SCN_C is Deep trim. This is a reference list only and holds no trading results.

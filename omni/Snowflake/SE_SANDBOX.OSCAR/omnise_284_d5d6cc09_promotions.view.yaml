@@ -1,4 +1,6 @@
 # Reference this view as se_sandbox_oscar__omnise_284_d5d6cc09_promotions
+label: Promotions
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_284_D5D6CC09_PROMOTIONS
@@ -6,25 +8,44 @@ table_name: OMNISE_284_D5D6CC09_PROMOTIONS
 dimensions:
   promo_code:
     sql: '"PROMO_CODE"'
+    label: Promo code
+    format: ID
+    primary_key: true
+    synonyms: [ promo, promo code, code, promotion code, campaign code ]
 
   promo_name:
     sql: '"PROMO_NAME"'
+    label: Promotion name
+    synonyms: [ promotion, campaign, sale name ]
 
   promo_type:
     sql: '"PROMO_TYPE"'
+    label: Promotion type
+    description: Member Flash, Public Sale, Seasonal Sale or Getaway Bundle.
+    synonyms: [ sale type, offer type, promo type, flash ]
 
   is_member_only:
     sql: '"IS_MEMBER_ONLY"'
+    label: Member only
+    description: True for member only flash promotions.
+    synonyms: [ members only, member exclusive, member offer ]
 
   advertised_discount_pct:
     sql: '"ADVERTISED_DISCOUNT_PCT"'
+    label: Advertised discount
+    description: Advertised discount fraction per promotion. Attribute only, never
+      average or sum it. Use the discount_rate measure.
+    hidden: true
 
   promo_start_date:
     sql: '"PROMO_START_DATE"'
+    label: Promotion start
 
   promo_end_date:
     sql: '"PROMO_END_DATE"'
+    label: Promotion end
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
