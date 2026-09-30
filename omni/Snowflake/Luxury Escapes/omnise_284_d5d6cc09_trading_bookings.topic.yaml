@@ -9,6 +9,237 @@ joins:
     se_sandbox_oscar__omnise_284_d5d6cc09_destinations: {}
     se_sandbox_oscar__omnise_284_d5d6cc09_promotions: {}
 
+views:
+  se_sandbox_oscar__omnise_284_d5d6cc09_bookings:
+    dimensions:
+      in_current_period:
+        sql: "{{# se_sandbox_oscar__omnise_284_d5d6cc09_bookings.current_period.filter
+          }} ${booking_date} {{/
+          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.current_period.filter
+          }}"
+        hidden: true
+
+      in_comparison_period:
+        sql: "{{#
+          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.comparison_period.filter
+          }} ${booking_date} {{/
+          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.comparison_period.filt\
+          er }}"
+        hidden: true
+
+    measures:
+      current_gbv:
+        sql: ${gross_booking_value_aud}
+        label: GBV — current period
+        group_label: Current period
+        format: number_0
+        aggregate_type: sum
+        filters:
+          in_current_period:
+            is: true
+
+      current_bookings:
+        sql: ${booking_id}
+        label: Bookings — current period
+        group_label: Current period
+        format: number_0
+        aggregate_type: count_distinct
+        filters:
+          in_current_period:
+            is: true
+
+      current_discount_amount:
+        sql: ${discount_aud}
+        label: Discount amount — current period
+        group_label: Current period
+        format: number_0
+        aggregate_type: sum
+        filters:
+          in_current_period:
+            is: true
+
+      current_supplier_cost:
+        sql: ${supplier_cost_aud}
+        label: Supplier cost — current period
+        group_label: Current period
+        format: number_0
+        aggregate_type: sum
+        filters:
+          in_current_period:
+            is: true
+
+      current_margin_amount:
+        sql: ${margin_aud}
+        label: Margin amount — current period
+        group_label: Current period
+        format: number_0
+        aggregate_type: sum
+        filters:
+          in_current_period:
+            is: true
+
+      current_margin_over_gbv:
+        sql: ${current_margin_amount} / NULLIF(${current_gbv}, 0)
+        label: Margin over GBV — current period
+        group_label: Current period
+        format: percent_2
+        description: Ratio of summed amounts for current period. Null if period GBV is zero.
+
+      current_discount_rate:
+        sql: ${current_discount_amount} / NULLIF(${current_gbv}, 0)
+        label: Discount rate — current period
+        group_label: Current period
+        format: percent_2
+        description: Ratio of summed amounts for current period. Null if period GBV is zero.
+
+      current_supplier_cost_rate:
+        sql: ${current_supplier_cost} / NULLIF(${current_gbv}, 0)
+        label: Supplier cost rate — current period
+        group_label: Current period
+        format: percent_2
+        description: Ratio of summed amounts for current period. Null if period GBV is zero.
+
+      comparison_gbv:
+        sql: ${gross_booking_value_aud}
+        label: GBV — comparison period
+        group_label: Comparison period
+        format: number_0
+        aggregate_type: sum
+        filters:
+          in_comparison_period:
+            is: true
+
+      comparison_bookings:
+        sql: ${booking_id}
+        label: Bookings — comparison period
+        group_label: Comparison period
+        format: number_0
+        aggregate_type: count_distinct
+        filters:
+          in_comparison_period:
+            is: true
+
+      comparison_discount_amount:
+        sql: ${discount_aud}
+        label: Discount amount — comparison period
+        group_label: Comparison period
+        format: number_0
+        aggregate_type: sum
+        filters:
+          in_comparison_period:
+            is: true
+
+      comparison_supplier_cost:
+        sql: ${supplier_cost_aud}
+        label: Supplier cost — comparison period
+        group_label: Comparison period
+        format: number_0
+        aggregate_type: sum
+        filters:
+          in_comparison_period:
+            is: true
+
+      comparison_margin_amount:
+        sql: ${margin_aud}
+        label: Margin amount — comparison period
+        group_label: Comparison period
+        format: number_0
+        aggregate_type: sum
+        filters:
+          in_comparison_period:
+            is: true
+
+      comparison_margin_over_gbv:
+        sql: ${comparison_margin_amount} / NULLIF(${comparison_gbv}, 0)
+        label: Margin over GBV — comparison period
+        group_label: Comparison period
+        format: percent_2
+        description: Ratio of summed amounts for comparison period. Null if period GBV
+          is zero.
+
+      comparison_discount_rate:
+        sql: ${comparison_discount_amount} / NULLIF(${comparison_gbv}, 0)
+        label: Discount rate — comparison period
+        group_label: Comparison period
+        format: percent_2
+        description: Ratio of summed amounts for comparison period. Null if period GBV
+          is zero.
+
+      comparison_supplier_cost_rate:
+        sql: ${comparison_supplier_cost} / NULLIF(${comparison_gbv}, 0)
+        label: Supplier cost rate — comparison period
+        group_label: Comparison period
+        format: percent_2
+        description: Ratio of summed amounts for comparison period. Null if period GBV
+          is zero.
+
+      gbv_change:
+        sql: ${current_gbv} - ${comparison_gbv}
+        label: GBV change
+        group_label: Period changes
+        format: number_0
+
+      gbv_growth_pct:
+        sql: (${current_gbv} - ${comparison_gbv}) / NULLIF(${comparison_gbv}, 0)
+        label: GBV growth
+        group_label: Period changes
+        format: percent_2
+        description: "Current vs comparison period GBV growth. Null when comparison GBV
+          is zero: do not describe a new entrant as zero growth."
+
+      margin_amount_change:
+        sql: ${current_margin_amount} - ${comparison_margin_amount}
+        label: Margin amount change
+        group_label: Period changes
+        format: number_0
+
+      margin_rate_change_pp:
+        sql: 100 * (${current_margin_over_gbv} - ${comparison_margin_over_gbv})
+        label: Margin rate change (pp)
+        group_label: Period changes
+        format: number_2
+        description: Current margin over GBV minus comparison margin over GBV,
+          multiplied by 100. Percentage points, not percent growth; null if
+          either period has zero GBV.
+
+      discount_rate_change_pp:
+        sql: 100 * (${current_discount_rate} - ${comparison_discount_rate})
+        label: Discount rate change (pp)
+        group_label: Period changes
+        format: number_2
+
+      supplier_cost_rate_change_pp:
+        sql: 100 * (${current_supplier_cost_rate} - ${comparison_supplier_cost_rate})
+        label: Supplier cost rate change (pp)
+        group_label: Period changes
+        format: number_2
+
+      comparison_activity_gbv:
+        sql: ${current_gbv} + ${comparison_gbv}
+        label: GBV in either period
+        group_label: Period changes
+        format: number_0
+        hidden: true
+
+    filters:
+      comparison_period:
+        type: timestamp
+        label: Comparison period dates
+        group_label: Comparison dates
+        description: Booking dates used by the comparison period measures. End date is
+          exclusive.
+        default_filter:
+          between_dates: [ 2025-06-01, 2025-09-01 ]
+
+      current_period:
+        type: timestamp
+        label: Current period dates
+        group_label: Comparison dates
+        description: Booking dates used by the current period measures. End date is
+          exclusive.
+        default_filter:
+          between_dates: [ 2026-06-01, 2026-09-01 ]
+
 relationships:
   - join_from_view: se_sandbox_oscar__omnise_284_d5d6cc09_bookings
     join_to_view: se_sandbox_oscar__omnise_284_d5d6cc09_offers
@@ -32,15 +263,13 @@ relationships:
     relationship_type: many_to_one
 
 ai_context: |
-  One row per confirmed booking in the bookings view, dated by booking_date (the sale date, travel dates are not modelled). All money is in AUD. Bookings join many to one to offers, and offers to destinations and promotions, so there is no fanout.
+  This topic owns reusable comparison metrics. For period comparisons, select current_gbv, comparison_gbv, gbv_change, gbv_growth_pct, current_margin_over_gbv, comparison_margin_over_gbv and margin_rate_change_pp from the bookings view. These are topic fields; use them directly without tab-only fields, CTEs, custom SQL or ad hoc period pivots. For promotion drivers add promo_code, current/comparison_discount_rate and current/comparison_supplier_cost_rate.
 
-  Definitions. GBV (gross booking value) is before discounts. margin_amount = gbv - discount_amount - supplier_cost. Margin over GBV (also called margin percent or margin rate) = margin_amount / gbv, always computed on summed values (ratio of sums), never an average of percentages. If a shared field named margin_over_gbv is not available, compute margin_amount divided by gbv and say so. State the method used. Mention once, briefly, the alternative margin_over_net_revenue = margin_amount / net_revenue. average_booking_value = gbv / bookings.
+  Set bookings.current_period and bookings.comparison_period filter-only dates to the requested windows; defaults are Jun 1-Aug 31 2026 and Jun 1-Aug 31 2025 (exclusive Sep 1 end). With these comparison measures, leave booking_date unfiltered and use comparison_activity_gbv > 0 to retain entities with bookings in either period. Other destination, offer and promo filters apply to both periods. Rank "grew most" by gbv_change descending; gbv_growth_pct is relative growth and margin_rate_change_pp is percentage points. Null growth with zero prior GBV means no comparison base, not zero growth or proof of a new launch.
 
-  Vocabulary. GBV, gross booking value, booking value, sales = gbv. Orders = bookings. ABV = average_booking_value. Margin, margin dollars = margin_amount. Discount = discount_amount (rate = discount_rate). Hotel cost, cost of goods = supplier_cost. Nights = room_nights_total. Flash or member flash = promo_type Member Flash. Promo or code = promo_code. Villa = property_type Villa. ANZ = region Australia & New Zealand. SEA = region South East Asia. YoY = same period one year earlier.
+  For follow-up "where margin fell", use destinations identified by negative margin_rate_change_pp, keeping the same two windows. Distinguish changes in promotion margin rates from changes in GBV mix and promotions entering/leaving the window; use model rate-change fields before claiming rates were unchanged. Round only for display. Quantify attribution before saying entrants explain the entire decline; call any undecomposed legacy contribution a mix and rate effect.
 
-  Dates. The data covers 2025-01-01 to 2026-08-31. Always use explicit dates for both periods, never relative periods. The house comparison is 2026-06-01 to 2026-08-31 versus 2025-06-01 to 2025-08-31.
-
-  Style. Keep answers concise. Lead with the finding, name the metric definition used, and do not average percentages. When the user lists specific columns, return exactly those columns and no others, do not add helper or ratio columns. If asked to sort by a ratio that is not one of the listed columns, sort by it without displaying it.
+  All amounts are AUD and data is synthetic through 2026-08-31. GBV is before discounts; margin_amount = gbv - discount_amount - supplier_cost; margin_over_gbv is the ratio of sums, not an average of row rates. For ordinary single-period questions use the original gbv, margin_amount, margin_over_gbv and booking_date fields. Geography describes holiday destinations, not traveller origins; flash = Member Flash, ANZ = Australia & New Zealand, SEA = South East Asia.
 
 sample_queries:
   gbv_and_margin_by_destination:
@@ -48,35 +277,70 @@ sample_queries:
       fields:
         [
           se_sandbox_oscar__omnise_284_d5d6cc09_destinations.destination_name,
-          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.gbv,
-          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.margin_amount
+          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.comparison_gbv,
+          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.current_gbv,
+          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.gbv_change,
+          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.gbv_growth_pct,
+          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.comparison_margin_over_gbv,
+          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.current_margin_over_gbv,
+          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.margin_rate_change_pp
         ]
       base_view: se_sandbox_oscar__omnise_284_d5d6cc09_bookings
-      limit: 50
+      filters:
+        se_sandbox_oscar__omnise_284_d5d6cc09_bookings.current_period:
+          between_dates: [ 2026-06-01, 2026-09-01 ]
+        se_sandbox_oscar__omnise_284_d5d6cc09_bookings.comparison_period:
+          between_dates: [ 2025-06-01, 2025-09-01 ]
+        se_sandbox_oscar__omnise_284_d5d6cc09_bookings.comparison_activity_gbv:
+          greater_than: 0
+      limit: 1000
+      sorts:
+        - field: se_sandbox_oscar__omnise_284_d5d6cc09_bookings.gbv_change
+          desc: true
       topic: omnise_284_d5d6cc09_trading_bookings
-    description: GBV and margin amount by destination. Filter booking date to
-      2026-06-01 to 2026-08-31 and again to 2025-06-01 to 2025-08-31 to compare
-      the periods.
     prompt: For Jun 1 to Aug 31 2026 versus Jun 1 to Aug 31 2025, which destinations
       grew GBV the most and what happened to margin over GBV in each?
+    ai_context: Use these topic-owned measures directly; only change the two period
+      date filters for other date windows. No tab-only fields are needed.
   promotion_drivers:
     query:
       fields:
         [
           se_sandbox_oscar__omnise_284_d5d6cc09_destinations.destination_name,
           se_sandbox_oscar__omnise_284_d5d6cc09_promotions.promo_code,
-          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.gbv,
-          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.discount_amount,
-          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.supplier_cost,
-          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.margin_amount
+          se_sandbox_oscar__omnise_284_d5d6cc09_promotions.promo_type,
+          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.comparison_gbv,
+          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.current_gbv,
+          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.gbv_change,
+          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.comparison_margin_over_gbv,
+          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.current_margin_over_gbv,
+          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.margin_rate_change_pp,
+          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.comparison_discount_rate,
+          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.current_discount_rate,
+          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.comparison_supplier_cost_rate,
+          se_sandbox_oscar__omnise_284_d5d6cc09_bookings.current_supplier_cost_rate
         ]
       base_view: se_sandbox_oscar__omnise_284_d5d6cc09_bookings
-      limit: 50
+      filters:
+        se_sandbox_oscar__omnise_284_d5d6cc09_bookings.current_period:
+          between_dates: [ 2026-06-01, 2026-09-01 ]
+        se_sandbox_oscar__omnise_284_d5d6cc09_bookings.comparison_period:
+          between_dates: [ 2025-06-01, 2025-09-01 ]
+        se_sandbox_oscar__omnise_284_d5d6cc09_bookings.comparison_activity_gbv:
+          greater_than: 0
+        se_sandbox_oscar__omnise_284_d5d6cc09_destinations.destination_name:
+          is: [ Bali, Fiji ]
+      limit: 1000
+      sorts:
+        - field: se_sandbox_oscar__omnise_284_d5d6cc09_destinations.destination_name
+        - field: se_sandbox_oscar__omnise_284_d5d6cc09_bookings.current_gbv
+          desc: true
       topic: omnise_284_d5d6cc09_trading_bookings
-    description: Promotion level GBV, discount, supplier cost and margin for
-      2026-06-01 to 2026-08-31, lowest margin over GBV first.
-    prompt: Within the destinations where margin over GBV fell, which promotions are
-      driving it, for Jun 1 to Aug 31 2026 versus Jun 1 to Aug 31 2025?
+    prompt: Within the destinations where margin fell, which promotions are driving it?
+    ai_context: This example uses Bali and Fiji; replace destination values with the
+      declining destinations from the preceding query. Keep both period
+      parameters. Compare model rate-change fields before claiming within-promo
+      rates are unchanged.
   gbv_by_region:
     query:
       fields:
@@ -87,8 +351,9 @@ sample_queries:
           se_sandbox_oscar__omnise_284_d5d6cc09_bookings.average_booking_value
         ]
       base_view: se_sandbox_oscar__omnise_284_d5d6cc09_bookings
-      limit: 20
+      filters:
+        se_sandbox_oscar__omnise_284_d5d6cc09_bookings.booking_date:
+          between_dates: [ 2026-06-01, 2026-09-01 ]
+      limit: 1000
       topic: omnise_284_d5d6cc09_trading_bookings
-    description: Regional split of booking value for the pinned window 2026-06-01 to
-      2026-08-31.
     prompt: What was GBV by region for Jun 1 to Aug 31 2026?

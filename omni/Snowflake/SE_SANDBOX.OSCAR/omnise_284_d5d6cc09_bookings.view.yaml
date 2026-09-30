@@ -144,3 +144,10 @@ measures:
     label: Supplier cost per room night
     format: number_0
     description: Supplier cost divided by room nights, in AUD per night. Ratio of sums.
+
+  margin_over_gbv:
+    sql: ${margin_amount} / NULLIF(${gbv}, 0)
+    label: Margin over GBV
+    format: percent_1
+    description: Total margin amount divided by total gross booking value before
+      discounts. Ratio of sums; returns null when GBV is zero.
