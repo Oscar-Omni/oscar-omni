@@ -11,51 +11,76 @@ dimensions:
     label: Offer ID
     format: ID
     primary_key: true
+    ai_context: Unique offer ID. Use offer_name to label results; use this only for
+      drilling or disambiguating offers with the same name.
 
   offer_name:
     sql: '"OFFER_NAME"'
     label: Offer
     synonyms: [ offer, package, deal, escape, hotel package, villa package ]
+    ai_context: Name of the offer or package. Use it to break down booking metrics
+      by offer, package or deal.
 
   destination_id:
     sql: '"DESTINATION_ID"'
     label: Destination ID
     format: ID
     hidden: true
+    ai_context: Hidden join key to destinations. Use destinations.destination_name instead.
 
   promo_code:
     sql: '"PROMO_CODE"'
     label: Promo code (offer key)
     format: ID
     hidden: true
+    ai_context: Hidden join key to promotions. Use promotions.promo_code or
+      promo_name instead.
 
   property_type:
     sql: '"PROPERTY_TYPE"'
     label: Property type
     description: Villa, Resort, Hotel or Apartment.
     synonyms: [ property, accommodation type, villa, resort, hotel ]
+    ai_context: "Accommodation type: Villa, Resort, Hotel or Apartment. Use when
+      asked to compare performance by property or accommodation type."
 
   list_nightly_rate_aud:
     sql: '"LIST_NIGHTLY_RATE_AUD"'
     label: List nightly rate (AUD)
     description: Rate per room night before discount. Attribute only, do not average.
     hidden: true
+    ai_context: Offer attribute only. Never sum or average it; use bookings measures
+      for pricing analysis.
 
   supplier_nightly_rate_aud:
     sql: '"SUPPLIER_NIGHTLY_RATE_AUD"'
     label: Supplier nightly rate (AUD)
     description: Contracted supplier cost per room night. Attribute only, do not average.
     hidden: true
+    ai_context: Contracted supplier rate, attribute only. Never sum or average it;
+      use bookings.supplier_cost_per_room_night.
 
   live_from_date:
     sql: '"LIVE_FROM_DATE"'
     label: Live from
+    ai_context: Start of the offer's selling window. Not a booking or travel date;
+      do not use it to filter trading metrics by time.
 
   live_to_date:
     sql: '"LIVE_TO_DATE"'
     label: Live to
+    ai_context: End of the offer's selling window. Not a booking or travel date; do
+      not use it to filter trading metrics by time.
 
 measures:
   count:
     hidden: true
     aggregate_type: count
+
+ai_context: One row per offer/package (grain = offer_id). Each offer belongs to
+  one destination and carries at most one promo_code. Use offer_name and
+  property_type (Villa, Resort, Hotel, Apartment) to slice booking metrics.
+  live_from_date and live_to_date are the offer's selling window, not booking or
+  travel dates. List and supplier nightly rates are attributes only; never
+  average or sum them, use the bookings supplier_cost_per_room_night measure
+  instead.

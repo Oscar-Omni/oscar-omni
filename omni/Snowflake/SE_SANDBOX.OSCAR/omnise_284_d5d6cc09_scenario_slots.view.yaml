@@ -11,21 +11,36 @@ dimensions:
     label: Scenario ID
     format: ID
     primary_key: true
+    ai_context: "Scenario slot code: BASELINE, SCN_A, SCN_B or SCN_C. Use when
+      filtering to a specific slot."
 
   scenario_name:
     sql: '"SCENARIO_NAME"'
     label: Scenario
     synonyms: [ scenario, slot, what if ]
+    ai_context: "Readable scenario name: Baseline (actuals), Trim discount, Trim
+      discount and renegotiate supplier, Deep trim."
 
   slot_order:
     sql: '"SLOT_ORDER"'
     label: Slot order
+    ai_context: Display order of scenarios. Sort by this rather than by name.
 
   is_baseline:
     sql: '"IS_BASELINE"'
     label: Baseline
+    ai_context: True only for BASELINE, which represents actuals and is read only.
 
 measures:
   count:
     label: Scenario slots
     aggregate_type: count
+    ai_context: Number of scenario slots (four). Holds no trading results; use
+      bookings measures for actuals.
+
+ai_context: Reference list of four scenario slots for the Offer margin review
+  app, ordered by slot_order. BASELINE is actuals and read only (is_baseline =
+  true); SCN_A is Trim discount, SCN_B is Trim discount and renegotiate
+  supplier, SCN_C is Deep trim. Scenario input values are set in the app and are
+  not stored here, and this view holds no trading results; for actuals use
+  bookings.

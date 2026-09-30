@@ -11,6 +11,9 @@ dimensions:
     label: Booking ID
     format: ID
     primary_key: true
+    ai_context: Unique ID of one confirmed booking. Use for drilling to individual
+      bookings; to count bookings use the bookings measure, not COUNT on this
+      field.
 
   booking_date:
     sql: '"BOOKING_DATE"'
@@ -18,37 +21,55 @@ dimensions:
     description: The date the booking was confirmed. All trading measures are
       attributed to this date, not the travel date.
     synonyms: [ date, sale date, booked date, order date ]
+    ai_context: Date the booking was confirmed, not the travel date. Use it for all
+      time trends and single-period date filters. For period-over-period
+      comparisons, leave this unfiltered and set the current_period and
+      comparison_period filters instead. Data runs through 2026-08-31.
 
   offer_id:
     sql: '"OFFER_ID"'
     label: Offer ID (booking key)
     format: ID
     hidden: true
+    ai_context: Hidden join key to offers. Do not select it; use offers.offer_name
+      to label offers.
 
   room_nights:
     sql: '"ROOM_NIGHTS"'
     label: Room nights (booking)
+    ai_context: Room nights on a single booking. Row-level only; for totals use the
+      room_nights_total measure.
 
   gross_booking_value_aud:
     sql: '"GROSS_BOOKING_VALUE_AUD"'
     label: Gross booking value (AUD)
     description: One booking value before discounts, in AUD.
+    ai_context: Row-level GBV in AUD, before discounts. Do not aggregate directly;
+      use the gbv measure.
 
   discount_aud:
     sql: '"DISCOUNT_AUD"'
     label: Discount (AUD)
+    ai_context: Row-level discount in AUD. Use the discount_amount measure for
+      totals and discount_rate for depth.
 
   supplier_cost_aud:
     sql: '"SUPPLIER_COST_AUD"'
     label: Supplier cost (AUD)
+    ai_context: Row-level supplier cost in AUD. Use the supplier_cost measure for totals.
 
   net_revenue_aud:
     sql: '"NET_REVENUE_AUD"'
     label: Net revenue (AUD)
+    ai_context: Row-level GBV minus discount in AUD. Use the net_revenue measure for
+      totals.
 
   margin_aud:
     sql: '"MARGIN_AUD"'
     label: Margin (AUD)
+    ai_context: Row-level margin in AUD (GBV minus discount minus supplier cost).
+      Use margin_amount for totals; never average this for a margin rate, use
+      margin_over_gbv.
 
 measures:
   count:
@@ -63,6 +84,10 @@ measures:
       values by booking date.
     aggregate_type: sum
     synonyms: [ gross booking value, booking value, sales, gross sales ]
+    ai_context: Default headline sales metric. Use for questions about sales, GBV,
+      booking value or size of a destination/offer/promotion. It is before
+      discounts. For period comparisons use current_gbv and comparison_gbv
+      instead.
 
   bookings:
     sql: ${booking_id}
@@ -71,6 +96,7 @@ measures:
     description: Count of confirmed bookings.
     aggregate_type: count_distinct
     synonyms: [ orders, number of bookings, booking count ]
+    ai_context: Use for any booking count, number of orders or volume question.
 
   average_booking_value:
     sql: ${gbv} / NULLIF(${bookings}, 0)
@@ -78,6 +104,8 @@ measures:
     format: number_0
     description: GBV divided by bookings (ratio of sums, AUD).
     synonyms: [ ABV, avg booking value, average order value ]
+    ai_context: Use for ABV or average order value questions. Ratio of GBV to
+      bookings; never average it across rows or groups.
 
   discount_amount:
     sql: ${discount_aud}
@@ -86,6 +114,8 @@ measures:
     description: Total discount given in AUD.
     aggregate_type: sum
     synonyms: [ discounts, promo discount, discount dollars ]
+    ai_context: Total AUD discount given. Pair with discount_rate when explaining
+      promotional cost or margin erosion.
 
   supplier_cost:
     sql: ${supplier_cost_aud}
@@ -94,6 +124,9 @@ measures:
     description: Total supplier cost in AUD, room nights times the supplier nightly rate.
     aggregate_type: sum
     synonyms: [ hotel cost, cost of goods, COGS ]
+    ai_context: Total AUD paid to suppliers. Pair with supplier_cost_rate or
+      supplier_cost_per_room_night when explaining margin changes from supplier
+      pricing.
 
   net_revenue:
     sql: ${net_revenue_aud}
@@ -102,6 +135,8 @@ measures:
     description: GBV minus discount amount, in AUD.
     aggregate_type: sum
     synonyms: [ revenue after discounts, net sales ]
+    ai_context: GBV after discounts. Use only when asked for net revenue or revenue
+      after discounts; the default sales metric is gbv.
 
   margin_amount:
     sql: ${margin_aud}
@@ -110,6 +145,8 @@ measures:
     description: GBV minus discount amount minus supplier cost, in AUD.
     aggregate_type: sum
     synonyms: [ margin, margin dollars, gross margin ]
+    ai_context: Default margin dollars metric (AUD). Use for margin, profit or gross
+      margin in dollar terms.
 
   margin_over_net_revenue:
     sql: ${margin_amount} / NULLIF(${net_revenue}, 0)
@@ -117,6 +154,8 @@ measures:
     format: percent_1
     description: Margin amount divided by net revenue. The alternative to margin
       over GBV. Ratio of sums.
+    ai_context: Alternative margin rate. Use only when the user explicitly asks for
+      margin as a share of net revenue; otherwise use margin_over_gbv.
 
   discount_rate:
     sql: ${discount_amount} / NULLIF(${gbv}, 0)
@@ -124,12 +163,18 @@ measures:
     format: percent_1
     description: Discount amount divided by GBV. Ratio of sums.
     synonyms: [ discount percent, discount depth ]
+    ai_context: Actual discount depth (discount / GBV). Prefer this over
+      promotions.advertised_discount_pct when asked how deep discounts are.
+      Useful for explaining margin changes.
 
   supplier_cost_rate:
     sql: ${supplier_cost} / NULLIF(${gbv}, 0)
     label: Supplier cost rate
     format: percent_1
     description: Supplier cost divided by GBV. Ratio of sums.
+    ai_context: Supplier cost as a share of GBV. Use to explain margin changes
+      driven by supplier cost; margin_over_gbv = 1 - discount_rate -
+      supplier_cost_rate.
 
   room_nights_total:
     sql: ${room_nights}
@@ -138,12 +183,15 @@ measures:
     description: Total room nights booked.
     aggregate_type: sum
     synonyms: [ nights, nights booked, room nights ]
+    ai_context: Use for nights booked or room night volume questions.
 
   supplier_cost_per_room_night:
     sql: ${supplier_cost} / NULLIF(${room_nights_total}, 0)
     label: Supplier cost per room night
     format: number_0
     description: Supplier cost divided by room nights, in AUD per night. Ratio of sums.
+    ai_context: Effective supplier cost per night in AUD. Use this instead of
+      averaging offers.supplier_nightly_rate_aud.
 
   margin_over_gbv:
     sql: ${margin_amount} / NULLIF(${gbv}, 0)
@@ -151,3 +199,19 @@ measures:
     format: percent_1
     description: Total margin amount divided by total gross booking value before
       discounts. Ratio of sums; returns null when GBV is zero.
+    ai_context: Default margin rate or margin percent. Use whenever the user asks
+      for margin % or margin rate unless they specify net revenue. For period
+      comparisons use current_margin_over_gbv, comparison_margin_over_gbv and
+      margin_rate_change_pp.
+
+ai_context: One row per confirmed booking (grain = booking_id). Synthetic demo
+  data through 2026-08-31, all amounts in AUD. All measures are attributed to
+  booking_date (when the booking was confirmed), not travel date. GBV is before
+  discounts; net_revenue = gbv - discount_amount; margin_amount = gbv -
+  discount_amount - supplier_cost. Default margin rate is margin_over_gbv; use
+  margin_over_net_revenue only when explicitly asked. All rate measures
+  (margin_over_gbv, discount_rate, supplier_cost_rate, average_booking_value,
+  supplier_cost_per_room_night) are ratios of sums, never average row-level
+  rates. Use the bookings measure for booking counts. For period-over-period
+  comparisons use the topic's current_/comparison_ period measures rather than
+  filtering booking_date.

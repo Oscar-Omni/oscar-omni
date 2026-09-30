@@ -12,33 +12,41 @@ dimensions:
     format: ID
     hidden: true
     primary_key: true
+    ai_context: Hidden unique key per destination and month. Not for analysis.
 
   destination_id:
     sql: '"DESTINATION_ID"'
     label: Destination ID
     format: ID
     hidden: true
+    ai_context: Hidden key to destinations. Use destinations.destination_name for
+      labels and to align with actuals.
 
   budget_month:
     sql: '"BUDGET_MONTH"'
     label: Budget month
     description: First day of the calendar month the budget applies to.
+    ai_context: First day of the budget month (Jan-Aug 2026). Use at month grain to
+      compare with bookings aggregated by booking_date month.
 
   budget_gbv_aud:
     sql: '"BUDGET_GBV_AUD"'
     label: Budget GBV (AUD)
     hidden: true
+    ai_context: Row-level budget GBV. Use the budget_gbv measure for totals.
 
   budget_margin_pct:
     sql: '"BUDGET_MARGIN_PCT"'
     label: Budget margin percent
     description: Input only, never average this column. Use budget_margin_over_gbv.
     hidden: true
+    ai_context: Input percentage only. Never average it; use budget_margin_over_gbv.
 
   budget_margin_aud:
     sql: '"BUDGET_MARGIN_AUD"'
     label: Budget margin (AUD)
     hidden: true
+    ai_context: Row-level budget margin. Use the budget_margin_amount measure for totals.
 
 measures:
   count:
@@ -52,6 +60,8 @@ measures:
     description: Budgeted gross booking value in AUD.
     aggregate_type: sum
     synonyms: [ budget, plan, target GBV, GBV budget ]
+    ai_context: Budgeted, planned or target GBV in AUD. Compare to bookings.gbv at
+      destination and month grain.
 
   budget_margin_amount:
     sql: ${budget_margin_aud}
@@ -60,9 +70,20 @@ measures:
     description: Budgeted margin in AUD.
     aggregate_type: sum
     synonyms: [ margin budget, budget margin ]
+    ai_context: Budgeted or target margin dollars in AUD. Compare to
+      bookings.margin_amount.
 
   budget_margin_over_gbv:
     sql: ${budget_margin_amount} / NULLIF(${budget_gbv}, 0)
     label: Budget margin over GBV
     format: percent_1
     description: Budget margin amount divided by budget GBV. Ratio of sums.
+    ai_context: Budgeted margin rate (ratio of sums). Compare to
+      bookings.margin_over_gbv; never average budget_margin_pct instead.
+
+ai_context: "One row per destination per calendar month (budget_month = first
+  day of month), Jan-Aug 2026, amounts in AUD. Budget, plan and target mean the
+  same thing. Use budget_gbv, budget_margin_amount and budget_margin_over_gbv
+  (ratio of sums); never average budget_margin_pct. Not joined to bookings: to
+  compare budget vs actuals, aggregate bookings to destination and month first,
+  then compare."

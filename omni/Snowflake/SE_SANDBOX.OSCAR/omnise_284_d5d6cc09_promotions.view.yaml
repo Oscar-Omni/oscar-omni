@@ -12,23 +12,32 @@ dimensions:
     format: ID
     primary_key: true
     synonyms: [ promo, promo code, code, promotion code, campaign code ]
+    ai_context: Unique promotion code. Use it to break down metrics by promotion,
+      especially for promotion driver analysis alongside current/comparison
+      discount and supplier cost rates.
 
   promo_name:
     sql: '"PROMO_NAME"'
     label: Promotion name
     synonyms: [ promotion, campaign, sale name ]
+    ai_context: Readable promotion or campaign name. Prefer it for labels when the
+      user asks by campaign name.
 
   promo_type:
     sql: '"PROMO_TYPE"'
     label: Promotion type
     description: Member Flash, Public Sale, Seasonal Sale or Getaway Bundle.
     synonyms: [ sale type, offer type, promo type, flash ]
+    ai_context: "Promotion category: Member Flash, Public Sale, Seasonal Sale or
+      Getaway Bundle. The word flash means Member Flash."
 
   is_member_only:
     sql: '"IS_MEMBER_ONLY"'
     label: Member only
     description: True for member only flash promotions.
     synonyms: [ members only, member exclusive, member offer ]
+    ai_context: True for member-only flash promotions. Use for member vs public
+      comparisons.
 
   advertised_discount_pct:
     sql: '"ADVERTISED_DISCOUNT_PCT"'
@@ -36,16 +45,31 @@ dimensions:
     description: Advertised discount fraction per promotion. Attribute only, never
       average or sum it. Use the discount_rate measure.
     hidden: true
+    ai_context: Headline advertised discount only. Never sum or average it; use
+      bookings.discount_rate for actual discount depth.
 
   promo_start_date:
     sql: '"PROMO_START_DATE"'
     label: Promotion start
+    ai_context: Start of the promotion window, not a booking date. Use to tell
+      whether a promotion entered a comparison period; filter trading metrics by
+      bookings.booking_date.
 
   promo_end_date:
     sql: '"PROMO_END_DATE"'
     label: Promotion end
+    ai_context: End of the promotion window, not a booking date. Use to tell whether
+      a promotion left a comparison period.
 
 measures:
   count:
     hidden: true
     aggregate_type: count
+
+ai_context: One row per promotion (grain = promo_code). Promo types are Member
+  Flash ("flash"), Public Sale, Seasonal Sale and Getaway Bundle; is_member_only
+  is true for member-only flash promotions. promo_start_date and promo_end_date
+  define the promotion window, not booking dates. advertised_discount_pct is the
+  headline discount only; for actual discount depth use the bookings
+  discount_rate measure. When explaining margin changes, separate promotions
+  whose rates changed from promotions entering or leaving the period.

@@ -12,17 +12,22 @@ dimensions:
     format: ID
     hidden: true
     primary_key: true
+    ai_context: Hidden key joining to offers and the trading budget. Use
+      destination_name for labels.
 
   destination_name:
     sql: '"DESTINATION_NAME"'
     label: Destination
     description: Holiday destination name, for example Bali or Fiji.
     synonyms: [ destination, location, holiday destination, market, place ]
+    ai_context: Holiday destination where travellers go, not where they are from.
+      Default field to label results by destination, location or market.
 
   country:
     sql: '"COUNTRY"'
     label: Country
     synonyms: [ country ]
+    ai_context: Country of the holiday destination. Use to group destinations by country.
 
   region:
     sql: '"REGION"'
@@ -31,8 +36,21 @@ dimensions:
       East Asia. The others are Pacific Islands, Indian Ocean, Europe and North
       Asia & Americas.
     synonyms: [ region, market region, ANZ, SEA ]
+    ai_context: "Destination region: ANZ (Australia & New Zealand), SEA (South East
+      Asia), Pacific Islands, Indian Ocean, Europe, North Asia & Americas. Map
+      user phrases like Australia & New Zealand to ANZ and South East Asia to
+      SEA when filtering."
 
 measures:
   count:
     hidden: true
     aggregate_type: count
+
+ai_context: "One row per holiday destination (grain = destination_id).
+  Destinations describe where travellers go, not where they are from. Use
+  destination_name to label results, and country or region to group them. Region
+  abbreviations: ANZ = Australia & New Zealand, SEA = South East Asia; other
+  regions are Pacific Islands, Indian Ocean, Europe, and North Asia & Americas.
+  Joins to bookings through offers, and directly to the trading budget on
+  destination_id. This view holds no measures; take metrics from bookings or
+  trading budget."
