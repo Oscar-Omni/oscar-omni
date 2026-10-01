@@ -1,0 +1,10 @@
+base_view: se_sandbox_oscar__omnise_297_96656fac_scenario_slots
+label: Scenario Slots
+group_label: Mirae Asset Sekuritas
+description: Four stable scenario slots for the Concentration Review Planner
+  app. Reference defaults only, not a topic for business questions.
+
+joins: {}
+
+ai_context: |
+  This topic is reference data for the Concentration Review Planner app and is not meant for business questions. One row per scenario slot keyed by scenario_id (SCN-BASE, SCN-A, SCN-B, SCN-C). SCN-BASE is the read only baseline. Do not use it to answer questions about trading or revenue.

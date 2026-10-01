@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__omnise_297_96656fac_dim_channels
+label: Trading channels
+description: One row per trading channel (3 rows) - Mobile app, Web platform, RM desk.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_297_96656FAC_DIM_CHANNELS
@@ -6,14 +9,24 @@ table_name: OMNISE_297_96656FAC_DIM_CHANNELS
 dimensions:
   channel_id:
     sql: '"CHANNEL_ID"'
+    label: Channel ID
     format: ID
+    primary_key: true
 
   channel_name:
     sql: '"CHANNEL_NAME"'
+    label: Channel
+    description: Trading channel actually used for the trade. RM desk is a channel;
+      it is not the Relationship managed segment.
+    synonyms: [ channel, kanal, saluran, trading channel ]
 
   channel_sort:
     sql: '"CHANNEL_SORT"'
+    label: Channel sort order
+    hidden: true
 
 measures:
   count:
+    label: Channel row count
+    hidden: true
     aggregate_type: count

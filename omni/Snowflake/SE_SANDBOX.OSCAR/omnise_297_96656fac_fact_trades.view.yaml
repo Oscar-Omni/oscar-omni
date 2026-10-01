@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__omnise_297_96656fac_fact_trades
+label: Executed trades
+description: One row per executed trade (about 100,000 rows), 2026-01-01 to
+  2026-09-30, IDX trading days in WIB. Cancelled or rejected orders are not in
+  this table. Money is whole IDR. Synthetic demo data.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_297_96656FAC_FACT_TRADES
@@ -6,34 +11,107 @@ table_name: OMNISE_297_96656FAC_FACT_TRADES
 dimensions:
   trade_id:
     sql: '"TRADE_ID"'
+    label: Trade ID
     format: ID
+    primary_key: true
 
   trade_date:
     sql: '"TRADE_DATE"'
+    label: Trade date
+    description: IDX trading day in WIB (Asia/Jakarta). A date with no time of day.
+      Quarter and month groupings use the date timeframes.
+    synonyms: [ date, tanggal, tanggal transaksi, quarter, kuartal ]
 
   client_id:
     sql: '"CLIENT_ID"'
+    label: Client ID
     format: ID
+    synonyms: [ account, nasabah, rekening ]
 
   channel_id:
     sql: '"CHANNEL_ID"'
+    label: Channel ID
     format: ID
 
   side:
     sql: '"SIDE"'
+    label: Trade side
+    description: BUY or SELL.
 
   gross_value_idr:
     sql: '"GROSS_VALUE_IDR"'
+    label: Gross traded value (IDR)
+    format: number_0
+    description: IDR value traded in one executed trade.
 
   commission_idr:
     sql: '"COMMISSION_IDR"'
+    label: Gross commission per trade (IDR)
+    format: number_0
+    description: Commission before client discounts, for one trade.
 
   discount_idr:
     sql: '"DISCOUNT_IDR"'
+    label: Discount per trade (IDR)
+    format: number_0
+    description: Commission discount given to the client on one trade.
 
   net_commission_idr:
     sql: '"NET_COMMISSION_IDR"'
+    label: Net commission per trade (IDR)
+    format: number_0
+    description: Row level net commission, commission less discount. Use the measure
+      total_net_commission_idr for totals.
+    hidden: true
 
 measures:
   count:
+    label: Trade row count
+    hidden: true
     aggregate_type: count
+
+  total_net_commission_idr:
+    sql: ${net_commission_idr}
+    label: Net commission revenue (IDR)
+    format: number_0
+    description: Sum of commission after client discounts, in IDR. This is the
+      revenue definition used everywhere, and the model name is
+      total_net_commission_idr because the row level column already uses
+      net_commission_idr. Additive over any dimension and period.
+    aggregate_type: sum
+    synonyms:
+      [
+        net commission,
+        net commission revenue,
+        commission revenue,
+        revenue,
+        komisi bersih,
+        pendapatan komisi
+      ]
+
+  gross_commission_idr:
+    sql: ${commission_idr}
+    label: Gross commission (IDR)
+    format: number_0
+    description: Sum of commission before client discounts, in IDR. The alternative
+      revenue definition, net commission is the default.
+    aggregate_type: sum
+    synonyms: [ gross commission, komisi bruto, commission before discounts ]
+
+  trades_executed:
+    sql: ${trade_id}
+    label: Trades executed
+    format: number_0
+    description: Count of executed trades.
+    aggregate_type: count_distinct
+    synonyms: [ trades, number of trades, transaksi, jumlah transaksi ]
+
+  active_clients:
+    sql: ${client_id}
+    label: Active clients
+    format: number_0
+    description: Distinct clients with at least one executed trade in the period of
+      the query. This is a distinct count, so never add it across months or
+      channels. It does add across segments and branches for the same period.
+    aggregate_type: count_distinct
+    synonyms: [ active accounts, traders, klien aktif, nasabah aktif ]

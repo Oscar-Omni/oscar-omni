@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__omnise_297_96656fac_dim_segments
+label: Client segments
+description: One row per client segment (4 rows). Each client belongs to exactly
+  one segment for the whole window. Synthetic demo data.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_297_96656FAC_DIM_SEGMENTS
@@ -6,14 +10,24 @@ table_name: OMNISE_297_96656FAC_DIM_SEGMENTS
 dimensions:
   segment_id:
     sql: '"SEGMENT_ID"'
+    label: Segment ID
     format: ID
+    primary_key: true
 
   segment_name:
     sql: '"SEGMENT_NAME"'
+    label: Segment
+    description: Client segment - Mobile active traders, Relationship managed, Long
+      term investors, Institutional and corporate.
+    synonyms: [ segmen, client segment, segmen klien, nasabah ]
 
   segment_sort:
     sql: '"SEGMENT_SORT"'
+    label: Segment sort order
+    hidden: true
 
 measures:
   count:
+    label: Segment row count
+    hidden: true
     aggregate_type: count

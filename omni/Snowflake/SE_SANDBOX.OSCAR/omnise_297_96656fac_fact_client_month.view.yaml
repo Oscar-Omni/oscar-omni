@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__omnise_297_96656fac_fact_client_month
+label: Client month balances
+description: One row per client per calendar month (28,800 rows). Month end
+  funded balance in IDR. Used for the funded accounts alternative and never
+  joined row to row with executed trades.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_297_96656FAC_FACT_CLIENT_MONTH
@@ -6,17 +11,49 @@ table_name: OMNISE_297_96656FAC_FACT_CLIENT_MONTH
 dimensions:
   client_id:
     sql: '"CLIENT_ID"'
+    label: Client ID
     format: ID
 
   month_start:
     sql: '"MONTH_START"'
+    label: Month
+    description: First day of the month. The balance is the snapshot at the last
+      trading day of that month.
 
   funded_balance_idr:
     sql: '"FUNDED_BALANCE_IDR"'
+    label: Funded balance (IDR)
+    format: number_0
+    description: Cash plus holdings at the last trading day of the month, in IDR.
+    synonyms: [ balance, saldo ]
 
   is_funded:
     sql: '"IS_FUNDED"'
+    label: Is funded
+    description: True when the month end funded balance is at least IDR 1,000,000
+      (synthetic threshold).
+
+  client_month_key:
+    sql: CONCAT(${client_id}, ${month_start})
+    label: Client month key
+    hidden: true
+    primary_key: true
 
 measures:
   count:
+    label: Client month rows
+    hidden: true
     aggregate_type: count
+
+  funded_accounts:
+    sql: ${client_id}
+    label: Funded accounts
+    format: number_0
+    description: Distinct clients whose month end balance is at least IDR 1,000,000.
+      A month end snapshot, so use one month only (2026-06-01 for Q2, 2026-09-01
+      for Q3) and never add it across months.
+    aggregate_type: count_distinct
+    filters:
+      is_funded:
+        is: true
+    synonyms: [ funded clients, rekening berdana, akun berdana ]

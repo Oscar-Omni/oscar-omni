@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__omnise_297_96656fac_scenario_slots
+label: Scenario slots
+description: Four stable scenario slots for the Concentration Review Planner
+  app, keyed by scenario_id. Holds read only reference defaults, not saved
+  state. SCN-BASE is the immutable baseline.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_297_96656FAC_SCENARIO_SLOTS
@@ -6,23 +11,36 @@ table_name: OMNISE_297_96656FAC_SCENARIO_SLOTS
 dimensions:
   scenario_id:
     sql: '"SCENARIO_ID"'
+    label: Scenario ID
     format: ID
+    primary_key: true
 
   scenario_name:
     sql: '"SCENARIO_NAME"'
+    label: Scenario
 
   is_baseline:
     sql: '"IS_BASELINE"'
+    label: Is baseline
+    description: True only for SCN-BASE, which is read only.
 
   slot_order:
     sql: '"SLOT_ORDER"'
+    label: Slot order
 
   default_uplift_persistence_pct:
     sql: '"DEFAULT_UPLIFT_PERSISTENCE_PCT"'
+    label: Default uplift persistence (%)
+    description: Percent of the cohort Q3 over Q2 uplift that persists into Q4 when
+      no saved value exists.
 
   default_flag_threshold_pct:
     sql: '"DEFAULT_FLAG_THRESHOLD_PCT"'
+    label: Default flag threshold (%)
+    description: Share of the segment uplift above which a flag is recommended when
+      no saved value exists.
 
 measures:
   count:
+    label: Scenario slots
     aggregate_type: count

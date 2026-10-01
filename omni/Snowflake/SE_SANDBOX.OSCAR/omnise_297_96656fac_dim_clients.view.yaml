@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__omnise_297_96656fac_dim_clients
+label: Clients
+description: One row per pseudonymous client account (3,200 rows). No personal
+  names or identifiers. Synthetic demo data.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_297_96656FAC_DIM_CLIENTS
@@ -6,19 +10,29 @@ table_name: OMNISE_297_96656FAC_DIM_CLIENTS
 dimensions:
   client_id:
     sql: '"CLIENT_ID"'
+    label: Client ID
     format: ID
+    description: Pseudonymous client account, CL00001 to CL03200.
+    primary_key: true
+    synonyms: [ account, client, nasabah, rekening ]
 
   segment_id:
     sql: '"SEGMENT_ID"'
+    label: Segment ID
     format: ID
 
   branch_id:
     sql: '"BRANCH_ID"'
+    label: Branch ID
     format: ID
 
   onboarding_date:
     sql: '"ONBOARDING_DATE"'
+    label: Onboarding date
+    description: Date the account was opened, between 2018-01-01 and 2025-12-31.
 
 measures:
   count:
+    label: Client row count
+    hidden: true
     aggregate_type: count

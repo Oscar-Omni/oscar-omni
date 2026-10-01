@@ -1,0 +1,117 @@
+base_view: se_sandbox_oscar__omnise_297_96656fac_fact_trades
+label: Trading Activity
+group_label: Mirae Asset Sekuritas
+description: Executed trades with client segment, branch city and channel, for
+  the BOD/BOC trading overview. Net commission revenue, active clients and
+  trades executed. Synthetic demo data from 2026-01-01 to 2026-09-30.
+
+joins:
+  se_sandbox_oscar__omnise_297_96656fac_dim_clients:
+    se_sandbox_oscar__omnise_297_96656fac_dim_segments: {}
+    se_sandbox_oscar__omnise_297_96656fac_dim_branches: {}
+  se_sandbox_oscar__omnise_297_96656fac_dim_channels: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__omnise_297_96656fac_fact_trades
+    join_to_view: se_sandbox_oscar__omnise_297_96656fac_dim_clients
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_297_96656fac_fact_trades.client_id} =
+      ${se_sandbox_oscar__omnise_297_96656fac_dim_clients.client_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__omnise_297_96656fac_dim_clients
+    join_to_view: se_sandbox_oscar__omnise_297_96656fac_dim_segments
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_297_96656fac_dim_clients.segment_id} =
+      ${se_sandbox_oscar__omnise_297_96656fac_dim_segments.segment_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__omnise_297_96656fac_dim_clients
+    join_to_view: se_sandbox_oscar__omnise_297_96656fac_dim_branches
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_297_96656fac_dim_clients.branch_id} =
+      ${se_sandbox_oscar__omnise_297_96656fac_dim_branches.branch_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__omnise_297_96656fac_fact_trades
+    join_to_view: se_sandbox_oscar__omnise_297_96656fac_dim_channels
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_297_96656fac_fact_trades.channel_id} =
+      ${se_sandbox_oscar__omnise_297_96656fac_dim_channels.channel_id}
+    relationship_type: many_to_one
+
+ai_context: |
+  Grain is one row per executed trade. The data window is 2026-01-01 to 2026-09-30 and the default window is 2026-04-01 to 2026-09-30. IDR is the only currency. Dates are calendar dates in WIB, so always use explicit dates and never relative dates. Q3 2026 is 2026-07-01 to 2026-09-30 and Q2 2026 is 2026-04-01 to 2026-06-30. Date filters on trade_date use an exclusive end date, so Q3 is between 2026-07-01 and 2026-10-01.
+
+  Revenue means the measure total_net_commission_idr (label Net commission revenue), which is commission after client discounts. Gross commission before discounts is gross_commission_idr and is only used when the user says gross or bruto. Always state which revenue you used and mention gross commission as the alternative in one line.
+
+  An active client means a client with at least one executed trade in the period of the query (active_clients). Always state this definition in the answer and mention funded accounts (month end balance of at least IDR 1,000,000, in the client funding topic) as the alternative in one line. active_clients is a distinct count. Never sum it across months or channels. It can be added across segments or branches for the same period.
+
+  To compare two periods, group by trade_date at quarter level with the filter 2026-04-01 to 2026-10-01 and read total_net_commission_idr and active_clients for the Q2 and Q3 rows. The change is a derived column and not a stored field, so work it out as the Q3 value less the Q2 value and also give the percent change. For which segment contributed most to growth, group by segment_name and quarter, show the Q2 value, the Q3 value and the change for total_net_commission_idr, order by change descending, and state each segment share of the total change. Name the segment that carries most of the change and say how many of the four segments move.
+
+  The table holds executed trades only. RM on its own is ambiguous, because RM desk is a channel (channel_name) and Relationship managed is a segment (segment_name), so ask before mapping it. Net commission revenue per active client is a ratio of summed revenue to distinct active clients computed at the grain of the query. Never average monthly or row level ratios. If the model has a measure called net_commission_per_active_client, use it by name.
+
+  Indonesian terms map as follows. komisi bersih and pendapatan komisi mean total_net_commission_idr (net unless bruto is said). komisi bruto means gross_commission_idr. klien aktif and nasabah aktif mean active_clients. transaksi and jumlah transaksi mean trades_executed. segmen means segment_name. cabang and kota cabang mean branch_city. kanal and saluran mean channel_name. kuartal means the quarter of trade_date. Answer in the language of the question.
+
+sample_queries:
+  quarter_comparison:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__omnise_297_96656fac_fact_trades.trade_date[quart\
+            er]",
+          se_sandbox_oscar__omnise_297_96656fac_fact_trades.total_net_commission_idr,
+          se_sandbox_oscar__omnise_297_96656fac_fact_trades.active_clients
+        ]
+      base_view: se_sandbox_oscar__omnise_297_96656fac_fact_trades
+      filters:
+        se_sandbox_oscar__omnise_297_96656fac_fact_trades.trade_date:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+      limit: 10
+      sorts:
+        - field: se_sandbox_oscar__omnise_297_96656fac_fact_trades.trade_date[quarter]
+      topic: omnise_297_96656fac_trading_activity
+    prompt: Compare net commission revenue and active clients for 2026-07-01 to
+      2026-09-30 against 2026-04-01 to 2026-06-30.
+    ai_context: Group by quarter with the explicit date filter, then state the
+      change from Q2 to Q3 for both measures, and state the net commission and
+      active client definitions used.
+  segment_contribution:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__omnise_297_96656fac_dim_segments.segment_name,
+          "se_sandbox_oscar__omnise_297_96656fac_fact_trades.trade_date[quart\
+            er]",
+          se_sandbox_oscar__omnise_297_96656fac_fact_trades.total_net_commission_idr
+        ]
+      base_view: se_sandbox_oscar__omnise_297_96656fac_fact_trades
+      filters:
+        se_sandbox_oscar__omnise_297_96656fac_fact_trades.trade_date:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+      limit: 20
+      sorts:
+        - field: se_sandbox_oscar__omnise_297_96656fac_dim_segments.segment_name
+      topic: omnise_297_96656fac_trading_activity
+    prompt: Which client segment contributed most of the growth in net commission
+      revenue between those two periods?
+    ai_context: Show Q2, Q3 and the change per segment, ordered by change
+      descending, and say which segment carries most of the total change.
+  net_commission_by_branch_city:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__omnise_297_96656fac_dim_branches.branch_city,
+          se_sandbox_oscar__omnise_297_96656fac_fact_trades.total_net_commission_idr
+        ]
+      base_view: se_sandbox_oscar__omnise_297_96656fac_fact_trades
+      filters:
+        se_sandbox_oscar__omnise_297_96656fac_fact_trades.trade_date:
+          between_dates: [ 2026-07-01, 2026-10-01 ]
+      limit: 10
+      sorts:
+        - field: se_sandbox_oscar__omnise_297_96656fac_fact_trades.total_net_commission_idr
+          desc: true
+      topic: omnise_297_96656fac_trading_activity
+    prompt: Show net commission by branch city for 2026-07-01 to 2026-09-30, largest
+      first.

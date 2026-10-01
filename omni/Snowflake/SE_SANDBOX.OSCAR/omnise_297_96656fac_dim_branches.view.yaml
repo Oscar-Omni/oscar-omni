@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__omnise_297_96656fac_dim_branches
+label: Branches
+description: One row per invented demo branch office (5 rows). Branch names are
+  invented; only the city and province are real geography.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_297_96656FAC_DIM_BRANCHES
@@ -6,17 +10,28 @@ table_name: OMNISE_297_96656FAC_DIM_BRANCHES
 dimensions:
   branch_id:
     sql: '"BRANCH_ID"'
+    label: Branch ID
     format: ID
+    primary_key: true
 
   branch_name:
     sql: '"BRANCH_NAME"'
+    label: Branch office
 
   branch_city:
     sql: '"BRANCH_CITY"'
+    label: Branch city
+    description: City of the branch that holds the client account - Jakarta,
+      Surabaya, Medan, Bandung, Makassar.
+    synonyms: [ branch, cabang, kota cabang, city ]
 
   province:
     sql: '"PROVINCE"'
+    label: Province
+    synonyms: [ provinsi ]
 
 measures:
   count:
+    label: Branch row count
+    hidden: true
     aggregate_type: count

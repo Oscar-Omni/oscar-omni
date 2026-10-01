@@ -1,0 +1,54 @@
+base_view: se_sandbox_oscar__omnise_297_96656fac_fact_client_month
+label: Client Funding
+group_label: Mirae Asset Sekuritas
+description: Month end funded balances and funded accounts by client segment and
+  branch city. The alternative to the executed trade definition of active
+  clients. Synthetic demo data.
+
+joins:
+  se_sandbox_oscar__omnise_297_96656fac_dim_clients:
+    se_sandbox_oscar__omnise_297_96656fac_dim_segments: {}
+    se_sandbox_oscar__omnise_297_96656fac_dim_branches: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__omnise_297_96656fac_fact_client_month
+    join_to_view: se_sandbox_oscar__omnise_297_96656fac_dim_clients
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_297_96656fac_fact_client_month.client_id} =
+      ${se_sandbox_oscar__omnise_297_96656fac_dim_clients.client_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__omnise_297_96656fac_dim_clients
+    join_to_view: se_sandbox_oscar__omnise_297_96656fac_dim_segments
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_297_96656fac_dim_clients.segment_id} =
+      ${se_sandbox_oscar__omnise_297_96656fac_dim_segments.segment_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__omnise_297_96656fac_dim_clients
+    join_to_view: se_sandbox_oscar__omnise_297_96656fac_dim_branches
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_297_96656fac_dim_clients.branch_id} =
+      ${se_sandbox_oscar__omnise_297_96656fac_dim_branches.branch_id}
+    relationship_type: many_to_one
+
+ai_context: |
+  Grain is one row per client per calendar month, 2026-01-01 to 2026-09-01. funded_accounts is a month end snapshot. Use exactly one month_start per question. For a quarter use its last month, which is 2026-06-01 for Q2 and 2026-09-01 for Q3. Never add funded_accounts across months. A funded account has a month end balance of at least IDR 1,000,000 (a synthetic threshold). IDR is the only currency. Do not mix these measures with executed trade measures in one question, because active clients in the trading activity topic means at least one executed trade in the period and is a different definition.
+
+  Indonesian terms. rekening berdana and akun berdana mean funded_accounts. saldo means funded_balance_idr. segmen means segment_name. cabang and kota cabang mean branch_city.
+
+sample_queries:
+  funded_accounts_by_segment:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__omnise_297_96656fac_dim_segments.segment_name,
+          se_sandbox_oscar__omnise_297_96656fac_fact_client_month.funded_accounts
+        ]
+      base_view: se_sandbox_oscar__omnise_297_96656fac_fact_client_month
+      filters:
+        se_sandbox_oscar__omnise_297_96656fac_fact_client_month.month_start:
+          is: 2026-09-01
+      limit: 10
+      topic: omnise_297_96656fac_client_funding
+    prompt: How many funded accounts did we have by segment at 2026-09-01?
