@@ -1,0 +1,28 @@
+# Reference this view as se_sandbox_oscar__omnise_297_96656fac_scenario_slots
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_297_96656FAC_SCENARIO_SLOTS
+
+dimensions:
+  scenario_id:
+    sql: '"SCENARIO_ID"'
+    format: ID
+
+  scenario_name:
+    sql: '"SCENARIO_NAME"'
+
+  is_baseline:
+    sql: '"IS_BASELINE"'
+
+  slot_order:
+    sql: '"SLOT_ORDER"'
+
+  default_uplift_persistence_pct:
+    sql: '"DEFAULT_UPLIFT_PERSISTENCE_PCT"'
+
+  default_flag_threshold_pct:
+    sql: '"DEFAULT_FLAG_THRESHOLD_PCT"'
+
+measures:
+  count:
+    aggregate_type: count

@@ -1,0 +1,39 @@
+# Reference this view as se_sandbox_oscar__omnise_297_96656fac_fact_trades
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_297_96656FAC_FACT_TRADES
+
+dimensions:
+  trade_id:
+    sql: '"TRADE_ID"'
+    format: ID
+
+  trade_date:
+    sql: '"TRADE_DATE"'
+
+  client_id:
+    sql: '"CLIENT_ID"'
+    format: ID
+
+  channel_id:
+    sql: '"CHANNEL_ID"'
+    format: ID
+
+  side:
+    sql: '"SIDE"'
+
+  gross_value_idr:
+    sql: '"GROSS_VALUE_IDR"'
+
+  commission_idr:
+    sql: '"COMMISSION_IDR"'
+
+  discount_idr:
+    sql: '"DISCOUNT_IDR"'
+
+  net_commission_idr:
+    sql: '"NET_COMMISSION_IDR"'
+
+measures:
+  count:
+    aggregate_type: count

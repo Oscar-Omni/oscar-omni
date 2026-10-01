@@ -1,0 +1,19 @@
+# Reference this view as se_sandbox_oscar__omnise_297_96656fac_dim_segments
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_297_96656FAC_DIM_SEGMENTS
+
+dimensions:
+  segment_id:
+    sql: '"SEGMENT_ID"'
+    format: ID
+
+  segment_name:
+    sql: '"SEGMENT_NAME"'
+
+  segment_sort:
+    sql: '"SEGMENT_SORT"'
+
+measures:
+  count:
+    aggregate_type: count

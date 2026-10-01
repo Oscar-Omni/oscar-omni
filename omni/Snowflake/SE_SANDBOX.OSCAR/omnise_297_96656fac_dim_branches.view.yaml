@@ -1,0 +1,22 @@
+# Reference this view as se_sandbox_oscar__omnise_297_96656fac_dim_branches
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_297_96656FAC_DIM_BRANCHES
+
+dimensions:
+  branch_id:
+    sql: '"BRANCH_ID"'
+    format: ID
+
+  branch_name:
+    sql: '"BRANCH_NAME"'
+
+  branch_city:
+    sql: '"BRANCH_CITY"'
+
+  province:
+    sql: '"PROVINCE"'
+
+measures:
+  count:
+    aggregate_type: count

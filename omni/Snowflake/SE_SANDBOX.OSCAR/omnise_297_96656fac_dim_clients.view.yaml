@@ -1,0 +1,24 @@
+# Reference this view as se_sandbox_oscar__omnise_297_96656fac_dim_clients
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_297_96656FAC_DIM_CLIENTS
+
+dimensions:
+  client_id:
+    sql: '"CLIENT_ID"'
+    format: ID
+
+  segment_id:
+    sql: '"SEGMENT_ID"'
+    format: ID
+
+  branch_id:
+    sql: '"BRANCH_ID"'
+    format: ID
+
+  onboarding_date:
+    sql: '"ONBOARDING_DATE"'
+
+measures:
+  count:
+    aggregate_type: count
