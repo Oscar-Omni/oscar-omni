@@ -1,0 +1,61 @@
+base_view: se_sandbox_oscar__omnise_326_b14b2ec5_brigade_availability
+label: Crew availability
+group_label: Country Fire Authority Victoria
+description: Synthetic average crew able to respond and crew required, by
+  brigade, month and time band. Invented brigades, not CFA records.
+
+joins:
+  se_sandbox_oscar__omnise_326_b14b2ec5_brigades:
+    se_sandbox_oscar__omnise_326_b14b2ec5_districts: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__omnise_326_b14b2ec5_brigade_availability
+    join_to_view: se_sandbox_oscar__omnise_326_b14b2ec5_brigades
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_326_b14b2ec5_brigade_availability.brigade_id}
+      = ${se_sandbox_oscar__omnise_326_b14b2ec5_brigades.brigade_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__omnise_326_b14b2ec5_brigades
+    join_to_view: se_sandbox_oscar__omnise_326_b14b2ec5_districts
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_326_b14b2ec5_brigades.district_id} =
+      ${se_sandbox_oscar__omnise_326_b14b2ec5_districts.district_id}
+    relationship_type: many_to_one
+
+ai_context: |
+  One row per synthetic brigade, month and time band with the average crew able to respond and the crew required. Synthetic demo data. Crew cover is available crew divided by required crew, calculated after summing both. Never average per row cover percentages. Do not join to incidents for cover questions. Use month_start for period filters with an exclusive end date. The crew change starts on 2026-02-01.
+
+sample_queries:
+  crew_by_time_band:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__omnise_326_b14b2ec5_brigade_availability.time_band,
+          se_sandbox_oscar__omnise_326_b14b2ec5_brigade_availability.crew_available,
+          se_sandbox_oscar__omnise_326_b14b2ec5_brigade_availability.crew_required
+        ]
+      base_view: se_sandbox_oscar__omnise_326_b14b2ec5_brigade_availability
+      filters:
+        se_sandbox_oscar__omnise_326_b14b2ec5_brigade_availability.month_start:
+          between_dates: [ 2025-10-01, 2026-10-01 ]
+      topic: omnise_326_b14b2ec5_crew_availability
+    prompt: What was average available crew by time band from 1 October 2025 to 30
+      September 2026?
+  daytime_gap_by_brigade:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__omnise_326_b14b2ec5_brigades.brigade_name,
+          se_sandbox_oscar__omnise_326_b14b2ec5_brigade_availability.crew_available,
+          se_sandbox_oscar__omnise_326_b14b2ec5_brigade_availability.crew_required
+        ]
+      base_view: se_sandbox_oscar__omnise_326_b14b2ec5_brigade_availability
+      filters:
+        se_sandbox_oscar__omnise_326_b14b2ec5_brigade_availability.month_start:
+          between_dates: [ 2025-10-01, 2026-10-01 ]
+        se_sandbox_oscar__omnise_326_b14b2ec5_brigade_availability.time_band:
+          is: Weekday daytime
+      topic: omnise_326_b14b2ec5_crew_availability
+    prompt: Which brigades had available crew below required crew on weekday daytime
+      in the 12 months to 30 September 2026?

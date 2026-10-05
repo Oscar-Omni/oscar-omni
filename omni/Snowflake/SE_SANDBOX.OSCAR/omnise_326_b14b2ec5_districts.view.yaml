@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__omnise_326_b14b2ec5_districts
+label: Districts
+description: One row per CFA district name. Synthetic brigades are spread across them.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_326_B14B2EC5_DISTRICTS
@@ -6,10 +9,15 @@ table_name: OMNISE_326_B14B2EC5_DISTRICTS
 dimensions:
   district_id:
     sql: '"DISTRICT_ID"'
+    label: District ID
     format: ID
+    primary_key: true
 
   district_name:
     sql: '"DISTRICT_NAME"'
+    label: District
+    description: CFA district name
+    synonyms: [ region, area ]
 
 measures:
   count:

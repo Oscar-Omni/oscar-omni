@@ -1,0 +1,78 @@
+base_view: se_sandbox_oscar__omnise_326_b14b2ec5_incidents
+label: Emergency response performance
+group_label: Country Fire Authority Victoria
+description: Synthetic emergency incidents with the minutes taken for the first
+  vehicle to arrive, by brigade, district and hazard class. Invented brigades,
+  not CFA records.
+
+joins:
+  se_sandbox_oscar__omnise_326_b14b2ec5_brigades:
+    se_sandbox_oscar__omnise_326_b14b2ec5_districts: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__omnise_326_b14b2ec5_incidents
+    join_to_view: se_sandbox_oscar__omnise_326_b14b2ec5_brigades
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_326_b14b2ec5_incidents.brigade_id} =
+      ${se_sandbox_oscar__omnise_326_b14b2ec5_brigades.brigade_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__omnise_326_b14b2ec5_brigades
+    join_to_view: se_sandbox_oscar__omnise_326_b14b2ec5_districts
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_326_b14b2ec5_brigades.district_id} =
+      ${se_sandbox_oscar__omnise_326_b14b2ec5_districts.district_id}
+    relationship_type: many_to_one
+
+ai_context: |
+  Each row of incidents is one synthetic emergency incident with the minutes taken for the first vehicle to arrive. Synthetic demo data, not CFA records. Use incident_date for any period filter, with an exclusive end date. met_standard compares response_minutes with the standard for the hazard class. standard_met_rate is met count over incident count and must be recomputed after any grouping, never averaged across rows. incidents_over_standard is additive. time_band has three values and Weekday daytime means Monday to Friday 07:00 to 17:59. Do not join to brigade_availability for rate questions. Fixed periods: the current period is 2025-10-01 to 2026-10-01 and the prior period is 2024-10-01 to 2025-10-01. The crew change starts on 2026-02-01, so compare before and after that date.
+
+sample_queries:
+  standard_met_current_vs_prior:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__omnise_326_b14b2ec5_incidents.incident_date[year]",
+          se_sandbox_oscar__omnise_326_b14b2ec5_incidents.standard_met_rate
+        ]
+      base_view: se_sandbox_oscar__omnise_326_b14b2ec5_incidents
+      filters:
+        se_sandbox_oscar__omnise_326_b14b2ec5_incidents.incident_date:
+          between_dates: [ 2024-10-01, 2026-10-01 ]
+      topic: omnise_326_b14b2ec5_emergency_response
+    prompt: What percentage of emergency incidents met the response standard from 1
+      October 2025 to 30 September 2026 compared with 1 October 2024 to 30
+      September 2025?
+    ai_context: The year buckets are calendar years, so group by explicit period
+      instead and name both periods with exact dates.
+  time_band_fall:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__omnise_326_b14b2ec5_incidents.time_band,
+          se_sandbox_oscar__omnise_326_b14b2ec5_incidents.standard_met_rate
+        ]
+      base_view: se_sandbox_oscar__omnise_326_b14b2ec5_incidents
+      filters:
+        se_sandbox_oscar__omnise_326_b14b2ec5_incidents.incident_date:
+          between_dates: [ 2025-10-01, 2026-10-01 ]
+      topic: omnise_326_b14b2ec5_emergency_response
+    prompt: Which time band had the largest fall in standard met between those two
+      periods?
+  over_standard_by_district:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__omnise_326_b14b2ec5_districts.district_name,
+          se_sandbox_oscar__omnise_326_b14b2ec5_incidents.incidents_over_standard
+        ]
+      base_view: se_sandbox_oscar__omnise_326_b14b2ec5_incidents
+      filters:
+        se_sandbox_oscar__omnise_326_b14b2ec5_incidents.incident_date:
+          between_dates: [ 2025-10-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__omnise_326_b14b2ec5_incidents.incidents_over_standard
+          desc: true
+      topic: omnise_326_b14b2ec5_emergency_response
+    prompt: Show incidents over standard by district for the 12 months to 30
+      September 2026.

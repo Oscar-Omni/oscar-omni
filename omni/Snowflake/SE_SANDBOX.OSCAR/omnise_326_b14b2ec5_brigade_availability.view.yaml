@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__omnise_326_b14b2ec5_brigade_availability
+label: Brigade availability
+description: One row per brigade, month and time band with the average crew able
+  to respond and the crew required. Synthetic.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_326_B14B2EC5_BRIGADE_AVAILABILITY
@@ -16,10 +20,30 @@ dimensions:
 
   available_crew:
     sql: '"AVAILABLE_CREW"'
+    label: Available crew per row
+    hidden: true
 
   required_crew:
     sql: '"REQUIRED_CREW"'
+    label: Required crew per row
+    hidden: true
 
 measures:
   count:
     aggregate_type: count
+
+  crew_available:
+    sql: ${available_crew}
+    label: Available crew
+    format: NUMBER_1
+    description: Sum of average members able to respond. Divide by required crew
+      after summing, never average row percentages.
+    aggregate_type: sum
+    synonyms: [ crew available, crewing ]
+
+  crew_required:
+    sql: ${required_crew}
+    label: Required crew
+    format: NUMBER_0
+    description: Sum of crew needed to turn out a vehicle
+    aggregate_type: sum

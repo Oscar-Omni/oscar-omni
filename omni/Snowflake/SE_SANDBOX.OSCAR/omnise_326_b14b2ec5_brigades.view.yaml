@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__omnise_326_b14b2ec5_brigades
+label: Brigades
+description: One row per invented brigade. Synthetic, not real CFA brigades.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_326_B14B2EC5_BRIGADES
@@ -6,24 +9,47 @@ table_name: OMNISE_326_B14B2EC5_BRIGADES
 dimensions:
   brigade_id:
     sql: '"BRIGADE_ID"'
+    label: Brigade ID
     format: ID
+    primary_key: true
 
   brigade_name:
     sql: '"BRIGADE_NAME"'
+    label: Brigade
+    description: Invented brigade name
+    synonyms: [ station, fire brigade ]
 
   district_id:
     sql: '"DISTRICT_ID"'
+    label: District ID
     format: ID
+    hidden: true
 
   brigade_type:
     sql: '"BRIGADE_TYPE"'
+    label: Brigade type
+    description: Volunteer or Integrated
+    synonyms: [ volunteer or integrated ]
 
   primary_hazard_class:
     sql: '"PRIMARY_HAZARD_CLASS"'
+    label: Primary hazard class
+    description: Main hazard class of the brigade area
 
   registered_volunteers:
     sql: '"REGISTERED_VOLUNTEERS"'
+    label: Registered volunteers
+    format: NUMBER_0
+    description: Synthetic registered volunteer members
 
 measures:
   count:
     aggregate_type: count
+
+  volunteers_on_roll:
+    sql: ${registered_volunteers}
+    label: Volunteers on the roll
+    format: NUMBER_0
+    description: Total registered volunteers
+    aggregate_type: sum
+    synonyms: [ volunteers ]

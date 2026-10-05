@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__omnise_326_b14b2ec5_incidents
+label: Incidents
+description: One row per synthetic emergency incident, first vehicle arrival
+  only. Synthetic demo data with invented brigades, not CFA records.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_326_B14B2EC5_INCIDENTS
@@ -6,10 +10,16 @@ table_name: OMNISE_326_B14B2EC5_INCIDENTS
 dimensions:
   incident_id:
     sql: '"INCIDENT_ID"'
+    label: Incident ID
     format: ID
+    description: Incident key such as INC-0000001
+    primary_key: true
 
   incident_date:
     sql: '"INCIDENT_DATE"'
+    label: Incident date
+    description: Date the brigade was alerted. Use this for every period filter.
+    timeframes: [ raw, date, week, month, quarter, year ]
 
   incident_month:
     sql: '"INCIDENT_MONTH"'
@@ -48,13 +58,55 @@ dimensions:
 
   met_count:
     sql: '"MET_COUNT"'
+    label: Met flag
+    description: 1 when the standard was met else 0
+    hidden: true
 
   over_standard_count:
     sql: '"OVER_STANDARD_COUNT"'
+    label: Over standard flag
+    description: 1 when the standard was missed else 0
+    hidden: true
 
   incident_count:
     sql: '"INCIDENT_COUNT"'
+    label: Incident helper
+    description: Always 1, a numeric helper
+    hidden: true
 
 measures:
   count:
     aggregate_type: count
+
+  total_incidents:
+    sql: ${incident_id}
+    label: Incidents
+    format: NUMBER_0
+    description: Count of emergency incidents
+    aggregate_type: count
+    synonyms: [ incidents, emergency incidents, call outs ]
+
+  incidents_met:
+    sql: ${met_count}
+    label: Incidents within standard
+    format: NUMBER_0
+    description: Incidents where the first vehicle arrived within the standard
+    aggregate_type: sum
+
+  incidents_over_standard:
+    sql: ${over_standard_count}
+    label: Incidents over standard
+    format: NUMBER_0
+    description: Incidents where the first vehicle arrived after the standard. Additive.
+    aggregate_type: sum
+    synonyms: [ missed standard, late responses ]
+
+  standard_met_rate:
+    sql: 1.0 * ${incidents_met} / NULLIF(${total_incidents}, 0)
+    label: Standard met rate
+    format: PERCENT_1
+    description: Sum of met count over the count of incidents, the share of
+      incidents where the first vehicle arrived within the service delivery
+      standard. Recompute after any grouping, never average rows. Always filter
+      or group by incident date.
+    synonyms: [ compliance, standard compliance, response standard rate, SDS rate ]
