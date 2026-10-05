@@ -1,0 +1,60 @@
+# Reference this view as se_sandbox_oscar__omnise_326_b14b2ec5_incidents
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_326_B14B2EC5_INCIDENTS
+
+dimensions:
+  incident_id:
+    sql: '"INCIDENT_ID"'
+    format: ID
+
+  incident_date:
+    sql: '"INCIDENT_DATE"'
+
+  incident_month:
+    sql: '"INCIDENT_MONTH"'
+
+  incident_hour:
+    sql: '"INCIDENT_HOUR"'
+
+  day_type:
+    sql: '"DAY_TYPE"'
+
+  time_band:
+    sql: '"TIME_BAND"'
+
+  brigade_id:
+    sql: '"BRIGADE_ID"'
+    format: ID
+
+  district_id:
+    sql: '"DISTRICT_ID"'
+    format: ID
+
+  incident_type:
+    sql: '"INCIDENT_TYPE"'
+
+  hazard_class:
+    sql: '"HAZARD_CLASS"'
+
+  response_minutes:
+    sql: '"RESPONSE_MINUTES"'
+
+  standard_minutes:
+    sql: '"STANDARD_MINUTES"'
+
+  met_standard:
+    sql: '"MET_STANDARD"'
+
+  met_count:
+    sql: '"MET_COUNT"'
+
+  over_standard_count:
+    sql: '"OVER_STANDARD_COUNT"'
+
+  incident_count:
+    sql: '"INCIDENT_COUNT"'
+
+measures:
+  count:
+    aggregate_type: count

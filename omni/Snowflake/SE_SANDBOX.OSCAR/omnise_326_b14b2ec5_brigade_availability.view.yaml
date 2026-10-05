@@ -1,0 +1,25 @@
+# Reference this view as se_sandbox_oscar__omnise_326_b14b2ec5_brigade_availability
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_326_B14B2EC5_BRIGADE_AVAILABILITY
+
+dimensions:
+  brigade_id:
+    sql: '"BRIGADE_ID"'
+    format: ID
+
+  month_start:
+    sql: '"MONTH_START"'
+
+  time_band:
+    sql: '"TIME_BAND"'
+
+  available_crew:
+    sql: '"AVAILABLE_CREW"'
+
+  required_crew:
+    sql: '"REQUIRED_CREW"'
+
+measures:
+  count:
+    aggregate_type: count

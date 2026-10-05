@@ -1,0 +1,29 @@
+# Reference this view as se_sandbox_oscar__omnise_326_b14b2ec5_brigades
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_326_B14B2EC5_BRIGADES
+
+dimensions:
+  brigade_id:
+    sql: '"BRIGADE_ID"'
+    format: ID
+
+  brigade_name:
+    sql: '"BRIGADE_NAME"'
+
+  district_id:
+    sql: '"DISTRICT_ID"'
+    format: ID
+
+  brigade_type:
+    sql: '"BRIGADE_TYPE"'
+
+  primary_hazard_class:
+    sql: '"PRIMARY_HAZARD_CLASS"'
+
+  registered_volunteers:
+    sql: '"REGISTERED_VOLUNTEERS"'
+
+measures:
+  count:
+    aggregate_type: count
