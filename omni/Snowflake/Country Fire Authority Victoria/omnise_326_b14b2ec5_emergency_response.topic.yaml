@@ -24,8 +24,16 @@ relationships:
       ${se_sandbox_oscar__omnise_326_b14b2ec5_districts.district_id}
     relationship_type: many_to_one
 
-ai_context: |
-  Each row of incidents is one synthetic emergency incident with the minutes taken for the first vehicle to arrive. Synthetic demo data, not CFA records. Use incident_date for any period filter, with an exclusive end date. met_standard compares response_minutes with the standard for the hazard class. standard_met_rate is met count over incident count and must be recomputed after any grouping, never averaged across rows. incidents_over_standard is additive. time_band has three values and Weekday daytime means Monday to Friday 07:00 to 17:59. Do not join to brigade_availability for rate questions. Fixed periods: the current period is 2025-10-01 to 2026-10-01 and the prior period is 2024-10-01 to 2025-10-01. The crew change starts on 2026-02-01, so compare before and after that date.
+ai_context: |-
+  Each row of incidents is one synthetic emergency incident with the minutes taken for the first vehicle to arrive. Synthetic demo data, not CFA records; say so when presenting results. Use incident_date for any period filter, with an exclusive end date.
+
+  Metrics. The headline metric is standard_met_rate (label Standard met rate): incidents_met over total_incidents. It must be recomputed at the grain of every query, never averaged across rows, months, brigades or districts. Always state the metric used and the exact period. incidents_over_standard and incidents_met are additive counts and can be summed across any grouping. Use total_incidents for incident counts. avg_response_minutes is a supporting measure; do not use it to judge compliance because the standard differs by hazard class. met_standard compares response_minutes with standard_minutes for the incident's hazard_class.
+
+  Dimensions. time_band has three values: Weekday daytime (Monday to Friday 07:00 to 17:59), Weekday evening and night, Weekend. hazard_class: Significant urban, Other urban, Natural surroundings. incident_type: Structure fire, Grass and bush fire, Vehicle fire, Road crash rescue, Other fire and alarm. District comes from the districts view via brigades; brigade_type is Volunteer or Integrated.
+
+  Periods. Fixed periods: the current period is 2025-10-01 to 2026-10-01 and the prior period is 2024-10-01 to 2025-10-01 (exclusive ends). Do not use calendar year buckets to compare them; filter each period explicitly and name both with exact dates. The crew change starts on 2026-02-01, so for its effect compare incidents before and after that date over comparable months.
+
+  Analysis guidance. When asked where performance fell, rank by the change in standard_met_rate in percentage points and also give incidents_over_standard so small groups are not over-weighted. Do not join to brigade_availability for rate questions; crew questions belong to the Crew availability topic, and any link between crew cover and response performance should be made by aggregating each topic separately to brigade, district or time band and comparing. Synonyms: compliance, SDS rate and response standard mean standard_met_rate; call outs and jobs mean incidents; region or area means district.
 
 sample_queries:
   standard_met_current_vs_prior:

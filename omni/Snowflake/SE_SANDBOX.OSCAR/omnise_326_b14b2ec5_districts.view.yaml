@@ -22,3 +22,8 @@ dimensions:
 measures:
   count:
     aggregate_type: count
+
+ai_context: One row per CFA district (grain = district_id). Synthetic brigades
+  are spread across them. Use district_name to label results. Region and area in
+  questions mean district. Holds no measures beyond a count; take metrics from
+  incidents or crew availability.

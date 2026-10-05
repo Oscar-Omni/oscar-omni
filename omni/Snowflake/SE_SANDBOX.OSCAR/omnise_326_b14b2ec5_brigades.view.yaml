@@ -29,6 +29,7 @@ dimensions:
     sql: '"BRIGADE_TYPE"'
     label: Brigade type
     description: Volunteer or Integrated
+    sample_values: [ Volunteer, Integrated ]
     synonyms: [ volunteer or integrated ]
 
   primary_hazard_class:
@@ -53,3 +54,12 @@ measures:
     description: Total registered volunteers
     aggregate_type: sum
     synonyms: [ volunteers ]
+
+ai_context: One row per invented brigade (grain = brigade_id). Synthetic, not
+  real CFA brigades. Use brigade_name to label results. brigade_type is
+  Volunteer or Integrated (integrated brigades have career staff alongside
+  volunteers). primary_hazard_class is the main hazard class of the brigade area
+  and may differ from an individual incident's hazard_class.
+  registered_volunteers is an attribute; use the volunteers_on_roll measure to
+  total it, and do not sum it through incident or availability rows. Each
+  brigade belongs to one district.

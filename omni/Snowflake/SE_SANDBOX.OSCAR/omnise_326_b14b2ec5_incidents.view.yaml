@@ -26,12 +26,19 @@ dimensions:
 
   incident_hour:
     sql: '"INCIDENT_HOUR"'
+    description: Hour of day (0-23) the brigade was alerted
 
   day_type:
     sql: '"DAY_TYPE"'
+    description: Weekday or Weekend
+    sample_values: [ Weekday, Weekend ]
 
   time_band:
     sql: '"TIME_BAND"'
+    description: Time of week the incident occurred
+    sample_values: [ Weekday daytime, Weekday evening and night, Weekend ]
+    ai_context: Weekday daytime is Monday to Friday 07:00 to 17:59, when volunteer
+      crew availability is typically lowest.
 
   brigade_id:
     sql: '"BRIGADE_ID"'
@@ -43,18 +50,36 @@ dimensions:
 
   incident_type:
     sql: '"INCIDENT_TYPE"'
+    description: Type of emergency incident
+    sample_values:
+      [
+        Structure fire,
+        Grass and bush fire,
+        Vehicle fire,
+        Road crash rescue,
+        Other fire and alarm
+      ]
+    synonyms: [ job type, call type ]
 
   hazard_class:
     sql: '"HAZARD_CLASS"'
+    description: Service delivery standard hazard class of the incident location
+    sample_values: [ Significant urban, Other urban, Natural surroundings ]
+    ai_context: "Values: Significant urban, Other urban, Natural surroundings. Each
+      class has a different standard_minutes."
 
   response_minutes:
     sql: '"RESPONSE_MINUTES"'
+    description: Minutes from alert to first vehicle on scene
+    synonyms: [ response time, arrival time ]
 
   standard_minutes:
     sql: '"STANDARD_MINUTES"'
+    description: Target minutes for first vehicle arrival for the incident's hazard class
 
   met_standard:
     sql: '"MET_STANDARD"'
+    description: True when response_minutes is within standard_minutes for the hazard class
 
   met_count:
     sql: '"MET_COUNT"'
@@ -118,3 +143,23 @@ measures:
     description: Average minutes from alert to first vehicle on scene
     aggregate_type: average
     synonyms: [ average response time, mean response ]
+
+ai_context: "One row per synthetic emergency incident (grain = incident_id),
+  first vehicle arrival only. Synthetic demo data with invented brigades, not
+  CFA records. Use incident_date (date the brigade was alerted) for every period
+  filter, with an exclusive end date; incident_month is a convenience bucket
+  only. Headline metric is standard_met_rate (share of incidents where the first
+  vehicle arrived within the standard for the hazard class). It is a ratio of
+  sums (incidents_met / total_incidents) and must be recomputed at the grain of
+  the query, never averaged across rows, months or brigades.
+  incidents_over_standard and incidents_met are additive counts. Use
+  total_incidents for incident counts. avg_response_minutes is a mean of
+  response_minutes; report it alongside, not instead of, standard_met_rate.
+  hazard_class values: Significant urban, Other urban, Natural surroundings;
+  each has its own standard_minutes, so compare response times within a hazard
+  class, not across them. incident_type values: Structure fire, Grass and bush
+  fire, Vehicle fire, Road crash rescue, Other fire and alarm. time_band values:
+  Weekday daytime (Monday to Friday 07:00 to 17:59), Weekday evening and night,
+  Weekend. day_type is Weekday or Weekend. Synonyms: compliance, SDS, response
+  standard and turnout performance all mean standard_met_rate; call outs and
+  jobs mean incidents."

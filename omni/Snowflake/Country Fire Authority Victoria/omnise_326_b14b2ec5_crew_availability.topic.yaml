@@ -23,8 +23,16 @@ relationships:
       ${se_sandbox_oscar__omnise_326_b14b2ec5_districts.district_id}
     relationship_type: many_to_one
 
-ai_context: |
-  One row per synthetic brigade, month and time band with the average crew able to respond and the crew required. Synthetic demo data. Crew cover is available crew divided by required crew, calculated after summing both. Never average per row cover percentages. Do not join to incidents for cover questions. Use month_start for period filters with an exclusive end date. The crew change starts on 2026-02-01.
+ai_context: |-
+  One row per synthetic brigade, month and time band with the average crew able to respond (crew_available) and the crew required to turn out a vehicle (crew_required). Synthetic demo data, not CFA records; say so when presenting results.
+
+  Metrics. Crew cover is crew_available divided by crew_required, calculated after summing both at the grain of the query. Never average per-row cover percentages. A brigade or slot has a shortfall when crew_available is below crew_required; report the gap (required minus available) alongside cover. Both measures are sums of monthly averages, so for a multi-month total say it is crew-months, or group by month_start when reporting typical crew levels.
+
+  Dimensions. time_band values: Weekday daytime (Monday to Friday 07:00 to 17:59), Weekday evening and night, Weekend. Weekday daytime is usually the tightest band for volunteer brigades. brigade_type is Volunteer or Integrated. District comes from the districts view via brigades.
+
+  Periods. Use month_start for period filters with an exclusive end date. The current period is 2025-10-01 to 2026-10-01 and the prior period is 2024-10-01 to 2025-10-01. The crew change starts on 2026-02-01, so compare months before and after that date.
+
+  Do not join to incidents for cover questions; response performance belongs to the Emergency response performance topic. To relate crew cover to response performance, aggregate each topic separately to the same brigade, district or time band and compare. Synonyms: crewing and turnout crew mean crew_available; region or area means district.
 
 sample_queries:
   crew_by_time_band:
