@@ -110,3 +110,11 @@ measures:
       standard. Recompute after any grouping, never average rows. Always filter
       or group by incident date.
     synonyms: [ compliance, standard compliance, response standard rate, SDS rate ]
+
+  avg_response_minutes:
+    sql: ${response_minutes}
+    label: Average response (min)
+    format: NUMBER_1
+    description: Average minutes from alert to first vehicle on scene
+    aggregate_type: average
+    synonyms: [ average response time, mean response ]
