@@ -1,0 +1,102 @@
+# Reference this view as canva_accounts
+label: Canva Accounts
+
+uploaded_table_name: canva_accounts.csv::08c130ed-651f-49ae-8820-97d159c298b9
+
+dimensions:
+  account_id:
+    label: Account ID
+    display_order: 0
+    primary_key: true
+
+  account_name:
+    label: Account
+    display_order: 1
+    synonyms: [ customer, company, client ]
+
+  industry:
+    label: Industry
+    display_order: 2
+
+  region:
+    label: Region
+    description: APAC, EMEA or Americas.
+    display_order: 3
+
+  plan:
+    label: Plan
+    description: Teams, Enterprise or Education.
+    display_order: 4
+    synonyms: [ tier, package ]
+
+  seats:
+    label: Seats
+    format: number_0
+    display_order: 5
+
+  arr_aud:
+    label: ARR (AUD)
+    format: number_0
+    description: Annual recurring revenue per account in AUD. Attribute only, use
+      the arr measure.
+    display_order: 6
+    hidden: true
+
+  renewal_date:
+    label: Renewal date
+    display_order: 7
+    synonyms: [ renewal, contract end ]
+
+  csm_owner:
+    label: Customer success manager
+    display_order: 8
+    synonyms: [ CSM, owner, account owner ]
+
+  at_risk_flag:
+    label: At risk (usage decline)
+    description: Y when active users have fallen for months running ahead of renewal.
+    display_order: 9
+    synonyms: [ at risk, churn risk ]
+
+  days_to_renewal:
+    sql: DATEDIFF('day', CURRENT_DATE(), ${renewal_date})
+    label: Days to renewal
+    format: number_0
+    display_order: 10
+
+measures:
+  count:
+    hidden: true
+    aggregate_type: count
+
+  accounts:
+    sql: ${account_id}
+    label: Accounts
+    format: number_0
+    aggregate_type: count_distinct
+
+  arr:
+    sql: ${arr_aud}
+    label: ARR
+    format: $#,##0
+    description: Annual recurring revenue in AUD.
+    aggregate_type: sum
+
+  at_risk_accounts:
+    sql: ${account_id}
+    label: At risk accounts
+    format: number_0
+    aggregate_type: count_distinct
+    filters:
+      at_risk_flag:
+        is: Y
+
+  arr_at_risk:
+    sql: ${arr_aud}
+    label: ARR at risk
+    format: $#,##0
+    description: ARR on accounts flagged at risk.
+    aggregate_type: sum
+    filters:
+      at_risk_flag:
+        is: Y

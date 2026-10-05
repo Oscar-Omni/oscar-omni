@@ -1,0 +1,78 @@
+# Reference this view as canva_usage
+label: Canva Usage
+
+uploaded_table_name: canva_usage.csv::6808816d-d9fe-4670-af06-1a964fcef315
+
+dimensions:
+  usage_key:
+    sql: ${account_id} || '-' || ${usage_month}
+    hidden: true
+    primary_key: true
+
+  account_id:
+    label: Account ID (usage key)
+    display_order: 0
+    hidden: true
+
+  usage_month:
+    label: Usage month
+    description: First day of the calendar month, Oct 2025 to Sep 2026.
+    display_order: 1
+
+  active_users:
+    label: Active users (row)
+    display_order: 2
+    hidden: true
+
+  designs_created:
+    label: Designs created (row)
+    display_order: 3
+    hidden: true
+
+  ai_feature_uses:
+    label: AI feature uses (row)
+    display_order: 4
+    hidden: true
+
+  brand_kit_pct:
+    label: Brand kit adherence (row)
+    display_order: 5
+    hidden: true
+
+measures:
+  count:
+    hidden: true
+    aggregate_type: count
+
+  active_users_total:
+    sql: ${active_users}
+    label: Active users
+    format: number_0
+    aggregate_type: sum
+    synonyms: [ MAU, monthly active users, users ]
+
+  designs:
+    sql: ${designs_created}
+    label: Designs created
+    format: number_0
+    aggregate_type: sum
+
+  ai_uses:
+    sql: ${ai_feature_uses}
+    label: AI feature uses
+    format: number_0
+    aggregate_type: sum
+    synonyms: [ Magic Studio, AI usage ]
+
+  ai_share:
+    sql: ${ai_uses} / NULLIF(${designs}, 0)
+    label: AI share of designs
+    format: percent_1
+    description: AI feature uses divided by designs created, on summed values. Never
+      average the row level percentages.
+
+  brand_kit_adherence:
+    sql: ${brand_kit_pct}
+    label: Brand kit adherence
+    format: percent_1
+    aggregate_type: average

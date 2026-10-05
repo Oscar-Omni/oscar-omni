@@ -1,0 +1,21 @@
+base_view: canva_accounts
+label: Canva Accounts
+group_label: Canva Demo
+description: One row per enterprise account with ARR, plan, region, renewal date
+  and at risk flag.
+
+joins: {}
+
+ai_context: |
+  Synthetic Canva style account base, AUD. ARR is the sum of arr_aud per account. An account is at risk when active users have fallen for months running; at risk accounts are mostly renewing in the next 120 days.
+  Use ARR at risk and At risk accounts for churn questions. Keep answers short and name the measure used.
+
+sample_queries:
+  at_risk_by_region:
+    query:
+      fields: [ canva_accounts.region, canva_accounts.arr_at_risk, canva_accounts.arr ]
+      base_view: canva_accounts
+      limit: 10
+      topic: canva_accounts
+    description: ARR and ARR at risk by region.
+    prompt: Which regions have the most ARR at risk?

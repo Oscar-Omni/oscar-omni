@@ -1,0 +1,28 @@
+base_view: canva_usage
+label: Canva Usage
+group_label: Canva Demo
+description: Monthly product usage per account, Oct 2025 to Sep 2026, with
+  account attributes.
+
+joins:
+  canva_accounts: {}
+
+relationships:
+  - join_from_view: canva_usage
+    join_to_view: canva_accounts
+    join_type: always_left
+    on_sql: ${canva_usage.account_id} = ${canva_accounts.account_id}
+    relationship_type: many_to_one
+
+ai_context: |
+  One row per account per month. AI share of designs = AI feature uses / designs created on summed values. Active users flat in total hides at risk accounts falling while others grow. For ARR use the Canva Accounts topic.
+
+sample_queries:
+  ai_trend:
+    query:
+      fields: [ canva_usage.usage_month, canva_accounts.region, canva_usage.ai_share ]
+      base_view: canva_usage
+      limit: 100
+      topic: canva_usage
+    description: Monthly AI share of designs by region.
+    prompt: How is AI feature use trending by region?
