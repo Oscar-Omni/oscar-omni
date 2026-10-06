@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__omnise_367_d8d06bcb_plans
+label: Plans
+description: One row per plan. Invented plan names and synthetic prices, not
+  published prices.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_367_D8D06BCB_PLANS
@@ -6,19 +10,34 @@ table_name: OMNISE_367_D8D06BCB_PLANS
 dimensions:
   plan_id:
     sql: '"PLAN_ID"'
+    label: Plan ID
     format: ID
+    hidden: true
+    primary_key: true
 
   plan_name:
     sql: '"PLAN_NAME"'
+    label: Plan
+    description: Invented plan name, for example Home Fast 500.
+    synonyms: [ plan, product ]
 
   technology:
     sql: '"TECHNOLOGY"'
+    label: Technology
+    description: NBN or Fixed wireless.
+    sample_values: [ NBN, Fixed wireless ]
 
   speed_tier_mbps:
     sql: '"SPEED_TIER_MBPS"'
+    label: Speed tier (Mbps)
+    description: Download speed tier in Mbps.
+    synonyms: [ speed, speed tier ]
 
   monthly_price_aud:
     sql: '"MONTHLY_PRICE_AUD"'
+    label: Monthly price (AUD)
+    format: CURRENCY_2
+    description: Synthetic monthly price in AUD, not a published price.
 
 measures:
   count:

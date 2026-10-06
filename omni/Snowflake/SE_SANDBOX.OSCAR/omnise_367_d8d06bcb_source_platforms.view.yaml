@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__omnise_367_d8d06bcb_source_platforms
+label: Source platforms
+description: One row per source billing platform. Harbour and Kestrel are
+  invented platforms, not real acquired businesses.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_367_D8D06BCB_SOURCE_PLATFORMS
@@ -6,16 +10,29 @@ table_name: OMNISE_367_D8D06BCB_SOURCE_PLATFORMS
 dimensions:
   source_platform_id:
     sql: '"SOURCE_PLATFORM_ID"'
+    label: Source platform ID
     format: ID
+    hidden: true
+    primary_key: true
 
   platform_name:
     sql: '"PLATFORM_NAME"'
+    label: Platform
+    description: Billing platform name. Core Billing, Harbour (acquired) or Kestrel
+      (acquired).
+    sample_values: [ Core Billing, Harbour (acquired), Kestrel (acquired) ]
+    synonyms: [ platform, source platform, billing platform ]
 
   origin:
     sql: '"ORIGIN"'
+    label: Origin
+    description: core or acquired.
+    sample_values: [ core, acquired ]
 
   active_rule:
     sql: '"ACTIVE_RULE"'
+    label: Active rule
+    description: How the platform labels a service as active, in plain words.
 
 measures:
   count:

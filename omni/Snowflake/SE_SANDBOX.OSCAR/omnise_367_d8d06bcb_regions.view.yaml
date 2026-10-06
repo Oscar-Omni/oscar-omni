@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__omnise_367_d8d06bcb_regions
+label: Regions
+description: One row per service region. Invented region names on real Australian geography.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_367_D8D06BCB_REGIONS
@@ -6,13 +9,24 @@ table_name: OMNISE_367_D8D06BCB_REGIONS
 dimensions:
   region_id:
     sql: '"REGION_ID"'
+    label: Region ID
     format: ID
+    hidden: true
+    primary_key: true
 
   region_name:
     sql: '"REGION_NAME"'
+    label: Region
+    description: Service region name, for example Greater Sydney West or South East
+      Queensland North.
+    synonyms: [ region, area ]
 
   state_code:
     sql: '"STATE_CODE"'
+    label: State
+    description: State or territory code, one of NSW, VIC, QLD, WA, SA, TAS, ACT or NT.
+    sample_values: [ NSW, VIC, QLD, WA, SA, TAS, ACT, NT ]
+    synonyms: [ state, territory, state code ]
 
 measures:
   count:

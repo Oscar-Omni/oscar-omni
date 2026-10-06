@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__omnise_367_d8d06bcb_service_weeks
+label: Service weeks
+description: One row per service per Monday weekly snapshot while the service is
+  connected, 2025-10-06 to 2026-09-28. Synthetic demo data, invented platforms
+  Harbour and Kestrel, not Aussie Broadband figures.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_367_D8D06BCB_SERVICE_WEEKS
@@ -6,35 +11,147 @@ table_name: OMNISE_367_D8D06BCB_SERVICE_WEEKS
 dimensions:
   service_week_id:
     sql: '"SERVICE_WEEK_ID"'
+    label: Service week ID
     format: ID
+    hidden: true
+    primary_key: true
 
   service_id:
     sql: '"SERVICE_ID"'
+    label: Service ID
     format: ID
+    hidden: true
 
   snapshot_week:
     sql: '"SNAPSHOT_WEEK"'
+    label: Snapshot week
+    description: Monday of the weekly snapshot. Use this for every period filter,
+      with an exclusive end date.
+    timeframes: [ raw, date, week, month, quarter, year ]
+    synonyms: [ week, snapshot ]
 
   source_platform_id:
     sql: '"SOURCE_PLATFORM_ID"'
+    label: Source platform ID (copy)
     format: ID
+    description: Copied from services at generation time. Use platform_name from
+      source_platforms instead.
+    hidden: true
 
   region_id:
     sql: '"REGION_ID"'
+    label: Region ID (copy)
     format: ID
+    description: Copied from services at generation time. Use region_name from
+      regions instead.
+    hidden: true
 
   platform_status:
     sql: '"PLATFORM_STATUS"'
+    label: Platform status
+    description: Status as labelled by the source platform for that week.
+    sample_values: [ active, suspended, pending_disconnect ]
+    synonyms: [ status, service status ]
 
   billed_amount_aud:
     sql: '"BILLED_AMOUNT_AUD"'
+    label: Billed amount (AUD)
+    format: CURRENCY_2
+    description: Weekly billed charge in AUD. Zero when the service was not billed
+      that week.
 
   reported_active_flag:
     sql: '"REPORTED_ACTIVE_FLAG"'
+    label: Reported active flag
+    description: 1 when platform_status is active.
+    hidden: true
 
   non_billing_active_flag:
     sql: '"NON_BILLING_ACTIVE_FLAG"'
+    label: Active but not billed flag
+    description: 1 when platform_status is active and billed_amount_aud is 0.
+    hidden: true
 
 measures:
   count:
     aggregate_type: count
+
+  reported_active_flags:
+    sql: ${reported_active_flag}
+    label: Reported active service weeks
+    format: NUMBER_0
+    description: Service weeks the source platform labels active. Additive helper,
+      not an average.
+    hidden: true
+    aggregate_type: sum
+
+  snapshot_weeks:
+    sql: ${snapshot_week}
+    label: Snapshot weeks
+    format: NUMBER_0
+    description: Distinct weekly snapshots in the filter. The divisor that turns a
+      stock count into a weekly average.
+    hidden: true
+    aggregate_type: count_distinct
+
+  reported_active_services:
+    sql: ${reported_active_flags} / NULLIF(${snapshot_weeks}, 0)
+    label: Reported active services
+    group_label: Active service base
+    format: NUMBER_0
+    description: Average weekly count of services the source platform labels active.
+      A stock measure, so a multi week filter averages the weekly snapshots
+      instead of summing them. This is the metric that disagrees across
+      platforms.
+    synonyms: [ active service base, active services, reported active base ]
+    ai_context: Always average the weekly snapshots, never sum them across weeks.
+      This is the active service base as each source platform reports it. When
+      comparing two periods always state both averages, the absolute change and
+      the percentage change, which is the change divided by the earlier period,
+      written out in the answer text (for example 10,664 to 11,248 is +5.5%).
+
+  non_billing_active_weeks:
+    sql: ${non_billing_active_flag}
+    label: Active but not billed service weeks
+    group_label: Active service base
+    format: NUMBER_0
+    description: Service weeks labelled active but not billed. Additive, use it at
+      service grain in the detail table and exception list.
+    aggregate_type: sum
+    synonyms: [ unbilled active weeks ]
+
+  non_billing_active_services:
+    sql: ${non_billing_active_weeks} / NULLIF(${snapshot_weeks}, 0)
+    label: Active but not billed
+    group_label: Active service base
+    format: NUMBER_0
+    description: Average weekly count of services labelled active that were not
+      billed that week.
+    synonyms: [ active but not billed, unbilled active services, active not billed ]
+    ai_context: Average of weekly snapshots. Services that are active and billed
+      that week equal reported_active_services minus this measure. To restate
+      growth on billed services only, subtract this measure from
+      reported_active_services in each period, then give both billed averages,
+      the change and the percentage change.
+
+  not_billed_share:
+    sql: ${non_billing_active_services} / NULLIF(${reported_active_services}, 0)
+    label: Not billed share
+    group_label: Active service base
+    format: PERCENT_1
+    description: Share of the reported active base that was not billed.
+    synonyms: [ unbilled share, share not billed ]
+
+  billed_revenue_aud:
+    sql: ${billed_amount_aud}
+    label: Billed revenue (AUD)
+    group_label: Revenue
+    format: CURRENCY_0
+    description: Billed weekly charges in AUD, summed over the weeks in the filter.
+    aggregate_type: sum
+    synonyms: [ billed revenue, revenue ]
+
+ai_context: One row per service per Monday snapshot. Synthetic data, invented
+  platforms. Use snapshot_week for every period filter with an exclusive end
+  date. The active service base is a stock, so average the weekly snapshots and
+  never sum them across weeks.

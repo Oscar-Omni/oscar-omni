@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__omnise_367_d8d06bcb_services
+label: Services
+description: One row per broadband service (connection) ever connected up to
+  2026-09-28. Synthetic demo data, not Aussie Broadband records.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_367_D8D06BCB_SERVICES
@@ -6,29 +10,55 @@ table_name: OMNISE_367_D8D06BCB_SERVICES
 dimensions:
   service_id:
     sql: '"SERVICE_ID"'
+    label: Service ID
     format: ID
+    description: Service key such as SVC-000001.
+    primary_key: true
 
   source_platform_id:
     sql: '"SOURCE_PLATFORM_ID"'
+    label: Source platform ID
     format: ID
+    hidden: true
 
   plan_id:
     sql: '"PLAN_ID"'
+    label: Plan ID
     format: ID
+    hidden: true
 
   region_id:
     sql: '"REGION_ID"'
+    label: Region ID
     format: ID
+    hidden: true
 
   connected_date:
     sql: '"CONNECTED_DATE"'
+    label: Connected date
+    description: Date the service was connected.
+    timeframes: [ raw, date, month, quarter, year ]
 
   disconnected_date:
     sql: '"DISCONNECTED_DATE"'
+    label: Disconnected date
+    description: Date the service was disconnected. Empty while connected.
+    timeframes: [ raw, date, month, quarter, year ]
 
   billing_hold:
     sql: '"BILLING_HOLD"'
+    label: Billing hold
+    description: True when the service is on a billing hold, so nothing is billed for it.
+    synonyms: [ on hold, billing hold flag ]
 
 measures:
   count:
     aggregate_type: count
+
+  services_count:
+    sql: ${service_id}
+    label: Services
+    format: NUMBER_0
+    description: Count of distinct services ever connected in the filter. Not a
+      weekly active count, use reported_active_services for that.
+    aggregate_type: count_distinct

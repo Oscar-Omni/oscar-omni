@@ -1,0 +1,126 @@
+hidden: false
+
+base_view: se_sandbox_oscar__omnise_367_d8d06bcb_service_weeks
+label: Active Service Base
+group_label: Aussie Broadband
+description: Weekly snapshots of broadband services by source billing platform,
+  region and plan, for reconciling the active service base. Synthetic data with
+  invented platforms Harbour and Kestrel, not Aussie Broadband figures.
+
+joins:
+  se_sandbox_oscar__omnise_367_d8d06bcb_services:
+    se_sandbox_oscar__omnise_367_d8d06bcb_source_platforms: {}
+    se_sandbox_oscar__omnise_367_d8d06bcb_regions: {}
+    se_sandbox_oscar__omnise_367_d8d06bcb_plans: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__omnise_367_d8d06bcb_service_weeks
+    join_to_view: se_sandbox_oscar__omnise_367_d8d06bcb_services
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_367_d8d06bcb_service_weeks.service_id} =
+      ${se_sandbox_oscar__omnise_367_d8d06bcb_services.service_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__omnise_367_d8d06bcb_services
+    join_to_view: se_sandbox_oscar__omnise_367_d8d06bcb_source_platforms
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_367_d8d06bcb_services.source_platform_id} =
+      ${se_sandbox_oscar__omnise_367_d8d06bcb_source_platforms.source_platform_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__omnise_367_d8d06bcb_services
+    join_to_view: se_sandbox_oscar__omnise_367_d8d06bcb_regions
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_367_d8d06bcb_services.region_id} =
+      ${se_sandbox_oscar__omnise_367_d8d06bcb_regions.region_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__omnise_367_d8d06bcb_services
+    join_to_view: se_sandbox_oscar__omnise_367_d8d06bcb_plans
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_367_d8d06bcb_services.plan_id} =
+      ${se_sandbox_oscar__omnise_367_d8d06bcb_plans.plan_id}
+    relationship_type: many_to_one
+
+ai_context: |-
+  Each row of service_weeks is one service in one Monday weekly snapshot. Synthetic demo data with invented platforms Harbour and Kestrel, not Aussie Broadband figures; say so when presenting results. Use snapshot_week for every period filter, with an exclusive end date.
+
+  Metrics. The active service base is a stock, so always average the weekly snapshots and never sum them across weeks. reported_active_services is what each source platform calls active and is the default for an unqualified question about the active service base. non_billing_active_services is the average weekly count of services labelled active that were not billed that week. Services that were active and billed that week equal reported_active_services minus non_billing_active_services, use that for any question about counting only billed services. not_billed_share is non_billing_active_services over reported_active_services. billed_revenue_aud is additive. non_billing_active_weeks is additive and belongs at service grain, for example per service_id. A governed_active_services measure does not exist until it is promoted to the shared model, until then use the active minus not billed difference. Money is AUD.
+
+  Periods. Fixed periods: the current quarter is 2026-07-06 to 2026-10-05 (13 weekly snapshots) and the prior quarter is 2026-04-06 to 2026-07-05 (13 snapshots), exclusive ends. For quarter comparisons filter both periods explicitly with snapshot_week between 2026-04-06 and 2026-10-05 and group by snapshot_week[quarter], then name both periods with exact dates. Kestrel moved to a new billing platform on Monday 2026-07-27, the cutover week.
+
+  Dimensions. platform_name (Core Billing, Harbour (acquired), Kestrel (acquired)) and origin come from source_platforms. region_name and state_code come from regions. plan_name, technology and speed_tier_mbps come from plans. billing_hold on services marks services on a billing hold for the whole window. Synonyms: active service base and active services mean reported_active_services, active but not billed means non_billing_active_services, platform means platform_name, state means state_code.
+
+  Analysis guidance. To explain a change in the base, group by platform_name first, then by region_name for the platform that stands out, then list service_id with billing_hold. Show reported_active_services next to non_billing_active_services so the gap is visible. Keep answers concise and lead with the headline numbers.
+
+sample_queries:
+  active_base_quarter_comparison:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__omnise_367_d8d06bcb_service_weeks.snapshot_week[\
+            quarter]",
+          se_sandbox_oscar__omnise_367_d8d06bcb_service_weeks.reported_active_services
+        ]
+      base_view: se_sandbox_oscar__omnise_367_d8d06bcb_service_weeks
+      filters:
+        se_sandbox_oscar__omnise_367_d8d06bcb_service_weeks.snapshot_week:
+          between_dates: [ 2026-04-06, 2026-10-05 ]
+      topic: omnise_367_d8d06bcb_active_service_base
+    prompt: What was the average weekly active service base for the quarter 6 July
+      2026 to 4 October 2026, and how does it compare with the previous quarter
+      6 April 2026 to 5 July 2026?
+    ai_context: Average the weekly snapshots, never sum them. The two calendar
+      quarters line up with the two named periods.
+  base_by_platform_by_quarter:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__omnise_367_d8d06bcb_source_platforms.platform_name,
+          "se_sandbox_oscar__omnise_367_d8d06bcb_service_weeks.snapshot_week[\
+            quarter]",
+          se_sandbox_oscar__omnise_367_d8d06bcb_service_weeks.reported_active_services,
+          se_sandbox_oscar__omnise_367_d8d06bcb_service_weeks.non_billing_active_services
+        ]
+      base_view: se_sandbox_oscar__omnise_367_d8d06bcb_service_weeks
+      filters:
+        se_sandbox_oscar__omnise_367_d8d06bcb_service_weeks.snapshot_week:
+          between_dates: [ 2026-04-06, 2026-10-05 ]
+      topic: omnise_367_d8d06bcb_active_service_base
+    prompt: Which source platform explains the increase between those two quarters,
+      and how much of the increase remains if we only count services that were
+      actually billed that week?
+    ai_context: Billed services are reported_active_services minus
+      non_billing_active_services. Compare each platform across the two quarters
+      and restate the growth on the billed count.
+  unbilled_by_region:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__omnise_367_d8d06bcb_regions.region_name,
+          se_sandbox_oscar__omnise_367_d8d06bcb_service_weeks.non_billing_active_services
+        ]
+      base_view: se_sandbox_oscar__omnise_367_d8d06bcb_service_weeks
+      filters:
+        se_sandbox_oscar__omnise_367_d8d06bcb_service_weeks.snapshot_week:
+          between_dates: [ 2026-07-06, 2026-10-05 ]
+      sorts:
+        - field: se_sandbox_oscar__omnise_367_d8d06bcb_service_weeks.non_billing_active_services
+          desc: true
+      topic: omnise_367_d8d06bcb_active_service_base
+    prompt: Which regions have the most services that are active but not billed in
+      the quarter 6 July 2026 to 4 October 2026?
+  weekly_active_base:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__omnise_367_d8d06bcb_service_weeks.snapshot_week[\
+            week]",
+          se_sandbox_oscar__omnise_367_d8d06bcb_service_weeks.reported_active_services
+        ]
+      base_view: se_sandbox_oscar__omnise_367_d8d06bcb_service_weeks
+      filters:
+        se_sandbox_oscar__omnise_367_d8d06bcb_service_weeks.snapshot_week:
+          between_dates: [ 2026-07-06, 2026-10-05 ]
+      topic: omnise_367_d8d06bcb_active_service_base
+    prompt: What was the active service base each week this quarter?
