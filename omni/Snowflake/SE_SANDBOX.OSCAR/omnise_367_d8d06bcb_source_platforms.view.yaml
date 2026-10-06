@@ -1,0 +1,22 @@
+# Reference this view as se_sandbox_oscar__omnise_367_d8d06bcb_source_platforms
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_367_D8D06BCB_SOURCE_PLATFORMS
+
+dimensions:
+  source_platform_id:
+    sql: '"SOURCE_PLATFORM_ID"'
+    format: ID
+
+  platform_name:
+    sql: '"PLATFORM_NAME"'
+
+  origin:
+    sql: '"ORIGIN"'
+
+  active_rule:
+    sql: '"ACTIVE_RULE"'
+
+measures:
+  count:
+    aggregate_type: count

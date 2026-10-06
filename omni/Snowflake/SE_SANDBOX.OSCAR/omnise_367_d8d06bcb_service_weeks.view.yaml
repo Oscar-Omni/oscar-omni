@@ -1,0 +1,40 @@
+# Reference this view as se_sandbox_oscar__omnise_367_d8d06bcb_service_weeks
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_367_D8D06BCB_SERVICE_WEEKS
+
+dimensions:
+  service_week_id:
+    sql: '"SERVICE_WEEK_ID"'
+    format: ID
+
+  service_id:
+    sql: '"SERVICE_ID"'
+    format: ID
+
+  snapshot_week:
+    sql: '"SNAPSHOT_WEEK"'
+
+  source_platform_id:
+    sql: '"SOURCE_PLATFORM_ID"'
+    format: ID
+
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  platform_status:
+    sql: '"PLATFORM_STATUS"'
+
+  billed_amount_aud:
+    sql: '"BILLED_AMOUNT_AUD"'
+
+  reported_active_flag:
+    sql: '"REPORTED_ACTIVE_FLAG"'
+
+  non_billing_active_flag:
+    sql: '"NON_BILLING_ACTIVE_FLAG"'
+
+measures:
+  count:
+    aggregate_type: count

@@ -1,0 +1,25 @@
+# Reference this view as se_sandbox_oscar__omnise_367_d8d06bcb_plans
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_367_D8D06BCB_PLANS
+
+dimensions:
+  plan_id:
+    sql: '"PLAN_ID"'
+    format: ID
+
+  plan_name:
+    sql: '"PLAN_NAME"'
+
+  technology:
+    sql: '"TECHNOLOGY"'
+
+  speed_tier_mbps:
+    sql: '"SPEED_TIER_MBPS"'
+
+  monthly_price_aud:
+    sql: '"MONTHLY_PRICE_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

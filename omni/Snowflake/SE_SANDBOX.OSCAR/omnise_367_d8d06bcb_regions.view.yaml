@@ -1,0 +1,19 @@
+# Reference this view as se_sandbox_oscar__omnise_367_d8d06bcb_regions
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_367_D8D06BCB_REGIONS
+
+dimensions:
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  region_name:
+    sql: '"REGION_NAME"'
+
+  state_code:
+    sql: '"STATE_CODE"'
+
+measures:
+  count:
+    aggregate_type: count

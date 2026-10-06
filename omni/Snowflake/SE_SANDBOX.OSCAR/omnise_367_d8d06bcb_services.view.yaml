@@ -1,0 +1,34 @@
+# Reference this view as se_sandbox_oscar__omnise_367_d8d06bcb_services
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_367_D8D06BCB_SERVICES
+
+dimensions:
+  service_id:
+    sql: '"SERVICE_ID"'
+    format: ID
+
+  source_platform_id:
+    sql: '"SOURCE_PLATFORM_ID"'
+    format: ID
+
+  plan_id:
+    sql: '"PLAN_ID"'
+    format: ID
+
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  connected_date:
+    sql: '"CONNECTED_DATE"'
+
+  disconnected_date:
+    sql: '"DISCONNECTED_DATE"'
+
+  billing_hold:
+    sql: '"BILLING_HOLD"'
+
+measures:
+  count:
+    aggregate_type: count
