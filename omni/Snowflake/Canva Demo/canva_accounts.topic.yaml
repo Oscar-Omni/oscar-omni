@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: canva_accounts
 label: Canva Accounts
 group_label: Canva Demo
