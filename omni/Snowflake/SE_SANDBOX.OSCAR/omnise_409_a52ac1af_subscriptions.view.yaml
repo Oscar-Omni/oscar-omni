@@ -1,0 +1,28 @@
+# Reference this view as se_sandbox_oscar__omnise_409_a52ac1af_subscriptions
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_409_A52AC1AF_SUBSCRIPTIONS
+
+dimensions:
+  account_id:
+    sql: '"ACCOUNT_ID"'
+    format: ID
+
+  month_start:
+    sql: '"MONTH_START"'
+
+  plan_tier:
+    sql: '"PLAN_TIER"'
+
+  subscription_fee_aud:
+    sql: '"SUBSCRIPTION_FEE_AUD"'
+
+  downgraded_flag:
+    sql: '"DOWNGRADED_FLAG"'
+
+  churned_flag:
+    sql: '"CHURNED_FLAG"'
+
+measures:
+  count:
+    aggregate_type: count

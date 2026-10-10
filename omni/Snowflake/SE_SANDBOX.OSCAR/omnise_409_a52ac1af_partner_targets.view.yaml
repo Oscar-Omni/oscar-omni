@@ -1,0 +1,22 @@
+# Reference this view as se_sandbox_oscar__omnise_409_a52ac1af_partner_targets
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_409_A52AC1AF_PARTNER_TARGETS
+
+dimensions:
+  partner_id:
+    sql: '"PARTNER_ID"'
+    format: ID
+
+  target_failure_rate:
+    sql: '"TARGET_FAILURE_RATE"'
+
+  owner_team:
+    sql: '"OWNER_TEAM"'
+
+  review_quarter:
+    sql: '"REVIEW_QUARTER"'
+
+measures:
+  count:
+    aggregate_type: count

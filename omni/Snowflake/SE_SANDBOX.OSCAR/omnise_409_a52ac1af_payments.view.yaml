@@ -1,0 +1,56 @@
+# Reference this view as se_sandbox_oscar__omnise_409_a52ac1af_payments
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_409_A52AC1AF_PAYMENTS
+
+dimensions:
+  payment_id:
+    sql: '"PAYMENT_ID"'
+    format: ID
+
+  account_id:
+    sql: '"ACCOUNT_ID"'
+    format: ID
+
+  payment_date:
+    sql: '"PAYMENT_DATE"'
+
+  payment_method:
+    sql: '"PAYMENT_METHOD"'
+
+  payment_amount_aud:
+    sql: '"PAYMENT_AMOUNT_AUD"'
+
+  fee_aud:
+    sql: '"FEE_AUD"'
+
+  is_failed:
+    sql: '"IS_FAILED"'
+
+  failure_reason:
+    sql: '"FAILURE_REASON"'
+
+  settlement_days:
+    sql: '"SETTLEMENT_DAYS"'
+
+  segment:
+    sql: '"SEGMENT"'
+
+  state:
+    sql: '"STATE"'
+
+  settled_fee_aud:
+    sql: '"SETTLED_FEE_AUD"'
+
+  failed_fee_aud:
+    sql: '"FAILED_FEE_AUD"'
+
+  failed_payment_flag:
+    sql: '"FAILED_PAYMENT_FLAG"'
+
+  payment_count_flag:
+    sql: '"PAYMENT_COUNT_FLAG"'
+
+measures:
+  count:
+    aggregate_type: count

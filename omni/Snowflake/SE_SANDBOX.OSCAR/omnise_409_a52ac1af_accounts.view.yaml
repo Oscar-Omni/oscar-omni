@@ -1,0 +1,39 @@
+# Reference this view as se_sandbox_oscar__omnise_409_a52ac1af_accounts
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: OMNISE_409_A52AC1AF_ACCOUNTS
+
+dimensions:
+  account_id:
+    sql: '"ACCOUNT_ID"'
+    format: ID
+
+  account_name:
+    sql: '"ACCOUNT_NAME"'
+
+  crm_account_id:
+    sql: '"CRM_ACCOUNT_ID"'
+    format: ID
+
+  partner_id:
+    sql: '"PARTNER_ID"'
+    format: ID
+
+  segment:
+    sql: '"SEGMENT"'
+
+  vertical:
+    sql: '"VERTICAL"'
+
+  state:
+    sql: '"STATE"'
+
+  signup_date:
+    sql: '"SIGNUP_DATE"'
+
+  is_active:
+    sql: '"IS_ACTIVE"'
+
+measures:
+  count:
+    aggregate_type: count
