@@ -1,0 +1,129 @@
+hidden: false
+
+base_view: se_sandbox_oscar__omnise_409_a52ac1af_payments
+label: Payments Health
+group_label: Ignition
+description: Payment attempts, failures and fees for Ignition's client firms
+  with accounts, referral partners and partner failure targets. Payment grain.
+  Synthetic data.
+
+joins:
+  se_sandbox_oscar__omnise_409_a52ac1af_accounts:
+    se_sandbox_oscar__omnise_409_a52ac1af_partners:
+      se_sandbox_oscar__omnise_409_a52ac1af_partner_targets: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__omnise_409_a52ac1af_payments
+    join_to_view: se_sandbox_oscar__omnise_409_a52ac1af_accounts
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_409_a52ac1af_payments.account_id} =
+      ${se_sandbox_oscar__omnise_409_a52ac1af_accounts.account_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__omnise_409_a52ac1af_accounts
+    join_to_view: se_sandbox_oscar__omnise_409_a52ac1af_partners
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_409_a52ac1af_accounts.partner_id} =
+      ${se_sandbox_oscar__omnise_409_a52ac1af_partners.partner_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__omnise_409_a52ac1af_partners
+    join_to_view: se_sandbox_oscar__omnise_409_a52ac1af_partner_targets
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__omnise_409_a52ac1af_partners.partner_id} =
+      ${se_sandbox_oscar__omnise_409_a52ac1af_partner_targets.partner_id}
+    relationship_type: one_to_one
+
+ai_context: |-
+  Payment grain. A failure rate is failed payments over payment attempts (payments.payment_failure_rate), never failed accounts over accounts. Fees are AUD. Partner PRT-0000 means direct, no referring partner. Dates are payments.payment_date and any period filter uses an exclusive end date. Answer from this governed topic in one query; do not loop over accounts or records.
+
+  Vocabulary. Failure rate and declines mean payments.payment_failure_rate and payments.failed_payment_count. Decline reason means payments.failure_reason. Fee leakage and fee lost mean payments.total_failed_fee_aud. Revenue and settled fees mean payments.total_settled_fee_aud. DD means the Direct debit value of payments.payment_method. Partner and referrer mean partners.partner_name. Firm and client mean accounts.account_name. Target means partner_targets.target_failure_rate. Synthetic data, say so when presenting.
+
+  Analysis guidance. To explain a change in failure rate, compare the two named periods exactly, group by partners.partner_name and payments.payment_method, show payment_failure_rate for each period beside total_failed_fee_aud, and name the dominant payments.failure_reason. Do not attribute a cause beyond the failure reason. A partner can be over target for a long time without having changed, so compare the same partner across the two periods before calling it a change. Subscription fees and downgrades are in the subscription_health topic and are never added to payment fees in one query. Keep answers concise and lead with the headline numbers.
+
+sample_queries:
+  failure_rate_by_month:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__omnise_409_a52ac1af_payments.payment_date[month]",
+          se_sandbox_oscar__omnise_409_a52ac1af_payments.payment_failure_rate
+        ]
+      base_view: se_sandbox_oscar__omnise_409_a52ac1af_payments
+      filters:
+        se_sandbox_oscar__omnise_409_a52ac1af_payments.payment_date:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+      topic: omnise_409_a52ac1af_payments_health
+    prompt: What was the payment failure rate by month from 1 April 2026 to 30
+      September 2026?
+  failure_rate_by_partner_and_method:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__omnise_409_a52ac1af_partners.partner_name,
+          se_sandbox_oscar__omnise_409_a52ac1af_payments.payment_method,
+          se_sandbox_oscar__omnise_409_a52ac1af_payments.payment_failure_rate,
+          se_sandbox_oscar__omnise_409_a52ac1af_payments.total_failed_fee_aud
+        ]
+      base_view: se_sandbox_oscar__omnise_409_a52ac1af_payments
+      filters:
+        se_sandbox_oscar__omnise_409_a52ac1af_payments.payment_date:
+          between_dates: [ 2026-07-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__omnise_409_a52ac1af_payments.total_failed_fee_aud
+          desc: true
+      topic: omnise_409_a52ac1af_payments_health
+    prompt: Which partner and payment method lost the most fee to failed payments
+      from 1 July 2026 to 30 September 2026?
+    ai_context: Group by partner name and payment method, include the failure rate
+      and the fee lost in AUD, sort by fee lost descending.
+  partners_above_target:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__omnise_409_a52ac1af_partners.partner_name,
+          se_sandbox_oscar__omnise_409_a52ac1af_payments.payment_failure_rate,
+          se_sandbox_oscar__omnise_409_a52ac1af_partner_targets.target_failure_rate
+        ]
+      base_view: se_sandbox_oscar__omnise_409_a52ac1af_payments
+      filters:
+        se_sandbox_oscar__omnise_409_a52ac1af_payments.payment_date:
+          between_dates: [ 2026-07-01, 2026-10-01 ]
+      topic: omnise_409_a52ac1af_payments_health
+    prompt: Which partners are above their failure rate target for 1 July 2026 to 30
+      September 2026?
+  fee_lost_to_mandate_invalid:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__omnise_409_a52ac1af_partners.partner_name,
+          se_sandbox_oscar__omnise_409_a52ac1af_payments.total_failed_fee_aud
+        ]
+      base_view: se_sandbox_oscar__omnise_409_a52ac1af_payments
+      filters:
+        se_sandbox_oscar__omnise_409_a52ac1af_payments.payment_date:
+          between_dates: [ 2026-07-01, 2026-10-01 ]
+        se_sandbox_oscar__omnise_409_a52ac1af_payments.failure_reason:
+          is: Mandate invalid
+      sorts:
+        - field: se_sandbox_oscar__omnise_409_a52ac1af_payments.total_failed_fee_aud
+          desc: true
+      topic: omnise_409_a52ac1af_payments_health
+    prompt: How much fee did we lose to mandate invalid failures by partner in Q3
+      2026 (1 July 2026 to 30 September 2026)?
+  settled_fees_by_state:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__omnise_409_a52ac1af_accounts.state,
+          se_sandbox_oscar__omnise_409_a52ac1af_payments.total_settled_fee_aud
+        ]
+      base_view: se_sandbox_oscar__omnise_409_a52ac1af_payments
+      filters:
+        se_sandbox_oscar__omnise_409_a52ac1af_payments.payment_date:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__omnise_409_a52ac1af_payments.total_settled_fee_aud
+          desc: true
+      topic: omnise_409_a52ac1af_payments_health
+    prompt: Show settled fees by state for 1 April 2026 to 30 September 2026.

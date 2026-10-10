@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__omnise_409_a52ac1af_partners
+label: Partners
+description: One row per referral partner. PRT-0000 is the direct, no partner
+  bucket. Synthetic names.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_409_A52AC1AF_PARTNERS
@@ -6,17 +10,31 @@ table_name: OMNISE_409_A52AC1AF_PARTNERS
 dimensions:
   partner_id:
     sql: '"PARTNER_ID"'
+    label: Partner ID
     format: ID
+    primary_key: true
 
   partner_name:
     sql: '"PARTNER_NAME"'
+    label: Partner name
+    description: Invented referral partner name
+    synonyms: [ partner, referrer, referral partner ]
 
   partner_type:
     sql: '"PARTNER_TYPE"'
+    label: Partner type
+    description: Advisory network, Software marketplace, Referral agency or Direct
 
   onboarded_date:
     sql: '"ONBOARDED_DATE"'
+    label: Onboarded date
+    description: Date the partner relationship started
 
 measures:
   count:
+    aggregate_type: count
+
+  partner_count:
+    label: Partners
+    format: NUMBER_0
     aggregate_type: count

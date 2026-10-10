@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__omnise_409_a52ac1af_payments
+label: Payments
+description: One row per client payment attempt processed on the platform. Fees
+  and amounts are AUD. Synthetic data.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_409_A52AC1AF_PAYMENTS
@@ -6,51 +10,159 @@ table_name: OMNISE_409_A52AC1AF_PAYMENTS
 dimensions:
   payment_id:
     sql: '"PAYMENT_ID"'
+    label: Payment ID
     format: ID
+    description: Unique key for each payment attempt
+    group_label: Payment
+    primary_key: true
 
   account_id:
     sql: '"ACCOUNT_ID"'
+    label: Account ID
     format: ID
+    hidden: true
 
   payment_date:
     sql: '"PAYMENT_DATE"'
+    label: Payment date
+    description: Date the payment was attempted
+    group_label: Payment
+    synonyms: [ date, day ]
 
   payment_method:
     sql: '"PAYMENT_METHOD"'
+    label: Payment method
+    description: Card, Direct debit or Bank transfer
+    group_label: Payment
+    synonyms: [ method, DD, direct debit ]
 
   payment_amount_aud:
     sql: '"PAYMENT_AMOUNT_AUD"'
+    label: Payment amount (AUD)
+    format: CURRENCY_2
+    group_label: Payment
 
   fee_aud:
     sql: '"FEE_AUD"'
+    label: Fee (AUD)
+    format: CURRENCY_2
+    description: Platform fee on the payment if it settles, about 1.3 percent of the amount
+    group_label: Payment
 
   is_failed:
     sql: '"IS_FAILED"'
+    label: Is failed
+    description: True when the payment did not settle
+    group_label: Failure
 
   failure_reason:
     sql: '"FAILURE_REASON"'
+    label: Failure reason
+    description: Why the payment failed. Null when settled
+    group_label: Failure
+    synonyms: [ decline reason, reason, declined because ]
 
   settlement_days:
     sql: '"SETTLEMENT_DAYS"'
+    label: Settlement days
+    description: Days from attempt to settlement, null when failed
+    group_label: Payment
 
   segment:
     sql: '"SEGMENT"'
+    label: Segment (at payment)
+    description: Account segment stamped at payment time
+    hidden: true
 
   state:
     sql: '"STATE"'
+    label: State (at payment)
+    description: Account state stamped at payment time
+    hidden: true
 
   settled_fee_aud:
     sql: '"SETTLED_FEE_AUD"'
+    label: Settled fee row (AUD)
+    hidden: true
 
   failed_fee_aud:
     sql: '"FAILED_FEE_AUD"'
+    label: Failed fee row (AUD)
+    hidden: true
 
   failed_payment_flag:
     sql: '"FAILED_PAYMENT_FLAG"'
+    label: Failed payment flag
+    hidden: true
 
   payment_count_flag:
     sql: '"PAYMENT_COUNT_FLAG"'
+    label: Payment count flag
+    hidden: true
 
 measures:
   count:
     aggregate_type: count
+
+  payment_count:
+    label: Payments
+    group_label: Payment measures
+    format: NUMBER_0
+    description: Payment attempts, one per payment row
+    aggregate_type: count
+    synonyms: [ payment attempts, transactions ]
+
+  failed_payment_count:
+    sql: ${failed_payment_flag}
+    label: Failed payments
+    group_label: Failure measures
+    format: NUMBER_0
+    description: Payments that did not settle
+    aggregate_type: sum
+    synonyms: [ declines, failures, failed payments ]
+
+  total_settled_fee_aud:
+    sql: ${settled_fee_aud}
+    label: Settled fees (AUD)
+    group_label: Payment measures
+    format: CURRENCY_0
+    description: Platform fees on settled payments in AUD
+    aggregate_type: sum
+    synonyms: [ revenue, fees earned, settled fees ]
+
+  total_failed_fee_aud:
+    sql: ${failed_fee_aud}
+    label: Fee lost to failed payments (AUD)
+    group_label: Failure measures
+    format: CURRENCY_0
+    description: Platform fees not earned because the payment failed, in AUD
+    aggregate_type: sum
+    synonyms: [ fee leakage, lost fees, leakage ]
+
+  paying_accounts:
+    sql: ${account_id}
+    label: Paying accounts
+    group_label: Payment measures
+    format: NUMBER_0
+    description: Distinct accounts with at least one payment attempt in the period
+    aggregate_type: count_distinct
+    synonyms: [ active payers, paying firms ]
+
+  payment_failure_rate:
+    sql: ${failed_payment_count} / NULLIF(${payment_count}, 0)
+    label: Payment failure rate
+    group_label: Failure measures
+    format: PERCENT_1
+    description: Failed payments divided by payment attempts. Payment grain, not
+      account grain
+    synonyms: [ failure rate, decline rate ]
+
+  direct_debit_failure_rate:
+    sql: SUM(CASE WHEN ${payment_method} = 'Direct debit' THEN
+      ${failed_payment_flag} END) / NULLIF(SUM(CASE WHEN ${payment_method} =
+      'Direct debit' THEN 1 END), 0)
+    label: Direct debit failure rate
+    group_label: Failure measures
+    format: PERCENT_1
+    description: Failed direct debit payments divided by direct debit payment attempts
+    synonyms: [ DD failure rate, direct debit decline rate ]

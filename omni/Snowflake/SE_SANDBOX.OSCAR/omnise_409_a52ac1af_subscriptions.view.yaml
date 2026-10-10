@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__omnise_409_a52ac1af_subscriptions
+label: Subscriptions
+description: One row per account per active month. Account month grain. Do not
+  add these fees to payment fees in one query.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_409_A52AC1AF_SUBSCRIPTIONS
@@ -6,23 +10,74 @@ table_name: OMNISE_409_A52AC1AF_SUBSCRIPTIONS
 dimensions:
   account_id:
     sql: '"ACCOUNT_ID"'
+    label: Account ID
     format: ID
+    hidden: true
 
   month_start:
     sql: '"MONTH_START"'
+    label: Month
+    description: First day of the subscription month
+    synonyms: [ month ]
 
   plan_tier:
     sql: '"PLAN_TIER"'
+    label: Plan tier
+    description: Essentials, Growth or Scale
+    synonyms: [ plan, tier ]
 
   subscription_fee_aud:
     sql: '"SUBSCRIPTION_FEE_AUD"'
+    label: Subscription fee row (AUD)
+    hidden: true
 
   downgraded_flag:
     sql: '"DOWNGRADED_FLAG"'
+    label: Downgraded flag
+    description: 1 when the account moved to a lower tier this month
+    hidden: true
 
   churned_flag:
     sql: '"CHURNED_FLAG"'
+    label: Churned flag
+    description: 1 in the account's final month
+    hidden: true
+
+  account_month_key:
+    sql: CONCAT("ACCOUNT_ID", '|', TO_CHAR("MONTH_START"))
+    label: Account month key
+    hidden: true
+    primary_key: true
 
 measures:
   count:
     aggregate_type: count
+
+  active_account_months:
+    label: Active account months
+    format: NUMBER_0
+    description: Count of subscription rows, one per account per active month
+    aggregate_type: count
+
+  downgrade_count:
+    sql: ${downgraded_flag}
+    label: Downgrades
+    format: NUMBER_0
+    description: Accounts that moved to a lower plan tier in the month
+    aggregate_type: sum
+    synonyms: [ downgrades, downgraded accounts ]
+
+  total_subscription_fee_aud:
+    sql: ${subscription_fee_aud}
+    label: Subscription fees (AUD)
+    format: CURRENCY_0
+    description: Monthly subscription fees in AUD
+    aggregate_type: sum
+    synonyms: [ MRR, subscription revenue ]
+
+  subscription_downgrade_rate:
+    sql: ${downgrade_count} / NULLIF(${active_account_months}, 0)
+    label: Subscription downgrade rate
+    format: PERCENT_1
+    description: Downgrades divided by active account months
+    synonyms: [ downgrade rate ]

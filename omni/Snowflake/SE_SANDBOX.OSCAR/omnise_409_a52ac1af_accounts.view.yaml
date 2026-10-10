@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__omnise_409_a52ac1af_accounts
+label: Accounts
+description: One row per client firm account. Synthetic firms.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_409_A52AC1AF_ACCOUNTS
@@ -6,34 +9,61 @@ table_name: OMNISE_409_A52AC1AF_ACCOUNTS
 dimensions:
   account_id:
     sql: '"ACCOUNT_ID"'
+    label: Account ID
     format: ID
+    primary_key: true
 
   account_name:
     sql: '"ACCOUNT_NAME"'
+    label: Account name
+    description: Invented firm name
+    synonyms: [ firm, client, customer ]
 
   crm_account_id:
     sql: '"CRM_ACCOUNT_ID"'
+    label: CRM account ID
     format: ID
+    description: Synthetic CRM key, what an MCP pull from the CRM would have to loop over
 
   partner_id:
     sql: '"PARTNER_ID"'
+    label: Partner ID
     format: ID
+    hidden: true
 
   segment:
     sql: '"SEGMENT"'
+    label: Segment
+    description: Small, Mid-market or Enterprise
+    synonyms: [ size, tier ]
 
   vertical:
     sql: '"VERTICAL"'
+    label: Vertical
+    description: Accounting, Legal, Consulting, Architecture or Engineering
+    synonyms: [ industry, profession ]
 
   state:
     sql: '"STATE"'
+    label: State
+    description: Australian state or territory code
+    synonyms: [ region, territory ]
 
   signup_date:
     sql: '"SIGNUP_DATE"'
+    label: Signup date
+    description: Account start date
 
   is_active:
     sql: '"IS_ACTIVE"'
+    label: Is active
+    description: False once the account has churned
 
 measures:
   count:
+    aggregate_type: count
+
+  account_count:
+    label: Accounts
+    format: NUMBER_0
     aggregate_type: count

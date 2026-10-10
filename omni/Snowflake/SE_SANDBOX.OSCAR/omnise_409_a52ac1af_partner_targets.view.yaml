@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__omnise_409_a52ac1af_partner_targets
+label: Partner targets
+description: One row per partner, an internal planning target for payment
+  failure rate. Synthetic, not a published or regulated figure.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: OMNISE_409_A52AC1AF_PARTNER_TARGETS
@@ -6,16 +10,26 @@ table_name: OMNISE_409_A52AC1AF_PARTNER_TARGETS
 dimensions:
   partner_id:
     sql: '"PARTNER_ID"'
+    label: Partner ID
     format: ID
+    hidden: true
+    primary_key: true
 
   target_failure_rate:
     sql: '"TARGET_FAILURE_RATE"'
+    label: Target failure rate
+    format: PERCENT_1
+    description: Planning target for payment failure rate for the partner
+    synonyms: [ target, failure target ]
 
   owner_team:
     sql: '"OWNER_TEAM"'
+    label: Owner team
 
   review_quarter:
     sql: '"REVIEW_QUARTER"'
+    label: Review quarter
+    description: Quarter the target applies to
 
 measures:
   count:
