@@ -1,0 +1,65 @@
+hidden: false
+
+base_view: se_sandbox_oscar__demo_need_2_care_transitions
+label: Care Journey and Records
+group_label: Need
+description: Moves between Screening, Treatment, Recovery and Lapsed, hospital
+  record timing and post treatment lapse. One row per stage change. Synthetic
+  data.
+
+joins:
+  se_sandbox_oscar__demo_need_2_members: {}
+  se_sandbox_oscar__demo_need_2_partners: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_need_2_care_transitions
+    join_to_view: se_sandbox_oscar__demo_need_2_members
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_need_2_care_transitions.member_id} =
+      ${se_sandbox_oscar__demo_need_2_members.member_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_need_2_care_transitions
+    join_to_view: se_sandbox_oscar__demo_need_2_partners
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_need_2_care_transitions.partner_id} =
+      ${se_sandbox_oscar__demo_need_2_partners.partner_id}
+    relationship_type: many_to_one
+
+ai_context: |-
+  Synthetic Need data. One row per change of care stage (Screening, Treatment, Recovery, Lapsed). Dates are KST; filter on care_transitions.transition_date_kst with an exclusive end date.
+
+  records_24h_rate and post_treatment_lapse_rate are the governed rates. records_24h_rate uses treatment entries as the denominator and counts entry rows only; post_treatment_lapse_rate uses treatment exits. Do not divide raw flags yourself.
+
+  Vocabulary. Diagnosis means is_treatment_entry (treatment_entries). Hospital records and 24 hour collection mean records_24h_rate, split by records_within_24h. Drop off after treatment means post_treatment_lapse_rate. Engaged before diagnosis means engaged_prior_month. Treatment stage means from_stage. Channel means acquisition_channel. Insurer means partners.partner_name.
+
+  Analysis guidance. Members who were not engaged the month before diagnosis get records within 24 hours less often; compare records_24h_rate by engaged_prior_month and acquisition_channel, then post_treatment_lapse_rate by records_within_24h. Lead with the headline numbers.
+
+sample_queries:
+  records_by_engaged_prior:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_need_2_care_transitions.engaged_prior_month,
+          se_sandbox_oscar__demo_need_2_care_transitions.treatment_entries,
+          se_sandbox_oscar__demo_need_2_care_transitions.records_24h_rate
+        ]
+      base_view: se_sandbox_oscar__demo_need_2_care_transitions
+      filters:
+        se_sandbox_oscar__demo_need_2_care_transitions.transition_date_kst:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+      topic: demo_need_2_care_journey
+    prompt: What share of treatment entries from 2026-04-01 to 2026-09-30 had
+      hospital records collected within 24 hours, split by engaged_prior_month?
+  post_treatment_lapse_by_records:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_need_2_care_transitions.records_within_24h,
+          se_sandbox_oscar__demo_need_2_care_transitions.treatment_exits,
+          se_sandbox_oscar__demo_need_2_care_transitions.post_treatment_lapse_rate
+        ]
+      base_view: se_sandbox_oscar__demo_need_2_care_transitions
+      topic: demo_need_2_care_journey
+    prompt: How does post_treatment_lapse_rate differ when records were collected
+      within 24 hours?
