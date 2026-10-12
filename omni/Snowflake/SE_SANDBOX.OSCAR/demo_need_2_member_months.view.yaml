@@ -1,0 +1,71 @@
+# Reference this view as se_sandbox_oscar__demo_need_2_member_months
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_NEED_2_MEMBER_MONTHS
+
+dimensions:
+  member_id:
+    sql: '"MEMBER_ID"'
+    format: ID
+
+  month_start:
+    sql: '"MONTH_START"'
+
+  partner_id:
+    sql: '"PARTNER_ID"'
+    format: ID
+
+  acquisition_channel:
+    sql: '"ACQUISITION_CHANNEL"'
+
+  region:
+    sql: '"REGION"'
+
+  months_since_enrol:
+    sql: '"MONTHS_SINCE_ENROL"'
+
+  is_enrol_month:
+    sql: '"IS_ENROL_MONTH"'
+
+  exposed_in_month:
+    sql: '"EXPOSED_IN_MONTH"'
+
+  in_force_eom:
+    sql: '"IN_FORCE_EOM"'
+
+  in_force_eom_utc_naive:
+    sql: '"IN_FORCE_EOM_UTC_NAIVE"'
+
+  lapsed_in_month:
+    sql: '"LAPSED_IN_MONTH"'
+
+  chatbot_sessions:
+    sql: '"CHATBOT_SESSIONS"'
+
+  checkup_uploaded:
+    sql: '"CHECKUP_UPLOADED"'
+
+  engaged_in_month:
+    sql: '"ENGAGED_IN_MONTH"'
+
+  stage_at_month_start:
+    sql: '"STAGE_AT_MONTH_START"'
+
+  stage_at_month_end:
+    sql: '"STAGE_AT_MONTH_END"'
+
+  early_exposed:
+    sql: '"EARLY_EXPOSED"'
+
+  early_engaged:
+    sql: '"EARLY_ENGAGED"'
+
+  early_lapsed:
+    sql: '"EARLY_LAPSED"'
+
+  premium_aud:
+    sql: '"PREMIUM_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

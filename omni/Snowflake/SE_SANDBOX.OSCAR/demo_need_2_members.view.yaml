@@ -1,0 +1,50 @@
+# Reference this view as se_sandbox_oscar__demo_need_2_members
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_NEED_2_MEMBERS
+
+dimensions:
+  member_id:
+    sql: '"MEMBER_ID"'
+    format: ID
+
+  partner_id:
+    sql: '"PARTNER_ID"'
+    format: ID
+
+  acquisition_channel:
+    sql: '"ACQUISITION_CHANNEL"'
+
+  region:
+    sql: '"REGION"'
+
+  enrol_ts_utc:
+    sql: '"ENROL_TS_UTC"'
+
+  enrol_date_kst:
+    sql: '"ENROL_DATE_KST"'
+
+  cohort_month:
+    sql: '"COHORT_MONTH"'
+
+  plan_tier:
+    sql: '"PLAN_TIER"'
+
+  activated_90d:
+    sql: '"ACTIVATED_90D"'
+
+  lapse_ts_utc:
+    sql: '"LAPSE_TS_UTC"'
+
+  lapse_date_kst:
+    sql: '"LAPSE_DATE_KST"'
+
+  lapse_date_utc:
+    sql: '"LAPSE_DATE_UTC"'
+
+  lapse_reason:
+    sql: '"LAPSE_REASON"'
+
+measures:
+  count:
+    aggregate_type: count

@@ -1,0 +1,19 @@
+# Reference this view as se_sandbox_oscar__demo_need_2_partners
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_NEED_2_PARTNERS
+
+dimensions:
+  partner_id:
+    sql: '"PARTNER_ID"'
+    format: ID
+
+  partner_name:
+    sql: '"PARTNER_NAME"'
+
+  partner_type:
+    sql: '"PARTNER_TYPE"'
+
+measures:
+  count:
+    aggregate_type: count
