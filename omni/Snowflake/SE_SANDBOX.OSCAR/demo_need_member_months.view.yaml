@@ -1,0 +1,71 @@
+# Reference this view as se_sandbox_oscar__demo_need_member_months
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_NEED_MEMBER_MONTHS
+
+dimensions:
+  member_id:
+    sql: '"MEMBER_ID"'
+    format: ID
+
+  month_start:
+    sql: '"MONTH_START"'
+
+  partner_id:
+    sql: '"PARTNER_ID"'
+    format: ID
+
+  acquisition_channel:
+    sql: '"ACQUISITION_CHANNEL"'
+
+  region:
+    sql: '"REGION"'
+
+  months_since_enrol:
+    sql: '"MONTHS_SINCE_ENROL"'
+
+  is_enrol_month:
+    sql: '"IS_ENROL_MONTH"'
+
+  exposed_in_month:
+    sql: '"EXPOSED_IN_MONTH"'
+
+  in_force_eom:
+    sql: '"IN_FORCE_EOM"'
+
+  lapsed_in_month:
+    sql: '"LAPSED_IN_MONTH"'
+
+  wallet_sessions:
+    sql: '"WALLET_SESSIONS"'
+
+  wallet_active:
+    sql: '"WALLET_ACTIVE"'
+
+  screening_completed:
+    sql: '"SCREENING_COMPLETED"'
+
+  rider_active_eom:
+    sql: '"RIDER_ACTIVE_EOM"'
+
+  mode_at_month_start:
+    sql: '"MODE_AT_MONTH_START"'
+
+  mode_at_month_end:
+    sql: '"MODE_AT_MONTH_END"'
+
+  early_exposed:
+    sql: '"EARLY_EXPOSED"'
+
+  early_wallet_active:
+    sql: '"EARLY_WALLET_ACTIVE"'
+
+  early_rider_active:
+    sql: '"EARLY_RIDER_ACTIVE"'
+
+  premium_aud:
+    sql: '"PREMIUM_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

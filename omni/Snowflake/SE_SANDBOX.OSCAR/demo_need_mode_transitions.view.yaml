@@ -1,0 +1,54 @@
+# Reference this view as se_sandbox_oscar__demo_need_mode_transitions
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_NEED_MODE_TRANSITIONS
+
+dimensions:
+  transition_id:
+    sql: '"TRANSITION_ID"'
+    format: ID
+
+  member_id:
+    sql: '"MEMBER_ID"'
+    format: ID
+
+  partner_id:
+    sql: '"PARTNER_ID"'
+    format: ID
+
+  acquisition_channel:
+    sql: '"ACQUISITION_CHANNEL"'
+
+  region:
+    sql: '"REGION"'
+
+  transition_date_kst:
+    sql: '"TRANSITION_DATE_KST"'
+
+  from_mode:
+    sql: '"FROM_MODE"'
+
+  to_mode:
+    sql: '"TO_MODE"'
+
+  is_treatment_entry:
+    sql: '"IS_TREATMENT_ENTRY"'
+
+  nurse_contacted_14d:
+    sql: '"NURSE_CONTACTED_14D"'
+
+  days_to_nurse_contact:
+    sql: '"DAYS_TO_NURSE_CONTACT"'
+
+  wallet_active_prior_month:
+    sql: '"WALLET_ACTIVE_PRIOR_MONTH"'
+
+  is_treatment_exit:
+    sql: '"IS_TREATMENT_EXIT"'
+
+  treatment_exit_lapsed:
+    sql: '"TREATMENT_EXIT_LAPSED"'
+
+measures:
+  count:
+    aggregate_type: count
