@@ -1,4 +1,10 @@
 # Reference this view as se_sandbox_oscar__demo_need_member_months
+label: Member months
+description: One row per member per Korea Standard Time calendar month from
+  enrolment (or April 2025) to lapse. Every rate is a sum of 0/1 flags over a
+  sum of 0/1 flags. The early rates cover tenure months 0 to 5 so a growing
+  young book does not hide a change. Synthetic data, money in AUD.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_NEED_MEMBER_MONTHS
@@ -6,66 +12,243 @@ table_name: DEMO_NEED_MEMBER_MONTHS
 dimensions:
   member_id:
     sql: '"MEMBER_ID"'
+    label: Member ID
     format: ID
+    description: Member this row belongs to
+    group_label: Member
 
   month_start:
     sql: '"MONTH_START"'
+    label: Month (KST)
+    description: First day of the Korea Standard Time calendar month
+    group_label: Time
+    synonyms: [ month, period ]
 
   partner_id:
     sql: '"PARTNER_ID"'
+    label: Partner ID
     format: ID
+    hidden: true
 
   acquisition_channel:
     sql: '"ACQUISITION_CHANNEL"'
+    label: Acquisition channel
+    description: partner_app_embed, direct_app, telesales, employer_group or agent_branch
+    group_label: Member
+    synonyms: [ channel, source, insurer agents ]
 
   region:
     sql: '"REGION"'
+    label: Region
+    description: Seoul, Gyeonggi, Incheon, Busan, Daegu or Daejeon
+    group_label: Member
+    synonyms: [ area, province ]
 
   months_since_enrol:
     sql: '"MONTHS_SINCE_ENROL"'
+    label: Months since enrolment
+    format: NUMBER_0
+    description: Tenure in months, 0 in the enrolment month
+    group_label: Member
+    synonyms: [ tenure ]
 
   is_enrol_month:
     sql: '"IS_ENROL_MONTH"'
+    label: Is enrolment month
+    description: 1 in the KST month the policy was issued
+    group_label: Flags
 
   exposed_in_month:
     sql: '"EXPOSED_IN_MONTH"'
+    label: Exposed in month
+    hidden: true
 
   in_force_eom:
     sql: '"IN_FORCE_EOM"'
+    label: In force at month end
+    description: 1 when the policy is in force at the end of the KST month
+    group_label: Flags
+    synonyms: [ in force ]
 
   lapsed_in_month:
     sql: '"LAPSED_IN_MONTH"'
+    label: Lapsed in month
+    hidden: true
 
   wallet_sessions:
     sql: '"WALLET_SESSIONS"'
+    label: Health Wallet sessions
+    format: NUMBER_0
+    description: Health Wallet sessions in the month
+    group_label: Engagement
+    synonyms: [ sessions, app sessions ]
 
   wallet_active:
     sql: '"WALLET_ACTIVE"'
+    label: Wallet active
+    description: 1 when the member had at least one Health Wallet session in the month
+    group_label: Engagement
+    synonyms: [ engaged, health wallet active ]
 
   screening_completed:
     sql: '"SCREENING_COMPLETED"'
+    label: Screening completed
+    description: 1 when a coordinated screening was completed in the month
+    group_label: Engagement
+    synonyms: [ screening, screened ]
 
   rider_active_eom:
     sql: '"RIDER_ACTIVE_EOM"'
+    label: Rider attached at month end
+    description: 1 when the bundled rider is attached at month end
+    group_label: Flags
+    synonyms: [ has rider, rider ]
 
   mode_at_month_start:
     sql: '"MODE_AT_MONTH_START"'
+    label: Journey mode at month start
+    description: Healthy, Treatment or Recovery
+    group_label: Journey
+    synonyms: [ mode, journey mode ]
 
   mode_at_month_end:
     sql: '"MODE_AT_MONTH_END"'
+    label: Journey mode at month end
+    description: Healthy, Treatment, Recovery or Lapsed
+    group_label: Journey
 
   early_exposed:
     sql: '"EARLY_EXPOSED"'
+    label: Early exposed
+    hidden: true
 
   early_wallet_active:
     sql: '"EARLY_WALLET_ACTIVE"'
+    label: Early wallet active
+    hidden: true
 
   early_rider_active:
     sql: '"EARLY_RIDER_ACTIVE"'
+    label: Early rider active
+    hidden: true
 
   premium_aud:
     sql: '"PREMIUM_AUD"'
+    label: Premium row (AUD)
+    hidden: true
+
+  member_month_key:
+    sql: "\"MEMBER_ID\" || '|' || TO_VARCHAR(\"MONTH_START\")"
+    label: Member month key
+    hidden: true
+    primary_key: true
 
 measures:
   count:
     aggregate_type: count
+
+  new_policyholders:
+    sql: ${is_enrol_month}
+    label: New policyholders
+    group_label: Volume
+    format: NUMBER_0
+    description: Policies issued in the period, counted on the KST enrolment month.
+      A flow, additive across months
+    aggregate_type: sum
+    synonyms: [ new members, sign ups, new policies, enrolments ]
+
+  policyholder_count:
+    sql: ${in_force_eom}
+    label: Policyholders in force
+    group_label: Volume
+    format: NUMBER_0
+    description: Point in time count of policies in force at the end of a KST month.
+      Use one month or the last month of a range and never add months together.
+      The single governed definition, so UTC and KST pulls no longer disagree
+    aggregate_type: sum
+    synonyms: [ policyholders, in force, active policies, book size ]
+
+  total_premium_aud:
+    sql: ${premium_aud}
+    label: Premium (AUD)
+    group_label: Revenue
+    format: CURRENCY_0
+    description: Synthetic gross written premium in AUD, charged on in force months.
+      Base 36 or 52 plus 11 for the bundled rider
+    aggregate_type: sum
+    synonyms: [ premium, revenue, gross written premium, GWP ]
+
+  exposed_policies:
+    sql: ${exposed_in_month}
+    label: Exposed policies
+    group_label: Building blocks
+    format: NUMBER_0
+    description: Policies in force at the month start or issued during the month,
+      the denominator of the lapse rate
+    aggregate_type: sum
+
+  lapse_count:
+    sql: ${lapsed_in_month}
+    label: Lapses
+    group_label: Building blocks
+    format: NUMBER_0
+    description: Policies that lapsed in the month
+    aggregate_type: sum
+    synonyms: [ lapses, cancellations ]
+
+  early_exposed_months:
+    sql: ${early_exposed}
+    label: Early exposed member months
+    group_label: Building blocks
+    format: NUMBER_0
+    description: Member months in tenure months 0 to 5, the denominator of the early rates
+    aggregate_type: sum
+
+  early_wallet_active_months:
+    sql: ${early_wallet_active}
+    label: Early wallet active member months
+    group_label: Building blocks
+    format: NUMBER_0
+    description: Early member months with at least one Health Wallet session
+    aggregate_type: sum
+
+  early_rider_active_months:
+    sql: ${early_rider_active}
+    label: Early rider member months
+    group_label: Building blocks
+    format: NUMBER_0
+    description: Early member months with the bundled rider attached at month end
+    aggregate_type: sum
+
+  early_wallet_active_rate:
+    sql: ${early_wallet_active_months} / NULLIF(${early_exposed_months}, 0)
+    label: Early Health Wallet active rate
+    group_label: Engagement rates
+    format: PERCENT_1
+    description: Share of member months in the first six months of tenure with at
+      least one Health Wallet session. Tenure limited so a growing young book
+      does not hide a change
+    synonyms:
+      [
+        Health Wallet engagement,
+        Healthy mode engagement,
+        wallet engagement,
+        engagement rate
+      ]
+
+  early_rider_uptake_rate:
+    sql: ${early_rider_active_months} / NULLIF(${early_exposed_months}, 0)
+    label: Early rider uptake rate
+    group_label: Engagement rates
+    format: PERCENT_1
+    description: Share of member months in the first six months of tenure with the
+      bundled rider attached at month end. The money metric for the partner
+    synonyms: [ rider uptake, attach rate, rider attach rate, rider take up ]
+
+  monthly_lapse_rate:
+    sql: ${lapse_count} / NULLIF(${exposed_policies}, 0)
+    label: Monthly lapse rate
+    group_label: Retention rates
+    format: PERCENT_2
+    description: Lapses in the month divided by policies exposed in the month, whole book
+    synonyms: [ lapse rate, churn, churn rate, cancellation rate ]

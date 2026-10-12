@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__demo_need_members
+label: Members
+description: One row per policyholder ever enrolled through an insurer partner,
+  including an opening book enrolled from April 2024. Business dates are Korea
+  Standard Time (UTC+9). Synthetic data.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_NEED_MEMBERS
@@ -6,36 +11,104 @@ table_name: DEMO_NEED_MEMBERS
 dimensions:
   member_id:
     sql: '"MEMBER_ID"'
+    label: Member ID
     format: ID
+    description: Unique key for each policyholder
+    group_label: Member
+    primary_key: true
 
   partner_id:
     sql: '"PARTNER_ID"'
+    label: Partner ID
     format: ID
+    hidden: true
 
   acquisition_channel:
     sql: '"ACQUISITION_CHANNEL"'
+    label: Acquisition channel
+    description: How the member was acquired, partner_app_embed, direct_app,
+      telesales, employer_group or agent_branch
+    group_label: Member
+    synonyms: [ channel, source, insurer agents ]
 
   region:
     sql: '"REGION"'
+    label: Region
+    description: Korean region of the member, Seoul, Gyeonggi, Incheon, Busan, Daegu
+      or Daejeon
+    group_label: Member
+    synonyms: [ area, province ]
 
   enrol_ts_utc:
     sql: '"ENROL_TS_UTC"'
+    label: Enrolment time (UTC)
+    description: Policy issue time as stored by the app in UTC. Use the KST
+      enrolment date for reporting
+    group_label: Enrolment
 
   enrol_date_kst:
     sql: '"ENROL_DATE_KST"'
+    label: Enrolment date (KST)
+    description: Policy issue date on the Korea Standard Time calendar, the governed
+      business date
+    group_label: Enrolment
+    synonyms: [ sign up date, enrolment date, join date ]
 
   cohort_month:
     sql: '"COHORT_MONTH"'
+    label: Cohort month
+    description: First day of the KST month the member enrolled
+    group_label: Enrolment
+    synonyms: [ cohort, enrolment month, signup month ]
 
   plan_tier:
     sql: '"PLAN_TIER"'
+    label: Plan tier
+    description: Basic or Plus base cover
+    group_label: Member
+    synonyms: [ tier, plan ]
 
   activated_90d:
     sql: '"ACTIVATED_90D"'
+    label: Activated in 90 days
+    format: NUMBER_0
+    description: 1 when the member used Health Wallet in at least 2 of the first 3
+      months or completed a coordinated screening in that time, otherwise 0
+    group_label: Engagement
+    synonyms: [ activated, activation, built the habit ]
 
   lapse_date_kst:
     sql: '"LAPSE_DATE_KST"'
+    label: Lapse date (KST)
+    description: KST date the policy lapsed or was cancelled. Null while in force
+    group_label: Enrolment
+    synonyms: [ cancelled date, churn date ]
 
 measures:
   count:
     aggregate_type: count
+
+  member_count:
+    label: Members enrolled
+    group_label: Member measures
+    format: NUMBER_0
+    description: Policyholders ever enrolled, counted once each. Not the in force
+      count, use policyholder_count for that
+    aggregate_type: count
+    synonyms: [ members, ever enrolled ]
+
+  activated_members:
+    sql: ${activated_90d}
+    label: Activated members
+    group_label: Engagement measures
+    format: NUMBER_0
+    description: Members who built the Healthy mode habit in their first 90 days
+    aggregate_type: sum
+
+  activation_rate_90d:
+    sql: ${activated_members} / NULLIF(${member_count}, 0)
+    label: Activation rate (90 days)
+    group_label: Engagement measures
+    format: PERCENT_1
+    description: Activated members divided by members enrolled
+    synonyms: [ activation rate, habit rate ]

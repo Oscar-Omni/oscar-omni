@@ -1,0 +1,134 @@
+hidden: false
+
+base_view: se_sandbox_oscar__demo_need_member_months
+label: Partner Growth
+group_label: Need
+description: Policyholder growth, Health Wallet engagement, rider uptake and
+  lapse for Need's insurer partners. Member month grain, one row per member per
+  KST month. Synthetic data.
+
+joins:
+  se_sandbox_oscar__demo_need_members: {}
+  se_sandbox_oscar__demo_need_partners: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_need_member_months
+    join_to_view: se_sandbox_oscar__demo_need_members
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_need_member_months.member_id} =
+      ${se_sandbox_oscar__demo_need_members.member_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_need_member_months
+    join_to_view: se_sandbox_oscar__demo_need_partners
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_need_member_months.partner_id} =
+      ${se_sandbox_oscar__demo_need_partners.partner_id}
+    relationship_type: many_to_one
+
+ai_context: |-
+  Member month grain, one row per member per KST month. Business months are Korea Standard Time (UTC+9, no daylight saving), so every month filter uses member_months.month_start and an exclusive end date. policyholder_count is a point in time count at the KST month end: use it for one month or the last month of a range and never add months together. new_policyholders is a flow and is additive across months. The early rates (early_wallet_active_rate, early_rider_uptake_rate) cover tenure months 0 to 5 only, so a growing young book does not hide a change; monthly_lapse_rate covers the whole book. Channels are partner_app_embed, direct_app, telesales, employer_group and agent_branch (insurer agents). Partners are fictional: Marae Insurance, Solbit Life and Nuri Mutual. Regions are Seoul, Gyeonggi, Incheon, Busan, Daegu and Daejeon. Money is AUD. Answer from this governed topic in one query; do not loop over members.
+
+  Vocabulary. Policyholders, in force and book size mean member_months.policyholder_count. New members and sign ups mean member_months.new_policyholders. Health Wallet engagement and Healthy mode engagement mean member_months.early_wallet_active_rate. Rider uptake and attach rate mean member_months.early_rider_uptake_rate. Churn and lapse mean member_months.monthly_lapse_rate. Channel and insurer agents mean member_months.acquisition_channel. Carrier and insurer mean partners.partner_name. Cohort means members.cohort_month. Activated means members.activated_90d. Premium means member_months.total_premium_aud. Screening means member_months.screening_completed.
+
+  Analysis guidance. To explain a change in a rate, compare the two named periods exactly with the same filters, split by region first, then by member_months.acquisition_channel, and show the rate for each period beside new_policyholders so the channel mix is visible. A fall in a blended rate can come from a shift in channel mix with every channel's own rate flat, so check each channel's rate in both periods and each channel's share of new_policyholders before calling it a decline. Care journey questions about Treatment, nurse navigation and drop off belong to the care_journey topic. Keep answers concise, lead with the headline numbers and say the data is synthetic when presenting.
+
+sample_queries:
+  early_rider_uptake_by_region_current:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_need_member_months.region,
+          se_sandbox_oscar__demo_need_member_months.early_rider_uptake_rate
+        ]
+      base_view: se_sandbox_oscar__demo_need_member_months
+      filters:
+        se_sandbox_oscar__demo_need_member_months.month_start:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_need_member_months.early_rider_uptake_rate
+      topic: demo_need_partner_growth
+    prompt: What was early rider uptake by region from 1 April 2026 to 30 September
+      2026?
+  early_rider_uptake_by_region_prior:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_need_member_months.region,
+          se_sandbox_oscar__demo_need_member_months.early_rider_uptake_rate
+        ]
+      base_view: se_sandbox_oscar__demo_need_member_months
+      filters:
+        se_sandbox_oscar__demo_need_member_months.month_start:
+          between_dates: [ 2025-10-01, 2026-04-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_need_member_months.early_rider_uptake_rate
+      topic: demo_need_partner_growth
+    prompt: What was early rider uptake by region from 1 October 2025 to 31 March 2026?
+  gyeonggi_by_channel_current:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_need_member_months.acquisition_channel,
+          se_sandbox_oscar__demo_need_member_months.new_policyholders,
+          se_sandbox_oscar__demo_need_member_months.early_rider_uptake_rate
+        ]
+      base_view: se_sandbox_oscar__demo_need_member_months
+      filters:
+        se_sandbox_oscar__demo_need_member_months.month_start:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_need_member_months.region:
+          is: Gyeonggi
+      sorts:
+        - field: se_sandbox_oscar__demo_need_member_months.new_policyholders
+          desc: true
+      topic: demo_need_partner_growth
+    prompt: For Gyeonggi, what were new policyholders and early rider uptake by
+      acquisition channel from 1 April 2026 to 30 September 2026?
+    ai_context: Show each channel's share of new policyholders and compare it with
+      the same breakdown for 1 October 2025 to 31 March 2026.
+  agent_branch_share_by_month:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_need_member_months.month_start[month]",
+          se_sandbox_oscar__demo_need_member_months.acquisition_channel,
+          se_sandbox_oscar__demo_need_member_months.new_policyholders
+        ]
+      base_view: se_sandbox_oscar__demo_need_member_months
+      filters:
+        se_sandbox_oscar__demo_need_member_months.month_start:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+      topic: demo_need_partner_growth
+    prompt: What share of new policyholders came through agent_branch each month
+      from April to September 2026?
+  wallet_active_by_partner_q3:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_need_partners.partner_name,
+          se_sandbox_oscar__demo_need_member_months.early_wallet_active_rate
+        ]
+      base_view: se_sandbox_oscar__demo_need_member_months
+      filters:
+        se_sandbox_oscar__demo_need_member_months.month_start:
+          between_dates: [ 2026-07-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_need_member_months.early_wallet_active_rate
+      topic: demo_need_partner_growth
+    prompt: Which partner had the lowest early Health Wallet active rate in Q3 2026
+      (1 July 2026 to 30 September 2026)?
+  policyholders_in_force_sep_2026:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_need_partners.partner_name,
+          se_sandbox_oscar__demo_need_member_months.policyholder_count
+        ]
+      base_view: se_sandbox_oscar__demo_need_member_months
+      filters:
+        se_sandbox_oscar__demo_need_member_months.month_start:
+          between_dates: [ 2026-09-01, 2026-10-01 ]
+      topic: demo_need_partner_growth
+    prompt: How many policyholders were in force at the end of September 2026, by
+      partner?
