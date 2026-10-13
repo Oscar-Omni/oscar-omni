@@ -1,0 +1,127 @@
+hidden: false
+
+base_view: se_sandbox_oscar__demo_ignition_firm_months
+label: Revenue Performance
+group_label: Ignition
+description: Canonical revenue, new firm and payments adoption reporting for
+  Finance, RevOps and the data team. One row per customer firm per month.
+  Synthetic data, money in AUD.
+
+joins:
+  se_sandbox_oscar__demo_ignition_firms: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_ignition_firm_months
+    join_to_view: se_sandbox_oscar__demo_ignition_firms
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_ignition_firm_months.firm_id} =
+      ${se_sandbox_oscar__demo_ignition_firms.firm_id}
+    relationship_type: many_to_one
+
+ai_context: |-
+  Synthetic Ignition data, every firm invented, money in AUD. One row per customer firm per calendar month. Firms or customers means accounting and professional services practices that subscribe to Ignition. Data runs from 2024-10-01 to 2026-09-30. Every period filter uses firm_months.month_start with an exclusive end date: 2026-04-01 to 2026-09-30 means month_start between 2026-04-01 and 2026-10-01.
+
+  Revenue means total_revenue = subscription_revenue_aud + payments_revenue. Subscription revenue and MRR mean subscription_revenue_aud. Payments revenue means payments_revenue. GPV and payment volume mean gpv. New customers means new_firms, which is additive across months. Customers means active_firms. active_firms and payments_live_firms are month end counts: report them per month or at the last month of a range, never summed across months.
+
+  Early payments adoption and payments adoption mean early_payments_rate, which covers the first six months of tenure (months 0 to 5). Never answer an adoption question with a raw count of payments live firms. Churn means monthly_churn_rate (logo churn, whole book); early churn means early_churn_rate. Channel and self serve mean firm_months.acquisition_channel: partner_referral, direct_sales, events_webinar and self_serve_trial. Firm size means firm_months.segment: solo, small, mid and multi_office. Market means firm_months.country. Use the firm_months copies of country, region, segment, acquisition_channel and plan_tier, not the firms view.
+
+  Analysis guidance. To compare two periods, run the same query once per period with identical filters and report both side by side with the change in percentage points, and always state both periods with explicit dates. To explain a change in a blended rate, split by country, then by acquisition_channel, and show each channel's early_payments_rate in both periods beside new_firms so each channel's share of new firms is visible. A fall in a blended rate can come from channel mix with every channel's own rate flat; check that before calling it a product problem. Each answer is one aggregate query against the warehouse, never firm by firm. Cohort and onboarding questions about payments_live_60d belong to the Firm Cohorts topic. Lead with the headline numbers and keep answers short.
+
+sample_queries:
+  early_adoption_by_country_current:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_ignition_firm_months.country,
+          se_sandbox_oscar__demo_ignition_firm_months.early_payments_rate
+        ]
+      base_view: se_sandbox_oscar__demo_ignition_firm_months
+      filters:
+        se_sandbox_oscar__demo_ignition_firm_months.month_start:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_ignition_firm_months.early_payments_rate
+      topic: demo_ignition_revenue_performance
+    prompt: What was early payments adoption by country between 2026-04-01 and
+      2026-09-30?
+  early_adoption_by_country_prior:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_ignition_firm_months.country,
+          se_sandbox_oscar__demo_ignition_firm_months.early_payments_rate
+        ]
+      base_view: se_sandbox_oscar__demo_ignition_firm_months
+      filters:
+        se_sandbox_oscar__demo_ignition_firm_months.month_start:
+          between_dates: [ 2025-10-01, 2026-04-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_ignition_firm_months.early_payments_rate
+      topic: demo_ignition_revenue_performance
+    prompt: What was early payments adoption by country between 2025-10-01 and
+      2026-03-31?
+  us_by_channel_current:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_ignition_firm_months.acquisition_channel,
+          se_sandbox_oscar__demo_ignition_firm_months.new_firms,
+          se_sandbox_oscar__demo_ignition_firm_months.early_payments_rate
+        ]
+      base_view: se_sandbox_oscar__demo_ignition_firm_months
+      filters:
+        se_sandbox_oscar__demo_ignition_firm_months.month_start:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_ignition_firm_months.country:
+          is: United States
+      sorts:
+        - field: se_sandbox_oscar__demo_ignition_firm_months.new_firms
+          desc: true
+      topic: demo_ignition_revenue_performance
+    prompt: For the United States, what were new firms and early payments adoption
+      by acquisition channel between 2026-04-01 and 2026-09-30?
+    ai_context: Show each channel's share of new firms and compare with the same
+      breakdown for 2025-10-01 to 2026-03-31.
+  revenue_by_country_current:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_ignition_firm_months.country,
+          se_sandbox_oscar__demo_ignition_firm_months.total_revenue
+        ]
+      base_view: se_sandbox_oscar__demo_ignition_firm_months
+      filters:
+        se_sandbox_oscar__demo_ignition_firm_months.month_start:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_ignition_firm_months.total_revenue
+          desc: true
+      topic: demo_ignition_revenue_performance
+    prompt: What was total revenue by country between 2026-04-01 and 2026-09-30?
+  active_firms_by_segment_sep_2026:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_ignition_firm_months.segment,
+          se_sandbox_oscar__demo_ignition_firm_months.active_firms
+        ]
+      base_view: se_sandbox_oscar__demo_ignition_firm_months
+      filters:
+        se_sandbox_oscar__demo_ignition_firm_months.month_start:
+          between_dates: [ 2026-09-01, 2026-10-01 ]
+      topic: demo_ignition_revenue_performance
+    prompt: How many active firms did we have at the end of September 2026 by segment?
+  channel_share_by_month_2026:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_ignition_firm_months.month_start[month]",
+          se_sandbox_oscar__demo_ignition_firm_months.acquisition_channel,
+          se_sandbox_oscar__demo_ignition_firm_months.new_firms
+        ]
+      base_view: se_sandbox_oscar__demo_ignition_firm_months
+      filters:
+        se_sandbox_oscar__demo_ignition_firm_months.month_start:
+          between_dates: [ 2026-01-01, 2026-10-01 ]
+      topic: demo_ignition_revenue_performance
+    prompt: Which acquisition channel's share of new firms grew most in 2026?

@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__demo_ignition_firm_months
+label: Firm Months
+description: One row per customer firm per calendar month from the later of the
+  signup month and October 2024 to the churn month inclusive. Synthetic Ignition
+  data, every firm invented, money in AUD.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_IGNITION_FIRM_MONTHS
@@ -6,68 +11,256 @@ table_name: DEMO_IGNITION_FIRM_MONTHS
 dimensions:
   firm_id:
     sql: '"FIRM_ID"'
+    label: Firm ID
     format: ID
 
   month_start:
     sql: '"MONTH_START"'
+    label: Month
+    description: First day of the calendar month. Use an exclusive end date in
+      filters, so April to September 2026 is 2026-04-01 to 2026-10-01.
+    synonyms: [ month, reporting month ]
 
   country:
     sql: '"COUNTRY"'
+    label: Country
+    description: Australia, New Zealand, United Kingdom, United States or Canada
+    synonyms: [ market ]
 
   region:
     sql: '"REGION"'
+    label: Region
+    description: State or region within the country, for example New South Wales,
+      California or Ontario
+    synonyms: [ state, province ]
 
   segment:
     sql: '"SEGMENT"'
+    label: Firm Size
+    description: Firm size by staff. solo, small (2 to 10), mid (11 to 50),
+      multi_office (over 50)
+    synonyms: [ firm size, size, segment ]
 
   acquisition_channel:
     sql: '"ACQUISITION_CHANNEL"'
+    label: Acquisition Channel
+    description: partner_referral, direct_sales, events_webinar or self_serve_trial
+    synonyms: [ channel, self serve, source ]
 
   plan_tier:
     sql: '"PLAN_TIER"'
+    label: Plan Tier
+    description: Core, Plus or Scale. Invented tier names, not Ignition pricing
+    synonyms: [ tier, plan ]
 
   cohort_month:
     sql: '"COHORT_MONTH"'
+    label: Cohort Month
+    description: First day of the firm's signup month
+    synonyms: [ cohort, signup month ]
 
   months_since_signup:
     sql: '"MONTHS_SINCE_SIGNUP"'
+    label: Months Since Signup
+    description: Tenure in months, 0 in the signup month
+    synonyms: [ tenure ]
 
   is_signup_month:
     sql: '"IS_SIGNUP_MONTH"'
+    label: Is Signup Month
+    hidden: true
 
   exposed_in_month:
     sql: '"EXPOSED_IN_MONTH"'
+    label: Exposed in Month
+    description: 1 on every row, subscribed at some point in the month
+    hidden: true
 
   active_eom:
     sql: '"ACTIVE_EOM"'
+    label: Active at Month End
+    description: 1 when still subscribed at the end of the month
+    hidden: true
 
   churned_in_month:
     sql: '"CHURNED_IN_MONTH"'
+    label: Churned in Month
+    hidden: true
 
   payments_live_eom:
     sql: '"PAYMENTS_LIVE_EOM"'
+    label: Payments Live at Month End
+    description: 1 when active at month end and collecting client payments through
+      Ignition payments
+    hidden: true
 
   early_exposed:
     sql: '"EARLY_EXPOSED"'
+    label: Early Tenure Exposed
+    description: 1 in tenure months 0 to 5
+    hidden: true
 
   early_payments_live:
     sql: '"EARLY_PAYMENTS_LIVE"'
+    label: Early Tenure Payments Live
+    hidden: true
 
   early_churned:
     sql: '"EARLY_CHURNED"'
+    label: Early Tenure Churned
+    hidden: true
 
   mrr_aud:
     sql: '"MRR_AUD"'
+    label: Subscription Revenue in Month (row)
+    description: Warehouse column MRR_AUD, one firm month
+    hidden: true
 
   gpv_aud:
     sql: '"GPV_AUD"'
+    label: GPV in Month (row)
+    description: Warehouse column GPV_AUD, one firm month
+    hidden: true
 
   payments_revenue_aud:
     sql: '"PAYMENTS_REVENUE_AUD"'
+    label: Payments Revenue in Month (row)
+    description: Warehouse column PAYMENTS_REVENUE_AUD, one firm month
+    hidden: true
 
   total_revenue_aud:
     sql: '"TOTAL_REVENUE_AUD"'
+    label: Total Revenue in Month (row)
+    description: Warehouse column TOTAL_REVENUE_AUD, one firm month
+    hidden: true
+
+  firm_month_id:
+    sql: "\"FIRM_ID\" || '_' || TO_CHAR(\"MONTH_START\", 'YYYY-MM')"
+    description: Firm id and month, the grain of this table
+    hidden: true
+    primary_key: true
 
 measures:
   count:
+    label: Firm Months
     aggregate_type: count
+
+  subscription_revenue_aud:
+    sql: ${mrr_aud}
+    label: Subscription Revenue (AUD)
+    format: currency_0
+    description: Subscription revenue recognised in the period (list price by plan
+      tier, prorated in signup and churn months). Summed in the warehouse in one
+      query, never firm by firm from the CRM.
+    aggregate_type: sum
+    synonyms: [ subscription revenue, MRR, recurring revenue ]
+
+  payments_revenue:
+    sql: ${payments_revenue_aud}
+    label: Payments Revenue (AUD)
+    format: currency_0
+    description: Ignition payments revenue in the period, GPV times an invented
+      0.35% net take rate
+    aggregate_type: sum
+    synonyms: [ payments revenue, payments revenue aud ]
+
+  total_revenue:
+    sql: ${total_revenue_aud}
+    label: Total Revenue (AUD)
+    format: currency_0
+    description: Subscription revenue plus payments revenue
+    aggregate_type: sum
+    synonyms: [ revenue, total revenue, total revenue aud ]
+
+  gpv:
+    sql: ${gpv_aud}
+    label: GPV (AUD)
+    format: currency_0
+    description: Gross payment volume firms collected from their clients through
+      Ignition payments
+    aggregate_type: sum
+    synonyms: [ GPV, payment volume, gross payment volume ]
+
+  new_firms:
+    sql: ${is_signup_month}
+    label: New Firms
+    format: number_0
+    description: Firms whose subscription started in the period. Additive across months.
+    aggregate_type: sum
+    synonyms: [ new customers, signups, new business ]
+
+  active_firms:
+    sql: ${active_eom}
+    label: Active Firms
+    format: number_0
+    description: Point in time count of firms subscribed at month end. Use per month
+      or for the last month of a range; never add months together.
+    aggregate_type: sum
+    synonyms: [ customers, active customers, book size ]
+
+  payments_live_firms:
+    sql: ${payments_live_eom}
+    label: Payments Live Firms
+    format: number_0
+    description: Point in time count of active firms with payments live at month
+      end. Never add months together.
+    aggregate_type: sum
+    synonyms: [ live on payments ]
+
+  churned_firms:
+    sql: ${churned_in_month}
+    label: Churned Firms
+    format: number_0
+    description: Firms whose subscription ended in the period
+    aggregate_type: sum
+    synonyms: [ churned customers, cancellations ]
+
+  exposed_months:
+    sql: ${exposed_in_month}
+    label: Exposed Firm Months
+    format: number_0
+    aggregate_type: sum
+
+  early_exposed_months:
+    sql: ${early_exposed}
+    label: Early Exposed Firm Months
+    format: number_0
+    description: Firm months in tenure months 0 to 5
+    aggregate_type: sum
+
+  early_payments_live_months:
+    sql: ${early_payments_live}
+    label: Early Payments Live Firm Months
+    format: number_0
+    aggregate_type: sum
+
+  early_churns:
+    sql: ${early_churned}
+    label: Early Churns
+    format: number_0
+    description: Churns in tenure months 0 to 5
+    aggregate_type: sum
+
+  early_payments_rate:
+    sql: ${early_payments_live_months} / NULLIF(${early_exposed_months}, 0)
+    label: Early Payments Adoption
+    format: percent_1
+    description: Share of firm months in the first six months of tenure with
+      payments live at month end. Tenure limited so a growing young book does
+      not hide a change.
+    synonyms: [ payments adoption, early payments rate, adoption ]
+
+  early_churn_rate:
+    sql: ${early_churns} / NULLIF(${early_exposed_months}, 0)
+    label: Early Churn Rate
+    format: percent_2
+    description: Churns in the first six months of tenure over firm months exposed
+      in that band
+    synonyms: [ early churn ]
+
+  monthly_churn_rate:
+    sql: ${churned_firms} / NULLIF(${exposed_months}, 0)
+    label: Monthly Churn Rate
+    format: percent_2
+    description: Logo churn in the month over firms exposed in the month, whole book
+    synonyms: [ churn, churn rate, logo churn ]

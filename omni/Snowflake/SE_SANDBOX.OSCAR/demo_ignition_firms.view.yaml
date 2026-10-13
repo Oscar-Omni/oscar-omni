@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_ignition_firms
+label: Firms
+description: One row per customer firm ever signed up, including the opening
+  book active at 2024-10-01. Synthetic Ignition data, every firm invented.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_IGNITION_FIRMS
@@ -6,44 +10,99 @@ table_name: DEMO_IGNITION_FIRMS
 dimensions:
   firm_id:
     sql: '"FIRM_ID"'
+    label: Firm ID
     format: ID
+    primary_key: true
 
   firm_name:
     sql: '"FIRM_NAME"'
+    label: Firm Name
+    description: Invented accounting or professional services practice name
+    synonyms: [ firm, practice, customer name ]
 
   country:
     sql: '"COUNTRY"'
+    label: Country
+    synonyms: [ market ]
 
   region:
     sql: '"REGION"'
+    label: Region
+    synonyms: [ state, province ]
 
   segment:
     sql: '"SEGMENT"'
+    label: Firm Size
+    description: solo, small (2 to 10), mid (11 to 50), multi_office (over 50)
+    synonyms: [ firm size, size ]
 
   acquisition_channel:
     sql: '"ACQUISITION_CHANNEL"'
+    label: Acquisition Channel
+    description: partner_referral, direct_sales, events_webinar or self_serve_trial
+    synonyms: [ channel, self serve ]
 
   plan_tier:
     sql: '"PLAN_TIER"'
+    label: Plan Tier
+    description: Core, Plus or Scale. Invented tier names
+    synonyms: [ tier, plan ]
 
   signup_date:
     sql: '"SIGNUP_DATE"'
+    label: Signup Date
+    description: Date the subscription started
+    synonyms: [ signup, start date ]
 
   cohort_month:
     sql: '"COHORT_MONTH"'
+    label: Cohort Month
+    description: First day of the signup month
+    synonyms: [ cohort ]
 
   payments_live_date:
     sql: '"PAYMENTS_LIVE_DATE"'
+    label: Payments Live Date
+    description: Date the firm first collected a client payment through Ignition
+      payments. Empty when never live by 2026-09-30.
+    synonyms: [ went live date ]
 
   payments_live_60d:
     sql: '"PAYMENTS_LIVE_60D"'
+    label: Payments Live Within 60 Days
+    description: 1 when payments went live within 60 days of signup. Cohorts after
+      July 2026 are not complete for this flag.
+    synonyms: [ went live on payments, onboarding, onboarded ]
 
   churn_date:
     sql: '"CHURN_DATE"'
+    label: Churn Date
+    description: Date the subscription ended. Empty when active
+    synonyms: [ churned, cancelled date ]
 
   is_opening_book:
     sql: '"IS_OPENING_BOOK"'
+    label: Is Opening Book
+    description: 1 for firms signed up before 2024-10-01
 
 measures:
   count:
+    label: Firms
+    format: number_0
     aggregate_type: count
+    synonyms: [ firms, number of firms ]
+
+  firms_live_60d:
+    sql: ${payments_live_60d}
+    label: Firms Live on Payments Within 60 Days
+    format: number_0
+    aggregate_type: sum
+    synonyms: [ onboarded firms ]
+
+  payments_live_60d_rate:
+    sql: ${firms_live_60d} / NULLIF(${count}, 0)
+    label: Payments Live Within 60 Days Rate
+    format: percent_1
+    description: Share of firms in a cohort that went live on payments within 60
+      days of signup
+    synonyms: [ onboarding rate, activation rate ]
