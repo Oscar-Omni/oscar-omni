@@ -1,0 +1,49 @@
+# Reference this view as se_sandbox_oscar__demo_ignition_firms
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_IGNITION_FIRMS
+
+dimensions:
+  firm_id:
+    sql: '"FIRM_ID"'
+    format: ID
+
+  firm_name:
+    sql: '"FIRM_NAME"'
+
+  country:
+    sql: '"COUNTRY"'
+
+  region:
+    sql: '"REGION"'
+
+  segment:
+    sql: '"SEGMENT"'
+
+  acquisition_channel:
+    sql: '"ACQUISITION_CHANNEL"'
+
+  plan_tier:
+    sql: '"PLAN_TIER"'
+
+  signup_date:
+    sql: '"SIGNUP_DATE"'
+
+  cohort_month:
+    sql: '"COHORT_MONTH"'
+
+  payments_live_date:
+    sql: '"PAYMENTS_LIVE_DATE"'
+
+  payments_live_60d:
+    sql: '"PAYMENTS_LIVE_60D"'
+
+  churn_date:
+    sql: '"CHURN_DATE"'
+
+  is_opening_book:
+    sql: '"IS_OPENING_BOOK"'
+
+measures:
+  count:
+    aggregate_type: count

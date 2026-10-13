@@ -1,0 +1,73 @@
+# Reference this view as se_sandbox_oscar__demo_ignition_firm_months
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_IGNITION_FIRM_MONTHS
+
+dimensions:
+  firm_id:
+    sql: '"FIRM_ID"'
+    format: ID
+
+  month_start:
+    sql: '"MONTH_START"'
+
+  country:
+    sql: '"COUNTRY"'
+
+  region:
+    sql: '"REGION"'
+
+  segment:
+    sql: '"SEGMENT"'
+
+  acquisition_channel:
+    sql: '"ACQUISITION_CHANNEL"'
+
+  plan_tier:
+    sql: '"PLAN_TIER"'
+
+  cohort_month:
+    sql: '"COHORT_MONTH"'
+
+  months_since_signup:
+    sql: '"MONTHS_SINCE_SIGNUP"'
+
+  is_signup_month:
+    sql: '"IS_SIGNUP_MONTH"'
+
+  exposed_in_month:
+    sql: '"EXPOSED_IN_MONTH"'
+
+  active_eom:
+    sql: '"ACTIVE_EOM"'
+
+  churned_in_month:
+    sql: '"CHURNED_IN_MONTH"'
+
+  payments_live_eom:
+    sql: '"PAYMENTS_LIVE_EOM"'
+
+  early_exposed:
+    sql: '"EARLY_EXPOSED"'
+
+  early_payments_live:
+    sql: '"EARLY_PAYMENTS_LIVE"'
+
+  early_churned:
+    sql: '"EARLY_CHURNED"'
+
+  mrr_aud:
+    sql: '"MRR_AUD"'
+
+  gpv_aud:
+    sql: '"GPV_AUD"'
+
+  payments_revenue_aud:
+    sql: '"PAYMENTS_REVENUE_AUD"'
+
+  total_revenue_aud:
+    sql: '"TOTAL_REVENUE_AUD"'
+
+measures:
+  count:
+    aggregate_type: count
