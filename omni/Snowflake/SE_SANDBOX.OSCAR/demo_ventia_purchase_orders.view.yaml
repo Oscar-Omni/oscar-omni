@@ -1,0 +1,54 @@
+# Reference this view as se_sandbox_oscar__demo_ventia_purchase_orders
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_VENTIA_PURCHASE_ORDERS
+
+dimensions:
+  po_line_id:
+    sql: '"PO_LINE_ID"'
+    format: ID
+
+  contract_id:
+    sql: '"CONTRACT_ID"'
+    format: ID
+
+  supplier_id:
+    sql: '"SUPPLIER_ID"'
+    format: ID
+
+  po_date:
+    sql: '"PO_DATE"'
+
+  month_start:
+    sql: '"MONTH_START"'
+
+  spend_category:
+    sql: '"SPEND_CATEGORY"'
+
+  sector:
+    sql: '"SECTOR"'
+
+  state:
+    sql: '"STATE"'
+
+  classification_status:
+    sql: '"CLASSIFICATION_STATUS"'
+
+  is_off_panel:
+    sql: '"IS_OFF_PANEL"'
+
+  spend_aud:
+    sql: '"SPEND_AUD"'
+
+  benchmark_aud:
+    sql: '"BENCHMARK_AUD"'
+
+  off_panel_spend_aud:
+    sql: '"OFF_PANEL_SPEND_AUD"'
+
+  off_panel_premium_aud:
+    sql: '"OFF_PANEL_PREMIUM_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

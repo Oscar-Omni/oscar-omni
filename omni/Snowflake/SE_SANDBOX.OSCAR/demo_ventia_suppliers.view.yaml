@@ -1,0 +1,34 @@
+# Reference this view as se_sandbox_oscar__demo_ventia_suppliers
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_VENTIA_SUPPLIERS
+
+dimensions:
+  supplier_id:
+    sql: '"SUPPLIER_ID"'
+    format: ID
+
+  supplier_name:
+    sql: '"SUPPLIER_NAME"'
+
+  primary_capability:
+    sql: '"PRIMARY_CAPABILITY"'
+
+  panel_status:
+    sql: '"PANEL_STATUS"'
+
+  classification_status:
+    sql: '"CLASSIFICATION_STATUS"'
+
+  vendor_category:
+    sql: '"VENDOR_CATEGORY"'
+
+  home_state:
+    sql: '"HOME_STATE"'
+
+  onboarded_date:
+    sql: '"ONBOARDED_DATE"'
+
+measures:
+  count:
+    aggregate_type: count

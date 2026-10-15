@@ -1,0 +1,22 @@
+# Reference this view as se_sandbox_oscar__demo_ventia_supplier_certifications
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_VENTIA_SUPPLIER_CERTIFICATIONS
+
+dimensions:
+  supplier_id:
+    sql: '"SUPPLIER_ID"'
+    format: ID
+
+  certification:
+    sql: '"CERTIFICATION"'
+
+  certified_until:
+    sql: '"CERTIFIED_UNTIL"'
+
+  is_current:
+    sql: '"IS_CURRENT"'
+
+measures:
+  count:
+    aggregate_type: count

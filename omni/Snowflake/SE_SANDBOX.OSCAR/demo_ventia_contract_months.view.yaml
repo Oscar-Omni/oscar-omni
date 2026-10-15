@@ -1,0 +1,61 @@
+# Reference this view as se_sandbox_oscar__demo_ventia_contract_months
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_VENTIA_CONTRACT_MONTHS
+
+dimensions:
+  contract_id:
+    sql: '"CONTRACT_ID"'
+    format: ID
+
+  month_start:
+    sql: '"MONTH_START"'
+
+  sector:
+    sql: '"SECTOR"'
+
+  state:
+    sql: '"STATE"'
+
+  region:
+    sql: '"REGION"'
+
+  service_line:
+    sql: '"SERVICE_LINE"'
+
+  revenue_aud:
+    sql: '"REVENUE_AUD"'
+
+  labour_cost_aud:
+    sql: '"LABOUR_COST_AUD"'
+
+  supplier_spend_aud:
+    sql: '"SUPPLIER_SPEND_AUD"'
+
+  other_cost_aud:
+    sql: '"OTHER_COST_AUD"'
+
+  total_cost_aud:
+    sql: '"TOTAL_COST_AUD"'
+
+  gross_margin_aud:
+    sql: '"GROSS_MARGIN_AUD"'
+
+  budget_margin_aud:
+    sql: '"BUDGET_MARGIN_AUD"'
+
+  margin_vs_budget_aud:
+    sql: '"MARGIN_VS_BUDGET_AUD"'
+
+  off_panel_spend_aud:
+    sql: '"OFF_PANEL_SPEND_AUD"'
+
+  off_panel_premium_aud:
+    sql: '"OFF_PANEL_PREMIUM_AUD"'
+
+  unclassified_spend_aud:
+    sql: '"UNCLASSIFIED_SPEND_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

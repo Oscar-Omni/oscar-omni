@@ -1,0 +1,43 @@
+# Reference this view as se_sandbox_oscar__demo_ventia_contracts
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_VENTIA_CONTRACTS
+
+dimensions:
+  contract_id:
+    sql: '"CONTRACT_ID"'
+    format: ID
+
+  contract_name:
+    sql: '"CONTRACT_NAME"'
+
+  sector:
+    sql: '"SECTOR"'
+
+  service_line:
+    sql: '"SERVICE_LINE"'
+
+  state:
+    sql: '"STATE"'
+
+  region:
+    sql: '"REGION"'
+
+  source_system:
+    sql: '"SOURCE_SYSTEM"'
+
+  contract_model:
+    sql: '"CONTRACT_MODEL"'
+
+  start_date:
+    sql: '"START_DATE"'
+
+  annual_value_aud:
+    sql: '"ANNUAL_VALUE_AUD"'
+
+  target_margin_pct:
+    sql: '"TARGET_MARGIN_PCT"'
+
+measures:
+  count:
+    aggregate_type: count
