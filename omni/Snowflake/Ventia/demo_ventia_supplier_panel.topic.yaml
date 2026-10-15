@@ -1,0 +1,72 @@
+hidden: false
+
+base_view: se_sandbox_oscar__demo_ventia_suppliers
+label: Supplier Panel
+group_label: Ventia
+description: Find a capable, certified supplier. One row per supplier joined to
+  its ISO certifications; replaces the manual four dataset lookup. Synthetic
+  Ventia data.
+
+joins:
+  se_sandbox_oscar__demo_ventia_supplier_certifications: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_ventia_suppliers
+    join_to_view: se_sandbox_oscar__demo_ventia_supplier_certifications
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_ventia_suppliers.supplier_id} =
+      ${se_sandbox_oscar__demo_ventia_supplier_certifications.supplier_id}
+    relationship_type: one_to_many
+
+ai_context: Synthetic Ventia data, every supplier invented. One row per
+  supplier, joined to the ISO certifications it holds. A capable panel supplier
+  has suppliers.panel_status = panel, the requested suppliers.primary_capability
+  and suppliers.home_state, and supplier_certifications.is_current = 1 for each
+  requested certification (current means valid on or after 2026-10-01).
+  Capability means primary_capability; ISO cert means certification (ISO 9001,
+  ISO 14001 or ISO 45001); approved supplier means panel_status = panel;
+  location means home_state. Count suppliers with supplier_count, never
+  certification rows. List supplier_name and supplier_id for matches.
+
+sample_queries:
+  qld_traffic_management_iso45001:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_ventia_suppliers.supplier_id,
+          se_sandbox_oscar__demo_ventia_suppliers.supplier_name,
+          se_sandbox_oscar__demo_ventia_supplier_certifications.certified_until
+        ]
+      base_view: se_sandbox_oscar__demo_ventia_suppliers
+      filters:
+        se_sandbox_oscar__demo_ventia_suppliers.panel_status:
+          is: panel
+        se_sandbox_oscar__demo_ventia_suppliers.home_state:
+          is: Queensland
+        se_sandbox_oscar__demo_ventia_suppliers.primary_capability:
+          is: traffic_management
+        se_sandbox_oscar__demo_ventia_supplier_certifications.certification:
+          is: ISO 45001
+        se_sandbox_oscar__demo_ventia_supplier_certifications.is_current:
+          is: 1
+      sorts:
+        - field: se_sandbox_oscar__demo_ventia_suppliers.supplier_id
+      topic: demo_ventia_supplier_panel
+    prompt: Which panel suppliers in Queensland do traffic management and hold a
+      current ISO 45001?
+  panel_suppliers_by_capability:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_ventia_suppliers.primary_capability,
+          se_sandbox_oscar__demo_ventia_suppliers.supplier_count
+        ]
+      base_view: se_sandbox_oscar__demo_ventia_suppliers
+      filters:
+        se_sandbox_oscar__demo_ventia_suppliers.panel_status:
+          is: panel
+      sorts:
+        - field: se_sandbox_oscar__demo_ventia_suppliers.supplier_count
+          desc: true
+      topic: demo_ventia_supplier_panel
+    prompt: How many panel suppliers are there per capability?

@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_ventia_supplier_certifications
+label: Supplier Certifications
+description: One row per supplier per ISO certification held. A certification is
+  current when certified_until is on or after 2026-10-01.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_VENTIA_SUPPLIER_CERTIFICATIONS
@@ -6,17 +10,39 @@ table_name: DEMO_VENTIA_SUPPLIER_CERTIFICATIONS
 dimensions:
   supplier_id:
     sql: '"SUPPLIER_ID"'
+    label: Certified Supplier ID
     format: ID
+    hidden: true
 
   certification:
     sql: '"CERTIFICATION"'
+    label: Certification
+    description: ISO 9001, ISO 14001 or ISO 45001
+    synonyms: [ ISO cert, certificate, accreditation ]
 
   certified_until:
     sql: '"CERTIFIED_UNTIL"'
+    label: Certified Until
 
   is_current:
     sql: '"IS_CURRENT"'
+    label: Is Current
+    description: 1 when the certification is valid on or after 2026-10-01
+    synonyms: [ current cert, valid, in date ]
+
+  supplier_certification_id:
+    sql: "\"SUPPLIER_ID\" || '_' || \"CERTIFICATION\""
+    description: Supplier and certification, the grain of this table
+    hidden: true
+    primary_key: true
 
 measures:
   count:
+    label: Certifications
     aggregate_type: count
+
+  current_certifications:
+    sql: ${is_current}
+    label: Current Certifications
+    format: number_0
+    aggregate_type: sum

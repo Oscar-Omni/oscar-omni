@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_ventia_suppliers
+label: Suppliers
+description: One row per supplier ever paid on the portfolio, 640 invented
+  trading names labelled synthetic. SUP-0901 to SUP-0909 were onboarded in 2026.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_VENTIA_SUPPLIERS
@@ -6,29 +10,59 @@ table_name: DEMO_VENTIA_SUPPLIERS
 dimensions:
   supplier_id:
     sql: '"SUPPLIER_ID"'
+    label: Supplier ID
     format: ID
+    primary_key: true
 
   supplier_name:
     sql: '"SUPPLIER_NAME"'
+    label: Supplier
+    description: Invented trading name, labelled synthetic
+    synonyms: [ vendor, supplier, subcontractor ]
 
   primary_capability:
     sql: '"PRIMARY_CAPABILITY"'
+    label: Capability
+    description: traffic_management, civil_subcontract, plant_hire, electrical,
+      environmental, cleaning_facilities or telecom_field_services
+    synonyms: [ capability, services, trade ]
 
   panel_status:
     sql: '"PANEL_STATUS"'
+    label: Panel Status
+    description: panel (on an approved supplier panel) or off_panel
+    synonyms: [ approved supplier, panel, preferred supplier ]
 
   classification_status:
     sql: '"CLASSIFICATION_STATUS"'
+    label: Supplier Classification
+    description: ai_classified, manually_classified or unclassified
 
   vendor_category:
     sql: '"VENDOR_CATEGORY"'
+    label: Vendor Category
+    description: Spend taxonomy category from the classification; empty when unclassified
 
   home_state:
     sql: '"HOME_STATE"'
+    label: Home State
+    description: Where the supplier is based
+    synonyms: [ location, supplier state, based in ]
 
   onboarded_date:
     sql: '"ONBOARDED_DATE"'
+    label: Onboarded
+    description: Date the supplier was first set up
+    synonyms: [ new vendors, onboarding date ]
 
 measures:
   count:
+    label: Supplier Rows
     aggregate_type: count
+
+  supplier_count:
+    sql: '"SUPPLIER_ID"'
+    label: Suppliers
+    format: number_0
+    aggregate_type: count_distinct
+    synonyms: [ number of suppliers, how many suppliers ]

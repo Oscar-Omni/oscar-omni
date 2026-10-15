@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__demo_ventia_contracts
+label: Contracts
+description: One row per service contract in the synthetic portfolio, CT-0001 to
+  CT-0120. Names are invented and labelled synthetic; no real Ventia contract,
+  client or site is represented.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_VENTIA_CONTRACTS
@@ -6,38 +11,71 @@ table_name: DEMO_VENTIA_CONTRACTS
 dimensions:
   contract_id:
     sql: '"CONTRACT_ID"'
+    label: Contract ID
     format: ID
+    primary_key: true
 
   contract_name:
     sql: '"CONTRACT_NAME"'
+    label: Contract
+    description: Invented descriptive contract name, labelled synthetic
+    synonyms: [ contract, contract name, project ]
 
   sector:
     sql: '"SECTOR"'
+    label: Contract Sector
+    hidden: true
 
   service_line:
     sql: '"SERVICE_LINE"'
+    label: Contract Service Line
+    hidden: true
 
   state:
     sql: '"STATE"'
+    label: Contract State
+    hidden: true
 
   region:
     sql: '"REGION"'
+    label: Contract Region
+    hidden: true
 
   source_system:
     sql: '"SOURCE_SYSTEM"'
+    label: Source System
+    description: Where the contract's finance data lands today, databricks, fabric
+      or custom_tool. Stands in for the post acquisition silos
+    synonyms: [ source system, system, platform ]
 
   contract_model:
     sql: '"CONTRACT_MODEL"'
+    label: Contract Model
+    description: schedule_of_rates, lump_sum or alliance
 
   start_date:
     sql: '"START_DATE"'
+    label: Contract Start
 
   annual_value_aud:
     sql: '"ANNUAL_VALUE_AUD"'
+    label: Annual Contract Value (AUD)
+    format: currency_0
 
   target_margin_pct:
     sql: '"TARGET_MARGIN_PCT"'
+    label: Target Margin %
+    format: percent_1
+    description: Contract gross margin target
+    synonyms: [ target margin, margin target ]
 
 measures:
   count:
+    label: Contracts (rows)
     aggregate_type: count
+
+  total_annual_value_aud:
+    sql: ${annual_value_aud}
+    label: Total Annual Contract Value (AUD)
+    format: currency_0
+    aggregate_type: sum

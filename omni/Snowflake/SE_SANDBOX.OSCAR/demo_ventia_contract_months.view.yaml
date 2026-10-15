@@ -1,4 +1,10 @@
 # Reference this view as se_sandbox_oscar__demo_ventia_contract_months
+label: Contract Months
+description: One row per service contract per calendar month, 2024-10 to
+  2026-09. Revenue, cost and margin, with supplier spend totals that equal the
+  purchase order lines for the same contract and month. Synthetic Ventia data,
+  every contract invented, money in AUD.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_VENTIA_CONTRACT_MONTHS
@@ -6,56 +12,222 @@ table_name: DEMO_VENTIA_CONTRACT_MONTHS
 dimensions:
   contract_id:
     sql: '"CONTRACT_ID"'
+    label: Contract ID
     format: ID
 
   month_start:
     sql: '"MONTH_START"'
+    label: Month
+    description: First day of the calendar month. Use an exclusive end date in
+      filters, so April to September 2026 is 2026-04-01 to 2026-10-01.
+    synonyms: [ month, reporting month, period ]
 
   sector:
     sql: '"SECTOR"'
+    label: Sector
+    description: transport, utilities_water, defence_social or telecommunications.
+      Generic synthetic labels, not Ventia's reported segments
+    synonyms: [ sector, business, segment ]
 
   state:
     sql: '"STATE"'
+    label: State
+    description: New South Wales, Victoria, Queensland, Western Australia, South
+      Australia or New Zealand
+    synonyms: [ state, location, QLD, NSW ]
 
   region:
     sql: '"REGION"'
+    label: Region
+    description: Region within the state, for example South East Queensland or Pilbara
 
   service_line:
     sql: '"SERVICE_LINE"'
+    label: Service Line
+    description: road_maintenance, rail_maintenance, water_networks,
+      energy_networks, facilities_management or telecom_field_services
 
   revenue_aud:
     sql: '"REVENUE_AUD"'
+    label: Revenue (row)
+    hidden: true
 
   labour_cost_aud:
     sql: '"LABOUR_COST_AUD"'
+    label: Labour Cost (row)
+    hidden: true
 
   supplier_spend_aud:
     sql: '"SUPPLIER_SPEND_AUD"'
+    label: Supplier Spend (row)
+    hidden: true
 
   other_cost_aud:
     sql: '"OTHER_COST_AUD"'
+    label: Other Cost (row)
+    hidden: true
 
   total_cost_aud:
     sql: '"TOTAL_COST_AUD"'
+    label: Total Cost (row)
+    hidden: true
 
   gross_margin_aud:
     sql: '"GROSS_MARGIN_AUD"'
+    label: Gross Margin (row)
+    hidden: true
 
   budget_margin_aud:
     sql: '"BUDGET_MARGIN_AUD"'
+    label: Target Margin (row)
+    hidden: true
 
   margin_vs_budget_aud:
     sql: '"MARGIN_VS_BUDGET_AUD"'
+    label: Margin vs Target (row)
+    hidden: true
 
   off_panel_spend_aud:
     sql: '"OFF_PANEL_SPEND_AUD"'
+    label: Off Panel Spend (row)
+    hidden: true
 
   off_panel_premium_aud:
     sql: '"OFF_PANEL_PREMIUM_AUD"'
+    label: Off Panel Premium (row)
+    hidden: true
 
   unclassified_spend_aud:
     sql: '"UNCLASSIFIED_SPEND_AUD"'
+    label: Unclassified Spend (row)
+    hidden: true
+
+  contract_month_id:
+    sql: "\"CONTRACT_ID\" || '_' || TO_CHAR(\"MONTH_START\", 'YYYY-MM')"
+    description: Contract id and month, the grain of this table
+    hidden: true
+    primary_key: true
 
 measures:
   count:
+    label: Contract Months
     aggregate_type: count
+
+  contract_count:
+    sql: '"CONTRACT_ID"'
+    label: Contracts
+    format: number_0
+    aggregate_type: count_distinct
+    synonyms: [ number of contracts ]
+
+  revenue:
+    sql: ${revenue_aud}
+    label: Revenue (AUD)
+    format: currency_0
+    description: Contract revenue recognised in the period
+    aggregate_type: sum
+    synonyms: [ revenue, revenue aud, sales, turnover ]
+
+  labour_cost:
+    sql: ${labour_cost_aud}
+    label: Labour Cost (AUD)
+    format: currency_0
+    description: Self performed labour cost
+    aggregate_type: sum
+    synonyms: [ labour, labor cost ]
+
+  supplier_spend:
+    sql: ${supplier_spend_aud}
+    label: Supplier Spend (AUD)
+    format: currency_0
+    description: Total paid to suppliers on the contract, equal to the sum of its
+      purchase order lines
+    aggregate_type: sum
+    synonyms: [ subcontractor spend, supplier spend, third party spend ]
+
+  other_cost:
+    sql: ${other_cost_aud}
+    label: Other Cost (AUD)
+    format: currency_0
+    description: Plant, overheads and other direct cost
+    aggregate_type: sum
+
+  total_cost:
+    sql: ${total_cost_aud}
+    label: Total Cost (AUD)
+    format: currency_0
+    description: Labour, supplier and other direct cost
+    aggregate_type: sum
+    synonyms: [ cost, total cost ]
+
+  gross_margin:
+    sql: ${gross_margin_aud}
+    label: Gross Margin (AUD)
+    format: currency_0
+    description: Revenue less total cost
+    aggregate_type: sum
+    synonyms: [ margin dollars, gross profit, gross margin aud ]
+
+  budget_margin:
+    sql: ${budget_margin_aud}
+    label: Target Margin (AUD)
+    format: currency_0
+    description: Revenue times the contract gross margin target
+    aggregate_type: sum
+    synonyms: [ budget margin, target margin dollars ]
+
+  margin_vs_budget:
+    sql: ${margin_vs_budget_aud}
+    label: Margin vs Target (AUD)
+    format: currency_0
+    description: Gross margin above (positive) or below (negative) the contract target
+    aggregate_type: sum
+    synonyms: [ margin vs target, margin vs budget, margin gap ]
+
+  off_panel_spend:
+    sql: ${off_panel_spend_aud}
+    label: Off Panel Spend (AUD)
+    format: currency_0
+    description: Supplier spend with suppliers not on an approved panel
+    aggregate_type: sum
+    synonyms: [ off panel spend amount ]
+
+  off_panel_premium:
+    sql: ${off_panel_premium_aud}
+    label: Off Panel Premium (AUD)
+    format: currency_0
+    description: Paid above the panel schedule rate for off panel work. Off panel
+      lines cost 1.35 times the panel benchmark in every sector and month
+    aggregate_type: sum
+    synonyms: [ leakage, premium, overpayment, off panel premium aud ]
+
+  unclassified_spend:
+    sql: ${unclassified_spend_aud}
+    label: Unclassified Spend (AUD)
+    format: currency_0
+    description: Supplier spend with suppliers the vendor classification pipeline
+      has not categorised
+    aggregate_type: sum
+
+  gross_margin_pct:
+    sql: ${gross_margin} / NULLIF(${revenue}, 0)
+    label: Gross Margin %
+    format: percent_1
+    description: Gross margin over revenue. A ratio of sums, never an average of
+      contract percentages
+    synonyms: [ margin, GM, gross margin, margin percent ]
+
+  off_panel_share:
+    sql: ${off_panel_spend} / NULLIF(${supplier_spend}, 0)
+    label: Off Panel Share
+    format: percent_1
+    description: Share of supplier spend paid to suppliers not on an approved panel
+    synonyms: [ off panel, non panel spend, off panel rate ]
+
+  unclassified_spend_share:
+    sql: ${unclassified_spend} / NULLIF(${supplier_spend}, 0)
+    label: Unclassified Spend Share
+    format: percent_1
+    description: Share of supplier spend with suppliers the classification pipeline
+      has not categorised
+    synonyms: [ unclassified vendors, unclassified share ]

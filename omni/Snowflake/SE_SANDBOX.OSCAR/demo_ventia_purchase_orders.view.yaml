@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__demo_ventia_purchase_orders
+label: Purchase Order Lines
+description: One row per purchase order line paid to a supplier on a contract,
+  2024-10-01 to 2026-09-30. Off panel lines carry their premium over the panel
+  benchmark. Synthetic Ventia data, money in AUD.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_VENTIA_PURCHASE_ORDERS
@@ -6,49 +11,126 @@ table_name: DEMO_VENTIA_PURCHASE_ORDERS
 dimensions:
   po_line_id:
     sql: '"PO_LINE_ID"'
+    label: PO Line
     format: ID
+    primary_key: true
 
   contract_id:
     sql: '"CONTRACT_ID"'
+    label: PO Contract ID
     format: ID
+    hidden: true
 
   supplier_id:
     sql: '"SUPPLIER_ID"'
+    label: Supplier ID
     format: ID
 
   po_date:
     sql: '"PO_DATE"'
+    label: PO Date
+    description: Date the PO line was raised
 
   month_start:
     sql: '"MONTH_START"'
+    label: PO Month
+    description: First day of the PO date month; joins to contract months
 
   spend_category:
     sql: '"SPEND_CATEGORY"'
+    label: Spend Category
+    description: traffic_management, civil_subcontract, plant_hire, materials,
+      electrical, environmental or facilities_services
+    synonyms: [ category, spend category, work type ]
 
   sector:
     sql: '"SECTOR"'
+    label: PO Sector
+    description: Sector of the contract the line was raised on
 
   state:
     sql: '"STATE"'
+    label: PO State
+    description: State of the contract the line was raised on
 
   classification_status:
     sql: '"CLASSIFICATION_STATUS"'
+    label: Vendor Classification
+    description: ai_classified, manually_classified or unclassified, the state of
+      the supplier in the vendor classification pipeline
+    synonyms: [ vendor classification, classification status ]
 
   is_off_panel:
     sql: '"IS_OFF_PANEL"'
+    label: Is Off Panel
+    description: 1 when the supplier is not on an approved panel
 
   spend_aud:
     sql: '"SPEND_AUD"'
+    label: Line Spend (AUD)
+    format: currency_2
 
   benchmark_aud:
     sql: '"BENCHMARK_AUD"'
+    label: Line Panel Benchmark (AUD)
+    format: currency_2
+    description: What the same scope costs at the panel schedule rate
 
   off_panel_spend_aud:
     sql: '"OFF_PANEL_SPEND_AUD"'
+    label: Line Off Panel Spend (AUD)
+    format: currency_2
+    hidden: true
 
   off_panel_premium_aud:
     sql: '"OFF_PANEL_PREMIUM_AUD"'
+    label: Line Premium (AUD)
+    format: currency_2
+    description: Line spend less panel benchmark; 0 for panel lines
 
 measures:
   count:
+    label: PO Lines
     aggregate_type: count
+
+  po_spend_aud:
+    sql: ${spend_aud}
+    label: PO Spend (AUD)
+    format: currency_0
+    description: PO line spend, for supplier and category breakdowns
+    aggregate_type: sum
+    synonyms: [ spend, PO spend, supplier payments ]
+
+  po_benchmark_aud:
+    sql: ${benchmark_aud}
+    label: PO Panel Benchmark (AUD)
+    format: currency_0
+    aggregate_type: sum
+
+  po_off_panel_spend_aud:
+    sql: ${off_panel_spend_aud}
+    label: PO Off Panel Spend (AUD)
+    format: currency_0
+    aggregate_type: sum
+
+  po_off_panel_premium_aud:
+    sql: ${off_panel_premium_aud}
+    label: PO Off Panel Premium (AUD)
+    format: currency_0
+    description: Off panel premium at PO grain
+    aggregate_type: sum
+    synonyms: [ premium, PO premium ]
+
+  po_off_panel_share:
+    sql: ${po_off_panel_spend_aud} / NULLIF(${po_spend_aud}, 0)
+    label: PO Off Panel Share
+    format: percent_1
+    description: Off panel share at PO grain, for category and supplier breakdowns
+    synonyms: [ off panel share ]
+
+  po_price_ratio:
+    sql: ${po_spend_aud} / NULLIF(${po_benchmark_aud}, 0)
+    label: Price vs Panel Benchmark
+    format: number_2
+    description: Spend over panel benchmark; 1.35 on every off panel line, so a
+      rising premium is a mix effect, not a rate change
