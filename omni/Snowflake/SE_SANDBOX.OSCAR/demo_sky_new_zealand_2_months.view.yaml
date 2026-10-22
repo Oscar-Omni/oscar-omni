@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_sky_new_zealand_2_months
+label: Months
+description: Conformed calendar, one row per month from July 2024 to September
+  2026. Every topic filters dates through this view.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_SKY_NEW_ZEALAND_2_MONTHS
@@ -6,12 +10,24 @@ table_name: DEMO_SKY_NEW_ZEALAND_2_MONTHS
 dimensions:
   month_start:
     sql: '"MONTH_START"'
+    label: Month
+    description: First day of the calendar month. The one date for every filter. Use
+      an exclusive end date, so April to September 2026 is 2026-04-01 to
+      2026-10-01.
+    primary_key: true
+    synonyms: [ month, date, period, reporting month ]
 
   month_label:
     sql: '"MONTH_LABEL"'
+    label: Month Label
+    description: Short label such as Sep 2026
 
   calendar_quarter:
     sql: '"CALENDAR_QUARTER"'
+    label: Calendar Quarter
+    description: Calendar quarter such as 2026 Q3. Calendar quarters, not Sky's June
+      financial year.
+    synonyms: [ quarter ]
 
 measures:
   count:

@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_sky_new_zealand_2_cancellations
+label: Cancellations
+description: One row per subscriber cancellation with the reason the customer
+  gave. Counts only; churn rates live in Subscriber Health. Synthetic data.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_SKY_NEW_ZEALAND_2_CANCELLATIONS
@@ -6,43 +10,95 @@ table_name: DEMO_SKY_NEW_ZEALAND_2_CANCELLATIONS
 dimensions:
   cancellation_id:
     sql: '"CANCELLATION_ID"'
+    label: Cancellation ID
     format: ID
+    primary_key: true
 
   subscriber_id:
     sql: '"SUBSCRIBER_ID"'
+    label: Subscriber ID
     format: ID
 
   cancel_date:
     sql: '"CANCEL_DATE"'
+    label: Cancel Date
+    description: Day the cancellation took effect
 
   month_start:
     sql: '"MONTH_START"'
+    label: Cancellation Month (row)
+    description: Join key to Months. Filter on Months > Month instead.
+    hidden: true
 
   region_id:
     sql: '"REGION_ID"'
+    label: Region ID
     format: ID
+    hidden: true
 
   package:
     sql: '"PACKAGE"'
+    label: Package
+    synonyms: [ pack ]
 
   journey_stage:
     sql: '"JOURNEY_STAGE"'
+    label: Journey Stage
+    description: Journey stage at the start of the cancellation month
+    synonyms: [ early life, new box ]
 
   install_method:
     sql: '"INSTALL_METHOD"'
+    label: Install Method
+    synonyms: [ self install, tech install ]
 
   days_on_sky_box:
     sql: '"DAYS_ON_SKY_BOX"'
+    label: Days on Sky Box
+    format: number_0
+    description: Days on Sky Box at cancel date; empty on My Sky
 
   cancel_reason:
     sql: '"CANCEL_REASON"'
+    label: Cancel Reason
+    description: Price, Content, Moving house or overseas, Technical issues or Other
+    synonyms: [ churn reasons, reason ]
 
   is_technical_issue:
     sql: '"IS_TECHNICAL_ISSUE"'
+    label: Technical Issue (row flag)
+    group_label: Row flags
 
   monthly_fee_aud:
     sql: '"MONTHLY_FEE_AUD"'
+    label: Monthly Fee (AUD)
+    format: currency_2
+    description: Monthly fee lost with this cancellation
 
 measures:
   count:
     aggregate_type: count
+
+  cancellation_count:
+    sql: ${cancellation_id}
+    label: Cancellations
+    format: number_0
+    description: Cancellations in the period
+    aggregate_type: count_distinct
+    synonyms: [ cancellations, cancels ]
+
+  technical_cancellations:
+    sql: ${is_technical_issue}
+    label: Technical Issue Cancellations
+    format: number_0
+    description: Cancellations with reason Technical issues
+    aggregate_type: sum
+    synonyms: [ tech churn, technical cancellations ]
+
+  lost_monthly_fees_aud:
+    sql: ${monthly_fee_aud}
+    label: Lost Monthly Fees (AUD)
+    format: currency_0
+    description: Monthly fees lost with these cancellations. Times 12 for annualised.
+    aggregate_type: sum
+    synonyms: [ lost revenue ]

@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_sky_new_zealand_2_sky_box_activations
+label: Sky Box Activations
+description: One row per Sky Box activation, a migration from My Sky or a new
+  connection. Synthetic data.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_SKY_NEW_ZEALAND_2_SKY_BOX_ACTIVATIONS
@@ -6,40 +10,93 @@ table_name: DEMO_SKY_NEW_ZEALAND_2_SKY_BOX_ACTIVATIONS
 dimensions:
   activation_id:
     sql: '"ACTIVATION_ID"'
+    label: Activation ID
     format: ID
+    primary_key: true
 
   subscriber_id:
     sql: '"SUBSCRIBER_ID"'
+    label: Subscriber ID
     format: ID
 
   activation_date:
     sql: '"ACTIVATION_DATE"'
+    label: Activation Date
+    description: Day the Sky Box went live
 
   month_start:
     sql: '"MONTH_START"'
+    label: Activation Month (row)
+    description: Join key to Months. Filter on Months > Month instead.
+    hidden: true
 
   region_id:
     sql: '"REGION_ID"'
+    label: Region ID
     format: ID
+    hidden: true
 
   package:
     sql: '"PACKAGE"'
+    label: Package
+    synonyms: [ pack ]
 
   activation_type:
     sql: '"ACTIVATION_TYPE"'
+    label: Activation Type
+    description: Migration from My Sky or New connection
+    synonyms: [ new connections, migration type ]
 
   install_method:
     sql: '"INSTALL_METHOD"'
+    label: Install Method
+    description: Self install or Technician install
+    synonyms: [ self install, tech install ]
 
   activation_count:
     sql: '"ACTIVATION_COUNT"'
+    label: Activation (row flag)
+    group_label: Row flags
 
   is_migration:
     sql: '"IS_MIGRATION"'
+    label: Is Migration (row flag)
+    group_label: Row flags
 
   is_self_install:
     sql: '"IS_SELF_INSTALL"'
+    label: Is Self Install (row flag)
+    group_label: Row flags
 
 measures:
   count:
     aggregate_type: count
+
+  activations:
+    sql: ${activation_count}
+    label: Sky Box Activations
+    format: number_0
+    description: Sky Box activations, migrations and new connections
+    aggregate_type: sum
+    synonyms: [ activations, installs ]
+
+  migrations:
+    sql: ${is_migration}
+    label: Migrations
+    format: number_0
+    description: Activations that moved a My Sky subscriber onto Sky Box
+    aggregate_type: sum
+    synonyms: [ migrations, upgrades ]
+
+  self_installs:
+    sql: ${is_self_install}
+    label: Self Installs
+    format: number_0
+    aggregate_type: sum
+
+  self_install_share:
+    sql: ${self_installs} / NULLIF(${activations}, 0)
+    label: Self Install Share
+    format: percent_1
+    description: Share of activations that were self installed
+    synonyms: [ self install rate ]

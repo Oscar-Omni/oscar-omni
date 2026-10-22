@@ -1,0 +1,120 @@
+base_view: se_sandbox_oscar__demo_sky_new_zealand_2_subscriber_months
+label: Subscriber Health
+group_label: Sky New Zealand
+description: Churn, base, revenue and Sky Box migration for Sky New Zealand
+  decoder subscribers. One row per subscriber per month active at month start.
+  Synthetic data, money in AUD.
+
+joins:
+  se_sandbox_oscar__demo_sky_new_zealand_2_regions: {}
+  se_sandbox_oscar__demo_sky_new_zealand_2_months: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_sky_new_zealand_2_subscriber_months
+    join_to_view: se_sandbox_oscar__demo_sky_new_zealand_2_regions
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_sky_new_zealand_2_subscriber_months.region_id}
+      = ${se_sandbox_oscar__demo_sky_new_zealand_2_regions.region_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_sky_new_zealand_2_subscriber_months
+    join_to_view: se_sandbox_oscar__demo_sky_new_zealand_2_months
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_sky_new_zealand_2_subscriber_months.month_start}
+      = ${se_sandbox_oscar__demo_sky_new_zealand_2_months.month_start}
+    relationship_type: many_to_one
+
+ai_context: |-
+  Synthetic Sky New Zealand decoder subscriber data, one row per subscriber per month active at month start, money in AUD. Region names are real places; every figure is synthetic, never Sky's real numbers. Data runs from 2024-07-01 to 2026-09-30.
+
+  Churn means monthly_churn_rate, always sum(churned) / sum(is_active_at_start). Never average monthly or regional rates and never count distinct subscribers across months. Opening subscribers summed over several months is subscriber months, not distinct customers. Disconnections means churned_subscribers. Base and active customers mean opening_subscribers. Revenue means subscription_revenue_aud. Sky Box penetration means sky_box_share.
+
+  Journey stage is set at month start: My Sky (old decoder), Sky Box first 90 days, Sky Box 90 days plus. Early life and new box mean journey_stage = Sky Box first 90 days. Self install and tech install mean install_method values Self install and Technician install. Pack means package.
+
+  Use months.month_start for every date filter with an exclusive end: April to September 2026 is month_start between 2026-04-01 and 2026-10-01. When a user says this half or the last six months without dates, use 2026-04-01 to 2026-09-30 and compare with 2025-04-01 to 2025-09-30.
+
+  Analysis guidance. To compare two periods, run the same query once per period with identical filters and show both side by side with the change in percentage points, stating both date ranges. To explain a churn change, split by region first, then for the region that rose split by journey_stage and install_method by month, so a month by month climb is visible rather than one blended number. For cancellation reasons, use the Cancellations topic with the same region, journey stage, install method and months. Lead with the headline numbers and keep answers short.
+
+sample_queries:
+  churn_by_region_current:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_sky_new_zealand_2_regions.region,
+          se_sandbox_oscar__demo_sky_new_zealand_2_subscriber_months.monthly_churn_rate
+        ]
+      base_view: se_sandbox_oscar__demo_sky_new_zealand_2_subscriber_months
+      filters:
+        se_sandbox_oscar__demo_sky_new_zealand_2_months.month_start:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_sky_new_zealand_2_subscriber_months.monthly_churn_rate
+          desc: true
+      topic: demo_sky_new_zealand_2_subscriber_health
+    prompt: What was our monthly churn rate by region from 1 April 2026 to 30
+      September 2026?
+  churn_by_region_prior:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_sky_new_zealand_2_regions.region,
+          se_sandbox_oscar__demo_sky_new_zealand_2_subscriber_months.monthly_churn_rate
+        ]
+      base_view: se_sandbox_oscar__demo_sky_new_zealand_2_subscriber_months
+      filters:
+        se_sandbox_oscar__demo_sky_new_zealand_2_months.month_start:
+          between_dates: [ 2025-04-01, 2025-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_sky_new_zealand_2_subscriber_months.monthly_churn_rate
+          desc: true
+      topic: demo_sky_new_zealand_2_subscriber_health
+    prompt: What was our monthly churn rate by region from 1 April 2025 to 30
+      September 2025?
+  canterbury_stage_method_by_month:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_sky_new_zealand_2_months.month_start[month]",
+          se_sandbox_oscar__demo_sky_new_zealand_2_subscriber_months.journey_stage,
+          se_sandbox_oscar__demo_sky_new_zealand_2_subscriber_months.install_method,
+          se_sandbox_oscar__demo_sky_new_zealand_2_subscriber_months.opening_subscribers,
+          se_sandbox_oscar__demo_sky_new_zealand_2_subscriber_months.monthly_churn_rate
+        ]
+      base_view: se_sandbox_oscar__demo_sky_new_zealand_2_subscriber_months
+      filters:
+        se_sandbox_oscar__demo_sky_new_zealand_2_months.month_start:
+          between_dates: [ 2026-07-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_sky_new_zealand_2_regions.region:
+          is: Canterbury
+      topic: demo_sky_new_zealand_2_subscriber_health
+    prompt: For Canterbury, split monthly churn by journey stage and install method
+      for July, August and September 2026
+  churn_by_package_current:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_sky_new_zealand_2_subscriber_months.package,
+          se_sandbox_oscar__demo_sky_new_zealand_2_subscriber_months.monthly_churn_rate
+        ]
+      base_view: se_sandbox_oscar__demo_sky_new_zealand_2_subscriber_months
+      filters:
+        se_sandbox_oscar__demo_sky_new_zealand_2_months.month_start:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_sky_new_zealand_2_subscriber_months.monthly_churn_rate
+          desc: true
+      topic: demo_sky_new_zealand_2_subscriber_health
+    prompt: Which packages churn most in the last six months?
+  sky_box_share_by_month:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_sky_new_zealand_2_months.month_start[month]",
+          se_sandbox_oscar__demo_sky_new_zealand_2_subscriber_months.sky_box_share
+        ]
+      base_view: se_sandbox_oscar__demo_sky_new_zealand_2_subscriber_months
+      filters:
+        se_sandbox_oscar__demo_sky_new_zealand_2_months.month_start:
+          between_dates: [ 2024-07-01, 2026-10-01 ]
+      topic: demo_sky_new_zealand_2_subscriber_health
+    prompt: How has Sky Box share moved month by month since July 2024?

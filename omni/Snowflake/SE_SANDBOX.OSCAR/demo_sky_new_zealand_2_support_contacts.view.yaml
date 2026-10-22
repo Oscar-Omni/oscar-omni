@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_sky_new_zealand_2_support_contacts
+label: Support Contacts
+description: One row per inbound support contact. Synthetic data.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_SKY_NEW_ZEALAND_2_SUPPORT_CONTACTS
@@ -6,40 +9,108 @@ table_name: DEMO_SKY_NEW_ZEALAND_2_SUPPORT_CONTACTS
 dimensions:
   contact_id:
     sql: '"CONTACT_ID"'
+    label: Contact ID
     format: ID
+    primary_key: true
 
   subscriber_id:
     sql: '"SUBSCRIBER_ID"'
+    label: Subscriber ID
     format: ID
 
   contact_date:
     sql: '"CONTACT_DATE"'
+    label: Contact Date
 
   month_start:
     sql: '"MONTH_START"'
+    label: Contact Month (row)
+    description: Join key to Months. Filter on Months > Month instead.
+    hidden: true
 
   region_id:
     sql: '"REGION_ID"'
+    label: Region ID
     format: ID
+    hidden: true
 
   journey_stage:
     sql: '"JOURNEY_STAGE"'
+    label: Journey Stage
+    description: Journey stage at the start of the contact month
+    synonyms: [ early life, new box ]
 
   install_method:
     sql: '"INSTALL_METHOD"'
+    label: Install Method
+    synonyms: [ self install, tech install ]
 
   contact_reason:
     sql: '"CONTACT_REASON"'
+    label: Contact Reason
+    description: Billing, Connection and picture, Setup and installation, Content
+      and channels or Account
+    synonyms: [ no signal, setup help, reason ]
 
   channel:
     sql: '"CHANNEL"'
+    label: Channel
+    description: Phone, Live chat or App
 
   resolved_first_contact:
     sql: '"RESOLVED_FIRST_CONTACT"'
+    label: Resolved First Contact (row flag)
+    description: 1 when resolved without a repeat contact inside 7 days
+    group_label: Row flags
 
   handle_minutes:
     sql: '"HANDLE_MINUTES"'
+    label: Handle Minutes
+    format: number_1
+    description: Agent handle time; 0 for App self service
+
+  is_technical_contact:
+    sql: CASE WHEN CONTACT_REASON IN ('Connection and picture', 'Setup and
+      installation') THEN 1 ELSE 0 END
+    label: Technical Contact (row flag)
+    group_label: Row flags
 
 measures:
   count:
     aggregate_type: count
+
+  support_contact_count:
+    sql: ${contact_id}
+    label: Support Contacts
+    format: number_0
+    description: Inbound support contacts
+    aggregate_type: count_distinct
+    synonyms: [ calls, contacts ]
+
+  resolved_first_contacts:
+    sql: ${resolved_first_contact}
+    label: Resolved First Time
+    format: number_0
+    aggregate_type: sum
+
+  first_contact_resolution_rate:
+    sql: ${resolved_first_contacts} / NULLIF(${support_contact_count}, 0)
+    label: First Contact Resolution
+    format: percent_1
+    description: Contacts resolved without a repeat inside 7 days over all contacts
+    synonyms: [ FCR, first time fix ]
+
+  technical_contacts:
+    sql: ${is_technical_contact}
+    label: Technical Contacts
+    format: number_0
+    description: Connection and picture plus Setup and installation contacts
+    aggregate_type: sum
+    synonyms: [ technical contacts, picture and setup contacts ]
+
+  average_handle_minutes:
+    sql: ${handle_minutes}
+    label: Average Handle Minutes
+    format: number_1
+    aggregate_type: average
+    synonyms: [ AHT, handle time ]

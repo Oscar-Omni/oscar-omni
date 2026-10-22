@@ -1,0 +1,65 @@
+base_view: se_sandbox_oscar__demo_sky_new_zealand_2_sky_box_activations
+label: Sky Box Rollout
+group_label: Sky New Zealand
+description: Sky Box activations, migrations from My Sky and new connections, by
+  install method. One row per activation. Synthetic data.
+
+joins:
+  se_sandbox_oscar__demo_sky_new_zealand_2_regions: {}
+  se_sandbox_oscar__demo_sky_new_zealand_2_months: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_sky_new_zealand_2_sky_box_activations
+    join_to_view: se_sandbox_oscar__demo_sky_new_zealand_2_regions
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_sky_new_zealand_2_sky_box_activations.region_id}
+      = ${se_sandbox_oscar__demo_sky_new_zealand_2_regions.region_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_sky_new_zealand_2_sky_box_activations
+    join_to_view: se_sandbox_oscar__demo_sky_new_zealand_2_months
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_sky_new_zealand_2_sky_box_activations.month_start}
+      = ${se_sandbox_oscar__demo_sky_new_zealand_2_months.month_start}
+    relationship_type: many_to_one
+
+ai_context: Synthetic Sky New Zealand data. One row per Sky Box activation.
+  Migrations come from My Sky; new connections join straight onto Sky Box.
+  Activations and installs mean activations; migrations means migrations; self
+  install rate means self_install_share, always sum(is_self_install) /
+  sum(activation_count), never an average. Use months.month_start for every date
+  filter with an exclusive end date. The rollout plan is uploaded separately and
+  compares at region and month grain only, so sum activations by region and
+  month before comparing.
+
+sample_queries:
+  migrations_by_region_jas:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_sky_new_zealand_2_regions.region,
+          "se_sandbox_oscar__demo_sky_new_zealand_2_months.month_start[month]",
+          se_sandbox_oscar__demo_sky_new_zealand_2_sky_box_activations.migrations
+        ]
+      base_view: se_sandbox_oscar__demo_sky_new_zealand_2_sky_box_activations
+      filters:
+        se_sandbox_oscar__demo_sky_new_zealand_2_months.month_start:
+          between_dates: [ 2026-07-01, 2026-10-01 ]
+      topic: demo_sky_new_zealand_2_sky_box_rollout
+    prompt: How many Sky Box migrations did each region have in July, August and
+      September 2026?
+  canterbury_self_install_2026:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_sky_new_zealand_2_months.month_start[month]",
+          se_sandbox_oscar__demo_sky_new_zealand_2_sky_box_activations.self_install_share
+        ]
+      base_view: se_sandbox_oscar__demo_sky_new_zealand_2_sky_box_activations
+      filters:
+        se_sandbox_oscar__demo_sky_new_zealand_2_months.month_start:
+          between_dates: [ 2026-01-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_sky_new_zealand_2_regions.region:
+          is: Canterbury
+      topic: demo_sky_new_zealand_2_sky_box_rollout
+    prompt: What share of Canterbury activations were self installed by month in 2026?

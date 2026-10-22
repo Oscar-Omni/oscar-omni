@@ -1,0 +1,70 @@
+base_view: se_sandbox_oscar__demo_sky_new_zealand_2_support_contacts
+label: Support Contacts
+group_label: Sky New Zealand
+description: Inbound support contacts by reason, channel and outcome. One row
+  per contact. Synthetic data.
+
+joins:
+  se_sandbox_oscar__demo_sky_new_zealand_2_regions: {}
+  se_sandbox_oscar__demo_sky_new_zealand_2_months: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_sky_new_zealand_2_support_contacts
+    join_to_view: se_sandbox_oscar__demo_sky_new_zealand_2_regions
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_sky_new_zealand_2_support_contacts.region_id} =
+      ${se_sandbox_oscar__demo_sky_new_zealand_2_regions.region_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_sky_new_zealand_2_support_contacts
+    join_to_view: se_sandbox_oscar__demo_sky_new_zealand_2_months
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_sky_new_zealand_2_support_contacts.month_start}
+      = ${se_sandbox_oscar__demo_sky_new_zealand_2_months.month_start}
+    relationship_type: many_to_one
+
+ai_context: Synthetic Sky New Zealand data. One row per inbound support contact.
+  Calls and contacts mean support_contact_count. FCR means
+  first_contact_resolution_rate, sum(resolved_first_contact) / count of
+  contacts, never an average of monthly rates. Technical contacts means
+  Connection and picture plus Setup and installation (technical_contacts). No
+  signal maps to Connection and picture, setup help to Setup and installation.
+  AHT means average_handle_minutes. Use months.month_start for every date filter
+  with an exclusive end date. For contacts per subscriber, use Subscriber
+  Health, which has the opening subscriber denominator.
+
+sample_queries:
+  fcr_by_month:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_sky_new_zealand_2_months.month_start[month]",
+          se_sandbox_oscar__demo_sky_new_zealand_2_support_contacts.first_contact_resolution_rate
+        ]
+      base_view: se_sandbox_oscar__demo_sky_new_zealand_2_support_contacts
+      filters:
+        se_sandbox_oscar__demo_sky_new_zealand_2_months.month_start:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+      topic: demo_sky_new_zealand_2_support_contacts
+    prompt: How did first contact resolution move month by month from April to
+      September 2026?
+  canterbury_self_install_reasons:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_sky_new_zealand_2_support_contacts.contact_reason,
+          se_sandbox_oscar__demo_sky_new_zealand_2_support_contacts.support_contact_count
+        ]
+      base_view: se_sandbox_oscar__demo_sky_new_zealand_2_support_contacts
+      filters:
+        se_sandbox_oscar__demo_sky_new_zealand_2_months.month_start:
+          between_dates: [ 2026-07-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_sky_new_zealand_2_regions.region:
+          is: Canterbury
+        se_sandbox_oscar__demo_sky_new_zealand_2_support_contacts.install_method:
+          is: Self install
+      topic: demo_sky_new_zealand_2_support_contacts
+    prompt: Which contact reasons rose most for Canterbury self installs in July to
+      September 2026 compared with April to June 2026?
+    ai_context: Run the same query for 2026-04-01 to 2026-07-01 and show both with
+      the change.

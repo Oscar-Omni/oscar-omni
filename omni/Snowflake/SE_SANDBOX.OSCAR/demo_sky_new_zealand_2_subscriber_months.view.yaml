@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__demo_sky_new_zealand_2_subscriber_months
+label: Subscriber Months
+description: One row per subscriber per calendar month in which the subscriber
+  was active at the start of the month. Synthetic Sky New Zealand decoder
+  subscribers, money in AUD.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_SKY_NEW_ZEALAND_2_SUBSCRIBER_MONTHS
@@ -6,49 +11,164 @@ table_name: DEMO_SKY_NEW_ZEALAND_2_SUBSCRIBER_MONTHS
 dimensions:
   subscriber_month_id:
     sql: '"SUBSCRIBER_MONTH_ID"'
+    label: Subscriber Month ID
     format: ID
+    hidden: true
+    primary_key: true
 
   subscriber_id:
     sql: '"SUBSCRIBER_ID"'
+    label: Subscriber ID
     format: ID
+    description: Invented account key such as SUB-208114
+    synonyms: [ account, customer id ]
 
   month_start:
     sql: '"MONTH_START"'
+    label: Subscriber Month (row)
+    description: Join key to Months. Filter on Months > Month instead.
+    hidden: true
 
   region_id:
     sql: '"REGION_ID"'
+    label: Region ID
     format: ID
+    hidden: true
 
   package:
     sql: '"PACKAGE"'
+    label: Package
+    description: Starter, Starter + Sport, Starter + Movies or Starter + Sport +
+      Movies. Generic placeholders, not Sky's price list.
+    synonyms: [ pack, bundle ]
 
   journey_stage:
     sql: '"JOURNEY_STAGE"'
+    label: Journey Stage
+    description: Set at month start. My Sky (old decoder), Sky Box first 90 days
+      (early life on the new box) or Sky Box 90 days plus (settled).
+    synonyms: [ new box, early life, decoder stage, stage ]
 
   install_method:
     sql: '"INSTALL_METHOD"'
+    label: Install Method
+    description: Not on Sky Box, Self install or Technician install
+    synonyms: [ self install, tech install, installation ]
 
   days_on_sky_box:
     sql: '"DAYS_ON_SKY_BOX"'
+    label: Days on Sky Box
+    format: number_0
+    description: Days since Sky Box activation at month start; empty on My Sky
 
   is_active_at_start:
     sql: '"IS_ACTIVE_AT_START"'
+    label: Active at Start (row flag)
+    description: Always 1. Summed it gives opening subscribers.
+    group_label: Row flags
 
   on_sky_box:
     sql: '"ON_SKY_BOX"'
+    label: On Sky Box (row flag)
+    group_label: Row flags
 
   churned:
     sql: '"CHURNED"'
+    label: Churned (row flag)
+    description: 1 when the subscriber cancelled during the month
+    group_label: Row flags
 
   contact_count:
     sql: '"CONTACT_COUNT"'
+    label: Contacts in Month (row)
+    group_label: Row flags
 
   technical_contact_count:
     sql: '"TECHNICAL_CONTACT_COUNT"'
+    label: Technical Contacts in Month (row)
+    description: Contacts with reason Connection and picture or Setup and
+      installation, for this subscriber in this month
+    group_label: Row flags
 
   monthly_fee_aud:
     sql: '"MONTHLY_FEE_AUD"'
+    label: Monthly Fee (AUD, row)
+    format: currency_2
+    description: Synthetic monthly subscription fee in AUD
+    group_label: Row flags
 
 measures:
   count:
     aggregate_type: count
+
+  opening_subscribers:
+    sql: ${is_active_at_start}
+    label: Opening Subscribers
+    format: number_0
+    description: Subscribers active at month start. Over several months this is
+      subscriber months, not distinct subscribers.
+    aggregate_type: sum
+    synonyms: [ base, active customers, subscribers ]
+
+  churned_subscribers:
+    sql: ${churned}
+    label: Churned Subscribers
+    format: number_0
+    description: Subscribers who cancelled in the month
+    aggregate_type: sum
+    synonyms: [ disconnections, churners, cancellations ]
+
+  monthly_churn_rate:
+    sql: ${churned_subscribers} / NULLIF(${opening_subscribers}, 0)
+    label: Monthly Churn Rate
+    format: percent_2
+    description: Cancellations in the month over subscribers active at month start.
+      Over a period it is the subscriber month weighted average, never an
+      average of monthly rates.
+    synonyms: [ churn, churn rate ]
+
+  subscription_revenue_aud:
+    sql: ${monthly_fee_aud}
+    label: Subscription Revenue (AUD)
+    format: currency_0
+    description: Sum of synthetic monthly fees for subscribers active at month start
+    aggregate_type: sum
+    synonyms: [ revenue, subscription revenue ]
+
+  sky_box_subscribers:
+    sql: ${on_sky_box}
+    label: Subscribers on Sky Box
+    format: number_0
+    aggregate_type: sum
+
+  sky_box_share:
+    sql: ${sky_box_subscribers} / NULLIF(${opening_subscribers}, 0)
+    label: Sky Box Share
+    format: percent_1
+    description: Share of opening subscribers on Sky Box
+    synonyms: [ Sky Box penetration, migration progress ]
+
+  support_contacts:
+    sql: ${contact_count}
+    label: Support Contacts
+    format: number_0
+    aggregate_type: sum
+
+  technical_contacts:
+    sql: ${technical_contact_count}
+    label: Technical Contacts
+    format: number_0
+    description: Contacts about Connection and picture or Setup and installation
+    aggregate_type: sum
+
+  contacts_per_subscriber:
+    sql: ${support_contacts} / NULLIF(${opening_subscribers}, 0)
+    label: Contacts per Subscriber
+    format: number_2
+    description: Support contacts per opening subscriber per month
+
+  technical_contacts_per_subscriber:
+    sql: ${technical_contacts} / NULLIF(${opening_subscribers}, 0)
+    label: Technical Contacts per Subscriber
+    format: number_2
+    description: Technical contacts per opening subscriber per month

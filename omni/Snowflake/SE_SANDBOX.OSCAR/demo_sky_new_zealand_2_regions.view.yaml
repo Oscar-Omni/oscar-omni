@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_sky_new_zealand_2_regions
+label: Regions
+description: One row per New Zealand reporting region. Real places, synthetic performance.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_SKY_NEW_ZEALAND_2_REGIONS
@@ -6,13 +9,22 @@ table_name: DEMO_SKY_NEW_ZEALAND_2_REGIONS
 dimensions:
   region_id:
     sql: '"REGION_ID"'
+    label: Region ID
     format: ID
+    hidden: true
+    primary_key: true
 
   region:
     sql: '"REGION"'
+    label: Region
+    description: Auckland, Wellington, Canterbury, Waikato, Bay of Plenty,
+      Manawatu-Whanganui, Otago or Northland
+    synonyms: [ area, service region ]
 
   island:
     sql: '"ISLAND"'
+    label: Island
+    description: North Island or South Island
 
 measures:
   count:

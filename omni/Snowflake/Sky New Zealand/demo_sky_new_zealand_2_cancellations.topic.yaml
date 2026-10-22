@@ -1,0 +1,78 @@
+base_view: se_sandbox_oscar__demo_sky_new_zealand_2_cancellations
+label: Cancellations
+group_label: Sky New Zealand
+description: Subscriber cancellations with the reason given. One row per
+  cancellation. Counts only; for churn rates use Subscriber Health. Synthetic
+  data.
+
+joins:
+  se_sandbox_oscar__demo_sky_new_zealand_2_regions: {}
+  se_sandbox_oscar__demo_sky_new_zealand_2_months: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_sky_new_zealand_2_cancellations
+    join_to_view: se_sandbox_oscar__demo_sky_new_zealand_2_regions
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_sky_new_zealand_2_cancellations.region_id} =
+      ${se_sandbox_oscar__demo_sky_new_zealand_2_regions.region_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_sky_new_zealand_2_cancellations
+    join_to_view: se_sandbox_oscar__demo_sky_new_zealand_2_months
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_sky_new_zealand_2_cancellations.month_start} =
+      ${se_sandbox_oscar__demo_sky_new_zealand_2_months.month_start}
+    relationship_type: many_to_one
+
+ai_context: "Synthetic Sky New Zealand data, money in AUD. One row per
+  cancellation with the reason the customer gave: Price, Content, Moving house
+  or overseas, Technical issues or Other. Cancellations means
+  cancellation_count; tech churn means technical_cancellations; lost revenue
+  means lost_monthly_fees_aud. This topic has counts only: for a churn rate use
+  the Subscriber Health topic, because cancellations has no denominator. Use
+  months.month_start for every date filter with an exclusive end date. To find
+  which reasons grew, run the same breakdown for both periods and show the
+  change in count."
+
+sample_queries:
+  reasons_jas:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_sky_new_zealand_2_cancellations.cancel_reason,
+          se_sandbox_oscar__demo_sky_new_zealand_2_cancellations.cancellation_count
+        ]
+      base_view: se_sandbox_oscar__demo_sky_new_zealand_2_cancellations
+      filters:
+        se_sandbox_oscar__demo_sky_new_zealand_2_months.month_start:
+          between_dates: [ 2026-07-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_sky_new_zealand_2_cancellations.cancellation_count
+          desc: true
+      topic: demo_sky_new_zealand_2_cancellations
+    prompt: Which cancellation reasons grew most from April to June 2026 to July to
+      September 2026?
+    ai_context: Run the same query for 2026-04-01 to 2026-07-01 and show both with
+      the change.
+  canterbury_technical_sep:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_sky_new_zealand_2_cancellations.cancellation_id,
+          se_sandbox_oscar__demo_sky_new_zealand_2_cancellations.subscriber_id,
+          se_sandbox_oscar__demo_sky_new_zealand_2_cancellations.cancel_date,
+          se_sandbox_oscar__demo_sky_new_zealand_2_cancellations.journey_stage,
+          se_sandbox_oscar__demo_sky_new_zealand_2_cancellations.install_method,
+          se_sandbox_oscar__demo_sky_new_zealand_2_cancellations.days_on_sky_box
+        ]
+      base_view: se_sandbox_oscar__demo_sky_new_zealand_2_cancellations
+      filters:
+        se_sandbox_oscar__demo_sky_new_zealand_2_months.month_start:
+          between_dates: [ 2026-09-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_sky_new_zealand_2_regions.region:
+          is: Canterbury
+        se_sandbox_oscar__demo_sky_new_zealand_2_cancellations.cancel_reason:
+          is: Technical issues
+      topic: demo_sky_new_zealand_2_cancellations
+    prompt: List Canterbury cancellations in September 2026 with reason Technical
+      issues
