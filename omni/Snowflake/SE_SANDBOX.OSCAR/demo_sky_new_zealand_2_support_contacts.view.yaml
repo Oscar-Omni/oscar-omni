@@ -1,0 +1,45 @@
+# Reference this view as se_sandbox_oscar__demo_sky_new_zealand_2_support_contacts
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_SKY_NEW_ZEALAND_2_SUPPORT_CONTACTS
+
+dimensions:
+  contact_id:
+    sql: '"CONTACT_ID"'
+    format: ID
+
+  subscriber_id:
+    sql: '"SUBSCRIBER_ID"'
+    format: ID
+
+  contact_date:
+    sql: '"CONTACT_DATE"'
+
+  month_start:
+    sql: '"MONTH_START"'
+
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  journey_stage:
+    sql: '"JOURNEY_STAGE"'
+
+  install_method:
+    sql: '"INSTALL_METHOD"'
+
+  contact_reason:
+    sql: '"CONTACT_REASON"'
+
+  channel:
+    sql: '"CHANNEL"'
+
+  resolved_first_contact:
+    sql: '"RESOLVED_FIRST_CONTACT"'
+
+  handle_minutes:
+    sql: '"HANDLE_MINUTES"'
+
+measures:
+  count:
+    aggregate_type: count

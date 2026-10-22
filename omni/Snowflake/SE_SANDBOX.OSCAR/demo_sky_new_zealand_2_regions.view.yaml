@@ -1,0 +1,19 @@
+# Reference this view as se_sandbox_oscar__demo_sky_new_zealand_2_regions
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_SKY_NEW_ZEALAND_2_REGIONS
+
+dimensions:
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  region:
+    sql: '"REGION"'
+
+  island:
+    sql: '"ISLAND"'
+
+measures:
+  count:
+    aggregate_type: count

@@ -1,0 +1,18 @@
+# Reference this view as se_sandbox_oscar__demo_sky_new_zealand_2_months
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_SKY_NEW_ZEALAND_2_MONTHS
+
+dimensions:
+  month_start:
+    sql: '"MONTH_START"'
+
+  month_label:
+    sql: '"MONTH_LABEL"'
+
+  calendar_quarter:
+    sql: '"CALENDAR_QUARTER"'
+
+measures:
+  count:
+    aggregate_type: count

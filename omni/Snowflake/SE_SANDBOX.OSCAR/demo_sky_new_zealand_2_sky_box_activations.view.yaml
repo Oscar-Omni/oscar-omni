@@ -1,0 +1,45 @@
+# Reference this view as se_sandbox_oscar__demo_sky_new_zealand_2_sky_box_activations
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_SKY_NEW_ZEALAND_2_SKY_BOX_ACTIVATIONS
+
+dimensions:
+  activation_id:
+    sql: '"ACTIVATION_ID"'
+    format: ID
+
+  subscriber_id:
+    sql: '"SUBSCRIBER_ID"'
+    format: ID
+
+  activation_date:
+    sql: '"ACTIVATION_DATE"'
+
+  month_start:
+    sql: '"MONTH_START"'
+
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  package:
+    sql: '"PACKAGE"'
+
+  activation_type:
+    sql: '"ACTIVATION_TYPE"'
+
+  install_method:
+    sql: '"INSTALL_METHOD"'
+
+  activation_count:
+    sql: '"ACTIVATION_COUNT"'
+
+  is_migration:
+    sql: '"IS_MIGRATION"'
+
+  is_self_install:
+    sql: '"IS_SELF_INSTALL"'
+
+measures:
+  count:
+    aggregate_type: count

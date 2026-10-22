@@ -1,0 +1,48 @@
+# Reference this view as se_sandbox_oscar__demo_sky_new_zealand_2_cancellations
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_SKY_NEW_ZEALAND_2_CANCELLATIONS
+
+dimensions:
+  cancellation_id:
+    sql: '"CANCELLATION_ID"'
+    format: ID
+
+  subscriber_id:
+    sql: '"SUBSCRIBER_ID"'
+    format: ID
+
+  cancel_date:
+    sql: '"CANCEL_DATE"'
+
+  month_start:
+    sql: '"MONTH_START"'
+
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  package:
+    sql: '"PACKAGE"'
+
+  journey_stage:
+    sql: '"JOURNEY_STAGE"'
+
+  install_method:
+    sql: '"INSTALL_METHOD"'
+
+  days_on_sky_box:
+    sql: '"DAYS_ON_SKY_BOX"'
+
+  cancel_reason:
+    sql: '"CANCEL_REASON"'
+
+  is_technical_issue:
+    sql: '"IS_TECHNICAL_ISSUE"'
+
+  monthly_fee_aud:
+    sql: '"MONTHLY_FEE_AUD"'
+
+measures:
+  count:
+    aggregate_type: count
