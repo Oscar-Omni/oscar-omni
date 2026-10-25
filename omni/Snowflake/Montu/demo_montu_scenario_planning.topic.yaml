@@ -1,0 +1,13 @@
+base_view: se_sandbox_oscar__demo_montu_scenarios
+label: Scenario Planning
+group_label: Montu
+description: Saved scenario slots for the Acquisition Budget Planner app.
+  Assumptions only, not business results.
+
+joins: {}
+
+ai_context: "Saved scenario slots for the synthetic Acquisition Budget Planner
+  app: current_mix, trim_search and trim_pg07. Each row holds assumptions
+  (monthly budgets, cost per new patient, 60 day repeat rate), not results.
+  Never use this topic for actual new patients, CAC or repeat rate; those live
+  in Patient Growth."

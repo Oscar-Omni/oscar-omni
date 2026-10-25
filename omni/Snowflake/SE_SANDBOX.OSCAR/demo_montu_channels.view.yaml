@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_montu_channels
+label: Channels
+description: Synthetic acquisition channels.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_MONTU_CHANNELS
@@ -7,12 +10,22 @@ dimensions:
   channel_id:
     sql: '"CHANNEL_ID"'
     format: ID
+    hidden: true
+    primary_key: true
 
   channel_name:
     sql: '"CHANNEL_NAME"'
+    label: Channel
+    description: Organic search, Direct, Paid search, Partner network, Pharmacy
+      referral, Practitioner referral, Email and SMS.
+    synonyms: [ channel, acquisition channel, marketing channel ]
 
   channel_group:
     sql: '"CHANNEL_GROUP"'
+    label: Channel group
+    description: Paid (Paid search, Partner network), Owned (Organic search, Direct,
+      Email and SMS) or Referral (Pharmacy referral, Practitioner referral).
+    synonyms: [ paid channels, channel type ]
 
 measures:
   count:

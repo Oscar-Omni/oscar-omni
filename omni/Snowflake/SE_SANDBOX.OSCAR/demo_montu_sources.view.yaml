@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_montu_sources
+label: Sources
+description: Synthetic acquisition sources inside each channel. Names are
+  invented; none is a real partner.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_MONTU_SOURCES
@@ -6,14 +10,22 @@ table_name: DEMO_MONTU_SOURCES
 dimensions:
   source_id:
     sql: '"SOURCE_ID"'
+    label: Source ID
     format: ID
+    description: Stable synthetic id such as SRC-PNW-07. The key the uploaded
+      targets sheet joins on.
+    primary_key: true
 
   source_name:
     sql: '"SOURCE_NAME"'
+    label: Source
+    description: Synthetic source name such as Search clinic terms or Partner group 07.
+    synonyms: [ source, partner, partner group, acquisition source, campaign source ]
 
   channel_id:
     sql: '"CHANNEL_ID"'
     format: ID
+    hidden: true
 
 measures:
   count:

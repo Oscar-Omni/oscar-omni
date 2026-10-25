@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_montu_consults
+label: Consults
+description: One row per synthetic completed telehealth consult, Initial or
+  Follow up. Synthetic data, no patient details.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_MONTU_CONSULTS
@@ -6,27 +10,55 @@ table_name: DEMO_MONTU_CONSULTS
 dimensions:
   consult_id:
     sql: '"CONSULT_ID"'
+    label: Consult ID (synthetic)
     format: ID
+    primary_key: true
 
   consult_date:
     sql: '"CONSULT_DATE"'
+    label: Consult date
 
   month_start:
     sql: '"MONTH_START"'
+    hidden: true
 
   patient_key:
     sql: '"PATIENT_KEY"'
+    label: Patient key (synthetic)
+    description: Synthetic patient key; null for follow ups of patients first seen
+      before July 2024.
 
   state_id:
     sql: '"STATE_ID"'
     format: ID
+    hidden: true
 
   consult_type:
     sql: '"CONSULT_TYPE"'
+    label: Consult type
+    description: Initial (a patient's first ever consult) or Follow up.
+    synonyms: [ follow ups, follow up, initial consult, visit type ]
 
   script_issued:
     sql: '"SCRIPT_ISSUED"'
+    label: Script issued (flag)
+    description: 1 when the consult ended with a prescription.
 
 measures:
   count:
     aggregate_type: count
+
+  consult_count:
+    label: Consults
+    format: number_0
+    description: Completed consults, Initial and Follow up.
+    aggregate_type: count
+    synonyms: [ consults, bookings, appointments, visits ]
+
+  scripts_issued:
+    sql: ${script_issued}
+    label: Scripts issued
+    format: number_0
+    description: Consults that ended with a prescription.
+    aggregate_type: sum
+    synonyms: [ prescriptions, scripts ]

@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_montu_scenarios
+label: Scenarios
+description: Saved scenario slots for the Acquisition Budget Planner app.
+  Assumptions, not results.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_MONTU_SCENARIOS
@@ -6,32 +10,52 @@ table_name: DEMO_MONTU_SCENARIOS
 dimensions:
   scenario_id:
     sql: '"SCENARIO_ID"'
+    label: Scenario ID
     format: ID
+    primary_key: true
 
   scenario_name:
     sql: '"SCENARIO_NAME"'
+    label: Scenario
+    synonyms: [ scenario, slot, plan ]
 
   slot_order:
     sql: '"SLOT_ORDER"'
+    label: Slot order
 
   search_budget_aud:
     sql: '"SEARCH_BUDGET_AUD"'
+    label: Paid search budget per month
+    format: audcurrency_0
 
   pg07_budget_aud:
     sql: '"PG07_BUDGET_AUD"'
+    label: Partner group 07 budget per month
+    format: audcurrency_0
 
   search_cpa_aud:
     sql: '"SEARCH_CPA_AUD"'
+    label: Paid search cost per new patient
+    format: audcurrency_2
 
   pg07_cpa_aud:
     sql: '"PG07_CPA_AUD"'
+    label: Partner group 07 cost per new patient
+    format: audcurrency_2
 
   search_repeat_pct:
     sql: '"SEARCH_REPEAT_PCT"'
+    label: Paid search 60 day repeat rate (%)
 
   pg07_repeat_pct:
     sql: '"PG07_REPEAT_PCT"'
+    label: Partner group 07 60 day repeat rate (%)
 
 measures:
   count:
+    aggregate_type: count
+
+  scenario_count:
+    label: Scenario slots
+    format: number_0
     aggregate_type: count

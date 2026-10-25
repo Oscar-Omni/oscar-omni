@@ -1,0 +1,64 @@
+base_view: se_sandbox_oscar__demo_montu_consults
+label: Consults
+group_label: Montu
+description: Synthetic completed telehealth consults and scripts issued by
+  month, type and state. One row per consult. Synthetic data, not Montu figures.
+
+joins:
+  se_sandbox_oscar__demo_montu_months: {}
+  se_sandbox_oscar__demo_montu_states: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_montu_consults
+    join_to_view: se_sandbox_oscar__demo_montu_months
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_montu_consults.month_start} =
+      ${se_sandbox_oscar__demo_montu_months.month_start}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_montu_consults
+    join_to_view: se_sandbox_oscar__demo_montu_states
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_montu_consults.state_id} =
+      ${se_sandbox_oscar__demo_montu_states.state_id}
+    relationship_type: many_to_one
+
+ai_context: |-
+  Synthetic telehealth activity for an Omni demo: one row per completed consult, July 2024 to September 2026. Every figure is synthetic, never Montu's real numbers, and there are no patient, condition or product details.
+
+  Consults and bookings mean consult_count. Consult type is Initial (a patient's first ever consult) or Follow up; follow ups means consult_type = 'Follow up'. Prescriptions and scripts mean scripts_issued, the sum of script_issued. Follow ups of patients first seen before July 2024 have no patient_key. New patients, CAC and repeat rate are not in this topic; they live in Patient Growth, so never count new patients from consults.
+
+  Use months.month_start, the consult month, for every date filter with an exclusive end: 1 April to 30 September 2026 is month_start between 2026-04-01 and 2026-10-01. To compare two periods run the same query once per period and show both with the change.
+
+sample_queries:
+  consults_by_month_and_type:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_montu_months.month_start[month]",
+          se_sandbox_oscar__demo_montu_consults.consult_type,
+          se_sandbox_oscar__demo_montu_consults.consult_count
+        ]
+      base_view: se_sandbox_oscar__demo_montu_consults
+      filters:
+        se_sandbox_oscar__demo_montu_months.month_start:
+          between_dates: [ 2025-04-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_montu_months.month_start[month]
+      topic: demo_montu_consults
+    prompt: How many consults and follow ups did we run each month from April 2025
+      to September 2026?
+  scripts_current:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_montu_consults.consult_count,
+          se_sandbox_oscar__demo_montu_consults.scripts_issued
+        ]
+      base_view: se_sandbox_oscar__demo_montu_consults
+      filters:
+        se_sandbox_oscar__demo_montu_months.month_start:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+      topic: demo_montu_consults
+    prompt: How many consults and scripts were issued from 1 April 2026 to 30
+      September 2026?

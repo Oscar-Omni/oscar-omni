@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__demo_montu_months
+label: Months
+description: One row per calendar month, July 2024 to September 2026. The shared
+  date for every filter. For new patients it is the cohort month (month of first
+  consult); for consults it is the consult month.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_MONTU_MONTHS
@@ -6,6 +11,10 @@ table_name: DEMO_MONTU_MONTHS
 dimensions:
   month_start:
     sql: '"MONTH_START"'
+    label: Month
+    description: First day of the month. Use this for every date filter.
+    primary_key: true
+    synonyms: [ cohort, cohort month, first consult month, period ]
 
 measures:
   count:

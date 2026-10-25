@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__demo_montu_new_patients
+label: New patients
+description: One row per synthetic new patient on the date of their first ever
+  consult. Synthetic data for an Omni demo, not Montu figures, no patient
+  details.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_MONTU_NEW_PATIENTS
@@ -6,40 +11,118 @@ table_name: DEMO_MONTU_NEW_PATIENTS
 dimensions:
   patient_key:
     sql: '"PATIENT_KEY"'
+    label: Patient key (synthetic)
+    description: Synthetic key. No name, date of birth, contact detail, condition or
+      product is held.
+    primary_key: true
 
   first_consult_date:
     sql: '"FIRST_CONSULT_DATE"'
+    label: First consult date
+    description: Date of the patient's Initial consult.
 
   month_start:
     sql: '"MONTH_START"'
+    label: Cohort month (raw)
+    hidden: true
 
   state_id:
     sql: '"STATE_ID"'
     format: ID
+    hidden: true
 
   channel_id:
     sql: '"CHANNEL_ID"'
     format: ID
+    hidden: true
 
   source_id:
     sql: '"SOURCE_ID"'
     format: ID
+    hidden: true
 
   acquisition_cost:
     sql: '"ACQUISITION_COST"'
+    label: Acquisition cost per patient
+    format: audcurrency_2
+    description: Marketing cost attributed to this new patient, AUD. 0 for
+      Practitioner referral.
 
   eligible_60d:
     sql: '"ELIGIBLE_60D"'
+    label: Eligible for 60 day repeat (flag)
+    description: 1 when the first consult is on or before 31 July 2026, so a full 60
+      days of follow up is observed.
 
   returned_60d:
     sql: '"RETURNED_60D"'
+    label: Returned within 60 days (flag)
+    description: 1 when an eligible patient had a Follow up consult within 60 days
+      of the first consult.
 
   eligible_acquisition_cost:
     sql: '"ELIGIBLE_ACQUISITION_COST"'
+    label: Eligible acquisition cost per patient
+    format: audcurrency_2
+    description: acquisition_cost x eligible_60d, so cost and retained patients
+      cover the same cohorts.
 
   days_to_follow_up:
     sql: '"DAYS_TO_FOLLOW_UP"'
+    label: Days to follow up
+    description: Days from the first consult to the first Follow up consult; null
+      when there is none by 30 September 2026.
+    synonyms: [ time to return, days to return ]
 
 measures:
   count:
     aggregate_type: count
+
+  new_patient_count:
+    label: New patients
+    format: number_0
+    description: Patients whose first ever consult falls in the period. One row per
+      patient, so never count consults for this.
+    aggregate_type: count
+    synonyms: [ new patients, patients acquired, first consults ]
+
+  total_acquisition_cost:
+    sql: ${acquisition_cost}
+    label: Acquisition cost
+    format: audcurrency_0
+    description: Marketing cost attributed to new patients, AUD.
+    aggregate_type: sum
+    synonyms: [ marketing cost, acquisition spend ]
+
+  cac:
+    sql: ${total_acquisition_cost} / NULLIF(${new_patient_count}, 0)
+    label: CAC
+    format: audcurrency_2
+    description: Blended customer acquisition cost, sum(acquisition_cost) / count of
+      new patients. A ratio of sums; never average channel or monthly CACs.
+    synonyms: [ customer acquisition cost, cost per new patient, cost per acquisition ]
+
+  eligible_patients:
+    sql: ${eligible_60d}
+    label: Eligible patients
+    format: number_0
+    description: New patients with a full 60 days of follow up observed (first
+      consult on or before 31 July 2026).
+    aggregate_type: sum
+
+  returned_patients:
+    sql: ${returned_60d}
+    label: Returned patients
+    format: number_0
+    description: Eligible new patients who had a Follow up consult within 60 days.
+    aggregate_type: sum
+    synonyms: [ came back, retained patients, returning patients ]
+
+  repeat_rate_60d:
+    sql: ${returned_patients} / NULLIF(${eligible_patients}, 0)
+    label: 60 day repeat rate
+    format: percent_1
+    description: sum(returned_60d) / sum(eligible_60d). Share of new patients who
+      came back within 60 days, counting only patients with 60 days observed, so
+      it is blank, never zero, for cohorts after July 2026.
+    synonyms: [ repeat rate, retention, return rate, continuity of care ]

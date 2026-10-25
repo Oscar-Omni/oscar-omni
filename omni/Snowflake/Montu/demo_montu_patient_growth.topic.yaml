@@ -1,0 +1,150 @@
+base_view: se_sandbox_oscar__demo_montu_new_patients
+label: Patient Growth
+group_label: Montu
+description: Synthetic new patients, acquisition cost, CAC and 60 day repeat
+  rate by month, channel, source and state. One row per new patient. Synthetic
+  data, not Montu figures.
+
+joins:
+  se_sandbox_oscar__demo_montu_months: {}
+  se_sandbox_oscar__demo_montu_states: {}
+  se_sandbox_oscar__demo_montu_channels: {}
+  se_sandbox_oscar__demo_montu_sources: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_montu_new_patients
+    join_to_view: se_sandbox_oscar__demo_montu_months
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_montu_new_patients.month_start} =
+      ${se_sandbox_oscar__demo_montu_months.month_start}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_montu_new_patients
+    join_to_view: se_sandbox_oscar__demo_montu_states
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_montu_new_patients.state_id} =
+      ${se_sandbox_oscar__demo_montu_states.state_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_montu_new_patients
+    join_to_view: se_sandbox_oscar__demo_montu_channels
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_montu_new_patients.channel_id} =
+      ${se_sandbox_oscar__demo_montu_channels.channel_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_montu_new_patients
+    join_to_view: se_sandbox_oscar__demo_montu_sources
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_montu_new_patients.source_id} =
+      ${se_sandbox_oscar__demo_montu_sources.source_id}
+    relationship_type: many_to_one
+
+ai_context: |-
+  Synthetic telehealth acquisition data for an Omni demo: one row per new patient on the date of their first ever consult, July 2024 to September 2026. Every figure is synthetic and must never be described as Montu's real numbers; there are no patient details, conditions or products, so never invent clinical or product explanations.
+
+  New patients means new_patient_count, counted once per patient here, never from consults. CAC means cac, always sum(acquisition_cost) / count of new patients; never average channel or monthly CACs. Acquisition cost means total_acquisition_cost. Repeat rate, retention and came back mean repeat_rate_60d: sum(returned_60d) / sum(eligible_60d). Only patients with a full 60 days observed are eligible (first consult on or before 31 July 2026), so August and September 2026 cohorts drop out of the rate automatically; never divide by all new patients and never average rates. Time to return means days_to_follow_up.
+
+  Cohort month means months.month_start, the month of the first consult. Use months.month_start for every date filter with an exclusive end: 1 April to 30 September 2026 is month_start between 2026-04-01 and 2026-10-01. Channel means channels.channel_name; paid channels means channel_group = 'Paid'. Source or partner means sources.source_name. State means states.state_name.
+
+  Analysis guidance. To compare two periods, run the same query once per period with identical filters and show both side by side with the change, stating both date ranges explicitly. To explain a change in the overall repeat rate, split by channel first, then split the channel that moved most by source, and report each source's new patients and repeat rate; then rerun the overall rate excluding the source that explains the drop so cause and trend are separated. Lead with the headline numbers and keep answers short.
+
+sample_queries:
+  new_patients_by_channel_current:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_montu_channels.channel_name,
+          se_sandbox_oscar__demo_montu_new_patients.new_patient_count
+        ]
+      base_view: se_sandbox_oscar__demo_montu_new_patients
+      filters:
+        se_sandbox_oscar__demo_montu_months.month_start:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_montu_new_patients.new_patient_count
+          desc: true
+      topic: demo_montu_patient_growth
+    prompt: How many new patients did we see from 1 April 2026 to 30 September 2026
+      by acquisition channel?
+  new_patients_by_channel_prior:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_montu_channels.channel_name,
+          se_sandbox_oscar__demo_montu_new_patients.new_patient_count
+        ]
+      base_view: se_sandbox_oscar__demo_montu_new_patients
+      filters:
+        se_sandbox_oscar__demo_montu_months.month_start:
+          between_dates: [ 2025-04-01, 2025-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_montu_new_patients.new_patient_count
+          desc: true
+      topic: demo_montu_patient_growth
+    prompt: How many new patients did we see from 1 April 2025 to 30 September 2025
+      by acquisition channel?
+  repeat_rate_by_channel_current:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_montu_channels.channel_name,
+          se_sandbox_oscar__demo_montu_new_patients.eligible_patients,
+          se_sandbox_oscar__demo_montu_new_patients.repeat_rate_60d
+        ]
+      base_view: se_sandbox_oscar__demo_montu_new_patients
+      filters:
+        se_sandbox_oscar__demo_montu_months.month_start:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_montu_new_patients.repeat_rate_60d
+      topic: demo_montu_patient_growth
+    prompt: What was the 60 day repeat rate by channel from 1 April 2026 to 30
+      September 2026?
+  repeat_rate_by_source_current:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_montu_sources.source_name,
+          se_sandbox_oscar__demo_montu_new_patients.new_patient_count,
+          se_sandbox_oscar__demo_montu_new_patients.repeat_rate_60d
+        ]
+      base_view: se_sandbox_oscar__demo_montu_new_patients
+      filters:
+        se_sandbox_oscar__demo_montu_months.month_start:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_montu_channels.channel_name:
+          is: Partner network
+      sorts:
+        - field: se_sandbox_oscar__demo_montu_new_patients.repeat_rate_60d
+      topic: demo_montu_patient_growth
+    prompt: Which Partner network sources had the lowest 60 day repeat rate from 1
+      April 2026 to 30 September 2026?
+  repeat_rate_excluding_partner_group_07:
+    query:
+      fields: [ se_sandbox_oscar__demo_montu_new_patients.repeat_rate_60d ]
+      base_view: se_sandbox_oscar__demo_montu_new_patients
+      filters:
+        se_sandbox_oscar__demo_montu_months.month_start:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_montu_sources.source_name:
+          not: Partner group 07
+      topic: demo_montu_patient_growth
+    prompt: What was the 60 day repeat rate from 1 April 2026 to 30 September 2026
+      excluding Partner group 07?
+  cac_by_month:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_montu_months.month_start[month]",
+          se_sandbox_oscar__demo_montu_new_patients.new_patient_count,
+          se_sandbox_oscar__demo_montu_new_patients.cac
+        ]
+      base_view: se_sandbox_oscar__demo_montu_new_patients
+      filters:
+        se_sandbox_oscar__demo_montu_months.month_start:
+          between_dates: [ 2025-01-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_montu_months.month_start[month]
+      topic: demo_montu_patient_growth
+    prompt: What is CAC by month from January 2025 to September 2026?

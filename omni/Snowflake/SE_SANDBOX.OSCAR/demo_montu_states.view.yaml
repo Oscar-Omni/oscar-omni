@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_montu_states
+label: States
+description: Australian states and territories.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_MONTU_STATES
@@ -7,9 +10,14 @@ dimensions:
   state_id:
     sql: '"STATE_ID"'
     format: ID
+    hidden: true
+    primary_key: true
 
   state_name:
     sql: '"STATE_NAME"'
+    label: State
+    description: Full state or territory name, for example Queensland or New South Wales.
+    synonyms: [ state, territory, region, jurisdiction ]
 
 measures:
   count:
