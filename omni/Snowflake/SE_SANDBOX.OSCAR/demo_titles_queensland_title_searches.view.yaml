@@ -1,0 +1,28 @@
+# Reference this view as se_sandbox_oscar__demo_titles_queensland_title_searches
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_TITLES_QUEENSLAND_TITLE_SEARCHES
+
+dimensions:
+  search_date:
+    sql: '"SEARCH_DATE"'
+
+  month_start:
+    sql: '"MONTH_START"'
+
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  search_channel:
+    sql: '"SEARCH_CHANNEL"'
+
+  searches:
+    sql: '"SEARCHES"'
+
+  search_fees_aud:
+    sql: '"SEARCH_FEES_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

@@ -1,0 +1,21 @@
+# Reference this view as se_sandbox_oscar__demo_titles_queensland_months
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_TITLES_QUEENSLAND_MONTHS
+
+dimensions:
+  month_start:
+    sql: '"MONTH_START"'
+
+  month_label:
+    sql: '"MONTH_LABEL"'
+
+  financial_year:
+    sql: '"FINANCIAL_YEAR"'
+
+  financial_quarter:
+    sql: '"FINANCIAL_QUARTER"'
+
+measures:
+  count:
+    aggregate_type: count

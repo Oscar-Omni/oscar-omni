@@ -1,0 +1,19 @@
+# Reference this view as se_sandbox_oscar__demo_shippit_merchants
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_SHIPPIT_MERCHANTS
+
+dimensions:
+  merchant_id:
+    sql: '"MERCHANT_ID"'
+    format: ID
+
+  merchant_name:
+    sql: '"MERCHANT_NAME"'
+
+  category:
+    sql: '"CATEGORY"'
+
+measures:
+  count:
+    aggregate_type: count

@@ -1,0 +1,19 @@
+# Reference this view as se_sandbox_oscar__demo_montu_channels
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_MONTU_CHANNELS
+
+dimensions:
+  channel_id:
+    sql: '"CHANNEL_ID"'
+    format: ID
+
+  channel_name:
+    sql: '"CHANNEL_NAME"'
+
+  channel_group:
+    sql: '"CHANNEL_GROUP"'
+
+measures:
+  count:
+    aggregate_type: count

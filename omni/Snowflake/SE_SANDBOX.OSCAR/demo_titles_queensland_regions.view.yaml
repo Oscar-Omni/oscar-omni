@@ -1,0 +1,16 @@
+# Reference this view as se_sandbox_oscar__demo_titles_queensland_regions
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_TITLES_QUEENSLAND_REGIONS
+
+dimensions:
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  region_name:
+    sql: '"REGION_NAME"'
+
+measures:
+  count:
+    aggregate_type: count

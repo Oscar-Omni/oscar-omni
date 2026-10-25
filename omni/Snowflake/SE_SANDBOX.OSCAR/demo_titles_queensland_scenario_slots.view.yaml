@@ -1,0 +1,40 @@
+# Reference this view as se_sandbox_oscar__demo_titles_queensland_scenario_slots
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_TITLES_QUEENSLAND_SCENARIO_SLOTS
+
+dimensions:
+  scenario_id:
+    sql: '"SCENARIO_ID"'
+    format: ID
+
+  scenario_name:
+    sql: '"SCENARIO_NAME"'
+
+  slot_order:
+    sql: '"SLOT_ORDER"'
+
+  scheme_desk_examiners:
+    sql: '"SCHEME_DESK_EXAMINERS"'
+
+  pre_check_share_pct:
+    sql: '"PRE_CHECK_SHARE_PCT"'
+
+  settlements_per_month:
+    sql: '"SETTLEMENTS_PER_MONTH"'
+
+  unchecked_requisition_pct:
+    sql: '"UNCHECKED_REQUISITION_PCT"'
+
+  check_effectiveness_pct:
+    sql: '"CHECK_EFFECTIVENESS_PCT"'
+
+  clearances_per_examiner:
+    sql: '"CLEARANCES_PER_EXAMINER"'
+
+  bau_clearances_per_month:
+    sql: '"BAU_CLEARANCES_PER_MONTH"'
+
+measures:
+  count:
+    aggregate_type: count

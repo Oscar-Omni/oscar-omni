@@ -1,0 +1,22 @@
+# Reference this view as se_sandbox_oscar__demo_titles_queensland_lodgers
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_TITLES_QUEENSLAND_LODGERS
+
+dimensions:
+  lodger_id:
+    sql: '"LODGER_ID"'
+    format: ID
+
+  lodger_name:
+    sql: '"LODGER_NAME"'
+
+  lodger_type:
+    sql: '"LODGER_TYPE"'
+
+  lodger_state:
+    sql: '"LODGER_STATE"'
+
+measures:
+  count:
+    aggregate_type: count

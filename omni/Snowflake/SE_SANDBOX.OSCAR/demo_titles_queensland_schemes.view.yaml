@@ -1,0 +1,26 @@
+# Reference this view as se_sandbox_oscar__demo_titles_queensland_schemes
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_TITLES_QUEENSLAND_SCHEMES
+
+dimensions:
+  scheme_id:
+    sql: '"SCHEME_ID"'
+    format: ID
+
+  scheme_name:
+    sql: '"SCHEME_NAME"'
+
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  lot_count:
+    sql: '"LOT_COUNT"'
+
+  plan_registered_date:
+    sql: '"PLAN_REGISTERED_DATE"'
+
+measures:
+  count:
+    aggregate_type: count

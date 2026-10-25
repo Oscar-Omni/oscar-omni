@@ -1,0 +1,64 @@
+# Reference this view as se_sandbox_oscar__demo_shippit_shipments
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_SHIPPIT_SHIPMENTS
+
+dimensions:
+  shipment_id:
+    sql: '"SHIPMENT_ID"'
+    format: ID
+
+  ship_date:
+    sql: '"SHIP_DATE"'
+
+  merchant_id:
+    sql: '"MERCHANT_ID"'
+    format: ID
+
+  carrier_id:
+    sql: '"CARRIER_ID"'
+    format: ID
+
+  zone_id:
+    sql: '"ZONE_ID"'
+    format: ID
+
+  service_level:
+    sql: '"SERVICE_LEVEL"'
+
+  allocation_rule:
+    sql: '"ALLOCATION_RULE"'
+
+  promised_date:
+    sql: '"PROMISED_DATE"'
+
+  delivered_date:
+    sql: '"DELIVERED_DATE"'
+
+  shipment_count:
+    sql: '"SHIPMENT_COUNT"'
+
+  is_delivered:
+    sql: '"IS_DELIVERED"'
+
+  is_on_time:
+    sql: '"IS_ON_TIME"'
+
+  is_failed_attempt:
+    sql: '"IS_FAILED_ATTEMPT"'
+
+  is_returned:
+    sql: '"IS_RETURNED"'
+
+  transit_days:
+    sql: '"TRANSIT_DAYS"'
+
+  days_late:
+    sql: '"DAYS_LATE"'
+
+  carrier_cost_aud:
+    sql: '"CARRIER_COST_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

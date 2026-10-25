@@ -1,0 +1,37 @@
+# Reference this view as se_sandbox_oscar__demo_montu_scenarios
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_MONTU_SCENARIOS
+
+dimensions:
+  scenario_id:
+    sql: '"SCENARIO_ID"'
+    format: ID
+
+  scenario_name:
+    sql: '"SCENARIO_NAME"'
+
+  slot_order:
+    sql: '"SLOT_ORDER"'
+
+  search_budget_aud:
+    sql: '"SEARCH_BUDGET_AUD"'
+
+  pg07_budget_aud:
+    sql: '"PG07_BUDGET_AUD"'
+
+  search_cpa_aud:
+    sql: '"SEARCH_CPA_AUD"'
+
+  pg07_cpa_aud:
+    sql: '"PG07_CPA_AUD"'
+
+  search_repeat_pct:
+    sql: '"SEARCH_REPEAT_PCT"'
+
+  pg07_repeat_pct:
+    sql: '"PG07_REPEAT_PCT"'
+
+measures:
+  count:
+    aggregate_type: count

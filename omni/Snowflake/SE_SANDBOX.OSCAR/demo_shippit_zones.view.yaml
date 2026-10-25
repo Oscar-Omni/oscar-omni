@@ -1,0 +1,22 @@
+# Reference this view as se_sandbox_oscar__demo_shippit_zones
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_SHIPPIT_ZONES
+
+dimensions:
+  zone_id:
+    sql: '"ZONE_ID"'
+    format: ID
+
+  zone_name:
+    sql: '"ZONE_NAME"'
+
+  state_name:
+    sql: '"STATE_NAME"'
+
+  country:
+    sql: '"COUNTRY"'
+
+measures:
+  count:
+    aggregate_type: count

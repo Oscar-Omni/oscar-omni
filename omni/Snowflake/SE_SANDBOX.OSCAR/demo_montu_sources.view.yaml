@@ -1,0 +1,20 @@
+# Reference this view as se_sandbox_oscar__demo_montu_sources
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_MONTU_SOURCES
+
+dimensions:
+  source_id:
+    sql: '"SOURCE_ID"'
+    format: ID
+
+  source_name:
+    sql: '"SOURCE_NAME"'
+
+  channel_id:
+    sql: '"CHANNEL_ID"'
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

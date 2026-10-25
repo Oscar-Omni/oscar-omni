@@ -1,0 +1,77 @@
+# Reference this view as se_sandbox_oscar__demo_titles_queensland_dealings
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_TITLES_QUEENSLAND_DEALINGS
+
+dimensions:
+  dealing_id:
+    sql: '"DEALING_ID"'
+    format: ID
+
+  lodgement_case_id:
+    sql: '"LODGEMENT_CASE_ID"'
+    format: ID
+
+  lodged_date:
+    sql: '"LODGED_DATE"'
+
+  month_start:
+    sql: '"MONTH_START"'
+
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  lodger_id:
+    sql: '"LODGER_ID"'
+    format: ID
+
+  lodger_state:
+    sql: '"LODGER_STATE"'
+
+  scheme_id:
+    sql: '"SCHEME_ID"'
+    format: ID
+
+  dealing_type:
+    sql: '"DEALING_TYPE"'
+
+  channel:
+    sql: '"CHANNEL"'
+
+  status:
+    sql: '"STATUS"'
+
+  requisition_reason:
+    sql: '"REQUISITION_REASON"'
+
+  dealing_count:
+    sql: '"DEALING_COUNT"'
+
+  requisitioned:
+    sql: '"REQUISITIONED"'
+
+  registered:
+    sql: '"REGISTERED"'
+
+  within_target:
+    sql: '"WITHIN_TARGET"'
+
+  days_to_register:
+    sql: '"DAYS_TO_REGISTER"'
+
+  target_days:
+    sql: '"TARGET_DAYS"'
+
+  case_count:
+    sql: '"CASE_COUNT"'
+
+  case_requisitioned:
+    sql: '"CASE_REQUISITIONED"'
+
+  fee_aud:
+    sql: '"FEE_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

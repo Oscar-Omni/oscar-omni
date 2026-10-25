@@ -1,0 +1,45 @@
+# Reference this view as se_sandbox_oscar__demo_montu_new_patients
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_MONTU_NEW_PATIENTS
+
+dimensions:
+  patient_key:
+    sql: '"PATIENT_KEY"'
+
+  first_consult_date:
+    sql: '"FIRST_CONSULT_DATE"'
+
+  month_start:
+    sql: '"MONTH_START"'
+
+  state_id:
+    sql: '"STATE_ID"'
+    format: ID
+
+  channel_id:
+    sql: '"CHANNEL_ID"'
+    format: ID
+
+  source_id:
+    sql: '"SOURCE_ID"'
+    format: ID
+
+  acquisition_cost:
+    sql: '"ACQUISITION_COST"'
+
+  eligible_60d:
+    sql: '"ELIGIBLE_60D"'
+
+  returned_60d:
+    sql: '"RETURNED_60D"'
+
+  eligible_acquisition_cost:
+    sql: '"ELIGIBLE_ACQUISITION_COST"'
+
+  days_to_follow_up:
+    sql: '"DAYS_TO_FOLLOW_UP"'
+
+measures:
+  count:
+    aggregate_type: count
