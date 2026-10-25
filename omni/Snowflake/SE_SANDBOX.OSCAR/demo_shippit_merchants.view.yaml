@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_shippit_merchants
+label: Merchants
+description: Invented online retailers shipping through the platform. Not real retailers.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_SHIPPIT_MERCHANTS
@@ -6,14 +9,22 @@ table_name: DEMO_SHIPPIT_MERCHANTS
 dimensions:
   merchant_id:
     sql: '"MERCHANT_ID"'
+    label: Merchant ID
     format: ID
+    description: Merchant key. An embedded merchant view would scope on this field.
+    primary_key: true
 
   merchant_name:
     sql: '"MERCHANT_NAME"'
+    label: Merchant
+    synonyms: [ merchant, retailer, store, customer ]
 
   category:
     sql: '"CATEGORY"'
+    label: Merchant category
+    synonyms: [ category, vertical ]
 
 measures:
   count:
+    hidden: true
     aggregate_type: count

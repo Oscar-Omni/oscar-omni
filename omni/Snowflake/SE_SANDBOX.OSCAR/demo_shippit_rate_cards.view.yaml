@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_shippit_rate_cards
+label: Rate cards
+description: One row per month, carrier, zone and service level the carrier
+  offers, synthetic.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_SHIPPIT_RATE_CARDS
@@ -6,27 +10,75 @@ table_name: DEMO_SHIPPIT_RATE_CARDS
 dimensions:
   rate_month:
     sql: '"RATE_MONTH"'
+    label: Rate month
+    description: First of the month the rate applies to.
 
   carrier_id:
     sql: '"CARRIER_ID"'
+    label: Carrier ID
     format: ID
 
   zone_id:
     sql: '"ZONE_ID"'
+    label: Zone ID
     format: ID
 
   service_level:
     sql: '"SERVICE_LEVEL"'
+    label: Service level
 
   base_rate_aud:
     sql: '"BASE_RATE_AUD"'
+    label: Base rate AUD
+    format: audcurrency_2
+    description: Contracted base rate per parcel before fuel levy. Reviewed each 1 July.
+    synonyms: [ rate card, contract rate ]
 
   fuel_levy_pct:
     sql: '"FUEL_LEVY_PCT"'
+    label: Fuel levy
+    format: percent_1
+    description: Monthly fuel levy as a share of the base rate.
+    synonyms: [ fuel surcharge ]
 
   effective_rate_aud:
     sql: '"EFFECTIVE_RATE_AUD"'
+    label: Effective rate AUD
+    format: audcurrency_2
+    description: Base rate x (1 + fuel levy), per parcel.
+
+  rate_card_key:
+    sql: TO_VARCHAR("RATE_MONTH") || '|' || "CARRIER_ID" || '|' || "ZONE_ID" || '|'
+      || "SERVICE_LEVEL"
+    hidden: true
+    primary_key: true
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
+
+  avg_base_rate:
+    sql: ${base_rate_aud}
+    label: Average base rate
+    format: audcurrency_2
+    description: Average rate card base rate per parcel. A rate, not a spend; read
+      it by carrier, zone and service level.
+    aggregate_type: average
+    synonyms: [ base rate ]
+
+  avg_fuel_levy:
+    sql: ${fuel_levy_pct}
+    label: Average fuel levy
+    format: percent_1
+    aggregate_type: average
+    synonyms: [ fuel levy, fuel surcharge ]
+
+  avg_effective_rate:
+    sql: ${effective_rate_aud}
+    label: Average effective rate
+    format: audcurrency_2
+    description: Average rate card effective rate per parcel. A rate, not a spend;
+      read it by carrier, zone and service level. Never sum rates.
+    aggregate_type: average
+    synonyms: [ effective rate, all in rate ]

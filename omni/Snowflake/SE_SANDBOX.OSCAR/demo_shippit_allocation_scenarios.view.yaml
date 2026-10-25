@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_shippit_allocation_scenarios
+label: Allocation scenarios
+description: Four scenario slots for the Allocation Rule Planner app. Not delivery data.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_SHIPPIT_ALLOCATION_SCENARIOS
@@ -6,32 +9,47 @@ table_name: DEMO_SHIPPIT_ALLOCATION_SCENARIOS
 dimensions:
   scenario_id:
     sql: '"SCENARIO_ID"'
+    label: Scenario ID
     format: ID
+    primary_key: true
+    synonyms: [ slot ]
 
   scenario_name:
     sql: '"SCENARIO_NAME"'
+    label: Scenario
+    synonyms: [ scenario ]
 
   is_baseline:
     sql: '"IS_BASELINE"'
+    label: Is baseline
 
   bluegum_share_cap_pct:
     sql: '"BLUEGUM_SHARE_CAP_PCT"'
+    label: Bluegum share cap pct
 
   on_time_floor_pct:
     sql: '"ON_TIME_FLOOR_PCT"'
+    label: On time floor pct
 
   recovery_pts_per_10_share:
     sql: '"RECOVERY_PTS_PER_10_SHARE"'
+    label: Recovery points per 10 share
 
   peak_uplift_pct:
     sql: '"PEAK_UPLIFT_PCT"'
+    label: Peak uplift pct
 
   next_best_cost_gap_aud:
     sql: '"NEXT_BEST_COST_GAP_AUD"'
+    label: Next best cost gap AUD
+    format: audcurrency_2
 
   failed_attempt_fee_aud:
     sql: '"FAILED_ATTEMPT_FEE_AUD"'
+    label: Failed attempt fee AUD
+    format: audcurrency_2
 
 measures:
   count:
+    label: Scenarios
     aggregate_type: count

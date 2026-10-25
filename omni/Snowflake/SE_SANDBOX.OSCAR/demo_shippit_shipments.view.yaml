@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_shippit_shipments
+label: Shipments
+description: One row per parcel shipped (one label), synthetic. Dated by ship_date.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_SHIPPIT_SHIPMENTS
@@ -6,59 +9,196 @@ table_name: DEMO_SHIPPIT_SHIPMENTS
 dimensions:
   shipment_id:
     sql: '"SHIPMENT_ID"'
+    label: Shipment ID
     format: ID
+    primary_key: true
+    synonyms: [ parcel id, consignment, label ]
 
   ship_date:
     sql: '"SHIP_DATE"'
+    label: Ship date
+    description: Date the parcel was handed to the carrier. The date field for every
+      parcel question.
+    synonyms: [ dispatch date, shipped date ]
 
   merchant_id:
     sql: '"MERCHANT_ID"'
+    label: Merchant ID
     format: ID
+    hidden: true
 
   carrier_id:
     sql: '"CARRIER_ID"'
+    label: Carrier ID
     format: ID
 
   zone_id:
     sql: '"ZONE_ID"'
+    label: Zone ID
     format: ID
+    hidden: true
 
   service_level:
     sql: '"SERVICE_LEVEL"'
+    label: Service level
+    description: Standard, Express or Same day. Same day only in six metro zones.
+    synonyms: [ service, delivery speed ]
 
   allocation_rule:
     sql: '"ALLOCATION_RULE"'
+    label: Allocation rule
+    description: Rule that picked the carrier for this parcel. Cheapest, Fastest or
+      Preferred carrier.
+    synonyms: [ carrier allocation, rule ]
 
   promised_date:
     sql: '"PROMISED_DATE"'
+    label: Promised date
+    description: Delivery date promised to the receiver at checkout (the ETA). On
+      time is measured against this.
+    synonyms: [ ETA, delivery promise, estimated delivery date ]
 
   delivered_date:
     sql: '"DELIVERED_DATE"'
+    label: Delivered date
+    description: Date delivered to the receiver. Empty when returned to sender or lost.
 
   shipment_count:
     sql: '"SHIPMENT_COUNT"'
+    hidden: true
 
   is_delivered:
     sql: '"IS_DELIVERED"'
+    label: Is delivered
+    description: 1 when delivered to the receiver, else 0.
 
   is_on_time:
     sql: '"IS_ON_TIME"'
+    label: Is on time
+    description: 1 when delivered on or before the promised date, else 0.
 
   is_failed_attempt:
     sql: '"IS_FAILED_ATTEMPT"'
+    label: Is failed first attempt
+    description: 1 when the first delivery attempt failed (carded or redelivered).
 
   is_returned:
     sql: '"IS_RETURNED"'
+    label: Is returned
+    description: 1 when the receiver returned the parcel to the merchant.
 
   transit_days:
     sql: '"TRANSIT_DAYS"'
+    label: Transit days
+    description: Delivered date minus ship date, in calendar days. Empty when not delivered.
 
   days_late:
     sql: '"DAYS_LATE"'
+    label: Days late
+    description: Days delivered after the promised date, 0 when on time. Empty when
+      not delivered.
+    synonyms: [ lateness, delay ]
 
   carrier_cost_aud:
     sql: '"CARRIER_COST_AUD"'
+    label: Carrier cost AUD
+    format: audcurrency_2
+    description: Carrier charge for this parcel in AUD.
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
+
+  parcels:
+    sql: ${shipment_count}
+    label: Parcels
+    format: number_0
+    description: Parcels shipped.
+    aggregate_type: sum
+    synonyms: [ volume, shipments, parcel count ]
+
+  delivered_parcels:
+    sql: ${is_delivered}
+    label: Delivered parcels
+    format: number_0
+    description: Parcels delivered to the receiver. The denominator of on time rate.
+    aggregate_type: sum
+
+  on_time_parcels:
+    sql: ${is_on_time}
+    label: On time parcels
+    format: number_0
+    description: Parcels delivered on or before the promised date.
+    aggregate_type: sum
+
+  late_parcels:
+    sql: ${is_delivered} - ${is_on_time}
+    label: Late parcels
+    format: number_0
+    description: Delivered parcels that arrived after the promised date.
+    aggregate_type: sum
+    synonyms: [ late deliveries, missed promises ]
+
+  failed_attempts:
+    sql: ${is_failed_attempt}
+    label: Failed first attempts
+    format: number_0
+    description: Parcels whose first delivery attempt failed.
+    aggregate_type: sum
+
+  returned_parcels:
+    sql: ${is_returned}
+    label: Returned parcels
+    format: number_0
+    aggregate_type: sum
+
+  carrier_cost:
+    sql: ${carrier_cost_aud}
+    label: Carrier cost
+    format: audcurrency_0
+    description: Total carrier charges in AUD.
+    aggregate_type: sum
+    synonyms: [ carrier spend, shipping cost, freight spend ]
+
+  total_transit_days:
+    sql: ${transit_days}
+    hidden: true
+    aggregate_type: sum
+
+  on_time_rate:
+    sql: ${on_time_parcels} / NULLIF(${delivered_parcels}, 0)
+    label: On time rate
+    format: percent_1
+    description: sum(is_on_time) / sum(is_delivered). Share of delivered parcels
+      that arrived on or before the date promised at checkout. Never average
+      zone, carrier or merchant rates.
+    synonyms: [ on time, OTD, DoT, delivered on time, on time delivery rate ]
+
+  failed_attempt_rate:
+    sql: ${failed_attempts} / NULLIF(${parcels}, 0)
+    label: Failed first attempt rate
+    format: percent_1
+    description: sum(is_failed_attempt) / sum(shipment_count). Divides by all parcels.
+    synonyms: [ failed delivery rate, carded rate, failed attempt rate ]
+
+  return_rate:
+    sql: ${returned_parcels} / NULLIF(${parcels}, 0)
+    label: Return rate
+    format: percent_1
+    description: sum(is_returned) / sum(shipment_count). Divides by all parcels.
+    synonyms: [ returns ]
+
+  cost_per_parcel:
+    sql: ${carrier_cost} / NULLIF(${parcels}, 0)
+    label: Cost per parcel
+    format: audcurrency_2
+    description: sum(carrier_cost_aud) / sum(shipment_count), in AUD.
+    synonyms: [ CPP, cost per shipment, average parcel cost ]
+
+  avg_transit_days:
+    sql: ${total_transit_days} / NULLIF(${delivered_parcels}, 0)
+    label: Average transit days
+    format: number_1
+    description: sum(transit_days) / sum(is_delivered), delivered parcels only.
+    synonyms: [ transit time, delivery time ]

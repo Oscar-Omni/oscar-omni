@@ -1,0 +1,26 @@
+base_view: se_sandbox_oscar__demo_shippit_allocation_scenarios
+label: Allocation scenarios
+group_label: Shippit
+description: Scenario store for the Allocation Rule Planner app. Four slots with
+  seeded assumptions. Not delivery data.
+
+joins: {}
+
+ai_context: "Four app scenario slots for the Allocation Rule Planner, keyed on
+  scenario_id, with seeded assumption values and a scenario_json input column
+  the app saves into. Scenario means scenario_name; slot means scenario_id. This
+  is not delivery data: never use it to answer questions about parcels, on time
+  or cost; use the shipments topic for those."
+
+sample_queries:
+  scenario_slots:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_shippit_allocation_scenarios.scenario_id,
+          se_sandbox_oscar__demo_shippit_allocation_scenarios.scenario_name,
+          se_sandbox_oscar__demo_shippit_allocation_scenarios.bluegum_share_cap_pct
+        ]
+      base_view: se_sandbox_oscar__demo_shippit_allocation_scenarios
+      topic: demo_shippit_allocation_scenarios
+    prompt: Which scenario slots exist and what Bluegum share cap does each hold?

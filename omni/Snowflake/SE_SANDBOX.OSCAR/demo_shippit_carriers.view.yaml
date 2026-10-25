@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_shippit_carriers
+label: Carriers
+description: Invented carriers. Not real companies.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_SHIPPIT_CARRIERS
@@ -6,11 +9,16 @@ table_name: DEMO_SHIPPIT_CARRIERS
 dimensions:
   carrier_id:
     sql: '"CARRIER_ID"'
+    label: Carrier ID
     format: ID
+    primary_key: true
 
   carrier_name:
     sql: '"CARRIER_NAME"'
+    label: Carrier
+    synonyms: [ carrier, courier, delivery partner ]
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
