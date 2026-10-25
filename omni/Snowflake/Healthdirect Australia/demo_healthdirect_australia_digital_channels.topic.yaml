@@ -1,0 +1,68 @@
+base_view: se_sandbox_oscar__demo_healthdirect_australia_digital_sessions
+label: Digital Channels
+group_label: Healthdirect Australia
+description: Daily website sessions by region and channel - health information
+  pages, Service Finder and Symptom Checker. Synthetic data.
+
+joins:
+  se_sandbox_oscar__demo_healthdirect_australia_regions: {}
+  se_sandbox_oscar__demo_healthdirect_australia_months: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_healthdirect_australia_digital_sessions
+    join_to_view: se_sandbox_oscar__demo_healthdirect_australia_regions
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_healthdirect_australia_digital_sessions.region_id}
+      = ${se_sandbox_oscar__demo_healthdirect_australia_regions.region_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_healthdirect_australia_digital_sessions
+    join_to_view: se_sandbox_oscar__demo_healthdirect_australia_months
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_healthdirect_australia_digital_sessions.month_start}
+      = ${se_sandbox_oscar__demo_healthdirect_australia_months.month_start}
+    relationship_type: many_to_one
+
+ai_context: |-
+  Synthetic daily aggregate of website sessions by region and channel, July 2024 to September 2026, all 15 regions. Never Healthdirect's real figures.
+
+  Count sessions with session_count, which is sum(sessions); never count rows. Website visits means session_count. Channels are Health information pages, Service Finder and Symptom Checker.
+
+  Use months.month_start for every date filter with an exclusive end: April to September 2026 is 2026-04-01 to 2026-10-01. To compare periods, run the same query per period and show both with the change.
+
+sample_queries:
+  sessions_by_channel_current:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_healthdirect_australia_digital_sessions.channel,
+          se_sandbox_oscar__demo_healthdirect_australia_digital_sessions.session_count
+        ]
+      base_view: se_sandbox_oscar__demo_healthdirect_australia_digital_sessions
+      filters:
+        se_sandbox_oscar__demo_healthdirect_australia_months.month_start:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_healthdirect_australia_digital_sessions.session_count
+          desc: true
+      topic: demo_healthdirect_australia_digital_channels
+    prompt: How many digital sessions did each channel have in April to September 2026?
+  symptom_checker_by_month_2026:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_healthdirect_australia_months.month_start[m\
+            onth]",
+          se_sandbox_oscar__demo_healthdirect_australia_digital_sessions.session_count
+        ]
+      base_view: se_sandbox_oscar__demo_healthdirect_australia_digital_sessions
+      filters:
+        se_sandbox_oscar__demo_healthdirect_australia_months.month_start:
+          between_dates: [ 2026-01-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_healthdirect_australia_digital_sessions.channel:
+          is: Symptom Checker
+      sorts:
+        - field: se_sandbox_oscar__demo_healthdirect_australia_digital_sessions.session_count
+          desc: true
+      topic: demo_healthdirect_australia_digital_channels
+    prompt: Which month had the most Symptom Checker sessions in 2026?

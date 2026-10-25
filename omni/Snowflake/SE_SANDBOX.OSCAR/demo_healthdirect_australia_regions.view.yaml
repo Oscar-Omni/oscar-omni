@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_healthdirect_australia_regions
+label: Regions
+description: ABS Greater Capital City Statistical Areas and rest of state areas.
+  Real geography, synthetic performance.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_HEALTHDIRECT_AUSTRALIA_REGIONS
@@ -6,17 +10,30 @@ table_name: DEMO_HEALTHDIRECT_AUSTRALIA_REGIONS
 dimensions:
   region_id:
     sql: '"REGION_ID"'
+    label: Region ID
     format: ID
+    primary_key: true
 
   region:
     sql: '"REGION"'
+    label: Region
+    description: Greater capital city or rest of state area, for example Greater
+      Sydney or Rest of NSW
+    synonyms: [ regional NSW, area, GCCSA ]
 
   state:
     sql: '"STATE"'
+    label: State
+    description: NSW, Vic, Qld, SA, WA, Tas, NT or ACT
+    synonyms: [ jurisdiction, state or territory ]
 
   helpline_served:
     sql: '"HELPLINE_SERVED"'
+    label: Helpline Served
+    description: True where the synthetic helpline takes calls; Vic and Qld have no
+      helpline calls in this data
 
 measures:
   count:
+    hidden: true
     aggregate_type: count

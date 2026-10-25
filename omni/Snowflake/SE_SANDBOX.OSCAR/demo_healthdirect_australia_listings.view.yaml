@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_healthdirect_australia_listings
+label: Listings
+description: One row per synthetic directory listing. Invented names on real
+  geography, never a real service.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_HEALTHDIRECT_AUSTRALIA_LISTINGS
@@ -6,21 +10,39 @@ table_name: DEMO_HEALTHDIRECT_AUSTRALIA_LISTINGS
 dimensions:
   listing_id:
     sql: '"LISTING_ID"'
+    label: Listing ID
     format: ID
+    primary_key: true
 
   listing_name:
     sql: '"LISTING_NAME"'
+    label: Listing Name
+    description: Invented service name such as Ironbark Family Practice
+    synonyms: [ service name, practice, clinic ]
 
   region_id:
     sql: '"REGION_ID"'
+    label: Region ID
     format: ID
+    hidden: true
 
   service_type:
     sql: '"SERVICE_TYPE"'
+    label: Listing Service Type
+    description: General practice, Pharmacy, Mental health support or Urgent care clinic
 
   offers_after_hours:
     sql: '"OFFERS_AFTER_HOURS"'
+    label: Offers After Hours (row flag)
+    group_label: Row flags
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
+
+  listing_count:
+    sql: ${listing_id}
+    label: Listings
+    format: number_0
+    aggregate_type: count_distinct

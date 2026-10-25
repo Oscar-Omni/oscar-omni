@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_healthdirect_australia_service_finder_searches
+label: Service Finder Searches
+description: Daily Service Finder searches by region, service type and time of
+  need. Aggregate rows, synthetic data.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_HEALTHDIRECT_AUSTRALIA_SERVICE_FINDER_SEARCHES
@@ -6,26 +10,73 @@ table_name: DEMO_HEALTHDIRECT_AUSTRALIA_SERVICE_FINDER_SEARCHES
 dimensions:
   search_date:
     sql: '"SEARCH_DATE"'
+    label: Search Date
 
   month_start:
     sql: '"MONTH_START"'
+    label: Search Month (row)
+    description: Join key to Months. Filter on Months > Month instead.
+    hidden: true
 
   region_id:
     sql: '"REGION_ID"'
+    label: Region ID
     format: ID
+    hidden: true
 
   service_type:
     sql: '"SERVICE_TYPE"'
+    label: Service Type
+    description: General practice, Pharmacy, Mental health support or Urgent care clinic
+    synonyms: [ urgent care, GP, service ]
 
   time_of_need:
     sql: '"TIME_OF_NEED"'
+    label: Time of Need
+    description: In hours or After hours, from the open now or open at filter on the
+      search. The time the searcher needs care, not when they searched.
+    synonyms: [ after hours, open now ]
 
   searches:
     sql: '"SEARCHES"'
+    label: Searches (row)
+    hidden: true
 
   searches_no_open_result:
     sql: '"SEARCHES_NO_OPEN_RESULT"'
+    label: No Open Result Searches (row)
+    hidden: true
+
+  search_key:
+    sql: "\"SEARCH_DATE\" || '|' || \"REGION_ID\" || '|' || \"SERVICE_TYPE\" || '|'
+      || \"TIME_OF_NEED\""
+    label: Search Row Key
+    hidden: true
+    primary_key: true
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
+
+  search_count:
+    sql: ${searches}
+    label: Service Finder Searches
+    format: number_0
+    description: Searches, sum(searches). Never count rows.
+    aggregate_type: sum
+    synonyms: [ searches, lookups ]
+
+  no_open_result_searches:
+    sql: ${searches_no_open_result}
+    label: No Open Service Found
+    format: number_0
+    description: Searches that returned no service open at the requested time within 25 km
+    aggregate_type: sum
+
+  no_open_result_rate:
+    sql: ${no_open_result_searches} / NULLIF(${search_count}, 0)
+    label: No Open Result Rate
+    format: percent_1
+    description: sum(searches_no_open_result) / sum(searches)
+    synonyms: [ nothing open, zero results, no results ]

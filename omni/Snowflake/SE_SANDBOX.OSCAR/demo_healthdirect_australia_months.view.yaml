@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_healthdirect_australia_months
+label: Months
+description: Conformed calendar, one row per month from July 2024 to September
+  2026. Use Month for every date filter.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_HEALTHDIRECT_AUSTRALIA_MONTHS
@@ -6,16 +10,30 @@ table_name: DEMO_HEALTHDIRECT_AUSTRALIA_MONTHS
 dimensions:
   month_start:
     sql: '"MONTH_START"'
+    label: Month
+    description: First day of the month. The one date field for every topic and
+      dashboard filter.
+    primary_key: true
+    synonyms: [ month, period, date ]
 
   month_label:
     sql: '"MONTH_LABEL"'
+    label: Month Label
+    order_by_field: month_start
 
   financial_year:
     sql: '"FINANCIAL_YEAR"'
+    label: Financial Year
+    description: Australian financial year ending 30 June, for example FY27 is July
+      2026 to June 2027
+    synonyms: [ FY ]
 
   financial_quarter:
     sql: '"FINANCIAL_QUARTER"'
+    label: Financial Quarter
+    description: For example FY27 Q1 is July to September 2026
 
 measures:
   count:
+    hidden: true
     aggregate_type: count

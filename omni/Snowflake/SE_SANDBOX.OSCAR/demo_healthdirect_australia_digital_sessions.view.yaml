@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_healthdirect_australia_digital_sessions
+label: Digital Sessions
+description: Daily website sessions by region and digital channel. Aggregate
+  rows, synthetic data.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_HEALTHDIRECT_AUSTRALIA_DIGITAL_SESSIONS
@@ -6,20 +10,46 @@ table_name: DEMO_HEALTHDIRECT_AUSTRALIA_DIGITAL_SESSIONS
 dimensions:
   session_date:
     sql: '"SESSION_DATE"'
+    label: Session Date
 
   month_start:
     sql: '"MONTH_START"'
+    label: Session Month (row)
+    description: Join key to Months. Filter on Months > Month instead.
+    hidden: true
 
   region_id:
     sql: '"REGION_ID"'
+    label: Region ID
     format: ID
+    hidden: true
 
   channel:
     sql: '"CHANNEL"'
+    label: Channel
+    description: Health information pages, Service Finder or Symptom Checker
+    synonyms: [ digital channel, Symptom Checker, website section ]
 
   sessions:
     sql: '"SESSIONS"'
+    label: Sessions (row)
+    hidden: true
+
+  session_key:
+    sql: "\"SESSION_DATE\" || '|' || \"REGION_ID\" || '|' || \"CHANNEL\""
+    label: Session Row Key
+    hidden: true
+    primary_key: true
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
+
+  session_count:
+    sql: ${sessions}
+    label: Digital Sessions
+    format: number_0
+    description: Website sessions, sum(sessions). Never count rows.
+    aggregate_type: sum
+    synonyms: [ sessions, website visits, visits ]

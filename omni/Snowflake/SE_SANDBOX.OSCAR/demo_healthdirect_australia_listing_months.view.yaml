@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_healthdirect_australia_listing_months
+label: Listing Months
+description: One row per directory listing per month, as at the first day of the
+  month. Listing counts are a stock; read one month at a time.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_HEALTHDIRECT_AUSTRALIA_LISTING_MONTHS
@@ -6,33 +10,93 @@ table_name: DEMO_HEALTHDIRECT_AUSTRALIA_LISTING_MONTHS
 dimensions:
   listing_id:
     sql: '"LISTING_ID"'
+    label: Listing ID (row)
     format: ID
+    hidden: true
 
   month_start:
     sql: '"MONTH_START"'
+    label: Snapshot Month (row)
+    description: Join key to Months. Filter on Months > Month instead.
+    hidden: true
 
   region_id:
     sql: '"REGION_ID"'
+    label: Region ID
     format: ID
+    hidden: true
 
   service_type:
     sql: '"SERVICE_TYPE"'
+    label: Service Type
+    description: General practice, Pharmacy, Mental health support or Urgent care clinic
+    synonyms: [ urgent care, GP ]
 
   is_after_hours:
     sql: '"IS_AFTER_HOURS"'
+    label: After Hours Listing (row flag)
+    description: 1 when the listing publishes after hours opening times
+    group_label: Row flags
 
   is_hours_current:
     sql: '"IS_HOURS_CURRENT"'
+    label: Hours Current (row flag)
+    description: 1 when opening hours were verified within 365 days before the month
+      start (the demo's synthetic policy). 0 means lapsed or stale hours.
+    group_label: Row flags
+    synonyms: [ stale hours, lapsed, current hours ]
 
   is_after_hours_current:
     sql: '"IS_AFTER_HOURS_CURRENT"'
+    label: After Hours Current (row flag)
+    description: After hours listing with current hours, so shown as open after
+      hours in Service Finder
+    group_label: Row flags
 
   hours_verified_date:
     sql: '"HOURS_VERIFIED_DATE"'
+    label: Hours Last Verified
+    description: Last opening hours verification on or before the month start
+    synonyms: [ last verified, verification date ]
 
   days_since_verified:
     sql: '"DAYS_SINCE_VERIFIED"'
+    label: Days Since Verified
+    format: number_0
+
+  listing_month_key:
+    sql: "\"LISTING_ID\" || '|' || TO_VARCHAR(\"MONTH_START\")"
+    label: Listing Month Key
+    hidden: true
+    primary_key: true
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
+
+  after_hours_listings:
+    sql: ${is_after_hours}
+    label: After Hours Listings
+    format: number_0
+    description: Listings publishing after hours times. A stock - read it for one
+      month, never sum across months.
+    aggregate_type: sum
+    synonyms: [ listings, after hours services ]
+
+  after_hours_listings_current:
+    sql: ${is_after_hours_current}
+    label: After Hours Listings Current
+    format: number_0
+    description: After hours listings with hours verified in the last 365 days. A
+      stock - one month at a time.
+    aggregate_type: sum
+    synonyms: [ current listings ]
+
+  after_hours_listing_currency:
+    sql: ${after_hours_listings_current} / NULLIF(${after_hours_listings}, 0)
+    label: After Hours Listing Currency
+    format: percent_1
+    description: sum(is_after_hours_current) / sum(is_after_hours). Safe across
+      months because it is a ratio.
+    synonyms: [ listing currency, currency ]

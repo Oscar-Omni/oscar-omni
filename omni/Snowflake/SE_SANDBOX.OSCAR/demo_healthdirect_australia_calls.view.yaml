@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_healthdirect_australia_calls
+label: Helpline Calls
+description: One row per helpline call offered to the nurse triage queue.
+  Synthetic data, not Healthdirect's figures.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_HEALTHDIRECT_AUSTRALIA_CALLS
@@ -6,48 +10,165 @@ table_name: DEMO_HEALTHDIRECT_AUSTRALIA_CALLS
 dimensions:
   call_id:
     sql: '"CALL_ID"'
+    label: Call ID
     format: ID
+    primary_key: true
 
   call_date:
     sql: '"CALL_DATE"'
+    label: Call Date
+    description: Day the call was offered. For period filters use Months > Month.
 
   month_start:
     sql: '"MONTH_START"'
+    label: Call Month (row)
+    description: Join key to Months. Filter on Months > Month instead.
+    hidden: true
 
   region_id:
     sql: '"REGION_ID"'
+    label: Region ID
     format: ID
+    hidden: true
 
   hour_band:
     sql: '"HOUR_BAND"'
+    label: Hour Band
+    description: In hours (weekdays 8am to 6pm local) or After hours (evenings,
+      overnight, weekends and public holidays)
+    synonyms: [ after hours, in hours, time of call ]
 
   symptom_group:
     sql: '"SYMPTOM_GROUP"'
+    label: Symptom Group
+    description: Main presenting symptom group
+    synonyms: [ symptoms, presenting problem ]
 
   caller_intent:
     sql: '"CALLER_INTENT"'
+    label: Caller Intent
+    description: What the caller planned to do before the call - Emergency
+      department, Ambulance, GP, Self care or Unsure
+    synonyms: [ caller intention, intended action, planned to go ]
 
   disposition:
     sql: '"DISPOSITION"'
+    label: Triage Outcome
+    description: Triage disposition the caller left with - Call 000, ED now, Urgent
+      care clinic, GP within 24 hours, GP later, Pharmacist or Self care
+    synonyms: [ disposition, triage outcome, advice, outcome ]
 
   call_count:
     sql: '"CALL_COUNT"'
+    label: Call Count (row)
+    group_label: Row flags
+    hidden: true
 
   intended_ed:
     sql: '"INTENDED_ED"'
+    label: Intended ED (row flag)
+    description: 1 when the caller planned to go to an emergency department
+    group_label: Row flags
 
   ed_diverted:
     sql: '"ED_DIVERTED"'
+    label: ED Diverted (row flag)
+    description: 1 when a caller planning ED was advised to care other than Call 000
+      or ED now
+    group_label: Row flags
 
   answered_within_10_min:
     sql: '"ANSWERED_WITHIN_10_MIN"'
+    label: Answered Within 10 Minutes (row flag)
+    group_label: Row flags
 
   wait_seconds:
     sql: '"WAIT_SECONDS"'
+    label: Wait Seconds
+    format: number_0
+    description: Seconds from offer to answer by a nurse
 
   handle_seconds:
     sql: '"HANDLE_SECONDS"'
+    label: Handle Seconds
+    format: number_0
+    description: Seconds the nurse spent on the call, including any GP transfer
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
+
+  helpline_calls:
+    sql: ${call_count}
+    label: Helpline Calls
+    format: number_0
+    description: Helpline calls offered, sum(call_count)
+    aggregate_type: sum
+    synonyms: [ calls, call volume, call count ]
+
+  intended_ed_calls:
+    sql: ${intended_ed}
+    label: Callers Planning ED
+    format: number_0
+    description: Calls where the caller planned to go to an emergency department
+    aggregate_type: sum
+    synonyms: [ callers planning ED, intended ED ]
+
+  ed_diversions:
+    sql: ${ed_diverted}
+    label: Redirected From ED
+    format: number_0
+    description: Callers who planned ED and were advised to a lower level of care
+    aggregate_type: sum
+    synonyms: [ redirected from ED, ED diversions, diverted ]
+
+  answered_within_10_min_calls:
+    sql: ${answered_within_10_min}
+    label: Calls Answered Within 10 Minutes
+    format: number_0
+    aggregate_type: sum
+
+  total_wait_seconds:
+    sql: ${wait_seconds}
+    label: Total Wait Seconds
+    format: number_0
+    hidden: true
+    aggregate_type: sum
+
+  total_handle_seconds:
+    sql: ${handle_seconds}
+    label: Total Handle Seconds
+    format: number_0
+    hidden: true
+    aggregate_type: sum
+
+  ed_diversion_rate:
+    sql: ${ed_diversions} / NULLIF(${intended_ed_calls}, 0)
+    label: ED Diversion Rate
+    format: percent_1
+    description: sum(ed_diverted) / sum(intended_ed). Share of callers planning ED
+      who were advised to care other than Call 000 or ED now. A ratio of sums;
+      never average regional or monthly rates.
+    synonyms: [ ED diversion, ED redirection, diversion rate ]
+
+  answered_within_10_min_rate:
+    sql: ${answered_within_10_min_calls} / NULLIF(${helpline_calls}, 0)
+    label: Answered Within 10 Minutes
+    format: percent_1
+    description: sum(answered_within_10_min) / sum(call_count)
+    synonyms: [ grade of service, answered in 10, service level ]
+
+  avg_wait_minutes:
+    sql: ${total_wait_seconds} / NULLIF(${helpline_calls}, 0) / 60
+    label: Average Wait Minutes
+    format: number_1
+    description: sum(wait_seconds) / sum(call_count) / 60
+    synonyms: [ wait time, speed of answer, ASA ]
+
+  avg_handle_minutes:
+    sql: ${total_handle_seconds} / NULLIF(${helpline_calls}, 0) / 60
+    label: Average Handle Minutes
+    format: number_1
+    description: sum(handle_seconds) / sum(call_count) / 60
+    synonyms: [ handle time, AHT ]

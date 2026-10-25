@@ -1,0 +1,92 @@
+base_view: se_sandbox_oscar__demo_healthdirect_australia_listing_months
+label: Directory Listings
+group_label: Healthdirect Australia
+description: Synthetic directory listings snapshotted on the first of every
+  month, with after hours listing currency and last verification dates.
+
+joins:
+  se_sandbox_oscar__demo_healthdirect_australia_listings: {}
+  se_sandbox_oscar__demo_healthdirect_australia_regions: {}
+  se_sandbox_oscar__demo_healthdirect_australia_months: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_healthdirect_australia_listing_months
+    join_to_view: se_sandbox_oscar__demo_healthdirect_australia_listings
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_healthdirect_australia_listing_months.listing_id}
+      = ${se_sandbox_oscar__demo_healthdirect_australia_listings.listing_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_healthdirect_australia_listing_months
+    join_to_view: se_sandbox_oscar__demo_healthdirect_australia_regions
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_healthdirect_australia_listing_months.region_id}
+      = ${se_sandbox_oscar__demo_healthdirect_australia_regions.region_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_healthdirect_australia_listing_months
+    join_to_view: se_sandbox_oscar__demo_healthdirect_australia_months
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_healthdirect_australia_listing_months.month_start}
+      = ${se_sandbox_oscar__demo_healthdirect_australia_months.month_start}
+    relationship_type: many_to_one
+
+ai_context: |-
+  One row per synthetic directory listing per month, as at the first of the month, July 2024 to September 2026. Listing names are invented; nothing here is a real service or Healthdirect's data.
+
+  Listing counts (after_hours_listings, after_hours_listings_current) are a stock: filter to one month, or use after_hours_listing_currency across months, and never sum listing counts across months. Listing currency means after_hours_listing_currency. Lapsed or stale hours means is_hours_current = 0; the 365 day verification rule is the demo's assumption, not a published policy. Last verified means hours_verified_date. Service name means listings.listing_name. GP means service_type = 'General practice'; urgent care means 'Urgent care clinic'.
+
+  Use months.month_start for every date filter. On 1 September 2026 means month_start between 2026-09-01 and 2026-10-01.
+
+sample_queries:
+  rest_of_nsw_after_hours_currency_by_month:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_healthdirect_australia_months.month_start[m\
+            onth]",
+          se_sandbox_oscar__demo_healthdirect_australia_listing_months.after_hours_listings,
+          se_sandbox_oscar__demo_healthdirect_australia_listing_months.after_hours_listings_current,
+          se_sandbox_oscar__demo_healthdirect_australia_listing_months.after_hours_listing_currency
+        ]
+      base_view: se_sandbox_oscar__demo_healthdirect_australia_listing_months
+      filters:
+        se_sandbox_oscar__demo_healthdirect_australia_months.month_start:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_healthdirect_australia_regions.region:
+          is: Rest of NSW
+        se_sandbox_oscar__demo_healthdirect_australia_listing_months.service_type:
+          is: [ General practice, Urgent care clinic ]
+      sorts:
+        - field: se_sandbox_oscar__demo_healthdirect_australia_months.month_start[month]
+      topic: demo_healthdirect_australia_directory_listings
+    prompt: What share of after hours GP and urgent care listings in Rest of NSW had
+      current hours each month from April to September 2026?
+  rest_of_nsw_lapsed_listings_sep_2026:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_healthdirect_australia_listings.listing_id,
+          se_sandbox_oscar__demo_healthdirect_australia_listings.listing_name,
+          se_sandbox_oscar__demo_healthdirect_australia_listing_months.service_type,
+          se_sandbox_oscar__demo_healthdirect_australia_listing_months.hours_verified_date,
+          se_sandbox_oscar__demo_healthdirect_australia_listing_months.days_since_verified
+        ]
+      base_view: se_sandbox_oscar__demo_healthdirect_australia_listing_months
+      filters:
+        se_sandbox_oscar__demo_healthdirect_australia_months.month_start:
+          between_dates: [ 2026-09-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_healthdirect_australia_regions.region:
+          is: Rest of NSW
+        se_sandbox_oscar__demo_healthdirect_australia_listing_months.service_type:
+          is: [ General practice, Urgent care clinic ]
+        se_sandbox_oscar__demo_healthdirect_australia_listing_months.is_after_hours:
+          is: 1
+        se_sandbox_oscar__demo_healthdirect_australia_listing_months.is_hours_current:
+          is: 0
+      sorts:
+        - field: se_sandbox_oscar__demo_healthdirect_australia_listing_months.days_since_verified
+          desc: true
+      topic: demo_healthdirect_australia_directory_listings
+    prompt: List Rest of NSW after hours listings with lapsed hours on 1 September
+      2026 and when they were last verified

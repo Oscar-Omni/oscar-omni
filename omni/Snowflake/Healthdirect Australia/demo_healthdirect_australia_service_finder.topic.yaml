@@ -1,0 +1,74 @@
+base_view: se_sandbox_oscar__demo_healthdirect_australia_service_finder_searches
+label: Service Finder
+group_label: Healthdirect Australia
+description: Daily Service Finder searches by region, service type and time of
+  need, with searches that found nothing open. Synthetic data.
+
+joins:
+  se_sandbox_oscar__demo_healthdirect_australia_regions: {}
+  se_sandbox_oscar__demo_healthdirect_australia_months: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_healthdirect_australia_service_finder_searches
+    join_to_view: se_sandbox_oscar__demo_healthdirect_australia_regions
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_healthdirect_australia_service_finder_searches.region_id}
+      = ${se_sandbox_oscar__demo_healthdirect_australia_regions.region_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_healthdirect_australia_service_finder_searches
+    join_to_view: se_sandbox_oscar__demo_healthdirect_australia_months
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_healthdirect_australia_service_finder_searches.month_start}
+      = ${se_sandbox_oscar__demo_healthdirect_australia_months.month_start}
+    relationship_type: many_to_one
+
+ai_context: |-
+  Synthetic daily aggregate of Service Finder searches by region, service type and time of need, July 2024 to September 2026, all 15 regions. Never Healthdirect's real figures.
+
+  Searches means search_count, sum(searches); never count rows. Nothing open and zero results mean no_open_result_rate, sum(searches_no_open_result) / sum(searches): searches that found no service open at the requested time within 25 km. After hours means time_of_need = 'After hours'; time_of_need is when the searcher needs care, not when they searched. GP means service_type = 'General practice'; urgent care means 'Urgent care clinic'.
+
+  Use months.month_start for every date filter with an exclusive end. Show rates by month rather than one blended number when asked how something moved.
+
+sample_queries:
+  rest_of_nsw_after_hours_gp_urgent_care_by_month:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_healthdirect_australia_months.month_start[m\
+            onth]",
+          se_sandbox_oscar__demo_healthdirect_australia_service_finder_searches.search_count,
+          se_sandbox_oscar__demo_healthdirect_australia_service_finder_searches.no_open_result_rate
+        ]
+      base_view: se_sandbox_oscar__demo_healthdirect_australia_service_finder_searches
+      filters:
+        se_sandbox_oscar__demo_healthdirect_australia_months.month_start:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_healthdirect_australia_regions.region:
+          is: Rest of NSW
+        se_sandbox_oscar__demo_healthdirect_australia_service_finder_searches.time_of_need:
+          is: After hours
+        se_sandbox_oscar__demo_healthdirect_australia_service_finder_searches.service_type:
+          is: [ General practice, Urgent care clinic ]
+      sorts:
+        - field: se_sandbox_oscar__demo_healthdirect_australia_months.month_start[month]
+      topic: demo_healthdirect_australia_service_finder
+    prompt: What was the no open result rate for after hours GP and urgent care
+      searches in Rest of NSW by month from April to September 2026?
+  searches_by_region_current:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_healthdirect_australia_regions.region,
+          se_sandbox_oscar__demo_healthdirect_australia_service_finder_searches.search_count
+        ]
+      base_view: se_sandbox_oscar__demo_healthdirect_australia_service_finder_searches
+      filters:
+        se_sandbox_oscar__demo_healthdirect_australia_months.month_start:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_healthdirect_australia_service_finder_searches.search_count
+          desc: true
+      topic: demo_healthdirect_australia_service_finder
+    prompt: Which regions had the most Service Finder searches in April to September
+      2026?
