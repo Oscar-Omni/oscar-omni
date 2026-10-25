@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_titles_queensland_regions
+label: Regions
+description: Queensland regions, loosely on ABS SA4 groupings. Real geography,
+  synthetic performance.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_TITLES_QUEENSLAND_REGIONS
@@ -6,11 +10,17 @@ table_name: DEMO_TITLES_QUEENSLAND_REGIONS
 dimensions:
   region_id:
     sql: '"REGION_ID"'
+    label: Region ID
     format: ID
+    primary_key: true
 
   region_name:
     sql: '"REGION_NAME"'
+    label: Region
+    description: Region where the land is, such as Gold Coast or Brisbane
+    synonyms: [ region, area, location of land ]
 
 measures:
   count:
+    hidden: true
     aggregate_type: count

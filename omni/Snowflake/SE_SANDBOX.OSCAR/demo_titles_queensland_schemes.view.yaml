@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_titles_queensland_schemes
+label: Schemes
+description: Invented community titles schemes whose lots appear in dealings.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_TITLES_QUEENSLAND_SCHEMES
@@ -6,21 +9,34 @@ table_name: DEMO_TITLES_QUEENSLAND_SCHEMES
 dimensions:
   scheme_id:
     sql: '"SCHEME_ID"'
+    label: Scheme ID
     format: ID
+    primary_key: true
 
   scheme_name:
     sql: '"SCHEME_NAME"'
+    label: Scheme Name
+    description: Invented community titles scheme name
+    synonyms: [ off the plan, CTS, body corporate scheme, development, scheme ]
 
   region_id:
     sql: '"REGION_ID"'
+    label: Scheme Region ID
     format: ID
+    hidden: true
 
   lot_count:
     sql: '"LOT_COUNT"'
+    label: Lot Count
+    format: number_0
+    description: Lots in the scheme
 
   plan_registered_date:
     sql: '"PLAN_REGISTERED_DATE"'
+    label: Plan Registered Date
+    description: Date the scheme's survey plan was registered
 
 measures:
   count:
+    hidden: true
     aggregate_type: count

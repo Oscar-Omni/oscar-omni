@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_titles_queensland_lodgers
+label: Lodgers
+description: Invented lodging parties (conveyancers, law firms, lenders,
+  government) plus self represented accounts per state.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_TITLES_QUEENSLAND_LODGERS
@@ -6,17 +10,29 @@ table_name: DEMO_TITLES_QUEENSLAND_LODGERS
 dimensions:
   lodger_id:
     sql: '"LODGER_ID"'
+    label: Lodger ID
     format: ID
+    primary_key: true
 
   lodger_name:
     sql: '"LODGER_NAME"'
+    label: Lodger Name
+    description: Invented firm name
+    synonyms: [ conveyancer, firm, lodging party ]
 
   lodger_type:
     sql: '"LODGER_TYPE"'
+    label: Lodger Type
+    description: Conveyancer, Law firm, Lender, Government and council or Self represented
+    synonyms: [ lodger type, customer type ]
 
   lodger_state:
     sql: '"LODGER_STATE"'
+    label: Lodger Office State
+    description: State of the lodger's office. For dealings use Dealings > Lodger State.
+    hidden: true
 
 measures:
   count:
+    hidden: true
     aggregate_type: count

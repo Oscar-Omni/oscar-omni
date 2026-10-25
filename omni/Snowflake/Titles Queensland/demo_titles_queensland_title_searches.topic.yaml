@@ -1,0 +1,79 @@
+base_view: se_sandbox_oscar__demo_titles_queensland_title_searches
+label: Title Searches
+group_label: Titles Queensland
+description: Daily title searches by region of the title and search channel,
+  with search fees. Synthetic data, not Titles Queensland's figures.
+
+joins:
+  se_sandbox_oscar__demo_titles_queensland_regions: {}
+  se_sandbox_oscar__demo_titles_queensland_months: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_titles_queensland_title_searches
+    join_to_view: se_sandbox_oscar__demo_titles_queensland_regions
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_titles_queensland_title_searches.region_id} =
+      ${se_sandbox_oscar__demo_titles_queensland_regions.region_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_titles_queensland_title_searches
+    join_to_view: se_sandbox_oscar__demo_titles_queensland_months
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_titles_queensland_title_searches.month_start} =
+      ${se_sandbox_oscar__demo_titles_queensland_months.month_start}
+    relationship_type: many_to_one
+
+ai_context: |-
+  Synthetic search data for an Omni demo: one row per day, Queensland region of the title searched and search channel, July 2024 to September 2026. Every figure is synthetic and is never Titles Queensland's real number.
+
+  Searches and title searches mean search_count, which is sum(searches), never a row count. Search revenue means total_search_fees_aud, AUD from a placeholder schedule. Channels are OTIS, Information broker and Over the counter; OTIS and brokers mean title_searches.search_channel. Region means regions.region_name, where the land is.
+
+  Use months.month_start for every date filter with an exclusive end, for example 2025-07-01 to 2026-10-01 for July 2025 to September 2026. FY means months.financial_year (July to June). Shares are ratios of sums, never averages of daily shares.
+
+sample_queries:
+  searches_by_month:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_titles_queensland_months.month_start[month]",
+          se_sandbox_oscar__demo_titles_queensland_title_searches.search_count
+        ]
+      base_view: se_sandbox_oscar__demo_titles_queensland_title_searches
+      filters:
+        se_sandbox_oscar__demo_titles_queensland_months.month_start:
+          between_dates: [ 2025-07-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_titles_queensland_months.month_start[month]
+      topic: demo_titles_queensland_title_searches
+    prompt: How many title searches were there by month from July 2025 to September
+      2026?
+  searches_by_channel_fy:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_titles_queensland_months.financial_year,
+          se_sandbox_oscar__demo_titles_queensland_title_searches.search_channel,
+          se_sandbox_oscar__demo_titles_queensland_title_searches.search_count
+        ]
+      base_view: se_sandbox_oscar__demo_titles_queensland_title_searches
+      filters:
+        se_sandbox_oscar__demo_titles_queensland_months.financial_year:
+          is: [ FY25, FY26 ]
+      topic: demo_titles_queensland_title_searches
+    prompt: What share of searches came through OTIS in FY26 compared with FY25?
+  searches_by_region_jul_sep:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_titles_queensland_regions.region_name,
+          se_sandbox_oscar__demo_titles_queensland_title_searches.search_count
+        ]
+      base_view: se_sandbox_oscar__demo_titles_queensland_title_searches
+      filters:
+        se_sandbox_oscar__demo_titles_queensland_months.month_start:
+          between_dates: [ 2026-07-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_titles_queensland_title_searches.search_count
+          desc: true
+      topic: demo_titles_queensland_title_searches
+    prompt: Which regions had the most title searches in July to September 2026?

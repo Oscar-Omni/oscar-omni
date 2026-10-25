@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_titles_queensland_title_searches
+label: Title Searches
+description: Daily aggregate of title searches by region of the title and search
+  channel. Synthetic data.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_TITLES_QUEENSLAND_TITLE_SEARCHES
@@ -6,23 +10,59 @@ table_name: DEMO_TITLES_QUEENSLAND_TITLE_SEARCHES
 dimensions:
   search_date:
     sql: '"SEARCH_DATE"'
+    label: Search Date
+    description: Day of the searches. For period filters use Months > Month.
 
   month_start:
     sql: '"MONTH_START"'
+    label: Search Month (row)
+    hidden: true
 
   region_id:
     sql: '"REGION_ID"'
+    label: Region ID
     format: ID
+    hidden: true
 
   search_channel:
     sql: '"SEARCH_CHANNEL"'
+    label: Search Channel
+    description: OTIS, Information broker or Over the counter
+    synonyms: [ OTIS, brokers, information brokers, channel ]
 
   searches:
     sql: '"SEARCHES"'
+    label: Searches (row)
+    hidden: true
 
   search_fees_aud:
     sql: '"SEARCH_FEES_AUD"'
+    label: Search Fees (row)
+    hidden: true
+
+  search_key:
+    sql: "\"SEARCH_DATE\" || '|' || \"REGION_ID\" || '|' || \"SEARCH_CHANNEL\""
+    label: Search Row Key
+    hidden: true
+    primary_key: true
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
+
+  search_count:
+    sql: ${searches}
+    label: Title Searches
+    format: number_0
+    description: Title and plan searches, sum(searches). Never a row count.
+    aggregate_type: sum
+    synonyms: [ searches, title searches, search volume ]
+
+  total_search_fees_aud:
+    sql: ${search_fees_aud}
+    label: Search Fees AUD
+    format: currency_0
+    description: Search fees in AUD, placeholder schedule, sum(search_fees_aud)
+    aggregate_type: sum
+    synonyms: [ search revenue, search fees ]

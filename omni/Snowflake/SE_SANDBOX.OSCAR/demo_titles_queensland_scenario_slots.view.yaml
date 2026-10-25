@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_titles_queensland_scenario_slots
+label: Scenario Slots
+description: Saved scenario slots for the Gold Coast Scheme Recovery Planner
+  app. Planning assumptions, not registry results.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_TITLES_QUEENSLAND_SCENARIO_SLOTS
@@ -6,35 +10,51 @@ table_name: DEMO_TITLES_QUEENSLAND_SCENARIO_SLOTS
 dimensions:
   scenario_id:
     sql: '"SCENARIO_ID"'
+    label: Scenario ID
     format: ID
+    primary_key: true
 
   scenario_name:
     sql: '"SCENARIO_NAME"'
+    label: Scenario
+    synonyms: [ scenario, slot ]
 
   slot_order:
     sql: '"SLOT_ORDER"'
+    label: Slot Order
 
   scheme_desk_examiners:
     sql: '"SCHEME_DESK_EXAMINERS"'
+    label: Desk Examiners
+    description: Default examiners moved onto a Gold Coast scheme desk
 
   pre_check_share_pct:
     sql: '"PRE_CHECK_SHARE_PCT"'
+    label: Pre Check Share Pct
+    description: Default share of remaining scheme settlements pre checked against
+      the registered plan
 
   settlements_per_month:
     sql: '"SETTLEMENTS_PER_MONTH"'
+    label: Settlements Per Month
 
   unchecked_requisition_pct:
     sql: '"UNCHECKED_REQUISITION_PCT"'
+    label: Unchecked Requisition Pct
 
   check_effectiveness_pct:
     sql: '"CHECK_EFFECTIVENESS_PCT"'
+    label: Check Effectiveness Pct
 
   clearances_per_examiner:
     sql: '"CLEARANCES_PER_EXAMINER"'
+    label: Clearances Per Examiner
 
   bau_clearances_per_month:
     sql: '"BAU_CLEARANCES_PER_MONTH"'
+    label: BAU Clearances Per Month
 
 measures:
   count:
+    hidden: true
     aggregate_type: count

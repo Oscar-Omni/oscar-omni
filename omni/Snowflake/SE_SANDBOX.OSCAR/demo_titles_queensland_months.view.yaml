@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_titles_queensland_months
+label: Months
+description: Conformed calendar month shared by every Titles Queensland topic.
+  Use Month for every date filter.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_TITLES_QUEENSLAND_MONTHS
@@ -6,16 +10,29 @@ table_name: DEMO_TITLES_QUEENSLAND_MONTHS
 dimensions:
   month_start:
     sql: '"MONTH_START"'
+    label: Month
+    description: First day of the month, July 2024 to September 2026. The one date
+      filter for dealings and searches.
+    primary_key: true
+    synonyms: [ month, period, date ]
 
   month_label:
     sql: '"MONTH_LABEL"'
+    label: Month Label
+    order_by_field: month_start
 
   financial_year:
     sql: '"FINANCIAL_YEAR"'
+    label: Financial Year
+    description: Queensland financial year ending 30 June, FY25, FY26 or FY27
+    synonyms: [ FY, financial year ]
 
   financial_quarter:
     sql: '"FINANCIAL_QUARTER"'
+    label: Financial Quarter
+    description: Financial quarter such as FY27 Q1 (July to September 2026)
 
 measures:
   count:
+    hidden: true
     aggregate_type: count

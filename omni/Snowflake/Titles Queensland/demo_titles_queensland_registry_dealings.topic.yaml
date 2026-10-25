@@ -1,0 +1,210 @@
+base_view: se_sandbox_oscar__demo_titles_queensland_dealings
+label: Registry Dealings
+group_label: Titles Queensland
+description: Dealings lodged with the land titles registry with requisitions,
+  status and registration within target. One row per dealing (instrument).
+  Synthetic data, not Titles Queensland's figures.
+
+joins:
+  se_sandbox_oscar__demo_titles_queensland_regions: {}
+  se_sandbox_oscar__demo_titles_queensland_months: {}
+  se_sandbox_oscar__demo_titles_queensland_lodgers: {}
+  se_sandbox_oscar__demo_titles_queensland_schemes: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_titles_queensland_dealings
+    join_to_view: se_sandbox_oscar__demo_titles_queensland_regions
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_titles_queensland_dealings.region_id} =
+      ${se_sandbox_oscar__demo_titles_queensland_regions.region_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_titles_queensland_dealings
+    join_to_view: se_sandbox_oscar__demo_titles_queensland_months
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_titles_queensland_dealings.month_start} =
+      ${se_sandbox_oscar__demo_titles_queensland_months.month_start}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_titles_queensland_dealings
+    join_to_view: se_sandbox_oscar__demo_titles_queensland_lodgers
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_titles_queensland_dealings.lodger_id} =
+      ${se_sandbox_oscar__demo_titles_queensland_lodgers.lodger_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_titles_queensland_dealings
+    join_to_view: se_sandbox_oscar__demo_titles_queensland_schemes
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_titles_queensland_dealings.scheme_id} =
+      ${se_sandbox_oscar__demo_titles_queensland_schemes.scheme_id}
+    relationship_type: many_to_one
+
+ai_context: |-
+  Synthetic registry data for an Omni demo: one row per dealing (instrument) lodged, July 2024 to September 2026, status as at the 23 October 2026 extract. Region names are real Queensland geography; every figure, firm, scheme, fee and target is synthetic and is never Titles Queensland's real number. Money is AUD from placeholder fees.
+
+  A dealing is one instrument. A lodgement case is the group of dealings lodged together for one settlement (a Transfer with its Mortgage and Release share a case). Lodgements and dealings mean dealings_lodged; settlements and lodgement cases mean lodgement_cases.
+
+  Requisition rate means requisition_rate, per dealing: sum(requisitioned) / sum(dealing_count). This is registry operations' governed definition; use it unless the user explicitly asks per settlement or per case, and say that it is per dealing. Requisitions means requisitioned_dealings. Within target, on time and service standard mean within_target_rate: sum(within_target) / sum(dealing_count). Turnaround and processing time mean avg_days_to_register. Rates are ratios of sums; never average rates across regions or months.
+
+  Two kinds of place. Region means regions.region_name, where the land is. Lodger state means dealings.lodger_state, where the lodging firm is; interstate lodgers are lodger_state other than Queensland. Off the plan, CTS and body corporate scheme mean schemes.scheme_name. Stuck or waiting on a dependent dealing means dealings.status.
+
+  Dates. Use months.month_start for every date filter, and the end of a period is exclusive: 1 April to 30 September 2026 is month_start >= '2026-04-01' AND month_start < '2026-10-01'. Never write <= or BETWEEN with the first of the following month, because that adds a whole extra month (October 2025 exists in this data). Each comparison period must cover the same six months. FY means months.financial_year (July to June). When a user says this half or the last six months without dates, use 2026-04-01 up to but not including 2026-10-01 and compare with 2025-04-01 up to but not including 2025-10-01.
+
+  Analysis guidance. To compare two periods, run the same query once per period with identical filters and show both side by side with the change in percentage points, stating both date ranges. To explain a within target change, split by region first; for the region that fell most, split by months.month_start month so a month by month slide is visible rather than one blended number, then compare requisitioned_dealings by requisition_reason and dealing_type for July to September 2026 against April to June 2026. Lead with the headline numbers and keep answers short.
+
+sample_queries:
+  within_target_by_region_current:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_titles_queensland_regions.region_name,
+          se_sandbox_oscar__demo_titles_queensland_dealings.dealings_lodged,
+          se_sandbox_oscar__demo_titles_queensland_dealings.within_target_rate
+        ]
+      base_view: se_sandbox_oscar__demo_titles_queensland_dealings
+      filters:
+        se_sandbox_oscar__demo_titles_queensland_months.month_start:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_titles_queensland_dealings.within_target_rate
+      topic: demo_titles_queensland_registry_dealings
+    prompt: What share of dealings was registered within target by region from 1
+      April 2026 to 30 September 2026?
+  within_target_by_region_prior:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_titles_queensland_regions.region_name,
+          se_sandbox_oscar__demo_titles_queensland_dealings.dealings_lodged,
+          se_sandbox_oscar__demo_titles_queensland_dealings.within_target_rate
+        ]
+      base_view: se_sandbox_oscar__demo_titles_queensland_dealings
+      filters:
+        se_sandbox_oscar__demo_titles_queensland_months.month_start:
+          between_dates: [ 2025-04-01, 2025-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_titles_queensland_dealings.within_target_rate
+      topic: demo_titles_queensland_registry_dealings
+    prompt: What share of dealings was registered within target by region from 1
+      April 2025 to 30 September 2025?
+  gold_coast_by_month:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_titles_queensland_months.month_start[month]",
+          se_sandbox_oscar__demo_titles_queensland_dealings.dealings_lodged,
+          se_sandbox_oscar__demo_titles_queensland_dealings.within_target_rate,
+          se_sandbox_oscar__demo_titles_queensland_dealings.requisition_rate
+        ]
+      base_view: se_sandbox_oscar__demo_titles_queensland_dealings
+      filters:
+        se_sandbox_oscar__demo_titles_queensland_months.month_start:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_titles_queensland_regions.region_name:
+          is: Gold Coast
+      sorts:
+        - field: se_sandbox_oscar__demo_titles_queensland_months.month_start[month]
+      topic: demo_titles_queensland_registry_dealings
+    prompt: Show within target and requisition rate for Gold Coast for each month
+      from April to September 2026
+  gold_coast_reasons_jul_sep:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_titles_queensland_dealings.requisition_reason,
+          se_sandbox_oscar__demo_titles_queensland_dealings.dealing_type,
+          se_sandbox_oscar__demo_titles_queensland_dealings.requisitioned_dealings
+        ]
+      base_view: se_sandbox_oscar__demo_titles_queensland_dealings
+      filters:
+        se_sandbox_oscar__demo_titles_queensland_months.month_start:
+          between_dates: [ 2026-07-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_titles_queensland_regions.region_name:
+          is: Gold Coast
+        se_sandbox_oscar__demo_titles_queensland_dealings.requisition_reason:
+          not: No requisition
+      sorts:
+        - field: se_sandbox_oscar__demo_titles_queensland_dealings.requisitioned_dealings
+          desc: true
+      topic: demo_titles_queensland_registry_dealings
+    prompt: For Gold Coast, which requisition reasons and dealing types had the most
+      requisitions in July to September 2026?
+  gold_coast_reasons_apr_jun:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_titles_queensland_dealings.requisition_reason,
+          se_sandbox_oscar__demo_titles_queensland_dealings.dealing_type,
+          se_sandbox_oscar__demo_titles_queensland_dealings.requisitioned_dealings
+        ]
+      base_view: se_sandbox_oscar__demo_titles_queensland_dealings
+      filters:
+        se_sandbox_oscar__demo_titles_queensland_months.month_start:
+          between_dates: [ 2026-04-01, 2026-07-01 ]
+        se_sandbox_oscar__demo_titles_queensland_regions.region_name:
+          is: Gold Coast
+        se_sandbox_oscar__demo_titles_queensland_dealings.requisition_reason:
+          not: No requisition
+      sorts:
+        - field: se_sandbox_oscar__demo_titles_queensland_dealings.requisitioned_dealings
+          desc: true
+      topic: demo_titles_queensland_registry_dealings
+    prompt: For Gold Coast, which requisition reasons and dealing types had the most
+      requisitions in April to June 2026?
+  scheme_transfers_jul_sep:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_titles_queensland_schemes.scheme_name,
+          se_sandbox_oscar__demo_titles_queensland_dealings.requisitioned_dealings,
+          se_sandbox_oscar__demo_titles_queensland_dealings.requisition_rate
+        ]
+      base_view: se_sandbox_oscar__demo_titles_queensland_dealings
+      filters:
+        se_sandbox_oscar__demo_titles_queensland_months.month_start:
+          between_dates: [ 2026-07-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_titles_queensland_dealings.dealing_type:
+          is: Transfer
+        se_sandbox_oscar__demo_titles_queensland_dealings.scheme_id:
+          not: null
+      limit: 10
+      sorts:
+        - field: se_sandbox_oscar__demo_titles_queensland_dealings.requisitioned_dealings
+          desc: true
+      topic: demo_titles_queensland_registry_dealings
+    prompt: Which community titles schemes had the most requisitioned Transfers from
+      1 July 2026 to 30 September 2026?
+  requisition_rate_by_lodger_state:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_titles_queensland_dealings.lodger_state,
+          se_sandbox_oscar__demo_titles_queensland_dealings.dealings_lodged,
+          se_sandbox_oscar__demo_titles_queensland_dealings.requisition_rate
+        ]
+      base_view: se_sandbox_oscar__demo_titles_queensland_dealings
+      filters:
+        se_sandbox_oscar__demo_titles_queensland_months.month_start:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_titles_queensland_dealings.requisition_rate
+          desc: true
+      topic: demo_titles_queensland_registry_dealings
+    prompt: What was the requisition rate by lodger state for April to September 2026?
+  fees_by_channel_fy26:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_titles_queensland_dealings.channel,
+          se_sandbox_oscar__demo_titles_queensland_dealings.lodgement_fees_aud
+        ]
+      base_view: se_sandbox_oscar__demo_titles_queensland_dealings
+      filters:
+        se_sandbox_oscar__demo_titles_queensland_months.financial_year:
+          is: FY26
+      sorts:
+        - field: se_sandbox_oscar__demo_titles_queensland_dealings.lodgement_fees_aud
+          desc: true
+      topic: demo_titles_queensland_registry_dealings
+    prompt: How did lodgement fees split by channel in FY26?

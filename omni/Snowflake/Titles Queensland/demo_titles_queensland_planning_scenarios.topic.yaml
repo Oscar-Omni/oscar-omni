@@ -1,0 +1,29 @@
+base_view: se_sandbox_oscar__demo_titles_queensland_scenario_slots
+label: Planning Scenarios
+group_label: Titles Queensland
+description: Saved scenario slots for the Gold Coast Scheme Recovery Planner
+  app. Planning assumptions, not registry results.
+
+joins: {}
+
+ai_context: "Three saved scenario slots for the Gold Coast Scheme Recovery
+  Planner app: Hold course, Scheme desk, and Desk and pre check. One row per
+  slot. Scenario means scenario_slots.scenario_name. These are planning
+  assumptions for October to December 2026, not registry results; never present
+  them as actual registry performance."
+
+sample_queries:
+  slots:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_titles_queensland_scenario_slots.scenario_name,
+          se_sandbox_oscar__demo_titles_queensland_scenario_slots.scheme_desk_examiners,
+          se_sandbox_oscar__demo_titles_queensland_scenario_slots.pre_check_share_pct
+        ]
+      base_view: se_sandbox_oscar__demo_titles_queensland_scenario_slots
+      sorts:
+        - field: se_sandbox_oscar__demo_titles_queensland_scenario_slots.slot_order
+      topic: demo_titles_queensland_planning_scenarios
+    prompt: Which scenario slots are saved and how many desk examiners does each
+      assume?

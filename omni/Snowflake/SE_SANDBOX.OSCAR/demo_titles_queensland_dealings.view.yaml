@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__demo_titles_queensland_dealings
+label: Dealings
+description: One row per dealing (instrument) lodged with the registry, status
+  as at the 23 Oct 2026 extract. Synthetic data, not Titles Queensland's
+  figures.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_TITLES_QUEENSLAND_DEALINGS
@@ -6,72 +11,231 @@ table_name: DEMO_TITLES_QUEENSLAND_DEALINGS
 dimensions:
   dealing_id:
     sql: '"DEALING_ID"'
+    label: Dealing ID
     format: ID
+    primary_key: true
 
   lodgement_case_id:
     sql: '"LODGEMENT_CASE_ID"'
+    label: Lodgement Case ID
     format: ID
+    description: Groups the dealings lodged together for one settlement or matter. A
+      Transfer with its Mortgage and Release share a case.
+    synonyms: [ settlement, case ]
 
   lodged_date:
     sql: '"LODGED_DATE"'
+    label: Lodged Date
+    description: Business day the dealing was lodged. For period filters use Months > Month.
 
   month_start:
     sql: '"MONTH_START"'
+    label: Lodged Month (row)
+    description: Join key to Months. Filter on Months > Month instead.
+    hidden: true
 
   region_id:
     sql: '"REGION_ID"'
+    label: Region ID
     format: ID
+    hidden: true
 
   lodger_id:
     sql: '"LODGER_ID"'
+    label: Lodger ID
     format: ID
+    hidden: true
 
   lodger_state:
     sql: '"LODGER_STATE"'
+    label: Lodger State
+    description: State of the lodging firm's office (where the lodger is, not where
+      the land is)
+    synonyms: [ interstate lodgers, lodger location, firm state ]
 
   scheme_id:
     sql: '"SCHEME_ID"'
+    label: Scheme ID
     format: ID
+    description: Community titles scheme of the lot, empty when the land is not a scheme lot
 
   dealing_type:
     sql: '"DEALING_TYPE"'
+    label: Dealing Type
+    description: Transfer, Mortgage, Release of mortgage, Caveat, Lease,
+      Transmission by death, Easement or Other request
+    synonyms: [ instrument, instrument type, dealing type ]
 
   channel:
     sql: '"CHANNEL"'
+    label: Lodgement Channel
+    description: eConveyancing, eLodgement or Paper
+    synonyms: [ eConveyancing, paper lodgements, eLodgement, channel ]
 
   status:
     sql: '"STATUS"'
+    label: Status
+    description: Status at the 23 Oct 2026 extract. Registered, In requisition,
+      Awaiting dependent dealing or Withdrawn
+    synonyms: [ stuck, waiting on a dependent dealing, open ]
 
   requisition_reason:
     sql: '"REQUISITION_REASON"'
+    label: Requisition Reason
+    description: Main requisition reason, or No requisition
+    synonyms: [ requisition reason, why requisitioned ]
 
   dealing_count:
     sql: '"DEALING_COUNT"'
+    label: Dealing Count (row)
+    group_label: Row flags
+    hidden: true
 
   requisitioned:
     sql: '"REQUISITIONED"'
+    label: Requisitioned (row flag)
+    description: 1 when the registry issued at least one requisition on the dealing
+    group_label: Row flags
 
   registered:
     sql: '"REGISTERED"'
+    label: Registered (row flag)
+    group_label: Row flags
 
   within_target:
     sql: '"WITHIN_TARGET"'
+    label: Within Target (row flag)
+    description: 1 when registered within target_days business days of lodgement
+    group_label: Row flags
 
   days_to_register:
     sql: '"DAYS_TO_REGISTER"'
+    label: Days To Register
+    format: number_0
+    description: Business days from lodgement to registration; empty when not registered
 
   target_days:
     sql: '"TARGET_DAYS"'
+    label: Target Days
+    format: number_0
+    description: Synthetic service target in business days for the dealing type
 
   case_count:
     sql: '"CASE_COUNT"'
+    label: Case Count (row flag)
+    description: 1 on the lead dealing of each lodgement case
+    group_label: Row flags
 
   case_requisitioned:
     sql: '"CASE_REQUISITIONED"'
+    label: Case Requisitioned (row flag)
+    description: 1 on the lead dealing when any dealing in the case was requisitioned
+    group_label: Row flags
 
   fee_aud:
     sql: '"FEE_AUD"'
+    label: Fee AUD
+    format: currency_2
+    description: Lodgement fee charged, placeholder schedule in AUD
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
+
+  dealings_lodged:
+    sql: ${dealing_count}
+    label: Dealings Lodged
+    format: number_0
+    description: Dealings lodged, sum(dealing_count). Each instrument counts once,
+      so one settlement with a Transfer and a Mortgage is two dealings.
+    aggregate_type: sum
+    synonyms: [ lodgements, dealings, volume ]
+
+  registered_within_target:
+    sql: ${within_target}
+    label: Registered Within Target
+    format: number_0
+    description: Dealings registered within their service target, sum(within_target)
+    aggregate_type: sum
+
+  registered_dealings:
+    sql: ${registered}
+    label: Registered Dealings
+    format: number_0
+    aggregate_type: sum
+
+  requisitioned_dealings:
+    sql: ${requisitioned}
+    label: Requisitioned Dealings
+    format: number_0
+    description: Dealings that received at least one requisition, sum(requisitioned)
+    aggregate_type: sum
+    synonyms: [ requisitions ]
+
+  lodgement_cases:
+    sql: ${case_count}
+    label: Lodgement Cases
+    format: number_0
+    description: Lodgement cases (settlements or matters), counted once on the lead dealing
+    aggregate_type: sum
+    synonyms: [ settlements, lodgement cases, matters ]
+
+  requisitioned_cases:
+    sql: ${case_requisitioned}
+    label: Cases With A Requisition
+    format: number_0
+    description: Lodgement cases where any dealing was requisitioned
+    aggregate_type: sum
+
+  total_days_to_register:
+    sql: ${days_to_register}
+    label: Total Days To Register
+    hidden: true
+    aggregate_type: sum
+
+  total_target_days:
+    sql: ${target_days}
+    label: Total Target Days
+    hidden: true
+    aggregate_type: sum
+
+  within_target_rate:
+    sql: ${registered_within_target} / NULLIF(${dealings_lodged}, 0)
+    label: Within Target Rate
+    format: percent_1
+    description: sum(within_target) / sum(dealing_count). Share of lodged dealings
+      registered within target. A ratio of sums; never average regional or
+      monthly rates.
+    synonyms: [ within target, on time, service standard ]
+
+  requisition_rate:
+    sql: ${requisitioned_dealings} / NULLIF(${dealings_lodged}, 0)
+    label: Requisition Rate
+    format: percent_1
+    description: sum(requisitioned) / sum(dealing_count). Registry operations'
+      governed definition, requisitioned dealings per dealing lodged. Never
+      average rates.
+    synonyms: [ requisition rate, requisition rate per dealing ]
+
+  avg_days_to_register:
+    sql: ${total_days_to_register} / NULLIF(${registered_dealings}, 0)
+    label: Average Days To Register
+    format: number_1
+    description: sum(days_to_register) / sum(registered), business days, registered
+      dealings only
+    synonyms: [ turnaround, processing time ]
+
+  avg_target_days:
+    sql: ${total_target_days} / NULLIF(${dealings_lodged}, 0)
+    label: Average Target Days
+    format: number_1
+    description: sum(target_days) / sum(dealing_count), business days
+
+  lodgement_fees_aud:
+    sql: ${fee_aud}
+    label: Lodgement Fees AUD
+    format: currency_0
+    description: Lodgement fees in AUD, placeholder schedule
+    aggregate_type: sum
+    synonyms: [ lodgement fees, revenue, fees ]
