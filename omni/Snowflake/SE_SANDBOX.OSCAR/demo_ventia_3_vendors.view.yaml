@@ -1,0 +1,40 @@
+# Reference this view as se_sandbox_oscar__demo_ventia_3_vendors
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_VENTIA_3_VENDORS
+
+dimensions:
+  vendor_id:
+    sql: '"VENDOR_ID"'
+    format: ID
+
+  vendor_name:
+    sql: '"VENDOR_NAME"'
+
+  source_system:
+    sql: '"SOURCE_SYSTEM"'
+
+  capability:
+    sql: '"CAPABILITY"'
+
+  home_state:
+    sql: '"HOME_STATE"'
+
+  is_panel:
+    sql: '"IS_PANEL"'
+
+  classification_method:
+    sql: '"CLASSIFICATION_METHOD"'
+
+  iso_9001:
+    sql: '"ISO_9001"'
+
+  iso_14001:
+    sql: '"ISO_14001"'
+
+  iso_45001:
+    sql: '"ISO_45001"'
+
+measures:
+  count:
+    aggregate_type: count

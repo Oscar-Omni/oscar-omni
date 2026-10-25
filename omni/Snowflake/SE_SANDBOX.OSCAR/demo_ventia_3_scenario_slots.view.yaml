@@ -1,0 +1,34 @@
+# Reference this view as se_sandbox_oscar__demo_ventia_3_scenario_slots
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_VENTIA_3_SCENARIO_SLOTS
+
+dimensions:
+  scenario_id:
+    sql: '"SCENARIO_ID"'
+    format: ID
+
+  slot_name:
+    sql: '"SLOT_NAME"'
+
+  slot_order:
+    sql: '"SLOT_ORDER"'
+
+  is_read_only:
+    sql: '"IS_READ_ONLY"'
+
+  redirect_share_pct:
+    sql: '"REDIRECT_SHARE_PCT"'
+
+  price_gap_pct:
+    sql: '"PRICE_GAP_PCT"'
+
+  ramp_months:
+    sql: '"RAMP_MONTHS"'
+
+  transition_cost_aud:
+    sql: '"TRANSITION_COST_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

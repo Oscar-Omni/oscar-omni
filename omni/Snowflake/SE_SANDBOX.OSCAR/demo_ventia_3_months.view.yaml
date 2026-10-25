@@ -1,0 +1,21 @@
+# Reference this view as se_sandbox_oscar__demo_ventia_3_months
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_VENTIA_3_MONTHS
+
+dimensions:
+  month_start:
+    sql: '"MONTH_START"'
+
+  month_label:
+    sql: '"MONTH_LABEL"'
+
+  calendar_year:
+    sql: '"CALENDAR_YEAR"'
+
+  quarter_label:
+    sql: '"QUARTER_LABEL"'
+
+measures:
+  count:
+    aggregate_type: count

@@ -1,0 +1,39 @@
+# Reference this view as se_sandbox_oscar__demo_ventia_3_project_months
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_VENTIA_3_PROJECT_MONTHS
+
+dimensions:
+  project_id:
+    sql: '"PROJECT_ID"'
+    format: ID
+
+  month_start:
+    sql: '"MONTH_START"'
+
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  sector_id:
+    sql: '"SECTOR_ID"'
+    format: ID
+
+  revenue_aud:
+    sql: '"REVENUE_AUD"'
+
+  labour_cost_aud:
+    sql: '"LABOUR_COST_AUD"'
+
+  third_party_cost_aud:
+    sql: '"THIRD_PARTY_COST_AUD"'
+
+  other_cost_aud:
+    sql: '"OTHER_COST_AUD"'
+
+  gross_margin_aud:
+    sql: '"GROSS_MARGIN_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

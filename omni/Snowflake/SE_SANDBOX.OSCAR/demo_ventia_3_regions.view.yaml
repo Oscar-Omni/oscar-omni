@@ -1,0 +1,22 @@
+# Reference this view as se_sandbox_oscar__demo_ventia_3_regions
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_VENTIA_3_REGIONS
+
+dimensions:
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  region_name:
+    sql: '"REGION_NAME"'
+
+  state_code:
+    sql: '"STATE_CODE"'
+
+  country:
+    sql: '"COUNTRY"'
+
+measures:
+  count:
+    aggregate_type: count

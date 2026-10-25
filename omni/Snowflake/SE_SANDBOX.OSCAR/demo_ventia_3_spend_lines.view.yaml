@@ -1,0 +1,50 @@
+# Reference this view as se_sandbox_oscar__demo_ventia_3_spend_lines
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_VENTIA_3_SPEND_LINES
+
+dimensions:
+  spend_id:
+    sql: '"SPEND_ID"'
+    format: ID
+
+  invoice_date:
+    sql: '"INVOICE_DATE"'
+
+  month_start:
+    sql: '"MONTH_START"'
+
+  project_id:
+    sql: '"PROJECT_ID"'
+    format: ID
+
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  sector_id:
+    sql: '"SECTOR_ID"'
+    format: ID
+
+  vendor_id:
+    sql: '"VENDOR_ID"'
+    format: ID
+
+  spend_category:
+    sql: '"SPEND_CATEGORY"'
+
+  amount_aud:
+    sql: '"AMOUNT_AUD"'
+
+  premium_over_benchmark_aud:
+    sql: '"PREMIUM_OVER_BENCHMARK_AUD"'
+
+  off_panel_amount_aud:
+    sql: '"OFF_PANEL_AMOUNT_AUD"'
+
+  classified_amount_aud:
+    sql: '"CLASSIFIED_AMOUNT_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

@@ -1,0 +1,27 @@
+# Reference this view as se_sandbox_oscar__demo_ventia_3_projects
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_VENTIA_3_PROJECTS
+
+dimensions:
+  project_id:
+    sql: '"PROJECT_ID"'
+    format: ID
+
+  project_name:
+    sql: '"PROJECT_NAME"'
+
+  sector_id:
+    sql: '"SECTOR_ID"'
+    format: ID
+
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  client_type:
+    sql: '"CLIENT_TYPE"'
+
+measures:
+  count:
+    aggregate_type: count
