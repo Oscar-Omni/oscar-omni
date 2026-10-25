@@ -1,0 +1,25 @@
+# Reference this view as se_sandbox_oscar__demo_healthdirect_australia_digital_sessions
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_HEALTHDIRECT_AUSTRALIA_DIGITAL_SESSIONS
+
+dimensions:
+  session_date:
+    sql: '"SESSION_DATE"'
+
+  month_start:
+    sql: '"MONTH_START"'
+
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  channel:
+    sql: '"CHANNEL"'
+
+  sessions:
+    sql: '"SESSIONS"'
+
+measures:
+  count:
+    aggregate_type: count

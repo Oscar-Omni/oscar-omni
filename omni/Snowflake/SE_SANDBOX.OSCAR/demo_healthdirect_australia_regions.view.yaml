@@ -1,0 +1,22 @@
+# Reference this view as se_sandbox_oscar__demo_healthdirect_australia_regions
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_HEALTHDIRECT_AUSTRALIA_REGIONS
+
+dimensions:
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  region:
+    sql: '"REGION"'
+
+  state:
+    sql: '"STATE"'
+
+  helpline_served:
+    sql: '"HELPLINE_SERVED"'
+
+measures:
+  count:
+    aggregate_type: count

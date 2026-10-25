@@ -1,0 +1,31 @@
+# Reference this view as se_sandbox_oscar__demo_healthdirect_australia_service_finder_searches
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_HEALTHDIRECT_AUSTRALIA_SERVICE_FINDER_SEARCHES
+
+dimensions:
+  search_date:
+    sql: '"SEARCH_DATE"'
+
+  month_start:
+    sql: '"MONTH_START"'
+
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  service_type:
+    sql: '"SERVICE_TYPE"'
+
+  time_of_need:
+    sql: '"TIME_OF_NEED"'
+
+  searches:
+    sql: '"SEARCHES"'
+
+  searches_no_open_result:
+    sql: '"SEARCHES_NO_OPEN_RESULT"'
+
+measures:
+  count:
+    aggregate_type: count

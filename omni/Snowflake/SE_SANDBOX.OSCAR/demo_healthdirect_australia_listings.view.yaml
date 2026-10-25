@@ -1,0 +1,26 @@
+# Reference this view as se_sandbox_oscar__demo_healthdirect_australia_listings
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_HEALTHDIRECT_AUSTRALIA_LISTINGS
+
+dimensions:
+  listing_id:
+    sql: '"LISTING_ID"'
+    format: ID
+
+  listing_name:
+    sql: '"LISTING_NAME"'
+
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  service_type:
+    sql: '"SERVICE_TYPE"'
+
+  offers_after_hours:
+    sql: '"OFFERS_AFTER_HOURS"'
+
+measures:
+  count:
+    aggregate_type: count

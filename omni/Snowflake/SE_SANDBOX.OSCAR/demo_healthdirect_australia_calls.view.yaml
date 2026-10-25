@@ -1,0 +1,53 @@
+# Reference this view as se_sandbox_oscar__demo_healthdirect_australia_calls
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_HEALTHDIRECT_AUSTRALIA_CALLS
+
+dimensions:
+  call_id:
+    sql: '"CALL_ID"'
+    format: ID
+
+  call_date:
+    sql: '"CALL_DATE"'
+
+  month_start:
+    sql: '"MONTH_START"'
+
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  hour_band:
+    sql: '"HOUR_BAND"'
+
+  symptom_group:
+    sql: '"SYMPTOM_GROUP"'
+
+  caller_intent:
+    sql: '"CALLER_INTENT"'
+
+  disposition:
+    sql: '"DISPOSITION"'
+
+  call_count:
+    sql: '"CALL_COUNT"'
+
+  intended_ed:
+    sql: '"INTENDED_ED"'
+
+  ed_diverted:
+    sql: '"ED_DIVERTED"'
+
+  answered_within_10_min:
+    sql: '"ANSWERED_WITHIN_10_MIN"'
+
+  wait_seconds:
+    sql: '"WAIT_SECONDS"'
+
+  handle_seconds:
+    sql: '"HANDLE_SECONDS"'
+
+measures:
+  count:
+    aggregate_type: count

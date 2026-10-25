@@ -1,0 +1,38 @@
+# Reference this view as se_sandbox_oscar__demo_healthdirect_australia_listing_months
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_HEALTHDIRECT_AUSTRALIA_LISTING_MONTHS
+
+dimensions:
+  listing_id:
+    sql: '"LISTING_ID"'
+    format: ID
+
+  month_start:
+    sql: '"MONTH_START"'
+
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  service_type:
+    sql: '"SERVICE_TYPE"'
+
+  is_after_hours:
+    sql: '"IS_AFTER_HOURS"'
+
+  is_hours_current:
+    sql: '"IS_HOURS_CURRENT"'
+
+  is_after_hours_current:
+    sql: '"IS_AFTER_HOURS_CURRENT"'
+
+  hours_verified_date:
+    sql: '"HOURS_VERIFIED_DATE"'
+
+  days_since_verified:
+    sql: '"DAYS_SINCE_VERIFIED"'
+
+measures:
+  count:
+    aggregate_type: count
