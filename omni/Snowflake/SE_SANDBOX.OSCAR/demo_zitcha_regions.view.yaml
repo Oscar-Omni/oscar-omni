@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_zitcha_regions
+label: States
+description: Australian states and territories where impressions were served.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_ZITCHA_REGIONS
@@ -6,11 +9,18 @@ table_name: DEMO_ZITCHA_REGIONS
 dimensions:
   region_id:
     sql: '"REGION_ID"'
+    label: State ID
     format: ID
+    primary_key: true
 
   state_name:
     sql: '"STATE_NAME"'
+    label: State
+    description: Full state or territory name, for example Queensland.
+    synonyms: [ state, territory, region ]
 
 measures:
   count:
+    label: States
+    hidden: true
     aggregate_type: count

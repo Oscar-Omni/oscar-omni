@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__demo_zitcha_ad_performance_daily
+label: Ad performance
+description: Synthetic retail media delivery sold through Zitcha, one row per
+  campaign line, state and delivery day. Not any real retailer's or brand's
+  figures.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_ZITCHA_AD_PERFORMANCE_DAILY
@@ -6,50 +11,159 @@ table_name: DEMO_ZITCHA_AD_PERFORMANCE_DAILY
 dimensions:
   perf_date:
     sql: '"PERF_DATE"'
+    label: Delivery date
+    description: Day the ads were delivered. Use for every date filter; quarters are
+      Australian financial year quarters (Q1 FY27 is 1 July to 30 September
+      2026).
+    synonyms: [ date, day, delivery day ]
 
   retailer_name:
     sql: '"RETAILER_NAME"'
+    label: Retailer
+    description: Embed tenant that sold the media. Each user only sees their own
+      retailer through the demo_tenant access filter.
+    synonyms: [ tenant, retailer ]
 
   campaign_id:
     sql: '"CAMPAIGN_ID"'
+    label: Campaign ID
     format: ID
 
   brand_id:
     sql: '"BRAND_ID"'
+    label: Brand ID
     format: ID
 
   placement_id:
     sql: '"PLACEMENT_ID"'
+    label: Placement ID
     format: ID
 
   region_id:
     sql: '"REGION_ID"'
+    label: State ID
     format: ID
 
   channel:
     sql: '"CHANNEL"'
+    label: Channel
+    description: Onsite, Offsite or In-store. In-store means digital screens in stores.
+    synonyms: [ screens, media channel ]
 
   brand_tier:
     sql: '"BRAND_TIER"'
+    label: Brand tier
+    description: Enterprise, Growth or Emerging supplier brand.
+    synonyms: [ tier, supplier tier ]
 
   brand_category:
     sql: '"BRAND_CATEGORY"'
+    label: Brand category
+    description: Product category of the supplier brand.
+    synonyms: [ category ]
 
   impressions:
     sql: '"IMPRESSIONS"'
+    hidden: true
 
   clicks:
     sql: '"CLICKS"'
+    hidden: true
 
   spend_aud:
     sql: '"SPEND_AUD"'
+    hidden: true
 
   attributed_sales_aud:
     sql: '"ATTRIBUTED_SALES_AUD"'
+    hidden: true
 
   new_to_brand_sales_aud:
     sql: '"NEW_TO_BRAND_SALES_AUD"'
+    hidden: true
+
+  row_key:
+    sql: "\"CAMPAIGN_ID\" || '|' || \"REGION_ID\" || '|' ||
+      TO_VARCHAR(\"PERF_DATE\")"
+    hidden: true
+    primary_key: true
 
 measures:
   count:
+    label: Delivery rows
+    hidden: true
     aggregate_type: count
+
+  ad_spend:
+    sql: ${se_sandbox_oscar__demo_zitcha_ad_performance_daily.spend_aud}
+    label: Ad spend
+    format: bigaudcurrency_1
+    description: Media spend billed to brands, AUD.
+    aggregate_type: sum
+    synonyms: [ spend, media spend ]
+
+  attributed_sales:
+    sql: ${se_sandbox_oscar__demo_zitcha_ad_performance_daily.attributed_sales_aud}
+    label: Attributed sales
+    format: bigaudcurrency_1
+    description: Sales attributed to ads within the retailer's attribution window, AUD.
+    aggregate_type: sum
+    synonyms: [ sales ]
+
+  new_to_brand_sales:
+    sql: ${se_sandbox_oscar__demo_zitcha_ad_performance_daily.new_to_brand_sales_aud}
+    label: New to brand sales
+    format: bigaudcurrency_1
+    description: Part of attributed sales from shoppers new to the brand in the last
+      12 months. Included in attributed sales, never added to them.
+    aggregate_type: sum
+    synonyms: [ new to brand, NTB ]
+
+  impressions_total:
+    sql: ${se_sandbox_oscar__demo_zitcha_ad_performance_daily.impressions}
+    label: Impressions
+    format: number_0
+    aggregate_type: sum
+
+  clicks_total:
+    sql: ${se_sandbox_oscar__demo_zitcha_ad_performance_daily.clicks}
+    label: Clicks
+    format: number_0
+    description: Clicks; screens have no clicks.
+    aggregate_type: sum
+
+  roas:
+    sql: ${se_sandbox_oscar__demo_zitcha_ad_performance_daily.attributed_sales} /
+      NULLIF(${se_sandbox_oscar__demo_zitcha_ad_performance_daily.ad_spend}, 0)
+    label: ROAS
+    format: number_2
+    description: Return on ad spend, sum of attributed sales divided by sum of
+      spend. Never an average of daily, campaign or placement ROAS.
+    synonyms: [ return on ad spend ]
+
+  ctr:
+    sql: ${se_sandbox_oscar__demo_zitcha_ad_performance_daily.clicks_total} /
+      NULLIF(${se_sandbox_oscar__demo_zitcha_ad_performance_daily.impressions_total},
+      0)
+    label: CTR
+    format: percent_2
+    description: Click through rate, sum of clicks over sum of impressions. Screens
+      have no clicks, so compare CTR on Onsite and Offsite only.
+    synonyms: [ click through rate ]
+
+  effective_cpm:
+    sql: 1000 * ${se_sandbox_oscar__demo_zitcha_ad_performance_daily.ad_spend} /
+      NULLIF(${se_sandbox_oscar__demo_zitcha_ad_performance_daily.impressions_total},
+      0)
+    label: Effective CPM
+    format: audcurrency_2
+    description: Spend per thousand impressions, 1000 x sum of spend over sum of
+      impressions.
+    synonyms: [ CPM ]
+
+  active_brands:
+    sql: ${se_sandbox_oscar__demo_zitcha_ad_performance_daily.brand_id}
+    label: Active brands
+    format: number_0
+    description: Brands with any delivery in the period.
+    aggregate_type: count_distinct

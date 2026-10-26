@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_zitcha_brands
+label: Brands
+description: Invented supplier brands buying media from one retailer. Synthetic,
+  never a real brand.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_ZITCHA_BRANDS
@@ -6,14 +10,21 @@ table_name: DEMO_ZITCHA_BRANDS
 dimensions:
   brand_id:
     sql: '"BRAND_ID"'
+    label: Brand ID
     format: ID
+    primary_key: true
 
   retailer_name:
     sql: '"RETAILER_NAME"'
+    label: Brand retailer
+    hidden: true
 
   brand_name:
     sql: '"BRAND_NAME"'
+    label: Brand
+    synonyms: [ brand, supplier ]
 
 measures:
   count:
+    label: Brands
     aggregate_type: count

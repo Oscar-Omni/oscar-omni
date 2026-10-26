@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_zitcha_scenario_slots
+label: Scenario slots
+description: Saved planning slots for the Oct to Dec 2026 screen inventory
+  planner, three per retailer. Not actuals.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_ZITCHA_SCENARIO_SLOTS
@@ -6,35 +10,48 @@ table_name: DEMO_ZITCHA_SCENARIO_SLOTS
 dimensions:
   scenario_id:
     sql: '"SCENARIO_ID"'
+    label: Scenario ID
     format: ID
+    primary_key: true
 
   retailer_name:
     sql: '"RETAILER_NAME"'
+    label: Retailer
 
   slot_name:
     sql: '"SLOT_NAME"'
+    label: Slot
+    synonyms: [ scenario, plan ]
 
   slot_order:
     sql: '"SLOT_ORDER"'
+    label: Slot order
 
   total_budget_aud:
     sql: '"TOTAL_BUDGET_AUD"'
+    label: Default budget (A$)
 
   screen_share:
     sql: '"SCREEN_SHARE"'
+    label: Default screen share
 
   screen_cpm_aud:
     sql: '"SCREEN_CPM_AUD"'
+    label: Default screen CPM (A$)
 
   screen_roas:
     sql: '"SCREEN_ROAS"'
+    label: Default screen ROAS
 
   onsite_roas:
     sql: '"ONSITE_ROAS"'
+    label: Default other ROAS
 
   christmas_uplift:
     sql: '"CHRISTMAS_UPLIFT"'
+    label: Default December uplift
 
 measures:
   count:
+    label: Slots
     aggregate_type: count

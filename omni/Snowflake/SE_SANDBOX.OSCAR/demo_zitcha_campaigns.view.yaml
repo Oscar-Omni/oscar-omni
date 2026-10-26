@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_zitcha_campaigns
+label: Campaigns
+description: Synthetic campaign lines, one per brand booking on one placement.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_ZITCHA_CAMPAIGNS
@@ -6,26 +9,46 @@ table_name: DEMO_ZITCHA_CAMPAIGNS
 dimensions:
   campaign_id:
     sql: '"CAMPAIGN_ID"'
+    label: Campaign ID
     format: ID
+    primary_key: true
 
   retailer_name:
     sql: '"RETAILER_NAME"'
+    label: Campaign retailer
+    hidden: true
 
   campaign_name:
     sql: '"CAMPAIGN_NAME"'
+    label: Campaign
+    synonyms: [ campaign, campaign line ]
 
   objective:
     sql: '"OBJECTIVE"'
+    label: Objective
 
   start_date:
     sql: '"START_DATE"'
+    label: Campaign start
 
   end_date:
     sql: '"END_DATE"'
+    label: Campaign end
 
   budget_aud:
     sql: '"BUDGET_AUD"'
+    hidden: true
 
 measures:
   count:
+    label: Campaign lines
     aggregate_type: count
+
+  campaign_budget:
+    sql: ${se_sandbox_oscar__demo_zitcha_campaigns.budget_aud}
+    label: Campaign budget
+    format: bigaudcurrency_1
+    description: Booked budget, counted once per campaign however many daily rows
+      join to it.
+    aggregate_type: sum
+    synonyms: [ budget, booked budget ]

@@ -1,0 +1,32 @@
+base_view: se_sandbox_oscar__demo_zitcha_scenario_slots
+label: Media Plan Scenarios
+group_label: Zitcha
+description: Saved planning slots for the Oct to Dec 2026 screen inventory
+  planner. Not actuals.
+
+access_filters:
+  - field: se_sandbox_oscar__demo_zitcha_scenario_slots.retailer_name
+    user_attribute: demo_tenant
+    values_for_unfiltered: [ all ]
+
+joins: {}
+
+ai_context: Saved planning slots for the Oct to Dec 2026 placement mix planner,
+  three per retailer. The default columns hold each slot's seed assumptions;
+  scenario_json, when present, holds the saved assumptions and takes precedence.
+  Not actuals. Synthetic, built for an Omni demo.
+
+sample_queries:
+  slots_for_retailer:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_zitcha_scenario_slots.scenario_id,
+          se_sandbox_oscar__demo_zitcha_scenario_slots.slot_name,
+          se_sandbox_oscar__demo_zitcha_scenario_slots.slot_order
+        ]
+      base_view: se_sandbox_oscar__demo_zitcha_scenario_slots
+      sorts:
+        - field: se_sandbox_oscar__demo_zitcha_scenario_slots.slot_order
+      topic: demo_zitcha_media_plan_scenarios
+    prompt: Which slots exist for my retailer?

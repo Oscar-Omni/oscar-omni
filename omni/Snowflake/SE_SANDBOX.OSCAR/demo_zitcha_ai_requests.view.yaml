@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_zitcha_ai_requests
+label: AI requests
+description: Synthetic log of AI requests made in Zitcha's embedded reporting,
+  one row per request. Not Omni's or Zitcha's real usage or prices.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_ZITCHA_AI_REQUESTS
@@ -6,39 +10,124 @@ table_name: DEMO_ZITCHA_AI_REQUESTS
 dimensions:
   request_id:
     sql: '"REQUEST_ID"'
+    label: Request ID
     format: ID
+    primary_key: true
 
   request_date:
     sql: '"REQUEST_DATE"'
+    label: Request date
+    description: Day of the request. Use for every date filter.
 
   retailer_name:
     sql: '"RETAILER_NAME"'
+    label: Retailer
+    description: Tenant the request ran under.
+    synonyms: [ tenant, retailer ]
 
   requester_type:
     sql: '"REQUESTER_TYPE"'
+    label: Requester type
+    description: Retailer or Brand user.
 
   brand_id:
     sql: '"BRAND_ID"'
+    label: Brand ID
     format: ID
+    description: Brand of a brand user; empty for retailer users.
 
   task_type:
     sql: '"TASK_TYPE"'
+    label: Task type
+    description: Question, Dashboard summary or Chart explain. Summaries and chart
+      explains carry about three times the tokens of a question.
+    synonyms: [ task ]
 
   model_tier:
     sql: '"MODEL_TIER"'
+    label: Model tier
+    description: Large or Small model tier, never a vendor model name.
+    synonyms: [ model ]
 
   input_tokens:
     sql: '"INPUT_TOKENS"'
+    hidden: true
 
   output_tokens:
     sql: '"OUTPUT_TOKENS"'
+    hidden: true
 
   cost_aud:
     sql: '"COST_AUD"'
+    hidden: true
 
   accepted_flag:
     sql: '"ACCEPTED_FLAG"'
+    hidden: true
 
 measures:
   count:
     aggregate_type: count
+
+  request_count:
+    label: AI requests
+    format: number_0
+    aggregate_type: count
+    synonyms: [ requests ]
+
+  ai_cost:
+    sql: ${se_sandbox_oscar__demo_zitcha_ai_requests.cost_aud}
+    label: AI cost
+    format: audcurrency_2
+    description: Token cost of AI requests in AUD at synthetic tier rates.
+    aggregate_type: sum
+    synonyms: [ AI spend ]
+
+  cost_per_1k_requests:
+    sql: 1000 * ${se_sandbox_oscar__demo_zitcha_ai_requests.ai_cost} /
+      NULLIF(${se_sandbox_oscar__demo_zitcha_ai_requests.request_count}, 0)
+    label: Cost per 1,000 requests
+    format: audcurrency_2
+    description: 1000 x sum of cost over count of requests.
+    synonyms: [ cost per request ]
+
+  small_tier_requests:
+    label: Small tier requests
+    format: number_0
+    hidden: true
+    aggregate_type: count
+    filters:
+      model_tier:
+        is: Small
+
+  small_tier_share:
+    sql: ${se_sandbox_oscar__demo_zitcha_ai_requests.small_tier_requests} /
+      NULLIF(${se_sandbox_oscar__demo_zitcha_ai_requests.request_count}, 0)
+    label: Small tier share
+    format: percent_1
+    description: Share of requests answered on the Small tier.
+    synonyms: [ small model share ]
+
+  accepted_answers:
+    sql: ${se_sandbox_oscar__demo_zitcha_ai_requests.accepted_flag}
+    label: Accepted answers
+    format: number_0
+    hidden: true
+    aggregate_type: sum
+
+  accepted_answer_rate:
+    sql: ${se_sandbox_oscar__demo_zitcha_ai_requests.accepted_answers} /
+      NULLIF(${se_sandbox_oscar__demo_zitcha_ai_requests.request_count}, 0)
+    label: Accepted answer rate
+    format: percent_1
+    description: Share of requests whose answer the user kept, sum of accepted flags
+      over count of requests.
+    synonyms: [ accuracy, accepted answers ]
+
+  total_tokens:
+    sql: ${se_sandbox_oscar__demo_zitcha_ai_requests.input_tokens} +
+      ${se_sandbox_oscar__demo_zitcha_ai_requests.output_tokens}
+    label: Total tokens
+    format: number_0
+    aggregate_type: sum
+    synonyms: [ tokens ]

@@ -1,0 +1,84 @@
+base_view: se_sandbox_oscar__demo_zitcha_ai_requests
+label: AI Usage
+group_label: Zitcha
+description: AI requests in Zitcha's embedded reporting with token cost by model
+  tier, task, retailer and brand. Synthetic usage log for an Omni demo.
+
+access_filters:
+  - field: se_sandbox_oscar__demo_zitcha_ai_requests.retailer_name
+    user_attribute: demo_tenant
+    values_for_unfiltered: [ all ]
+
+joins:
+  se_sandbox_oscar__demo_zitcha_brands: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_zitcha_ai_requests
+    join_to_view: se_sandbox_oscar__demo_zitcha_brands
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_zitcha_ai_requests.brand_id} =
+      ${se_sandbox_oscar__demo_zitcha_brands.brand_id}
+    relationship_type: many_to_one
+
+ai_context: |-
+  One row per synthetic AI request made in Zitcha's embedded reporting from 1 October 2025 to 30 September 2026. Synthetic, illustrative of a usage log, not Omni's or Zitcha's real usage or prices.
+
+  Cost is token cost in AUD at synthetic tier rates. model_tier is Large or Small and never a vendor model name. Cost per 1,000 requests means ai_requests.cost_per_1k_requests: 1000 x sum of cost over count of requests. Accepted answer rate means sum of accepted flags over count of requests. Requester type is Retailer or Brand; brand is empty for retailer users. Task type is Question, Dashboard summary or Chart explain; summaries and chart explains carry about three times the tokens of a question.
+
+  Dates. Use ai_requests.request_date for every date filter, end exclusive. Quarters are Australian financial year quarters: last quarter means 1 July to 30 September 2026. Show monthly trends with request_date at month grain. Lead with the headline numbers and keep answers short.
+
+sample_queries:
+  cost_per_1k_by_tier_month:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_zitcha_ai_requests.request_date[month]",
+          se_sandbox_oscar__demo_zitcha_ai_requests.model_tier,
+          se_sandbox_oscar__demo_zitcha_ai_requests.request_count,
+          se_sandbox_oscar__demo_zitcha_ai_requests.cost_per_1k_requests
+        ]
+      base_view: se_sandbox_oscar__demo_zitcha_ai_requests
+      filters:
+        se_sandbox_oscar__demo_zitcha_ai_requests.request_date:
+          between_dates: [ 2025-10-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_zitcha_ai_requests.request_date[month]
+      topic: demo_zitcha_ai_usage
+    prompt: What did AI cost per 1,000 requests by model tier each month from
+      October 2025 to September 2026?
+  accepted_rate_by_month:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_zitcha_ai_requests.request_date[month]",
+          se_sandbox_oscar__demo_zitcha_ai_requests.accepted_answer_rate,
+          se_sandbox_oscar__demo_zitcha_ai_requests.small_tier_share
+        ]
+      base_view: se_sandbox_oscar__demo_zitcha_ai_requests
+      filters:
+        se_sandbox_oscar__demo_zitcha_ai_requests.request_date:
+          between_dates: [ 2025-10-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_zitcha_ai_requests.request_date[month]
+      topic: demo_zitcha_ai_usage
+    prompt: Did the accepted answer rate change after July 2026?
+  brand_ai_cost_q1_fy27:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_zitcha_brands.brand_name,
+          se_sandbox_oscar__demo_zitcha_ai_requests.request_count,
+          se_sandbox_oscar__demo_zitcha_ai_requests.ai_cost
+        ]
+      base_view: se_sandbox_oscar__demo_zitcha_ai_requests
+      filters:
+        se_sandbox_oscar__demo_zitcha_ai_requests.request_date:
+          between_dates: [ 2026-07-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_zitcha_ai_requests.requester_type:
+          is: Brand
+      limit: 10
+      sorts:
+        - field: se_sandbox_oscar__demo_zitcha_ai_requests.request_count
+          desc: true
+      topic: demo_zitcha_ai_usage
+    prompt: Which brands made the most AI requests last quarter and what did they cost?

@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_zitcha_placements
+label: Placements
+description: Ad placements a retailer sells through Zitcha.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_ZITCHA_PLACEMENTS
@@ -6,17 +9,25 @@ table_name: DEMO_ZITCHA_PLACEMENTS
 dimensions:
   placement_id:
     sql: '"PLACEMENT_ID"'
+    label: Placement ID
     format: ID
+    primary_key: true
 
   retailer_name:
     sql: '"RETAILER_NAME"'
+    label: Placement retailer
+    hidden: true
 
   placement_name:
     sql: '"PLACEMENT_NAME"'
+    label: Placement
+    synonyms: [ placement, inventory, ad slot ]
 
   placement_format:
     sql: '"PLACEMENT_FORMAT"'
+    label: Placement format
 
 measures:
   count:
+    label: Placements
     aggregate_type: count
