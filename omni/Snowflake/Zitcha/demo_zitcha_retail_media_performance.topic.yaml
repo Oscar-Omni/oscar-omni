@@ -138,7 +138,7 @@ sample_queries:
       sorts:
         - field: se_sandbox_oscar__demo_zitcha_ad_performance_daily.perf_date[week]
       topic: demo_zitcha_retail_media_performance
-    prompt: Show weekly spend by channel for Q1 FY27
+    prompt: Show weekly spend by channel last quarter
   top_brands_sept:
     query:
       fields:
