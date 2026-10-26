@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: se_sandbox_oscar__demo_sky_new_zealand_2_subscriber_months
 label: Subscriber Health
 group_label: Sky New Zealand

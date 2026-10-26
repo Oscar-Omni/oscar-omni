@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: se_sandbox_oscar__demo_titles_queensland_dealings
 label: Registry Dealings
 group_label: Titles Queensland

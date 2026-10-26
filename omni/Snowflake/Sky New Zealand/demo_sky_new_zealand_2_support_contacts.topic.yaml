@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: se_sandbox_oscar__demo_sky_new_zealand_2_support_contacts
 label: Support Contacts
 group_label: Sky New Zealand

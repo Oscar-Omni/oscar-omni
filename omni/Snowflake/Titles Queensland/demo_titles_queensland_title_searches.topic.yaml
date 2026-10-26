@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: se_sandbox_oscar__demo_titles_queensland_title_searches
 label: Title Searches
 group_label: Titles Queensland

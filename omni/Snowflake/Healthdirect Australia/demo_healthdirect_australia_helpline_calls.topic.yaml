@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: se_sandbox_oscar__demo_healthdirect_australia_calls
 label: Helpline Calls
 group_label: Healthdirect Australia
