@@ -1,0 +1,40 @@
+# Reference this view as se_sandbox_oscar__demo_zitcha_scenario_slots
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_ZITCHA_SCENARIO_SLOTS
+
+dimensions:
+  scenario_id:
+    sql: '"SCENARIO_ID"'
+    format: ID
+
+  retailer_name:
+    sql: '"RETAILER_NAME"'
+
+  slot_name:
+    sql: '"SLOT_NAME"'
+
+  slot_order:
+    sql: '"SLOT_ORDER"'
+
+  total_budget_aud:
+    sql: '"TOTAL_BUDGET_AUD"'
+
+  screen_share:
+    sql: '"SCREEN_SHARE"'
+
+  screen_cpm_aud:
+    sql: '"SCREEN_CPM_AUD"'
+
+  screen_roas:
+    sql: '"SCREEN_ROAS"'
+
+  onsite_roas:
+    sql: '"ONSITE_ROAS"'
+
+  christmas_uplift:
+    sql: '"CHRISTMAS_UPLIFT"'
+
+measures:
+  count:
+    aggregate_type: count

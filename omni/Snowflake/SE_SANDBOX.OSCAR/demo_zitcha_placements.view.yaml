@@ -1,0 +1,22 @@
+# Reference this view as se_sandbox_oscar__demo_zitcha_placements
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_ZITCHA_PLACEMENTS
+
+dimensions:
+  placement_id:
+    sql: '"PLACEMENT_ID"'
+    format: ID
+
+  retailer_name:
+    sql: '"RETAILER_NAME"'
+
+  placement_name:
+    sql: '"PLACEMENT_NAME"'
+
+  placement_format:
+    sql: '"PLACEMENT_FORMAT"'
+
+measures:
+  count:
+    aggregate_type: count

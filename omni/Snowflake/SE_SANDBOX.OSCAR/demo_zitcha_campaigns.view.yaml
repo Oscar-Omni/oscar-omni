@@ -1,0 +1,31 @@
+# Reference this view as se_sandbox_oscar__demo_zitcha_campaigns
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_ZITCHA_CAMPAIGNS
+
+dimensions:
+  campaign_id:
+    sql: '"CAMPAIGN_ID"'
+    format: ID
+
+  retailer_name:
+    sql: '"RETAILER_NAME"'
+
+  campaign_name:
+    sql: '"CAMPAIGN_NAME"'
+
+  objective:
+    sql: '"OBJECTIVE"'
+
+  start_date:
+    sql: '"START_DATE"'
+
+  end_date:
+    sql: '"END_DATE"'
+
+  budget_aud:
+    sql: '"BUDGET_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

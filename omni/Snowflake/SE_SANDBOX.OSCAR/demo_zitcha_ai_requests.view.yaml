@@ -1,0 +1,44 @@
+# Reference this view as se_sandbox_oscar__demo_zitcha_ai_requests
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_ZITCHA_AI_REQUESTS
+
+dimensions:
+  request_id:
+    sql: '"REQUEST_ID"'
+    format: ID
+
+  request_date:
+    sql: '"REQUEST_DATE"'
+
+  retailer_name:
+    sql: '"RETAILER_NAME"'
+
+  requester_type:
+    sql: '"REQUESTER_TYPE"'
+
+  brand_id:
+    sql: '"BRAND_ID"'
+    format: ID
+
+  task_type:
+    sql: '"TASK_TYPE"'
+
+  model_tier:
+    sql: '"MODEL_TIER"'
+
+  input_tokens:
+    sql: '"INPUT_TOKENS"'
+
+  output_tokens:
+    sql: '"OUTPUT_TOKENS"'
+
+  cost_aud:
+    sql: '"COST_AUD"'
+
+  accepted_flag:
+    sql: '"ACCEPTED_FLAG"'
+
+measures:
+  count:
+    aggregate_type: count

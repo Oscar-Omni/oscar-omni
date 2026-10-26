@@ -1,0 +1,19 @@
+# Reference this view as se_sandbox_oscar__demo_zitcha_brands
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_ZITCHA_BRANDS
+
+dimensions:
+  brand_id:
+    sql: '"BRAND_ID"'
+    format: ID
+
+  retailer_name:
+    sql: '"RETAILER_NAME"'
+
+  brand_name:
+    sql: '"BRAND_NAME"'
+
+measures:
+  count:
+    aggregate_type: count

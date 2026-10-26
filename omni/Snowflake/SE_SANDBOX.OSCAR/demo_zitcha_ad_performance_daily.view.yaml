@@ -1,0 +1,55 @@
+# Reference this view as se_sandbox_oscar__demo_zitcha_ad_performance_daily
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_ZITCHA_AD_PERFORMANCE_DAILY
+
+dimensions:
+  perf_date:
+    sql: '"PERF_DATE"'
+
+  retailer_name:
+    sql: '"RETAILER_NAME"'
+
+  campaign_id:
+    sql: '"CAMPAIGN_ID"'
+    format: ID
+
+  brand_id:
+    sql: '"BRAND_ID"'
+    format: ID
+
+  placement_id:
+    sql: '"PLACEMENT_ID"'
+    format: ID
+
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  channel:
+    sql: '"CHANNEL"'
+
+  brand_tier:
+    sql: '"BRAND_TIER"'
+
+  brand_category:
+    sql: '"BRAND_CATEGORY"'
+
+  impressions:
+    sql: '"IMPRESSIONS"'
+
+  clicks:
+    sql: '"CLICKS"'
+
+  spend_aud:
+    sql: '"SPEND_AUD"'
+
+  attributed_sales_aud:
+    sql: '"ATTRIBUTED_SALES_AUD"'
+
+  new_to_brand_sales_aud:
+    sql: '"NEW_TO_BRAND_SALES_AUD"'
+
+measures:
+  count:
+    aggregate_type: count
