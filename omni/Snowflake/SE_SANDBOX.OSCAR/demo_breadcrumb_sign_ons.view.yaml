@@ -1,0 +1,56 @@
+# Reference this view as se_sandbox_oscar__demo_breadcrumb_sign_ons
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_BREADCRUMB_SIGN_ONS
+
+dimensions:
+  sign_on_id:
+    sql: '"SIGN_ON_ID"'
+    format: ID
+
+  sign_on_date:
+    sql: '"SIGN_ON_DATE"'
+
+  builder_name:
+    sql: '"BUILDER_NAME"'
+
+  project_id:
+    sql: '"PROJECT_ID"'
+    format: ID
+
+  company_id:
+    sql: '"COMPANY_ID"'
+    format: ID
+
+  state_id:
+    sql: '"STATE_ID"'
+    format: ID
+
+  worker_id:
+    sql: '"WORKER_ID"'
+    format: ID
+
+  trade:
+    sql: '"TRADE"'
+
+  sign_on_method:
+    sql: '"SIGN_ON_METHOD"'
+
+  source_platform:
+    sql: '"SOURCE_PLATFORM"'
+
+  non_compliance_reason:
+    sql: '"NON_COMPLIANCE_REASON"'
+
+  worker_hours:
+    sql: '"WORKER_HOURS"'
+
+  inducted_flag:
+    sql: '"INDUCTED_FLAG"'
+
+  non_compliant_flag:
+    sql: '"NON_COMPLIANT_FLAG"'
+
+measures:
+  count:
+    aggregate_type: count

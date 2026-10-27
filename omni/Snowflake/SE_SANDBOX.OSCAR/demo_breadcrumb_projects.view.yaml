@@ -1,0 +1,28 @@
+# Reference this view as se_sandbox_oscar__demo_breadcrumb_projects
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_BREADCRUMB_PROJECTS
+
+dimensions:
+  project_id:
+    sql: '"PROJECT_ID"'
+    format: ID
+
+  builder_name:
+    sql: '"BUILDER_NAME"'
+
+  project_name:
+    sql: '"PROJECT_NAME"'
+
+  suburb:
+    sql: '"SUBURB"'
+
+  start_date:
+    sql: '"START_DATE"'
+
+  end_date:
+    sql: '"END_DATE"'
+
+measures:
+  count:
+    aggregate_type: count

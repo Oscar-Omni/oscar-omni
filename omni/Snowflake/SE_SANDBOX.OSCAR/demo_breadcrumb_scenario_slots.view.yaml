@@ -1,0 +1,43 @@
+# Reference this view as se_sandbox_oscar__demo_breadcrumb_scenario_slots
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_BREADCRUMB_SCENARIO_SLOTS
+
+dimensions:
+  scenario_id:
+    sql: '"SCENARIO_ID"'
+    format: ID
+
+  builder_name:
+    sql: '"BUILDER_NAME"'
+
+  slot_name:
+    sql: '"SLOT_NAME"'
+
+  slot_order:
+    sql: '"SLOT_ORDER"'
+
+  expected_sign_ons:
+    sql: '"EXPECTED_SIGN_ONS"'
+
+  labour_hire_share:
+    sql: '"LABOUR_HIRE_SHARE"'
+
+  uninducted_arrival_rate:
+    sql: '"UNINDUCTED_ARRIVAL_RATE"'
+
+  gate_block_rate:
+    sql: '"GATE_BLOCK_RATE"'
+
+  documents_lapsed_rate:
+    sql: '"DOCUMENTS_LAPSED_RATE"'
+
+  induction_cost_aud:
+    sql: '"INDUCTION_COST_AUD"'
+
+  stand_down_cost_aud:
+    sql: '"STAND_DOWN_COST_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

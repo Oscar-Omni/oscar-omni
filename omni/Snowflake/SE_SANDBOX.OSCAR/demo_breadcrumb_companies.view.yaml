@@ -1,0 +1,19 @@
+# Reference this view as se_sandbox_oscar__demo_breadcrumb_companies
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_BREADCRUMB_COMPANIES
+
+dimensions:
+  company_id:
+    sql: '"COMPANY_ID"'
+    format: ID
+
+  builder_name:
+    sql: '"BUILDER_NAME"'
+
+  company_name:
+    sql: '"COMPANY_NAME"'
+
+measures:
+  count:
+    aggregate_type: count

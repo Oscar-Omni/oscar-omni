@@ -1,0 +1,16 @@
+# Reference this view as se_sandbox_oscar__demo_breadcrumb_states
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_BREADCRUMB_STATES
+
+dimensions:
+  state_id:
+    sql: '"STATE_ID"'
+    format: ID
+
+  state_name:
+    sql: '"STATE_NAME"'
+
+measures:
+  count:
+    aggregate_type: count
