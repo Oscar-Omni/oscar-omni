@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: se_sandbox_oscar__demo_zitcha_ad_performance_daily
 label: Retail Media Performance
 group_label: Zitcha
