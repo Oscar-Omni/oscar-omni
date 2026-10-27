@@ -1,4 +1,4 @@
-hidden: true
+hidden: false
 
 base_view: se_sandbox_oscar__demo_healthdirect_australia_service_finder_searches
 label: Service Finder

@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: se_sandbox_oscar__demo_breadcrumb_sign_ons
 label: Site Attendance
 group_label: Breadcrumb
