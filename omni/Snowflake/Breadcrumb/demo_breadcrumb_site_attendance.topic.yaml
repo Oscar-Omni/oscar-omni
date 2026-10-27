@@ -1,0 +1,152 @@
+base_view: se_sandbox_oscar__demo_breadcrumb_sign_ons
+label: Site Attendance
+group_label: Breadcrumb
+description: Worker sign-ons to construction sites by project, subcontractor,
+  trade, sign-on method and day, with hours on site and compliance. Synthetic
+  data for an Omni demo.
+
+access_filters:
+  - field: se_sandbox_oscar__demo_breadcrumb_sign_ons.builder_name
+    user_attribute: demo_tenant
+    values_for_unfiltered: [ all ]
+
+joins:
+  se_sandbox_oscar__demo_breadcrumb_projects: {}
+  se_sandbox_oscar__demo_breadcrumb_companies: {}
+  se_sandbox_oscar__demo_breadcrumb_states: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_breadcrumb_sign_ons
+    join_to_view: se_sandbox_oscar__demo_breadcrumb_projects
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_breadcrumb_sign_ons.project_id} =
+      ${se_sandbox_oscar__demo_breadcrumb_projects.project_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_breadcrumb_sign_ons
+    join_to_view: se_sandbox_oscar__demo_breadcrumb_companies
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_breadcrumb_sign_ons.company_id} =
+      ${se_sandbox_oscar__demo_breadcrumb_companies.company_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_breadcrumb_sign_ons
+    join_to_view: se_sandbox_oscar__demo_breadcrumb_states
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_breadcrumb_sign_ons.state_id} =
+      ${se_sandbox_oscar__demo_breadcrumb_states.state_id}
+    relationship_type: many_to_one
+
+ai_context: |-
+  One row per synthetic worker sign-on to a construction site on a day, so a sign-on is a worker day, 1 July 2024 to 30 September 2026. The data is synthetic, built for an Omni demo, and is never any real builder's, subcontractor's or worker's records.
+
+  Builders. The two builders are Harbourgate Construction Group and Tallowmere Builders, in sign_ons.builder_name. The demo_tenant access filter already limits each user to their own builder's rows, so never add a builder filter and never group by builder unless asked to compare builders.
+
+  Metrics. Non compliant rate means sign_ons.non_compliant_rate: sum(non_compliant_flag) / count(sign_on_id). Never average daily, monthly or project rates. A sign-on is non compliant when the worker had no current site induction (Not inducted) or the company's insurance or licence certificate had lapsed (Documents lapsed); sign_ons.non_compliance_reason says which, and Not inducted wins when both apply. A count of breaches (non_compliant_sign_ons) is not a rate. Workers means distinct worker_id (unique_workers); hours on site is total_worker_hours. Manual portal means a supervisor signed the worker in from the web portal, which skips the app's induction check. Deliveries are short visits of one to two hours. Trade, sign-on method, platform and state are fields on sign_ons or states; site and project are projects.project_name; subbie and subcontractor are companies.company_name. Money is AUD.
+
+  Dates. Use sign_ons.sign_on_date for every date filter, and the end of a period is exclusive: 1 July to 30 September 2026 is sign_on_date from 2026-07-01 up to but not including 2026-10-01. Quarters are Australian financial year quarters: Q1 FY27 is 1 July to 30 September 2026, last quarter means Q1 FY27, and the same quarter last year is 1 July to 30 September 2025.
+
+  Analysis guidance. To compare two periods, run the same query once per period with identical filters and state both date ranges with sign-ons, non compliant sign-ons and the rate side by side. To explain a change in the non compliant rate, group the later period by projects.project_name and compare with the earlier period, then group the top project by companies.company_name, then show that project by sign_on_date at month grain and sign_on_method, and finally rerun the later period total excluding that company at that project (filter out the pair, not the whole company). Keep the same date field and scope in every follow up. Report what the data shows; do not invent causes such as weather, a regulator visit or a named person. Lead with the headline numbers and keep answers short.
+
+sample_queries:
+  rate_q1_fy27:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_breadcrumb_sign_ons.sign_on_count,
+          se_sandbox_oscar__demo_breadcrumb_sign_ons.non_compliant_sign_ons,
+          se_sandbox_oscar__demo_breadcrumb_sign_ons.non_compliant_rate
+        ]
+      base_view: se_sandbox_oscar__demo_breadcrumb_sign_ons
+      filters:
+        se_sandbox_oscar__demo_breadcrumb_sign_ons.sign_on_date:
+          between_dates: [ 2026-07-01, 2026-10-01 ]
+      topic: demo_breadcrumb_site_attendance
+    prompt: What was our non compliant rate from 1 July 2026 to 30 September 2026?
+  rate_q1_fy26:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_breadcrumb_sign_ons.sign_on_count,
+          se_sandbox_oscar__demo_breadcrumb_sign_ons.non_compliant_sign_ons,
+          se_sandbox_oscar__demo_breadcrumb_sign_ons.non_compliant_rate
+        ]
+      base_view: se_sandbox_oscar__demo_breadcrumb_sign_ons
+      filters:
+        se_sandbox_oscar__demo_breadcrumb_sign_ons.sign_on_date:
+          between_dates: [ 2025-07-01, 2025-10-01 ]
+      topic: demo_breadcrumb_site_attendance
+    prompt: What was our non compliant rate from 1 July 2025 to 30 September 2025?
+  uninducted_by_site:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_breadcrumb_projects.project_name,
+          se_sandbox_oscar__demo_breadcrumb_sign_ons.non_compliant_sign_ons
+        ]
+      base_view: se_sandbox_oscar__demo_breadcrumb_sign_ons
+      filters:
+        se_sandbox_oscar__demo_breadcrumb_sign_ons.sign_on_date:
+          between_dates: [ 2026-07-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_breadcrumb_sign_ons.non_compliance_reason:
+          is: Not inducted
+      sorts:
+        - field: se_sandbox_oscar__demo_breadcrumb_sign_ons.non_compliant_sign_ons
+          desc: true
+      topic: demo_breadcrumb_site_attendance
+    prompt: Which sites had the most uninducted sign-ons last quarter?
+  weekly_by_method:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_breadcrumb_sign_ons.sign_on_date[week]",
+          se_sandbox_oscar__demo_breadcrumb_sign_ons.sign_on_method,
+          se_sandbox_oscar__demo_breadcrumb_sign_ons.sign_on_count
+        ]
+      base_view: se_sandbox_oscar__demo_breadcrumb_sign_ons
+      filters:
+        se_sandbox_oscar__demo_breadcrumb_sign_ons.sign_on_date:
+          between_dates: [ 2026-07-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_breadcrumb_sign_ons.sign_on_date[week]
+      topic: demo_breadcrumb_site_attendance
+    prompt: Show weekly sign-ons by sign-on method for Q1 FY27
+  lapsed_subbies_sept:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_breadcrumb_companies.company_name,
+          se_sandbox_oscar__demo_breadcrumb_projects.project_name,
+          se_sandbox_oscar__demo_breadcrumb_sign_ons.non_compliant_sign_ons
+        ]
+      base_view: se_sandbox_oscar__demo_breadcrumb_sign_ons
+      filters:
+        se_sandbox_oscar__demo_breadcrumb_sign_ons.sign_on_date:
+          between_dates: [ 2026-09-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_breadcrumb_sign_ons.non_compliance_reason:
+          is: Documents lapsed
+      sorts:
+        - field: se_sandbox_oscar__demo_breadcrumb_sign_ons.non_compliant_sign_ons
+          desc: true
+      topic: demo_breadcrumb_site_attendance
+    prompt: Which subbies had lapsed documents in September 2026, and on which sites?
+  labour_hire_hours_fernhill:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_breadcrumb_sign_ons.sign_on_date[month]",
+          se_sandbox_oscar__demo_breadcrumb_sign_ons.total_worker_hours
+        ]
+      base_view: se_sandbox_oscar__demo_breadcrumb_sign_ons
+      filters:
+        se_sandbox_oscar__demo_breadcrumb_sign_ons.sign_on_date:
+          between_dates: [ 2026-07-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_breadcrumb_sign_ons.trade:
+          is: Labour hire
+        se_sandbox_oscar__demo_breadcrumb_projects.project_name:
+          is: Fernhill Residences
+      sorts:
+        - field: se_sandbox_oscar__demo_breadcrumb_sign_ons.sign_on_date[month]
+      topic: demo_breadcrumb_site_attendance
+    prompt: How many hours did labour hire workers spend on site at Fernhill
+      Residences each month from July to September 2026?

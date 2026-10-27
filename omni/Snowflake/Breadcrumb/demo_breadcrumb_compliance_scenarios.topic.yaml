@@ -1,0 +1,34 @@
+base_view: se_sandbox_oscar__demo_breadcrumb_scenario_slots
+label: Compliance Scenarios
+group_label: Breadcrumb
+description: Saved planning slots for the Oct to Dec 2026 Site Compliance
+  Planner. Assumptions, not actuals. Synthetic data for an Omni demo.
+
+access_filters:
+  - field: se_sandbox_oscar__demo_breadcrumb_scenario_slots.builder_name
+    user_attribute: demo_tenant
+    values_for_unfiltered: [ all ]
+
+joins: {}
+
+ai_context: "Saved planning slots for the Oct to Dec 2026 Site Compliance
+  Planner, three per builder, one row per slot keyed on scenario_id. Each row
+  holds the slot's default assumptions; scenario_json, when present, holds the
+  saved assumptions as JSON. These are plans, not actuals: never add them to
+  sign-on counts. Rates and shares are fractions (0.08 is 8%) and costs are AUD.
+  The demo_tenant access filter limits each user to their own builder's slots.
+  Synthetic data for an Omni demo."
+
+sample_queries:
+  slots:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_breadcrumb_scenario_slots.slot_name,
+          se_sandbox_oscar__demo_breadcrumb_scenario_slots.slot_order
+        ]
+      base_view: se_sandbox_oscar__demo_breadcrumb_scenario_slots
+      sorts:
+        - field: se_sandbox_oscar__demo_breadcrumb_scenario_slots.slot_order
+      topic: demo_breadcrumb_compliance_scenarios
+    prompt: Which planning slots exist for my company?

@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__demo_breadcrumb_sign_ons
+label: Sign-ons
+description: Synthetic worker sign-ons to construction sites, one row per worker
+  per site per day (a worker day). Built for an Omni demo; never any real
+  builder's, subcontractor's or worker's records.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_BREADCRUMB_SIGN_ONS
@@ -6,51 +11,144 @@ table_name: DEMO_BREADCRUMB_SIGN_ONS
 dimensions:
   sign_on_id:
     sql: '"SIGN_ON_ID"'
+    label: Sign-on ID
     format: ID
+    primary_key: true
 
   sign_on_date:
     sql: '"SIGN_ON_DATE"'
+    label: Sign-on date
+    description: Day the worker signed on. Use for every date filter; quarters are
+      Australian financial year quarters (Q1 FY27 is 1 July to 30 September
+      2026).
+    synonyms: [ date, day, attendance date ]
 
   builder_name:
     sql: '"BUILDER_NAME"'
+    label: Builder
+    description: Embed tenant, Harbourgate Construction Group or Tallowmere
+      Builders. Each user only sees their own builder through the demo_tenant
+      access filter.
+    synonyms: [ tenant, builder, head contractor ]
 
   project_id:
     sql: '"PROJECT_ID"'
+    label: Project ID
     format: ID
 
   company_id:
     sql: '"COMPANY_ID"'
+    label: Company ID
     format: ID
 
   state_id:
     sql: '"STATE_ID"'
+    label: State ID
     format: ID
 
   worker_id:
     sql: '"WORKER_ID"'
+    label: Worker ID
     format: ID
+    description: Pseudonymous worker id. No worker names are held.
 
   trade:
     sql: '"TRADE"'
+    label: Trade
+    description: The company's trade, constant per company. Deliveries covers
+      delivery, crane hire and waste visits of about one to two hours.
+    synonyms: [ trade type, discipline ]
 
   sign_on_method:
     sql: '"SIGN_ON_METHOD"'
+    label: Sign-on method
+    description: App, Kiosk QR or Manual portal. Manual portal is a supervisor
+      signing a worker in from the web portal, which skips the app's induction
+      check.
+    synonyms: [ method, manual sign on, sign on channel ]
 
   source_platform:
     sql: '"SOURCE_PLATFORM"'
+    label: Platform
+    description: Breadcrumb or SignOnSite, constant per project.
+    synonyms: [ platform, product, SignOnSite ]
 
   non_compliance_reason:
     sql: '"NON_COMPLIANCE_REASON"'
+    label: Non compliance reason
+    description: Compliant, Not inducted (no current site induction at sign on) or
+      Documents lapsed (the company's insurance or licence certificate had
+      expired). Not inducted wins when both apply.
+    synonyms: [ reason, breach reason, expired insurance, lapsed documents ]
 
   worker_hours:
     sql: '"WORKER_HOURS"'
+    label: Worker hours
+    format: number_2
+    description: Hours between sign on and sign off for this sign-on.
 
   inducted_flag:
     sql: '"INDUCTED_FLAG"'
+    label: Inducted flag
+    description: 1 when the worker held a current site induction at sign on, 0 when
+      uninducted.
+    synonyms: [ uninducted, inducted ]
 
   non_compliant_flag:
     sql: '"NON_COMPLIANT_FLAG"'
+    label: Non compliant flag
+    description: 1 when non_compliance_reason is not Compliant.
 
 measures:
   count:
     aggregate_type: count
+
+  sign_on_count:
+    sql: ${se_sandbox_oscar__demo_breadcrumb_sign_ons.sign_on_id}
+    label: Worker sign-ons
+    format: number_0
+    description: Worker sign-ons, one per worker per site per day (worker days).
+    aggregate_type: count_distinct
+    synonyms: [ sign-ons, worker days, attendance ]
+
+  total_worker_hours:
+    sql: ${se_sandbox_oscar__demo_breadcrumb_sign_ons.worker_hours}
+    label: Hours on site
+    format: number_0
+    description: Hours on site between sign on and sign off.
+    aggregate_type: sum
+    synonyms: [ hours on site, worker hours, hours ]
+
+  unique_workers:
+    sql: ${se_sandbox_oscar__demo_breadcrumb_sign_ons.worker_id}
+    label: Workers on site
+    format: number_0
+    description: Distinct workers who signed on in the period.
+    aggregate_type: count_distinct
+    synonyms: [ workers, headcount ]
+
+  non_compliant_sign_ons:
+    sql: ${se_sandbox_oscar__demo_breadcrumb_sign_ons.non_compliant_flag}
+    label: Non compliant sign-ons
+    format: number_0
+    description: Sign-ons by a worker without a current induction or for a company
+      with a lapsed certificate.
+    aggregate_type: sum
+    synonyms: [ non compliant, compliance breaches, breaches ]
+
+  non_compliant_rate:
+    sql: ${se_sandbox_oscar__demo_breadcrumb_sign_ons.non_compliant_sign_ons} /
+      NULLIF(${se_sandbox_oscar__demo_breadcrumb_sign_ons.sign_on_count}, 0)
+    label: Non compliant rate
+    format: percent_1
+    description: Sum of non compliant sign-ons divided by count of sign-ons. Never
+      an average of daily or project rates.
+    synonyms: [ non compliant rate, compliance rate, breach rate ]
+
+  avg_hours_per_sign_on:
+    sql: ${se_sandbox_oscar__demo_breadcrumb_sign_ons.total_worker_hours} /
+      NULLIF(${se_sandbox_oscar__demo_breadcrumb_sign_ons.sign_on_count}, 0)
+    label: Average hours per sign-on
+    format: number_1
+    description: Sum of hours on site divided by count of sign-ons.
+    synonyms: [ shift length, average shift ]

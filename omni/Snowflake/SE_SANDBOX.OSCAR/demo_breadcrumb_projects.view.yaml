@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_breadcrumb_projects
+label: Projects
+description: Synthetic construction projects (sites) run by the two demo
+  builders. Invented names in real Australian suburbs.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_BREADCRUMB_PROJECTS
@@ -6,22 +10,33 @@ table_name: DEMO_BREADCRUMB_PROJECTS
 dimensions:
   project_id:
     sql: '"PROJECT_ID"'
+    label: Project ID
     format: ID
+    primary_key: true
 
   builder_name:
     sql: '"BUILDER_NAME"'
+    label: Project builder
+    hidden: true
 
   project_name:
     sql: '"PROJECT_NAME"'
+    label: Project
+    description: Invented project name, for example Fernhill Residences.
+    synonyms: [ site, project, job ]
 
   suburb:
     sql: '"SUBURB"'
+    label: Suburb
+    synonyms: [ location, suburb ]
 
   start_date:
     sql: '"START_DATE"'
+    label: Project start date
 
   end_date:
     sql: '"END_DATE"'
+    label: Practical completion date
 
 measures:
   count:

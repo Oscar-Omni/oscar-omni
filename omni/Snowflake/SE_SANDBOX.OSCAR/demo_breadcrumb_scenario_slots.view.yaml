@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_breadcrumb_scenario_slots
+label: Scenario slots
+description: Saved planning slots for the Oct to Dec 2026 Site Compliance
+  Planner, three per builder. Assumptions, not actuals.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_BREADCRUMB_SCENARIO_SLOTS
@@ -6,38 +10,65 @@ table_name: DEMO_BREADCRUMB_SCENARIO_SLOTS
 dimensions:
   scenario_id:
     sql: '"SCENARIO_ID"'
+    label: Scenario ID
     format: ID
+    primary_key: true
 
   builder_name:
     sql: '"BUILDER_NAME"'
+    label: Builder
+    description: Tenant that owns the slot.
 
   slot_name:
     sql: '"SLOT_NAME"'
+    label: Slot
+    description: Label on the slot pill.
+    synonyms: [ scenario, plan ]
 
   slot_order:
     sql: '"SLOT_ORDER"'
+    label: Slot order
 
   expected_sign_ons:
     sql: '"EXPECTED_SIGN_ONS"'
+    label: Expected worker days
+    format: number_0
 
   labour_hire_share:
     sql: '"LABOUR_HIRE_SHARE"'
+    label: Labour hire share
+    format: percent_1
 
   uninducted_arrival_rate:
     sql: '"UNINDUCTED_ARRIVAL_RATE"'
+    label: Uninducted arrival rate
+    format: percent_1
 
   gate_block_rate:
     sql: '"GATE_BLOCK_RATE"'
+    label: Gate block rate
+    format: percent_0
 
   documents_lapsed_rate:
     sql: '"DOCUMENTS_LAPSED_RATE"'
+    label: Documents lapsed rate
+    format: percent_1
 
   induction_cost_aud:
     sql: '"INDUCTION_COST_AUD"'
+    label: Induction cost (A$)
+    format: audcurrency_0
 
   stand_down_cost_aud:
     sql: '"STAND_DOWN_COST_AUD"'
+    label: Stand down cost (A$)
+    format: audcurrency_0
 
 measures:
   count:
+    aggregate_type: count
+
+  slot_count:
+    label: Slots
+    format: number_0
     aggregate_type: count

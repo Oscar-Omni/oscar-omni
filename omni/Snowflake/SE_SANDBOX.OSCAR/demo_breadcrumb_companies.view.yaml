@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_breadcrumb_companies
+label: Companies
+description: Synthetic subcontractor and supplier companies on each builder's
+  register. Invented names, never real businesses.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_BREADCRUMB_COMPANIES
@@ -6,13 +10,20 @@ table_name: DEMO_BREADCRUMB_COMPANIES
 dimensions:
   company_id:
     sql: '"COMPANY_ID"'
+    label: Company ID
     format: ID
+    primary_key: true
 
   builder_name:
     sql: '"BUILDER_NAME"'
+    label: Company builder
+    hidden: true
 
   company_name:
     sql: '"COMPANY_NAME"'
+    label: Company
+    description: Subcontractor or supplier, for example Quollcrew Labour Hire.
+    synonyms: [ subbie, subcontractor, contractor, company ]
 
 measures:
   count:

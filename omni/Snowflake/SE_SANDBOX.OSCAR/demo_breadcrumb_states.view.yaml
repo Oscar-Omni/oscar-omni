@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_breadcrumb_states
+label: States
+description: Australian states and territories.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_BREADCRUMB_STATES
@@ -6,10 +9,15 @@ table_name: DEMO_BREADCRUMB_STATES
 dimensions:
   state_id:
     sql: '"STATE_ID"'
+    label: State ID
     format: ID
+    primary_key: true
 
   state_name:
     sql: '"STATE_NAME"'
+    label: State
+    description: Full state or territory name, for example Queensland.
+    synonyms: [ state, territory, region ]
 
 measures:
   count:
