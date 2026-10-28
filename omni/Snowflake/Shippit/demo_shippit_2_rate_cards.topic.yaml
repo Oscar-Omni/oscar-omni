@@ -1,0 +1,85 @@
+base_view: se_sandbox_oscar__demo_shippit_2_rate_cards
+label: Rate cards
+group_label: Shippit
+description: Each merchant's carrier rate card by month, carrier, zone and
+  service level, with base rate, fuel levy and effective rate. Synthetic.
+
+access_filters:
+  - field: se_sandbox_oscar__demo_shippit_2_rate_cards.merchant_name
+    user_attribute: demo_tenant
+    values_for_unfiltered: [ all ]
+
+joins:
+  se_sandbox_oscar__demo_shippit_2_carriers: {}
+  se_sandbox_oscar__demo_shippit_2_zones: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_shippit_2_rate_cards
+    join_to_view: se_sandbox_oscar__demo_shippit_2_carriers
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_shippit_2_rate_cards.carrier_id} =
+      ${se_sandbox_oscar__demo_shippit_2_carriers.carrier_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_shippit_2_rate_cards
+    join_to_view: se_sandbox_oscar__demo_shippit_2_zones
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_shippit_2_rate_cards.zone_id} =
+      ${se_sandbox_oscar__demo_shippit_2_zones.zone_id}
+    relationship_type: many_to_one
+
+ai_context: "One row per merchant, month, carrier, zone and service level the
+  carrier offers, synthetic, July 2024 to September 2026. Each merchant ships on
+  its own negotiated rate card. Base rates are reviewed each 1 July; the fuel
+  levy moves monthly. effective_rate_aud = base_rate_aud x (1 + fuel_levy_pct).
+  These are rates per parcel, not spend: never sum them, use avg_effective_rate
+  or avg_base_rate read by carrier, zone, service level and rate_month. Compare
+  with shipments only after aggregating shipments to month, carrier, zone and
+  service level. Carrier means carriers.carrier_name, zone means
+  zones.zone_name, state means zones.state_name. Each user sees only their own
+  merchant's rate card. Quote rates in A$."
+
+sample_queries:
+  bluegum_brisbane_standard_2026:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_shippit_2_rate_cards.rate_month,
+          se_sandbox_oscar__demo_shippit_2_rate_cards.avg_base_rate,
+          se_sandbox_oscar__demo_shippit_2_rate_cards.avg_effective_rate
+        ]
+      base_view: se_sandbox_oscar__demo_shippit_2_rate_cards
+      filters:
+        se_sandbox_oscar__demo_shippit_2_rate_cards.rate_month:
+          between_dates: [ 2026-01-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_shippit_2_carriers.carrier_name:
+          is: Bluegum Express
+        se_sandbox_oscar__demo_shippit_2_zones.zone_name:
+          is: Brisbane metro
+        se_sandbox_oscar__demo_shippit_2_rate_cards.service_level:
+          is: Standard
+      sorts:
+        - field: se_sandbox_oscar__demo_shippit_2_rate_cards.rate_month
+      topic: demo_shippit_2_rate_cards
+    prompt: How did Bluegum Express's Standard effective rate to Brisbane metro move
+      each month in 2026?
+  lowest_regional_qld_standard_jul_2026:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_shippit_2_carriers.carrier_name,
+          se_sandbox_oscar__demo_shippit_2_rate_cards.avg_effective_rate
+        ]
+      base_view: se_sandbox_oscar__demo_shippit_2_rate_cards
+      filters:
+        se_sandbox_oscar__demo_shippit_2_rate_cards.rate_month:
+          between_dates: [ 2026-07-01, 2026-08-01 ]
+        se_sandbox_oscar__demo_shippit_2_zones.zone_name:
+          is: Regional Queensland
+        se_sandbox_oscar__demo_shippit_2_rate_cards.service_level:
+          is: Standard
+      sorts:
+        - field: se_sandbox_oscar__demo_shippit_2_rate_cards.avg_effective_rate
+      topic: demo_shippit_2_rate_cards
+    prompt: Which carrier had the lowest Standard effective rate to Regional
+      Queensland in July 2026?

@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_shippit_2_zones
+label: Zones
+description: Delivery zones on real Australian and New Zealand geography.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_SHIPPIT_2_ZONES
@@ -6,16 +9,26 @@ table_name: DEMO_SHIPPIT_2_ZONES
 dimensions:
   zone_id:
     sql: '"ZONE_ID"'
+    label: Zone ID
     format: ID
+    primary_key: true
 
   zone_name:
     sql: '"ZONE_NAME"'
+    label: Zone
+    description: Metro or regional delivery zone, for example Brisbane metro or
+      Regional Queensland.
+    synonyms: [ metro or regional, delivery zone, region ]
 
   state_name:
     sql: '"STATE_NAME"'
+    label: State
+    description: Australian state or territory in full; New Zealand is one value.
+    synonyms: [ state, territory ]
 
   country:
     sql: '"COUNTRY"'
+    label: Country
 
 measures:
   count:

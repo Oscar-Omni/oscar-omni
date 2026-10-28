@@ -1,0 +1,41 @@
+base_view: se_sandbox_oscar__demo_shippit_2_scenario_slots
+label: Allocation scenarios
+group_label: Shippit
+description: Saved planning slots for the Allocation Rule Planner app. Not delivery data.
+
+access_filters:
+  - field: se_sandbox_oscar__demo_shippit_2_scenario_slots.merchant_name
+    user_attribute: demo_tenant
+    values_for_unfiltered: [ all ]
+
+joins:
+  se_sandbox_oscar__demo_shippit_2_carriers: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_shippit_2_scenario_slots
+    join_to_view: se_sandbox_oscar__demo_shippit_2_carriers
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_shippit_2_scenario_slots.focus_carrier_id} =
+      ${se_sandbox_oscar__demo_shippit_2_carriers.carrier_id}
+    relationship_type: many_to_one
+
+ai_context: Saved planning slots for the Allocation Rule Planner, three per
+  merchant, one row per slot keyed on scenario_id, with default assumption
+  values and a scenario_json input column the app saves into. Not delivery data;
+  do not use it to answer questions about parcels. Each user sees only their own
+  merchant's slots.
+
+sample_queries:
+  slots_and_caps:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_shippit_2_scenario_slots.slot_name,
+          se_sandbox_oscar__demo_shippit_2_scenario_slots.focus_share_cap_pct
+        ]
+      base_view: se_sandbox_oscar__demo_shippit_2_scenario_slots
+      sorts:
+        - field: se_sandbox_oscar__demo_shippit_2_scenario_slots.slot_order
+      topic: demo_shippit_2_allocation_scenarios
+    prompt: Which planning slots exist for my business and what share cap does each
+      hold?

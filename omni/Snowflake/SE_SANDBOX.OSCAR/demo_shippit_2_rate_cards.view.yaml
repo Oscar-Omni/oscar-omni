@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_shippit_2_rate_cards
+label: Rate cards
+description: One row per merchant, month, carrier, zone and service level. Rates
+  per parcel, synthetic.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_SHIPPIT_2_RATE_CARDS
@@ -6,30 +10,80 @@ table_name: DEMO_SHIPPIT_2_RATE_CARDS
 dimensions:
   merchant_name:
     sql: '"MERCHANT_NAME"'
+    label: Merchant
+    description: Merchant whose negotiated rate card this is. Embed tenant.
 
   rate_month:
     sql: '"RATE_MONTH"'
+    label: Rate month
+    description: First of the month the rate applies to.
 
   carrier_id:
     sql: '"CARRIER_ID"'
     format: ID
+    hidden: true
 
   zone_id:
     sql: '"ZONE_ID"'
     format: ID
+    hidden: true
 
   service_level:
     sql: '"SERVICE_LEVEL"'
+    label: Service level
 
   base_rate_aud:
     sql: '"BASE_RATE_AUD"'
+    label: Base rate (A$)
+    format: audcurrency_2
+    description: Contracted base rate per parcel before fuel levy. Reviewed each 1 July.
+    synonyms: [ rate card, base rate, contract rate ]
 
   fuel_levy_pct:
     sql: '"FUEL_LEVY_PCT"'
+    label: Fuel levy
+    format: percent_1
+    description: Monthly fuel levy as a share of the base rate.
+    synonyms: [ fuel levy, fuel surcharge ]
 
   effective_rate_aud:
     sql: '"EFFECTIVE_RATE_AUD"'
+    label: Effective rate (A$)
+    format: audcurrency_2
+    description: Base rate times one plus fuel levy.
+
+  rate_card_key:
+    sql: "\"MERCHANT_NAME\" || '|' || TO_VARCHAR(\"RATE_MONTH\") || '|' ||
+      \"CARRIER_ID\" || '|' || \"ZONE_ID\" || '|' || \"SERVICE_LEVEL\""
+    hidden: true
+    primary_key: true
 
 measures:
   count:
+    aggregate_type: count
+
+  avg_effective_rate:
+    sql: ${effective_rate_aud}
+    label: Average effective rate
+    format: audcurrency_2
+    description: Average rate card effective rate per parcel. A rate, not a spend;
+      read it by carrier, zone, service level and month.
+    aggregate_type: average
+    synonyms: [ effective rate, all in rate ]
+
+  avg_base_rate:
+    sql: ${base_rate_aud}
+    label: Average base rate
+    format: audcurrency_2
+    aggregate_type: average
+
+  avg_fuel_levy:
+    sql: ${fuel_levy_pct}
+    label: Average fuel levy
+    format: percent_1
+    aggregate_type: average
+
+  rate_lines:
+    label: Rate card lines
+    format: number_0
     aggregate_type: count

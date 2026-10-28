@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_shippit_2_scenario_slots
+label: Scenario slots
+description: Saved planning slots for the Allocation Rule Planner app, three per
+  merchant. Not delivery data.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_SHIPPIT_2_SCENARIO_SLOTS
@@ -6,45 +10,65 @@ table_name: DEMO_SHIPPIT_2_SCENARIO_SLOTS
 dimensions:
   scenario_id:
     sql: '"SCENARIO_ID"'
+    label: Scenario ID
     format: ID
+    primary_key: true
+    synonyms: [ slot ]
 
   merchant_name:
     sql: '"MERCHANT_NAME"'
+    label: Merchant
 
   slot_name:
     sql: '"SLOT_NAME"'
+    label: Slot name
+    synonyms: [ scenario, plan ]
 
   slot_order:
     sql: '"SLOT_ORDER"'
+    label: Slot order
 
   is_baseline:
     sql: '"IS_BASELINE"'
+    label: Is baseline
 
   focus_carrier_id:
     sql: '"FOCUS_CARRIER_ID"'
+    label: Focus carrier ID
     format: ID
 
   state_name:
     sql: '"STATE_NAME"'
+    label: Lane state
 
   service_level:
     sql: '"SERVICE_LEVEL"'
+    label: Lane service level
 
   focus_share_cap_pct:
     sql: '"FOCUS_SHARE_CAP_PCT"'
+    label: Focus share cap (%)
 
   focus_on_time_floor_pct:
     sql: '"FOCUS_ON_TIME_FLOOR_PCT"'
+    label: Focus on time floor (%)
 
   recovery_pts_per_10_share:
     sql: '"RECOVERY_PTS_PER_10_SHARE"'
+    label: Recovery points per 10 share points
 
   next_best_cost_gap_aud:
     sql: '"NEXT_BEST_COST_GAP_AUD"'
+    label: Next best cost gap (A$)
 
   failed_attempt_fee_aud:
     sql: '"FAILED_ATTEMPT_FEE_AUD"'
+    label: Failed attempt fee (A$)
 
 measures:
   count:
+    aggregate_type: count
+
+  slots:
+    label: Slots
     aggregate_type: count

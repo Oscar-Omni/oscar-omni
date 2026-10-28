@@ -1,0 +1,141 @@
+base_view: se_sandbox_oscar__demo_shippit_2_shipments
+label: Shipments
+group_label: Shippit
+description: Parcels shipped with carrier, zone, service level and allocation
+  rule, on time, failed first attempts, transit and carrier cost. One row per
+  parcel. Synthetic data, not Shippit's figures.
+
+access_filters:
+  - field: se_sandbox_oscar__demo_shippit_2_shipments.merchant_name
+    user_attribute: demo_tenant
+    values_for_unfiltered: [ all ]
+
+joins:
+  se_sandbox_oscar__demo_shippit_2_carriers: {}
+  se_sandbox_oscar__demo_shippit_2_zones: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_shippit_2_shipments
+    join_to_view: se_sandbox_oscar__demo_shippit_2_carriers
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_shippit_2_shipments.carrier_id} =
+      ${se_sandbox_oscar__demo_shippit_2_carriers.carrier_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_shippit_2_shipments
+    join_to_view: se_sandbox_oscar__demo_shippit_2_zones
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_shippit_2_shipments.zone_id} =
+      ${se_sandbox_oscar__demo_shippit_2_zones.zone_id}
+    relationship_type: many_to_one
+
+ai_context: |-
+  One row per synthetic parcel shipped by a merchant through Shippit, 1 July 2024 to 30 September 2026. Carrier and merchant names are invented and the data is synthetic, built for an Omni demo; zone geography is real Australia and New Zealand. Money is AUD and NZ costs are converted to AUD, so quote costs as A$.
+
+  The date field is shipments.ship_date. On time rate is sum(is_on_time) / sum(is_delivered): delivered on or before promised_date, the delivery date promised to the receiver at checkout (the ETA). Failed first attempt rate divides failed attempts by all parcels. Cost per parcel is carrier cost over parcels. Never average rates across zones, carriers or months; always use the on_time_rate, failed_attempt_rate and cost_per_parcel measures, which recompute from the sums. A late parcel is delivered after its promise; a failed attempt is a first attempt that did not land and can still end on time.
+
+  State means zones.state_name, and New Zealand is one value there, so a state list has nine rows. Metro or regional means zones.zone_name. Carrier or courier means carriers.carrier_name. allocation_rule is the rule that picked the carrier for that parcel: Cheapest, Fastest or Preferred carrier. service_level is Standard, Express or Same day. Quarters are Australian financial year quarters: Q1 FY27 is 1 July to 30 September 2026.
+
+  Date filters use an exclusive end: 1 July to 30 September 2026 is ship_date between 2026-07-01 and 2026-10-01. When a user says this half without dates, use 2026-04-01 to 2026-10-01 and compare with 2025-04-01 to 2025-10-01.
+
+  To compare two periods, run the same query once per period with identical filters and show both side by side with the change in percentage points, naming both date ranges. In a follow up, keep the state, service level and other filters from the previous answer unless the user changes them. To explain an on time change in one state, filter that state and service level, then split by ship_date month, carrier and allocation_rule with parcels, on_time_rate and cost_per_parcel. A carrier's share of parcels is its parcels divided by all parcels in the same month and allocation rule. Say which allocation rule moved and which stayed flat. Stay on the data: never invent causes such as weather, strikes or a named person.
+
+  Each user sees only their own merchant's rows through the demo_tenant access filter; never mention other merchants. Lead with the headline numbers and keep answers short.
+
+sample_queries:
+  on_time_by_state_jul_sep_2026:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_shippit_2_zones.state_name,
+          se_sandbox_oscar__demo_shippit_2_shipments.delivered_parcels,
+          se_sandbox_oscar__demo_shippit_2_shipments.on_time_rate
+        ]
+      base_view: se_sandbox_oscar__demo_shippit_2_shipments
+      filters:
+        se_sandbox_oscar__demo_shippit_2_shipments.ship_date:
+          between_dates: [ 2026-07-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_shippit_2_shipments.on_time_rate
+      topic: demo_shippit_2_shipments
+    prompt: What was our on time delivery rate by state for parcels shipped from 1
+      July 2026 to 30 September 2026?
+  on_time_by_state_jul_sep_2025:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_shippit_2_zones.state_name,
+          se_sandbox_oscar__demo_shippit_2_shipments.delivered_parcels,
+          se_sandbox_oscar__demo_shippit_2_shipments.on_time_rate
+        ]
+      base_view: se_sandbox_oscar__demo_shippit_2_shipments
+      filters:
+        se_sandbox_oscar__demo_shippit_2_shipments.ship_date:
+          between_dates: [ 2025-07-01, 2025-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_shippit_2_shipments.on_time_rate
+      topic: demo_shippit_2_shipments
+    prompt: What was our on time delivery rate by state for parcels shipped from 1
+      July 2025 to 30 September 2025?
+  queensland_standard_by_month_carrier_rule:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_shippit_2_shipments.ship_date[month]",
+          se_sandbox_oscar__demo_shippit_2_shipments.allocation_rule,
+          se_sandbox_oscar__demo_shippit_2_carriers.carrier_name,
+          se_sandbox_oscar__demo_shippit_2_shipments.parcels,
+          se_sandbox_oscar__demo_shippit_2_shipments.on_time_rate,
+          se_sandbox_oscar__demo_shippit_2_shipments.cost_per_parcel
+        ]
+      base_view: se_sandbox_oscar__demo_shippit_2_shipments
+      filters:
+        se_sandbox_oscar__demo_shippit_2_shipments.ship_date:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_shippit_2_zones.state_name:
+          is: Queensland
+        se_sandbox_oscar__demo_shippit_2_shipments.service_level:
+          is: Standard
+      sorts:
+        - field: se_sandbox_oscar__demo_shippit_2_shipments.ship_date[month]
+      topic: demo_shippit_2_shipments
+    prompt: Split Queensland Standard parcels by carrier and allocation rule for
+      each month from April to September 2026, with parcels, on time rate and
+      cost per parcel.
+  failed_attempt_rate_by_carrier:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_shippit_2_carriers.carrier_name,
+          se_sandbox_oscar__demo_shippit_2_shipments.parcels,
+          se_sandbox_oscar__demo_shippit_2_shipments.failed_attempt_rate
+        ]
+      base_view: se_sandbox_oscar__demo_shippit_2_shipments
+      filters:
+        se_sandbox_oscar__demo_shippit_2_shipments.ship_date:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_shippit_2_shipments.failed_attempt_rate
+          desc: true
+      topic: demo_shippit_2_shipments
+    prompt: Which carrier had the highest failed first attempt rate from 1 April to
+      30 September 2026?
+  late_parcels_by_zone_carrier_sep_2026:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_shippit_2_zones.zone_name,
+          se_sandbox_oscar__demo_shippit_2_carriers.carrier_name,
+          se_sandbox_oscar__demo_shippit_2_shipments.late_parcels
+        ]
+      base_view: se_sandbox_oscar__demo_shippit_2_shipments
+      filters:
+        se_sandbox_oscar__demo_shippit_2_shipments.ship_date:
+          between_dates: [ 2026-09-01, 2026-10-01 ]
+      limit: 10
+      sorts:
+        - field: se_sandbox_oscar__demo_shippit_2_shipments.late_parcels
+          desc: true
+      topic: demo_shippit_2_shipments
+    prompt: Which zones had the most late parcels in September 2026, and with which
+      carrier?
