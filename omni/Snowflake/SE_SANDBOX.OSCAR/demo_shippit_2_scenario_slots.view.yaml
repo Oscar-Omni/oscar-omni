@@ -1,0 +1,50 @@
+# Reference this view as se_sandbox_oscar__demo_shippit_2_scenario_slots
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_SHIPPIT_2_SCENARIO_SLOTS
+
+dimensions:
+  scenario_id:
+    sql: '"SCENARIO_ID"'
+    format: ID
+
+  merchant_name:
+    sql: '"MERCHANT_NAME"'
+
+  slot_name:
+    sql: '"SLOT_NAME"'
+
+  slot_order:
+    sql: '"SLOT_ORDER"'
+
+  is_baseline:
+    sql: '"IS_BASELINE"'
+
+  focus_carrier_id:
+    sql: '"FOCUS_CARRIER_ID"'
+    format: ID
+
+  state_name:
+    sql: '"STATE_NAME"'
+
+  service_level:
+    sql: '"SERVICE_LEVEL"'
+
+  focus_share_cap_pct:
+    sql: '"FOCUS_SHARE_CAP_PCT"'
+
+  focus_on_time_floor_pct:
+    sql: '"FOCUS_ON_TIME_FLOOR_PCT"'
+
+  recovery_pts_per_10_share:
+    sql: '"RECOVERY_PTS_PER_10_SHARE"'
+
+  next_best_cost_gap_aud:
+    sql: '"NEXT_BEST_COST_GAP_AUD"'
+
+  failed_attempt_fee_aud:
+    sql: '"FAILED_ATTEMPT_FEE_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

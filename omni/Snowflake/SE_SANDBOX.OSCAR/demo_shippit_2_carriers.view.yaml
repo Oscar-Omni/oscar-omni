@@ -1,0 +1,16 @@
+# Reference this view as se_sandbox_oscar__demo_shippit_2_carriers
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_SHIPPIT_2_CARRIERS
+
+dimensions:
+  carrier_id:
+    sql: '"CARRIER_ID"'
+    format: ID
+
+  carrier_name:
+    sql: '"CARRIER_NAME"'
+
+measures:
+  count:
+    aggregate_type: count

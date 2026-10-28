@@ -1,0 +1,35 @@
+# Reference this view as se_sandbox_oscar__demo_shippit_2_rate_cards
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_SHIPPIT_2_RATE_CARDS
+
+dimensions:
+  merchant_name:
+    sql: '"MERCHANT_NAME"'
+
+  rate_month:
+    sql: '"RATE_MONTH"'
+
+  carrier_id:
+    sql: '"CARRIER_ID"'
+    format: ID
+
+  zone_id:
+    sql: '"ZONE_ID"'
+    format: ID
+
+  service_level:
+    sql: '"SERVICE_LEVEL"'
+
+  base_rate_aud:
+    sql: '"BASE_RATE_AUD"'
+
+  fuel_levy_pct:
+    sql: '"FUEL_LEVY_PCT"'
+
+  effective_rate_aud:
+    sql: '"EFFECTIVE_RATE_AUD"'
+
+measures:
+  count:
+    aggregate_type: count
