@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: se_sandbox_oscar__demo_shippit_2_rate_cards
 label: Rate cards
 group_label: Shippit
