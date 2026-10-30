@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_ventia_3_sectors
+label: Sectors
+description: Ventia operating sectors. Synthetic performance.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_VENTIA_3_SECTORS
@@ -6,10 +9,16 @@ table_name: DEMO_VENTIA_3_SECTORS
 dimensions:
   sector_id:
     sql: '"SECTOR_ID"'
+    label: Sector ID
     format: ID
+    primary_key: true
 
   sector_name:
     sql: '"SECTOR_NAME"'
+    label: Sector
+    description: Defence and Social Infrastructure, Infrastructure Services,
+      Telecommunications or Transport.
+    synonyms: [ sector, business unit, segment ]
 
 measures:
   count:

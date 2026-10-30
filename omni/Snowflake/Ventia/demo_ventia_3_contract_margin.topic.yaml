@@ -1,0 +1,122 @@
+base_view: se_sandbox_oscar__demo_ventia_3_project_months
+label: Contract margin
+group_label: Ventia
+description: Synthetic contract margin ledger by project, sector, region and
+  month, in AUD. One row per project per month. Synthetic data, not Ventia's
+  figures.
+
+joins:
+  se_sandbox_oscar__demo_ventia_3_months: {}
+  se_sandbox_oscar__demo_ventia_3_projects:
+    se_sandbox_oscar__demo_ventia_3_sectors: {}
+    se_sandbox_oscar__demo_ventia_3_regions: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_ventia_3_project_months
+    join_to_view: se_sandbox_oscar__demo_ventia_3_months
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_ventia_3_project_months.month_start} =
+      ${se_sandbox_oscar__demo_ventia_3_months.month_start}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_ventia_3_project_months
+    join_to_view: se_sandbox_oscar__demo_ventia_3_projects
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_ventia_3_project_months.project_id} =
+      ${se_sandbox_oscar__demo_ventia_3_projects.project_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_ventia_3_projects
+    join_to_view: se_sandbox_oscar__demo_ventia_3_sectors
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_ventia_3_projects.sector_id} =
+      ${se_sandbox_oscar__demo_ventia_3_sectors.sector_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_ventia_3_projects
+    join_to_view: se_sandbox_oscar__demo_ventia_3_regions
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_ventia_3_projects.region_id} =
+      ${se_sandbox_oscar__demo_ventia_3_regions.region_id}
+    relationship_type: many_to_one
+
+ai_context: |-
+  Synthetic contract margin ledger for an Omni demo: one row per project per active month, July 2024 to September 2026, in AUD. Every figure is synthetic, never Ventia's real numbers, and AUD includes New Zealand.
+
+  Gross margin % is gross_margin_pct, sum(gross_margin_aud) / sum(revenue_aud). Labour cost share and third party cost share are each that cost over revenue, summed before dividing. Never average percentages across projects, regions or months. Margin or GM means gross_margin_pct; gross margin dollars means gross_margin. Third party cost means supplier and subcontractor cost.
+
+  Region or state means regions.region_name (the eight Australian states and territories plus New Zealand). Sector or business unit means sectors.sector_name. Contract or project means projects.project_name.
+
+  Use months.month_start for every date filter, with an exclusive end date: 1 January to 30 September 2026 is month_start between 2026-01-01 and 2026-10-01. The financial year is the calendar year, so FY26 year to date means 1 January to 30 September 2026.
+
+  To compare two periods, run the same topic query once per period with the measure fields and a month_start filter, then quote both values to one decimal place and the change in points. Do not join periods in custom SQL or CTEs: columns from a CTE lose the percent format and come back rounded. Supplier, vendor and off panel detail lives in the Supplier spend topic.
+
+sample_queries:
+  gm_by_region_fy26_ytd:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_ventia_3_regions.region_name,
+          se_sandbox_oscar__demo_ventia_3_project_months.revenue,
+          se_sandbox_oscar__demo_ventia_3_project_months.gross_margin_pct
+        ]
+      base_view: se_sandbox_oscar__demo_ventia_3_project_months
+      filters:
+        se_sandbox_oscar__demo_ventia_3_months.month_start:
+          between_dates: [ 2026-01-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_ventia_3_project_months.gross_margin_pct
+      topic: demo_ventia_3_contract_margin
+    prompt: What was gross margin % by region from 1 January to 30 September 2026?
+  gm_by_region_fy25_same_months:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_ventia_3_regions.region_name,
+          se_sandbox_oscar__demo_ventia_3_project_months.revenue,
+          se_sandbox_oscar__demo_ventia_3_project_months.gross_margin_pct
+        ]
+      base_view: se_sandbox_oscar__demo_ventia_3_project_months
+      filters:
+        se_sandbox_oscar__demo_ventia_3_months.month_start:
+          between_dates: [ 2025-01-01, 2025-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_ventia_3_project_months.gross_margin_pct
+      topic: demo_ventia_3_contract_margin
+    prompt: What was gross margin % by region from 1 January to 30 September 2025?
+  qld_cost_shares_q3:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_ventia_3_sectors.sector_name,
+          se_sandbox_oscar__demo_ventia_3_project_months.labour_cost_share,
+          se_sandbox_oscar__demo_ventia_3_project_months.third_party_cost_share,
+          se_sandbox_oscar__demo_ventia_3_project_months.gross_margin_pct
+        ]
+      base_view: se_sandbox_oscar__demo_ventia_3_project_months
+      filters:
+        se_sandbox_oscar__demo_ventia_3_months.month_start:
+          between_dates: [ 2026-07-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_ventia_3_regions.region_name:
+          is: Queensland
+      topic: demo_ventia_3_contract_margin
+    prompt: In Queensland, what were labour and third party cost as a share of
+      revenue by sector for 1 July to 30 September 2026?
+  lowest_margin_projects_q3:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_ventia_3_projects.project_name,
+          se_sandbox_oscar__demo_ventia_3_regions.region_name,
+          se_sandbox_oscar__demo_ventia_3_project_months.gross_margin_pct
+        ]
+      base_view: se_sandbox_oscar__demo_ventia_3_project_months
+      filters:
+        se_sandbox_oscar__demo_ventia_3_months.month_start:
+          between_dates: [ 2026-07-01, 2026-10-01 ]
+      limit: 20
+      sorts:
+        - field: se_sandbox_oscar__demo_ventia_3_project_months.gross_margin_pct
+      topic: demo_ventia_3_contract_margin
+    prompt: Which 20 projects had the lowest gross margin % from 1 July to 30
+      September 2026?

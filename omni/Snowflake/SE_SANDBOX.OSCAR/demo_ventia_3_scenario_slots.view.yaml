@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_ventia_3_scenario_slots
+label: Scenario slots
+description: Four fixed Panel Switch Planner slots with seed assumptions. Saved
+  edits live in the scenario_json input column.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_VENTIA_3_SCENARIO_SLOTS
@@ -6,28 +10,38 @@ table_name: DEMO_VENTIA_3_SCENARIO_SLOTS
 dimensions:
   scenario_id:
     sql: '"SCENARIO_ID"'
+    label: Scenario ID
     format: ID
+    primary_key: true
 
   slot_name:
     sql: '"SLOT_NAME"'
+    label: Scenario
+    order_by_field: se_sandbox_oscar__demo_ventia_3_scenario_slots.slot_order
 
   slot_order:
     sql: '"SLOT_ORDER"'
+    label: Slot order
 
   is_read_only:
     sql: '"IS_READ_ONLY"'
+    label: Read only
 
   redirect_share_pct:
     sql: '"REDIRECT_SHARE_PCT"'
+    label: Redirect share %
 
   price_gap_pct:
     sql: '"PRICE_GAP_PCT"'
+    label: Price gap %
 
   ramp_months:
     sql: '"RAMP_MONTHS"'
+    label: Ramp months
 
   transition_cost_aud:
     sql: '"TRANSITION_COST_AUD"'
+    label: Transition cost (AUD, placeholder)
 
 measures:
   count:

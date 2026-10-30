@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_ventia_3_spend_lines
+label: Spend lines
+description: Synthetic supplier invoice lines posted to projects, one row per
+  line, in AUD. Not Ventia's suppliers or spend.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_VENTIA_3_SPEND_LINES
@@ -6,45 +10,117 @@ table_name: DEMO_VENTIA_3_SPEND_LINES
 dimensions:
   spend_id:
     sql: '"SPEND_ID"'
+    label: Spend line ID
     format: ID
+    primary_key: true
 
   invoice_date:
     sql: '"INVOICE_DATE"'
+    label: Invoice date
 
   month_start:
     sql: '"MONTH_START"'
+    hidden: true
 
   project_id:
     sql: '"PROJECT_ID"'
     format: ID
+    hidden: true
 
   region_id:
     sql: '"REGION_ID"'
     format: ID
+    hidden: true
 
   sector_id:
     sql: '"SECTOR_ID"'
     format: ID
+    hidden: true
 
   vendor_id:
     sql: '"VENDOR_ID"'
     format: ID
+    hidden: true
 
   spend_category:
     sql: '"SPEND_CATEGORY"'
+    label: Category
+    description: Spend category on the line, equal to the vendor's capability.
+    synonyms: [ category, spend category, what we buy ]
 
   amount_aud:
     sql: '"AMOUNT_AUD"'
+    hidden: true
 
   premium_over_benchmark_aud:
     sql: '"PREMIUM_OVER_BENCHMARK_AUD"'
+    hidden: true
 
   off_panel_amount_aud:
     sql: '"OFF_PANEL_AMOUNT_AUD"'
+    hidden: true
 
   classified_amount_aud:
     sql: '"CLASSIFIED_AMOUNT_AUD"'
+    hidden: true
 
 measures:
   count:
+    aggregate_type: count
+
+  third_party_spend:
+    sql: ${se_sandbox_oscar__demo_ventia_3_spend_lines.amount_aud}
+    label: Third party spend
+    format: bigaudcurrency_1
+    description: Supplier invoice spend, AUD.
+    aggregate_type: sum
+    synonyms: [ spend, supplier spend, third party spend ]
+
+  off_panel_spend:
+    sql: ${se_sandbox_oscar__demo_ventia_3_spend_lines.off_panel_amount_aud}
+    label: Off panel spend
+    format: bigaudcurrency_1
+    description: Spend with vendors not on the panel, AUD.
+    aggregate_type: sum
+    synonyms: [ off panel, off contract, maverick spend ]
+
+  off_panel_share:
+    sql: ${se_sandbox_oscar__demo_ventia_3_spend_lines.off_panel_spend} /
+      NULLIF(${se_sandbox_oscar__demo_ventia_3_spend_lines.third_party_spend},
+      0)
+    label: Off panel spend share
+    format: percent_1
+    description: sum(off_panel_amount_aud) / sum(amount_aud).
+    synonyms: [ off panel share, off panel rate, maverick share ]
+
+  premium_over_benchmark:
+    sql: ${se_sandbox_oscar__demo_ventia_3_spend_lines.premium_over_benchmark_aud}
+    label: Premium over benchmark
+    format: bigaudcurrency_2
+    description: Amount paid above the panel benchmark price for the same work, AUD.
+      Zero on panel lines.
+    aggregate_type: sum
+    synonyms: [ premium, price variance, overpayment ]
+
+  classified_spend:
+    sql: ${se_sandbox_oscar__demo_ventia_3_spend_lines.classified_amount_aud}
+    label: Classified spend
+    format: bigaudcurrency_1
+    description: Spend whose vendor carried a category at posting, AUD.
+    aggregate_type: sum
+
+  classified_spend_share:
+    sql: ${se_sandbox_oscar__demo_ventia_3_spend_lines.classified_spend} /
+      NULLIF(${se_sandbox_oscar__demo_ventia_3_spend_lines.third_party_spend},
+      0)
+    label: Classified spend share
+    format: percent_1
+    description: sum(classified_amount_aud) / sum(amount_aud). Share of spend the
+      vendor classification pipeline or manual review had categorised at
+      posting.
+    synonyms: [ classified, categorised, classification coverage ]
+
+  spend_line_count:
+    label: Spend lines
+    format: number_0
     aggregate_type: count

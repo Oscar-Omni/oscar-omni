@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_ventia_3_regions
+label: Regions
+description: Australian states and territories plus New Zealand. Real geography,
+  synthetic performance.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_VENTIA_3_REGIONS
@@ -7,15 +11,23 @@ dimensions:
   region_id:
     sql: '"REGION_ID"'
     format: ID
+    hidden: true
+    primary_key: true
 
   region_name:
     sql: '"REGION_NAME"'
+    label: Region
+    description: Full state or territory name, plus New Zealand. Matches the admin1
+      map shapes.
+    synonyms: [ state, region, territory ]
 
   state_code:
     sql: '"STATE_CODE"'
+    label: State code
 
   country:
     sql: '"COUNTRY"'
+    label: Country
 
 measures:
   count:

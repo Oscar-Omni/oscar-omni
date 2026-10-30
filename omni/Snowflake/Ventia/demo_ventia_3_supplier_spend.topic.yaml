@@ -1,0 +1,115 @@
+base_view: se_sandbox_oscar__demo_ventia_3_spend_lines
+label: Supplier spend
+group_label: Ventia
+description: Synthetic supplier invoice lines by vendor, source system, project,
+  sector, region and month, in AUD. One row per invoice line. Synthetic data,
+  not Ventia's suppliers or spend.
+
+joins:
+  se_sandbox_oscar__demo_ventia_3_months: {}
+  se_sandbox_oscar__demo_ventia_3_vendors: {}
+  se_sandbox_oscar__demo_ventia_3_projects:
+    se_sandbox_oscar__demo_ventia_3_sectors: {}
+    se_sandbox_oscar__demo_ventia_3_regions: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_ventia_3_spend_lines
+    join_to_view: se_sandbox_oscar__demo_ventia_3_months
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_ventia_3_spend_lines.month_start} =
+      ${se_sandbox_oscar__demo_ventia_3_months.month_start}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_ventia_3_spend_lines
+    join_to_view: se_sandbox_oscar__demo_ventia_3_vendors
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_ventia_3_spend_lines.vendor_id} =
+      ${se_sandbox_oscar__demo_ventia_3_vendors.vendor_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_ventia_3_spend_lines
+    join_to_view: se_sandbox_oscar__demo_ventia_3_projects
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_ventia_3_spend_lines.project_id} =
+      ${se_sandbox_oscar__demo_ventia_3_projects.project_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_ventia_3_projects
+    join_to_view: se_sandbox_oscar__demo_ventia_3_sectors
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_ventia_3_projects.sector_id} =
+      ${se_sandbox_oscar__demo_ventia_3_sectors.sector_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_ventia_3_projects
+    join_to_view: se_sandbox_oscar__demo_ventia_3_regions
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_ventia_3_projects.region_id} =
+      ${se_sandbox_oscar__demo_ventia_3_regions.region_id}
+    relationship_type: many_to_one
+
+ai_context: |-
+  Synthetic supplier spend for an Omni demo: one row per supplier invoice line, July 2024 to September 2026, in AUD. Every vendor, project and figure is synthetic, never Ventia's.
+
+  Spend or supplier spend means third_party_spend. Off panel spend is spend with vendors not on the panel. Off panel share is sum(off_panel_amount_aud) / sum(amount_aud); classified spend share is sum(classified_amount_aud) / sum(amount_aud), the share of spend the vendor classification pipeline or manual review had categorised. Premium over benchmark is what was paid above the panel benchmark price. Never average percentages across lines, vendors or months.
+
+  Source system (vendors.source_system) is where the vendor record and invoices are held: Core procurement, Acquired business ledger or Field job tool. Category means spend_lines.spend_category. Region and sector come through projects (regions.region_name, sectors.sector_name).
+
+  Use months.month_start for every date filter, with an exclusive end date: 1 July to 30 September 2026 is month_start between 2026-07-01 and 2026-10-01. To compare two periods, run the same query once per period and show both. third_party_spend here reconciles to third_party_cost in Contract margin but comes from a different grain, so do not mix the two topics in one question.
+
+sample_queries:
+  off_panel_share_by_region_q3:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_ventia_3_regions.region_name,
+          se_sandbox_oscar__demo_ventia_3_spend_lines.third_party_spend,
+          se_sandbox_oscar__demo_ventia_3_spend_lines.off_panel_share
+        ]
+      base_view: se_sandbox_oscar__demo_ventia_3_spend_lines
+      filters:
+        se_sandbox_oscar__demo_ventia_3_months.month_start:
+          between_dates: [ 2026-07-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_ventia_3_spend_lines.off_panel_share
+          desc: true
+      topic: demo_ventia_3_supplier_spend
+    prompt: What was off panel share by region from 1 July to 30 September 2026?
+  classified_by_source_system_q3:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_ventia_3_vendors.source_system,
+          se_sandbox_oscar__demo_ventia_3_spend_lines.third_party_spend,
+          se_sandbox_oscar__demo_ventia_3_spend_lines.classified_spend_share
+        ]
+      base_view: se_sandbox_oscar__demo_ventia_3_spend_lines
+      filters:
+        se_sandbox_oscar__demo_ventia_3_months.month_start:
+          between_dates: [ 2026-07-01, 2026-10-01 ]
+      topic: demo_ventia_3_supplier_spend
+    prompt: Which source systems hold the spend that is not classified, 1 July to 30
+      September 2026?
+  top_vendors_premium_qld_inf_q3:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_ventia_3_vendors.vendor_name,
+          se_sandbox_oscar__demo_ventia_3_vendors.source_system,
+          se_sandbox_oscar__demo_ventia_3_spend_lines.premium_over_benchmark
+        ]
+      base_view: se_sandbox_oscar__demo_ventia_3_spend_lines
+      filters:
+        se_sandbox_oscar__demo_ventia_3_months.month_start:
+          between_dates: [ 2026-07-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_ventia_3_regions.region_name:
+          is: Queensland
+        se_sandbox_oscar__demo_ventia_3_sectors.sector_name:
+          is: Infrastructure Services
+      limit: 10
+      sorts:
+        - field: se_sandbox_oscar__demo_ventia_3_spend_lines.premium_over_benchmark
+          desc: true
+      topic: demo_ventia_3_supplier_spend
+    prompt: Top 10 vendors by premium over benchmark in Queensland Infrastructure
+      Services, 1 July to 30 September 2026

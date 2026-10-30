@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__demo_ventia_3_vendors
+label: Vendors
+description: Synthetic vendor master across three source systems, with
+  capability, home state, panel status, classification and ISO certifications.
+  Invented names, never a real business.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_VENTIA_3_VENDORS
@@ -6,35 +11,73 @@ table_name: DEMO_VENTIA_3_VENDORS
 dimensions:
   vendor_id:
     sql: '"VENDOR_ID"'
+    label: Vendor ID
     format: ID
+    primary_key: true
 
   vendor_name:
     sql: '"VENDOR_NAME"'
+    label: Vendor
+    synonyms: [ vendor, supplier, subcontractor ]
 
   source_system:
     sql: '"SOURCE_SYSTEM"'
+    label: Source system
+    description: Where the vendor record and invoices are held. Core procurement,
+      Acquired business ledger or Field job tool.
+    synonyms: [ ledger, source system, system ]
 
   capability:
     sql: '"CAPABILITY"'
+    label: Capability
+    description: What the vendor does, one of 16 capabilities such as Traffic
+      management or Plant hire.
+    synonyms: [ capability, what they do, trade, service ]
 
   home_state:
     sql: '"HOME_STATE"'
+    label: Based in
+    description: State or territory the vendor is based in, using region names.
+    synonyms: [ based in, home state, location ]
 
   is_panel:
     sql: '"IS_PANEL"'
+    label: On panel
+    description: True when the vendor is on the approved panel (demo term).
+    synonyms: [ approved panel, panel, preferred supplier ]
 
   classification_method:
     sql: '"CLASSIFICATION_METHOD"'
+    label: Classification status
+    description: AI pipeline, Manual review or Not classified.
+    synonyms: [ classification status, classified by ]
 
   iso_9001:
     sql: '"ISO_9001"'
+    label: ISO 9001
+    description: Holds ISO 9001 quality certification.
+    synonyms: [ quality certified ]
 
   iso_14001:
     sql: '"ISO_14001"'
+    label: ISO 14001
+    description: Holds ISO 14001 environmental certification.
+    synonyms: [ environmental certified ]
 
   iso_45001:
     sql: '"ISO_45001"'
+    label: ISO 45001
+    description: Holds ISO 45001 work health and safety certification.
+    synonyms: [ safety certified, WHS certified ]
 
 measures:
   count:
     aggregate_type: count
+
+  vendor_count:
+    sql: ${se_sandbox_oscar__demo_ventia_3_vendors.vendor_id}
+    label: Vendors
+    format: number_0
+    description: Distinct vendors.
+    aggregate_type: count_distinct
+    synonyms: [ how many suppliers, vendor count, supplier count ]

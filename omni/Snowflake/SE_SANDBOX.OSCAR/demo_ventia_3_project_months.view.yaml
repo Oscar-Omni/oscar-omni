@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_ventia_3_project_months
+label: Project months
+description: Synthetic contract margin ledger, one row per project per active
+  month, in AUD. Not Ventia's figures.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_VENTIA_3_PROJECT_MONTHS
@@ -7,33 +11,112 @@ dimensions:
   project_id:
     sql: '"PROJECT_ID"'
     format: ID
+    hidden: true
 
   month_start:
     sql: '"MONTH_START"'
+    hidden: true
 
   region_id:
     sql: '"REGION_ID"'
     format: ID
+    hidden: true
 
   sector_id:
     sql: '"SECTOR_ID"'
     format: ID
+    hidden: true
 
   revenue_aud:
     sql: '"REVENUE_AUD"'
+    hidden: true
 
   labour_cost_aud:
     sql: '"LABOUR_COST_AUD"'
+    hidden: true
 
   third_party_cost_aud:
     sql: '"THIRD_PARTY_COST_AUD"'
+    hidden: true
 
   other_cost_aud:
     sql: '"OTHER_COST_AUD"'
+    hidden: true
 
   gross_margin_aud:
     sql: '"GROSS_MARGIN_AUD"'
+    hidden: true
+
+  project_month_key:
+    sql: "\"PROJECT_ID\" || '|' || TO_CHAR(\"MONTH_START\", 'YYYY-MM-DD')"
+    hidden: true
+    primary_key: true
 
 measures:
   count:
     aggregate_type: count
+
+  revenue:
+    sql: ${se_sandbox_oscar__demo_ventia_3_project_months.revenue_aud}
+    label: Revenue
+    format: bigaudcurrency_1
+    description: Revenue recognised, AUD.
+    aggregate_type: sum
+    synonyms: [ revenue, turnover, sales ]
+
+  labour_cost:
+    sql: ${se_sandbox_oscar__demo_ventia_3_project_months.labour_cost_aud}
+    label: Labour cost
+    format: bigaudcurrency_1
+    description: Direct labour cost, AUD.
+    aggregate_type: sum
+    synonyms: [ labour cost, labor cost, direct labour ]
+
+  third_party_cost:
+    sql: ${se_sandbox_oscar__demo_ventia_3_project_months.third_party_cost_aud}
+    label: Third party cost
+    format: bigaudcurrency_1
+    description: Supplier and subcontractor cost on the margin ledger, AUD.
+      Reconciles to spend_lines third party spend.
+    aggregate_type: sum
+    synonyms: [ subcontractor cost, supplier cost, third party cost ]
+
+  other_cost:
+    sql: ${se_sandbox_oscar__demo_ventia_3_project_months.other_cost_aud}
+    label: Other cost
+    format: bigaudcurrency_1
+    description: Plant, materials on hand and overhead recovery, AUD.
+    aggregate_type: sum
+
+  gross_margin:
+    sql: ${se_sandbox_oscar__demo_ventia_3_project_months.gross_margin_aud}
+    label: Gross margin
+    format: bigaudcurrency_1
+    description: Revenue less labour, third party and other cost, AUD.
+    aggregate_type: sum
+    synonyms: [ gross margin dollars, margin dollars, GM dollars ]
+
+  gross_margin_pct:
+    sql: ${se_sandbox_oscar__demo_ventia_3_project_months.gross_margin} /
+      NULLIF(${se_sandbox_oscar__demo_ventia_3_project_months.revenue}, 0)
+    label: Gross margin %
+    format: percent_1
+    description: sum(gross_margin_aud) / sum(revenue_aud). A ratio of sums; never
+      average project, region or monthly percentages.
+    synonyms: [ margin, GM, gross margin, margin %, GM % ]
+
+  labour_cost_share:
+    sql: ${se_sandbox_oscar__demo_ventia_3_project_months.labour_cost} /
+      NULLIF(${se_sandbox_oscar__demo_ventia_3_project_months.revenue}, 0)
+    label: Labour cost share
+    format: percent_1
+    description: sum(labour_cost_aud) / sum(revenue_aud).
+    synonyms: [ labour share, labour as a share of revenue ]
+
+  third_party_cost_share:
+    sql: ${se_sandbox_oscar__demo_ventia_3_project_months.third_party_cost} /
+      NULLIF(${se_sandbox_oscar__demo_ventia_3_project_months.revenue}, 0)
+    label: Third party cost share
+    format: percent_1
+    description: sum(third_party_cost_aud) / sum(revenue_aud).
+    synonyms: [ third party share, supplier cost share, subcontractor share ]

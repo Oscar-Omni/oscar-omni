@@ -1,0 +1,52 @@
+base_view: se_sandbox_oscar__demo_ventia_3_vendors
+label: Supplier panel
+group_label: Ventia
+description: Synthetic supplier search. One row per vendor across three source
+  systems, with capability, home state, panel status, classification and ISO
+  certifications. No spend. Invented names, never a real business.
+
+joins: {}
+
+ai_context: |-
+  Synthetic supplier search for an Omni demo: one row per vendor across all three source systems. There is no spend in this topic; use Supplier spend for spend.
+
+  Filter by capability (what the vendor does), home_state (where they are based, using state names such as Queensland), is_panel and the ISO flags. Approved panel means is_panel is true. ISO 45001 is work health and safety, ISO 9001 quality, ISO 14001 environmental. Classification status is AI pipeline, Manual review or Not classified. How many suppliers means vendor_count.
+
+sample_queries:
+  qld_traffic_panel_iso45001:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_ventia_3_vendors.vendor_id,
+          se_sandbox_oscar__demo_ventia_3_vendors.vendor_name,
+          se_sandbox_oscar__demo_ventia_3_vendors.capability,
+          se_sandbox_oscar__demo_ventia_3_vendors.home_state
+        ]
+      base_view: se_sandbox_oscar__demo_ventia_3_vendors
+      filters:
+        se_sandbox_oscar__demo_ventia_3_vendors.capability:
+          is: Traffic management
+        se_sandbox_oscar__demo_ventia_3_vendors.home_state:
+          is: Queensland
+        se_sandbox_oscar__demo_ventia_3_vendors.is_panel:
+          is: true
+        se_sandbox_oscar__demo_ventia_3_vendors.iso_45001:
+          is: true
+      sorts:
+        - field: se_sandbox_oscar__demo_ventia_3_vendors.vendor_name
+      topic: demo_ventia_3_supplier_panel
+    prompt: Which panel suppliers based in Queensland do traffic management and hold
+      ISO 45001?
+  acquired_unclassified_count:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_ventia_3_vendors.classification_method,
+          se_sandbox_oscar__demo_ventia_3_vendors.vendor_count
+        ]
+      base_view: se_sandbox_oscar__demo_ventia_3_vendors
+      filters:
+        se_sandbox_oscar__demo_ventia_3_vendors.source_system:
+          is: Acquired business ledger
+      topic: demo_ventia_3_supplier_panel
+    prompt: How many vendors in the acquired business ledger are not classified?

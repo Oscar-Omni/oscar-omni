@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_ventia_3_months
+label: Months
+description: Conformed calendar shared by every Ventia topic, July 2024 to
+  September 2026. The financial year is the calendar year.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_VENTIA_3_MONTHS
@@ -6,15 +10,26 @@ table_name: DEMO_VENTIA_3_MONTHS
 dimensions:
   month_start:
     sql: '"MONTH_START"'
+    label: Month
+    description: First day of the month. Use this for every date filter, with an
+      exclusive end date.
+    primary_key: true
+    synonyms: [ month, period, date ]
 
   month_label:
     sql: '"MONTH_LABEL"'
+    label: Month label
+    order_by_field: se_sandbox_oscar__demo_ventia_3_months.month_start
 
   calendar_year:
     sql: '"CALENDAR_YEAR"'
+    label: Financial year
+    description: Calendar year, which is also the financial year.
+    synonyms: [ FY, year ]
 
   quarter_label:
     sql: '"QUARTER_LABEL"'
+    label: Quarter
 
 measures:
   count:

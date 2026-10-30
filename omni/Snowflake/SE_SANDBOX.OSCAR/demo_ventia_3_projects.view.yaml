@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_ventia_3_projects
+label: Projects
+description: Synthetic contracts and projects. Invented names, never a real
+  place, client or contract.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_VENTIA_3_PROJECTS
@@ -6,22 +10,36 @@ table_name: DEMO_VENTIA_3_PROJECTS
 dimensions:
   project_id:
     sql: '"PROJECT_ID"'
+    label: Project ID
     format: ID
+    primary_key: true
 
   project_name:
     sql: '"PROJECT_NAME"'
+    label: Project
+    synonyms: [ contract, project, package ]
 
   sector_id:
     sql: '"SECTOR_ID"'
+    label: Sector ID
     format: ID
 
   region_id:
     sql: '"REGION_ID"'
+    label: Region ID
     format: ID
 
   client_type:
     sql: '"CLIENT_TYPE"'
+    label: Client type
+    description: Government or Corporate.
 
 measures:
   count:
     aggregate_type: count
+
+  project_count:
+    sql: ${se_sandbox_oscar__demo_ventia_3_projects.project_id}
+    label: Projects
+    format: number_0
+    aggregate_type: count_distinct

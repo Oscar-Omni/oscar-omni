@@ -1,0 +1,27 @@
+base_view: se_sandbox_oscar__demo_ventia_3_scenario_slots
+label: Scenario planning
+group_label: Ventia
+description: Four fixed scenario slots that back the Panel Switch Planner app.
+  Not for analysis.
+
+joins: {}
+
+ai_context: "Four fixed scenario slots for the Panel Switch Planner app:
+  baseline, quick_wins, half_by_december and full_switch, with seed assumptions.
+  This is the app's store, not for analysis questions. All values are synthetic
+  placeholders."
+
+sample_queries:
+  slots_in_order:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_ventia_3_scenario_slots.scenario_id,
+          se_sandbox_oscar__demo_ventia_3_scenario_slots.slot_name,
+          se_sandbox_oscar__demo_ventia_3_scenario_slots.slot_order
+        ]
+      base_view: se_sandbox_oscar__demo_ventia_3_scenario_slots
+      sorts:
+        - field: se_sandbox_oscar__demo_ventia_3_scenario_slots.slot_order
+      topic: demo_ventia_3_scenario_planning
+    prompt: List the scenario slots in order
