@@ -1,4 +1,4 @@
-hidden: false
+hidden: true
 
 base_view: se_sandbox_oscar__demo_breadcrumb_scenario_slots
 label: Compliance Scenarios
