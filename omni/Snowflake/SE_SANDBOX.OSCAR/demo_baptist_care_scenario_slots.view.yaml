@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_baptist_care_scenario_slots
+label: RN Cover Scenario Slots
+description: Saved planning slots for the RN Cover Planner app. Synthetic app
+  supplement, three rows, holds no care data.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_BAPTIST_CARE_SCENARIO_SLOTS
@@ -6,32 +10,66 @@ table_name: DEMO_BAPTIST_CARE_SCENARIO_SLOTS
 dimensions:
   scenario_id:
     sql: '"SCENARIO_ID"'
+    label: Scenario ID
     format: ID
+    description: Stable slot id, RNC-BASE, RNC-A or RNC-B
+    primary_key: true
 
   slot_name:
     sql: '"SLOT_NAME"'
+    label: Scenario
+    description: Label on the slot pill in the RN Cover Planner
+    synonyms: [ scenario, planning slot ]
 
   slot_order:
     sql: '"SLOT_ORDER"'
+    label: Slot Order
+    format: NUMBER_0
 
   is_baseline:
     sql: '"IS_BASELINE"'
+    label: Is Baseline
+    format: NUMBER_0
+    description: 1 for RNC-BASE, the read only As rostered in August slot
 
   buffer_minutes:
     sql: '"BUFFER_MINUTES"'
+    label: Buffer Minutes
+    format: NUMBER_1
+    description: Default RN minutes per resident per day to roster above each home's target
 
   permanent_share_pct:
     sql: '"PERMANENT_SHARE_PCT"'
+    label: Permanent Share %
+    format: NUMBER_0
+    description: Default share of the added RN hours filled by permanent staff; the
+      rest is booked as agency
 
   agency_fill_rate_pct:
     sql: '"AGENCY_FILL_RATE_PCT"'
+    label: Agency Fill Rate %
+    format: NUMBER_0
+    description: Default share of booked agency hours actually filled
 
   permanent_rn_cost_per_hour_aud:
     sql: '"PERMANENT_RN_COST_PER_HOUR_AUD"'
+    label: Permanent RN Cost per Hour (A$, placeholder)
+    format: CURRENCY_2
+    description: Synthetic placeholder rate, not a Baptist Care rate
 
   agency_rn_cost_per_hour_aud:
     sql: '"AGENCY_RN_COST_PER_HOUR_AUD"'
+    label: Agency RN Cost per Hour (A$, placeholder)
+    format: CURRENCY_2
+    description: Synthetic placeholder rate, not a Baptist Care rate
 
 measures:
   count:
+    label: Scenario Slots
     aggregate_type: count
+
+  avg_permanent_share_pct:
+    sql: ${permanent_share_pct}
+    label: Average Permanent Share %
+    format: NUMBER_0
+    aggregate_type: average

@@ -1,0 +1,28 @@
+base_view: se_sandbox_oscar__demo_baptist_care_scenario_slots
+label: RN Cover Scenarios
+group_label: Aged Care
+description: Saved planning slots for the RN Cover Planner app
+
+joins: {}
+
+ai_context: |
+  Saved planning slots for the RN Cover Planner, one row per slot: RNC-BASE (As rostered in August, read only),
+  RNC-A (Agency to target) and RNC-B (Permanent to target). Each row holds default assumptions: buffer minutes
+  above target, permanent share of added RN hours, agency fill rate and two placeholder hourly rates in AUD.
+  The app saves edited assumptions as JSON into a scenario_json input column keyed on scenario_id.
+  Synthetic app supplement, not care data; never use it to answer questions about homes, residents or care minutes.
+  Map scenario or planning slot to slot_name.
+
+sample_queries:
+  planning_slots_permanent_share:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_baptist_care_scenario_slots.slot_name,
+          se_sandbox_oscar__demo_baptist_care_scenario_slots.permanent_share_pct
+        ]
+      base_view: se_sandbox_oscar__demo_baptist_care_scenario_slots
+      sorts:
+        - field: se_sandbox_oscar__demo_baptist_care_scenario_slots.slot_order
+      topic: demo_baptist_care_rn_cover_scenarios
+    prompt: Which planning slots exist and what permanent share does each assume?
