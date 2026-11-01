@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_cleanaway_waste_management_order_lines
+label: Order lines
+description: One row per order line, one product category on one order, 1 August
+  2024 to 31 October 2026. Illustrative synthetic data for an Omni demo.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_CLEANAWAY_WASTE_MANAGEMENT_ORDER_LINES
@@ -6,50 +10,169 @@ table_name: DEMO_CLEANAWAY_WASTE_MANAGEMENT_ORDER_LINES
 dimensions:
   line_id:
     sql: '"LINE_ID"'
+    label: Line ID
     format: ID
+    primary_key: true
+    synonyms: [ order line, line ]
 
   order_id:
     sql: '"ORDER_ID"'
+    label: Order ID
     format: ID
+    synonyms: [ order number ]
 
   order_date:
     sql: '"ORDER_DATE"'
+    label: Order date
+    description: Date the order was placed. The dashboard date field.
+    synonyms: [ sale date, date ]
 
   customer_id:
     sql: '"CUSTOMER_ID"'
+    label: Customer ID
     format: ID
+    hidden: true
 
   region_id:
     sql: '"REGION_ID"'
+    label: State code
     format: ID
+    description: NSW, VIC, QLD, WA, SA, TAS, ACT or NT. Use regions.state_name for
+      the state name.
 
   channel:
     sql: '"CHANNEL"'
+    label: Channel
+    description: Online, Direct or Partner (orders placed through a reseller partner).
+    synonyms: [ route to market, reseller, partner, sales channel ]
 
   category:
     sql: '"CATEGORY"'
+    label: Category
+    description: Technology, Furniture, Consumables or Services.
+    synonyms: [ product line, product category ]
 
   line_count:
     sql: '"LINE_COUNT"'
+    hidden: true
 
   list_amount_aud:
     sql: '"LIST_AMOUNT_AUD"'
+    label: List value (A$)
+    format: audcurrency_2
+    description: Value of the line at list price.
 
   discount_amount_aud:
     sql: '"DISCOUNT_AMOUNT_AUD"'
+    label: Discount (A$)
+    format: audcurrency_2
+    description: Discount given on the line.
 
   discount_pct:
     sql: '"DISCOUNT_PCT"'
+    label: Line discount %
+    format: percent_1
+    description: Discount over list value for this one line. For row level reading
+      only; never average it, use the discount rate measure.
 
   net_revenue_aud:
     sql: '"NET_REVENUE_AUD"'
+    label: Net revenue (A$)
+    format: audcurrency_2
+    description: List value minus discount.
 
   cost_aud:
     sql: '"COST_AUD"'
+    label: Cost (A$)
+    format: audcurrency_2
+    description: Cost of goods and delivery for the line.
 
   gross_margin_aud:
     sql: '"GROSS_MARGIN_AUD"'
+    label: Gross margin (A$)
+    format: audcurrency_2
+    description: Net revenue minus cost.
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
+
+  lines:
+    sql: ${line_count}
+    label: Order lines
+    format: number_0
+    description: Order lines.
+    aggregate_type: sum
+    synonyms: [ lines, line count, volume ]
+
+  orders:
+    sql: ${order_id}
+    label: Orders
+    format: number_0
+    description: Distinct orders.
+    aggregate_type: count_distinct
+    synonyms: [ order count, number of orders ]
+
+  list_amount:
+    sql: ${list_amount_aud}
+    label: List value
+    format: audcurrency_0
+    description: Value at list price in AUD.
+    aggregate_type: sum
+    synonyms: [ list price, gross sales, list sales ]
+
+  discount_amount:
+    sql: ${discount_amount_aud}
+    label: Discount given
+    format: audcurrency_0
+    description: Discount given in AUD.
+    aggregate_type: sum
+    synonyms: [ discount dollars, markdown ]
+
+  net_revenue:
+    sql: ${net_revenue_aud}
+    label: Net revenue
+    format: audcurrency_0
+    description: Net revenue in AUD, after discount.
+    aggregate_type: sum
+    synonyms: [ revenue, sales, net sales, turnover ]
+
+  total_cost:
+    sql: ${cost_aud}
+    label: Cost
+    format: audcurrency_0
+    description: Cost of goods and delivery in AUD.
+    aggregate_type: sum
+    synonyms: [ COGS, cost of sales ]
+
+  gross_margin:
+    sql: ${gross_margin_aud}
+    label: Gross margin
+    format: audcurrency_0
+    description: Gross margin in AUD, net revenue minus cost.
+    aggregate_type: sum
+    synonyms: [ gross profit, margin dollars, GP ]
+
+  gross_margin_pct:
+    sql: ${gross_margin} / NULLIF(${net_revenue}, 0)
+    label: Gross margin %
+    format: percent_1
+    description: Gross margin over net revenue. A ratio of sums; never average line,
+      state or month rates.
+    synonyms: [ margin, GM, margin %, gross margin percent ]
+
+  discount_rate:
+    sql: ${discount_amount} / NULLIF(${list_amount}, 0)
+    label: Discount rate
+    format: percent_1
+    description: Discount given over list value. A ratio of sums; never average the
+      line discount %.
+    synonyms: [ discount, discounting, discount %, average discount ]
+
+  average_order_value:
+    sql: ${net_revenue} / NULLIF(${orders}, 0)
+    label: Average order value
+    format: audcurrency_0
+    description: Net revenue over distinct orders, in AUD.
+    synonyms: [ AOV, basket size, average order ]

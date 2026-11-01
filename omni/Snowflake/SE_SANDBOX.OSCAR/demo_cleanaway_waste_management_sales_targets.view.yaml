@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_cleanaway_waste_management_sales_targets
+label: Sales targets
+description: One row per month, state and channel. The illustrative synthetic
+  sales plan, with actuals rolled up to the same grain.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_CLEANAWAY_WASTE_MANAGEMENT_SALES_TARGETS
@@ -6,20 +10,115 @@ table_name: DEMO_CLEANAWAY_WASTE_MANAGEMENT_SALES_TARGETS
 dimensions:
   target_month:
     sql: '"TARGET_MONTH"'
+    label: Target month
+    description: First of the month the target applies to.
+    synonyms: [ plan month, budget month, month ]
 
   region_id:
     sql: '"REGION_ID"'
+    label: State code
     format: ID
 
   channel:
     sql: '"CHANNEL"'
+    label: Channel
+    description: Online, Direct or Partner.
+    synonyms: [ route to market, reseller, partner ]
 
   target_net_revenue_aud:
     sql: '"TARGET_NET_REVENUE_AUD"'
+    label: Target net revenue (A$)
+    format: audcurrency_0
 
   target_gross_margin_aud:
     sql: '"TARGET_GROSS_MARGIN_AUD"'
+    label: Target gross margin (A$)
+    format: audcurrency_0
+
+  target_key:
+    sql: TO_CHAR(${target_month}, 'YYYY-MM') || '|' || ${region_id} || '|' ||
+      ${channel}
+    label: Target key
+    hidden: true
+    primary_key: true
+
+  actual_net_revenue_aud:
+    sql: (SELECT SUM(x.amt) FROM (SELECT "ORDER_DATE" AS od, "REGION_ID" AS rid,
+      "CHANNEL" AS ch, "NET_REVENUE_AUD" AS amt FROM
+      SE_SANDBOX.OSCAR.DEMO_CLEANAWAY_WASTE_MANAGEMENT_ORDER_LINES) x WHERE x.od
+      >= ${target_month} AND x.od < DATEADD(month, 1, ${target_month}) AND x.rid
+      = ${region_id} AND x.ch = ${channel})
+    label: Actual net revenue (A$)
+    format: audcurrency_0
+    hidden: true
+
+  actual_gross_margin_aud:
+    sql: (SELECT SUM(x.amt) FROM (SELECT "ORDER_DATE" AS od, "REGION_ID" AS rid,
+      "CHANNEL" AS ch, "GROSS_MARGIN_AUD" AS amt FROM
+      SE_SANDBOX.OSCAR.DEMO_CLEANAWAY_WASTE_MANAGEMENT_ORDER_LINES) x WHERE x.od
+      >= ${target_month} AND x.od < DATEADD(month, 1, ${target_month}) AND x.rid
+      = ${region_id} AND x.ch = ${channel})
+    label: Actual gross margin (A$)
+    format: audcurrency_0
+    hidden: true
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
+
+  target_net_revenue:
+    sql: ${target_net_revenue_aud}
+    label: Target net revenue
+    format: audcurrency_0
+    description: Planned net revenue in AUD.
+    aggregate_type: sum
+    synonyms: [ target, budget, plan, revenue target ]
+
+  target_gross_margin:
+    sql: ${target_gross_margin_aud}
+    label: Target gross margin
+    format: audcurrency_0
+    description: Planned gross margin in AUD.
+    aggregate_type: sum
+    synonyms: [ margin target, gross margin budget ]
+
+  target_gross_margin_pct:
+    sql: ${target_gross_margin} / NULLIF(${target_net_revenue}, 0)
+    label: Target gross margin %
+    format: percent_1
+    description: Target gross margin over target net revenue.
+
+  actual_net_revenue:
+    sql: ${actual_net_revenue_aud}
+    label: Actual net revenue
+    format: audcurrency_0
+    description: Net revenue from order lines rolled up to the plan grain (month,
+      state, channel), in AUD.
+    aggregate_type: sum
+    synonyms: [ actual revenue, actual sales, actuals ]
+
+  actual_gross_margin:
+    sql: ${actual_gross_margin_aud}
+    label: Actual gross margin
+    format: audcurrency_0
+    description: Gross margin from order lines rolled up to the plan grain, in AUD.
+    aggregate_type: sum
+    synonyms: [ actual margin, actual gross profit ]
+
+  actual_gross_margin_pct:
+    sql: ${actual_gross_margin} / NULLIF(${actual_net_revenue}, 0)
+    label: Actual gross margin %
+    format: percent_1
+
+  net_revenue_vs_target_pct:
+    sql: ${actual_net_revenue} / NULLIF(${target_net_revenue}, 0) - 1
+    label: Net revenue vs target
+    format: percent_1
+    description: Actual over target net revenue, minus one. Positive means ahead of plan.
+
+  gross_margin_vs_target_pct:
+    sql: ${actual_gross_margin} / NULLIF(${target_gross_margin}, 0) - 1
+    label: Gross margin vs target
+    format: percent_1
+    description: Actual over target gross margin, minus one. Negative means behind plan.

@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_cleanaway_waste_management_regions
+label: States
+description: One row per Australian state or territory. Real geography,
+  illustrative synthetic performance.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_CLEANAWAY_WASTE_MANAGEMENT_REGIONS
@@ -6,11 +10,17 @@ table_name: DEMO_CLEANAWAY_WASTE_MANAGEMENT_REGIONS
 dimensions:
   region_id:
     sql: '"REGION_ID"'
+    label: State code
     format: ID
+    primary_key: true
 
   state_name:
     sql: '"STATE_NAME"'
+    label: State
+    description: Full state or territory name, for example Victoria or New South Wales.
+    synonyms: [ state, region, territory ]
 
 measures:
   count:
+    hidden: true
     aggregate_type: count

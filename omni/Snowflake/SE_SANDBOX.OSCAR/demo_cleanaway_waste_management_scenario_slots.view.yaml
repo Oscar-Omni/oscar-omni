@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_cleanaway_waste_management_scenario_slots
+label: Scenario slots
+description: Saved planning slots for the Discount Guardrail Planner app. Not sales data.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_CLEANAWAY_WASTE_MANAGEMENT_SCENARIO_SLOTS
@@ -6,36 +9,52 @@ table_name: DEMO_CLEANAWAY_WASTE_MANAGEMENT_SCENARIO_SLOTS
 dimensions:
   scenario_id:
     sql: '"SCENARIO_ID"'
+    label: Scenario ID
     format: ID
+    primary_key: true
+    synonyms: [ slot ]
 
   slot_name:
     sql: '"SLOT_NAME"'
+    label: Slot name
+    synonyms: [ scenario ]
 
   slot_order:
     sql: '"SLOT_ORDER"'
+    label: Slot order
 
   is_baseline:
     sql: '"IS_BASELINE"'
+    label: Is baseline
 
   region_id:
     sql: '"REGION_ID"'
+    label: State code
     format: ID
 
   channel:
     sql: '"CHANNEL"'
+    label: Channel
 
   discount_cap_pct:
     sql: '"DISCOUNT_CAP_PCT"'
+    label: Discount cap %
+    description: Default cap on the average Partner discount; 30 means no cap.
 
   norm_discount_pct:
     sql: '"NORM_DISCOUNT_PCT"'
+    label: Usual discount %
 
   volume_lift_pct_per_point:
     sql: '"VOLUME_LIFT_PCT_PER_POINT"'
+    label: Volume lift % per point
+    description: Illustrative extra order lines per discount point above the norm.
 
   months_remaining:
     sql: '"MONTHS_REMAINING"'
+    label: Months remaining
 
 measures:
   count:
+    hidden: true
     aggregate_type: count

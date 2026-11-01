@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_cleanaway_waste_management_customers
+label: Customers
+description: One row per sample customer account. Names are generic samples;
+  illustrative synthetic data.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_CLEANAWAY_WASTE_MANAGEMENT_CUSTOMERS
@@ -6,14 +10,29 @@ table_name: DEMO_CLEANAWAY_WASTE_MANAGEMENT_CUSTOMERS
 dimensions:
   customer_id:
     sql: '"CUSTOMER_ID"'
+    label: Customer ID
     format: ID
+    primary_key: true
 
   customer_name:
     sql: '"CUSTOMER_NAME"'
+    label: Customer
+    description: Generic sample name matching the customer ID.
+    synonyms: [ customer, account, client ]
 
   segment:
     sql: '"SEGMENT"'
+    label: Segment
+    description: Consumer, Small business or Enterprise.
+    synonyms: [ customer segment, customer type ]
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
+
+  customers:
+    sql: ${customer_id}
+    label: Customers
+    format: number_0
+    aggregate_type: count_distinct
