@@ -1,0 +1,37 @@
+# Reference this view as se_sandbox_oscar__demo_baptist_care_scenario_slots
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_BAPTIST_CARE_SCENARIO_SLOTS
+
+dimensions:
+  scenario_id:
+    sql: '"SCENARIO_ID"'
+    format: ID
+
+  slot_name:
+    sql: '"SLOT_NAME"'
+
+  slot_order:
+    sql: '"SLOT_ORDER"'
+
+  is_baseline:
+    sql: '"IS_BASELINE"'
+
+  buffer_minutes:
+    sql: '"BUFFER_MINUTES"'
+
+  permanent_share_pct:
+    sql: '"PERMANENT_SHARE_PCT"'
+
+  agency_fill_rate_pct:
+    sql: '"AGENCY_FILL_RATE_PCT"'
+
+  permanent_rn_cost_per_hour_aud:
+    sql: '"PERMANENT_RN_COST_PER_HOUR_AUD"'
+
+  agency_rn_cost_per_hour_aud:
+    sql: '"AGENCY_RN_COST_PER_HOUR_AUD"'
+
+measures:
+  count:
+    aggregate_type: count
