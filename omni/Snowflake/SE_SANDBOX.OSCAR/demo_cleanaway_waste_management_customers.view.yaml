@@ -1,0 +1,19 @@
+# Reference this view as se_sandbox_oscar__demo_cleanaway_waste_management_customers
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_CLEANAWAY_WASTE_MANAGEMENT_CUSTOMERS
+
+dimensions:
+  customer_id:
+    sql: '"CUSTOMER_ID"'
+    format: ID
+
+  customer_name:
+    sql: '"CUSTOMER_NAME"'
+
+  segment:
+    sql: '"SEGMENT"'
+
+measures:
+  count:
+    aggregate_type: count

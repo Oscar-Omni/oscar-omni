@@ -1,0 +1,55 @@
+# Reference this view as se_sandbox_oscar__demo_cleanaway_waste_management_order_lines
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_CLEANAWAY_WASTE_MANAGEMENT_ORDER_LINES
+
+dimensions:
+  line_id:
+    sql: '"LINE_ID"'
+    format: ID
+
+  order_id:
+    sql: '"ORDER_ID"'
+    format: ID
+
+  order_date:
+    sql: '"ORDER_DATE"'
+
+  customer_id:
+    sql: '"CUSTOMER_ID"'
+    format: ID
+
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  channel:
+    sql: '"CHANNEL"'
+
+  category:
+    sql: '"CATEGORY"'
+
+  line_count:
+    sql: '"LINE_COUNT"'
+
+  list_amount_aud:
+    sql: '"LIST_AMOUNT_AUD"'
+
+  discount_amount_aud:
+    sql: '"DISCOUNT_AMOUNT_AUD"'
+
+  discount_pct:
+    sql: '"DISCOUNT_PCT"'
+
+  net_revenue_aud:
+    sql: '"NET_REVENUE_AUD"'
+
+  cost_aud:
+    sql: '"COST_AUD"'
+
+  gross_margin_aud:
+    sql: '"GROSS_MARGIN_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

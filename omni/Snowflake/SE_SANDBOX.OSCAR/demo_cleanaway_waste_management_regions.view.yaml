@@ -1,0 +1,16 @@
+# Reference this view as se_sandbox_oscar__demo_cleanaway_waste_management_regions
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_CLEANAWAY_WASTE_MANAGEMENT_REGIONS
+
+dimensions:
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  state_name:
+    sql: '"STATE_NAME"'
+
+measures:
+  count:
+    aggregate_type: count

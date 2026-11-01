@@ -1,0 +1,25 @@
+# Reference this view as se_sandbox_oscar__demo_cleanaway_waste_management_sales_targets
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_CLEANAWAY_WASTE_MANAGEMENT_SALES_TARGETS
+
+dimensions:
+  target_month:
+    sql: '"TARGET_MONTH"'
+
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  channel:
+    sql: '"CHANNEL"'
+
+  target_net_revenue_aud:
+    sql: '"TARGET_NET_REVENUE_AUD"'
+
+  target_gross_margin_aud:
+    sql: '"TARGET_GROSS_MARGIN_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

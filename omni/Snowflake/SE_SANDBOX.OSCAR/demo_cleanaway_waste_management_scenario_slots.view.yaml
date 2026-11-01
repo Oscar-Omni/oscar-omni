@@ -1,0 +1,41 @@
+# Reference this view as se_sandbox_oscar__demo_cleanaway_waste_management_scenario_slots
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_CLEANAWAY_WASTE_MANAGEMENT_SCENARIO_SLOTS
+
+dimensions:
+  scenario_id:
+    sql: '"SCENARIO_ID"'
+    format: ID
+
+  slot_name:
+    sql: '"SLOT_NAME"'
+
+  slot_order:
+    sql: '"SLOT_ORDER"'
+
+  is_baseline:
+    sql: '"IS_BASELINE"'
+
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  channel:
+    sql: '"CHANNEL"'
+
+  discount_cap_pct:
+    sql: '"DISCOUNT_CAP_PCT"'
+
+  norm_discount_pct:
+    sql: '"NORM_DISCOUNT_PCT"'
+
+  volume_lift_pct_per_point:
+    sql: '"VOLUME_LIFT_PCT_PER_POINT"'
+
+  months_remaining:
+    sql: '"MONTHS_REMAINING"'
+
+measures:
+  count:
+    aggregate_type: count
