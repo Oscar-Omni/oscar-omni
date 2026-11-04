@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: se_sandbox_oscar__demo_ventia_3_scenario_slots
 label: Scenario planning
 group_label: Ventia

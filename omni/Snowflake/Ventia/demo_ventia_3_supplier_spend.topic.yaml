@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: se_sandbox_oscar__demo_ventia_3_spend_lines
 label: Supplier spend
 group_label: Ventia
