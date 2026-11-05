@@ -22,7 +22,7 @@ maplibregl.addProtocol('pmtiles',protocol.tile);
 const baseLayers=basemaps.layers('protomaps',basemaps.namedFlavor('dark'),{lang:'en'});
 const map=new maplibregl.Map({
   container:'map',center:[134,-28],zoom:3,minZoom:2,maxZoom:13,renderWorldCopies:false,attributionControl:false,
-  style:{version:8,glyphs:'https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf',sprite:'https://protomaps.github.io/basemaps-assets/sprites/v4/dark',sources:{protomaps:{type:'vector',url:'pmtiles://https://latest.protomaps.com/v4.pmtiles',attribution:'<a href="https://protomaps.com" target="_blank" rel="noopener">Protomaps</a> · <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>'}},layers:baseLayers}
+  style:{version:8,glyphs:'https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf',sprite:'https://protomaps.github.io/basemaps-assets/sprites/v4/dark',sources:{protomaps:{type:'vector',url:'pmtiles://https://oscar-omni.github.io/oscar-omni/cleanaway/australia.pmtiles',attribution:'<a href="https://protomaps.com" target="_blank" rel="noopener">Protomaps</a> · <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>'}},layers:baseLayers}
 });
 map.scrollZoom.disable();
 map.addControl(new maplibregl.NavigationControl({showCompass:false}),'top-right');
