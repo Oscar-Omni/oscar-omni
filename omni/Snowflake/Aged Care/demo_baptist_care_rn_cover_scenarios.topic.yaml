@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: se_sandbox_oscar__demo_baptist_care_scenario_slots
 label: RN Cover Scenarios
 group_label: Aged Care
