@@ -1,0 +1,38 @@
+# Reference this view as se_sandbox_oscar__demo_brighte_capital_scenario_slots
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_BRIGHTE_CAPITAL_SCENARIO_SLOTS
+
+dimensions:
+  scenario_id:
+    sql: '"SCENARIO_ID"'
+    format: ID
+
+  slot_name:
+    sql: '"SLOT_NAME"'
+
+  slot_order:
+    sql: '"SLOT_ORDER"'
+
+  is_baseline:
+    sql: '"IS_BASELINE"'
+
+  intent_id:
+    sql: '"INTENT_ID"'
+    format: ID
+
+  id_fail_rate_pct:
+    sql: '"ID_FAIL_RATE_PCT"'
+
+  link_close_share_pct:
+    sql: '"LINK_CLOSE_SHARE_PCT"'
+
+  app_callback_share_pct:
+    sql: '"APP_CALLBACK_SHARE_PCT"'
+
+  human_cost_per_min_aud:
+    sql: '"HUMAN_COST_PER_MIN_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

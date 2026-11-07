@@ -1,0 +1,71 @@
+# Reference this view as se_sandbox_oscar__demo_brighte_capital_calls
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_BRIGHTE_CAPITAL_CALLS
+
+dimensions:
+  call_id:
+    sql: '"CALL_ID"'
+    format: ID
+
+  call_date:
+    sql: '"CALL_DATE"'
+
+  channel:
+    sql: '"CHANNEL"'
+
+  intent_id:
+    sql: '"INTENT_ID"'
+    format: ID
+
+  customer_state:
+    sql: '"CUSTOMER_STATE"'
+
+  agent_version:
+    sql: '"AGENT_VERSION"'
+
+  outcome:
+    sql: '"OUTCOME"'
+
+  is_contained:
+    sql: '"IS_CONTAINED"'
+
+  is_handoff:
+    sql: '"IS_HANDOFF"'
+
+  escalation_reason:
+    sql: '"ESCALATION_REASON"'
+
+  id_check_result:
+    sql: '"ID_CHECK_RESULT"'
+
+  repeat_within_7d:
+    sql: '"REPEAT_WITHIN_7D"'
+
+  agent_seconds:
+    sql: '"AGENT_SECONDS"'
+
+  human_seconds:
+    sql: '"HUMAN_SECONDS"'
+
+  handle_seconds:
+    sql: '"HANDLE_SECONDS"'
+
+  turns:
+    sql: '"TURNS"'
+
+  sentiment:
+    sql: '"SENTIMENT"'
+
+  ai_cost_aud:
+    sql: '"AI_COST_AUD"'
+
+  human_cost_aud:
+    sql: '"HUMAN_COST_AUD"'
+
+  total_cost_aud:
+    sql: '"TOTAL_COST_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

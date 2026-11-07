@@ -1,0 +1,25 @@
+# Reference this view as se_sandbox_oscar__demo_brighte_capital_intents
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_BRIGHTE_CAPITAL_INTENTS
+
+dimensions:
+  intent_id:
+    sql: '"INTENT_ID"'
+    format: ID
+
+  intent_name:
+    sql: '"INTENT_NAME"'
+
+  intent_group:
+    sql: '"INTENT_GROUP"'
+
+  human_only:
+    sql: '"HUMAN_ONLY"'
+
+  needs_id_check:
+    sql: '"NEEDS_ID_CHECK"'
+
+measures:
+  count:
+    aggregate_type: count

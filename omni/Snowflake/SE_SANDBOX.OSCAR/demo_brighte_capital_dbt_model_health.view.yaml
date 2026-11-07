@@ -1,0 +1,33 @@
+# Reference this view as se_sandbox_oscar__demo_brighte_capital_dbt_model_health
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_BRIGHTE_CAPITAL_DBT_MODEL_HEALTH
+
+dimensions:
+  model_name:
+    sql: '"MODEL_NAME"'
+
+  layer:
+    sql: '"LAYER"'
+
+  last_run_at:
+    sql: '"LAST_RUN_AT"'
+
+  hours_since_source_load:
+    sql: '"HOURS_SINCE_SOURCE_LOAD"'
+
+  freshness_status:
+    sql: '"FRESHNESS_STATUS"'
+
+  tests_passed:
+    sql: '"TESTS_PASSED"'
+
+  tests_warned:
+    sql: '"TESTS_WARNED"'
+
+  tests_failed:
+    sql: '"TESTS_FAILED"'
+
+measures:
+  count:
+    aggregate_type: count
