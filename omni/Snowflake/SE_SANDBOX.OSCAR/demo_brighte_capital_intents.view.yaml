@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_brighte_capital_intents
+label: Intents
+description: Voice agent call intents and their intent group. Synthetic.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_BRIGHTE_CAPITAL_INTENTS
@@ -6,20 +9,43 @@ table_name: DEMO_BRIGHTE_CAPITAL_INTENTS
 dimensions:
   intent_id:
     sql: '"INTENT_ID"'
+    label: Intent ID
     format: ID
+    primary_key: true
 
   intent_name:
     sql: '"INTENT_NAME"'
+    label: Intent
+    description: Intent shown on charts, for example Payment arrangement
+    synonyms:
+      [
+        intent,
+        reason for call,
+        call type,
+        topic,
+        payment arrangement,
+        payment plan change,
+        collections call
+      ]
 
   intent_group:
     sql: '"INTENT_GROUP"'
+    label: Intent Group
+    description: Applications, Servicing or Collections
+    synonyms: [ intent group, queue, line of business ]
 
   human_only:
     sql: '"HUMAN_ONLY"'
+    label: Human Only
+    description: True when policy always hands the call to a person (financial
+      hardship and complaints), so zero containment is expected
 
   needs_id_check:
     sql: '"NEEDS_ID_CHECK"'
+    label: Needs Identity Check
+    description: True when the agent must verify identity before acting on the account
 
 measures:
   count:
+    label: Intents
     aggregate_type: count

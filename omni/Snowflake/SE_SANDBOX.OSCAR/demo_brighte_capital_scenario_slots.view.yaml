@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_brighte_capital_scenario_slots
+label: Scenario Slots
+description: Saved payment arrangement fix scenario slots for the Payment
+  Arrangement Fix Planner app. Illustrative assumptions, not Brighte plans.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_BRIGHTE_CAPITAL_SCENARIO_SLOTS
@@ -6,33 +10,51 @@ table_name: DEMO_BRIGHTE_CAPITAL_SCENARIO_SLOTS
 dimensions:
   scenario_id:
     sql: '"SCENARIO_ID"'
+    label: Scenario ID
     format: ID
+    description: SCN-BASE, SCN-FIX or SCN-APPCB
+    primary_key: true
 
   slot_name:
     sql: '"SLOT_NAME"'
+    label: Scenario
+    synonyms: [ scenario, slot, option ]
 
   slot_order:
     sql: '"SLOT_ORDER"'
+    label: Slot Order
 
   is_baseline:
     sql: '"IS_BASELINE"'
+    label: Is Baseline
+    description: True only for SCN-BASE, which is read only
 
   intent_id:
     sql: '"INTENT_ID"'
+    label: Intent ID
     format: ID
 
   id_fail_rate_pct:
     sql: '"ID_FAIL_RATE_PCT"'
+    label: Identity Check Failure Rate (%)
+    format: number_1
 
   link_close_share_pct:
     sql: '"LINK_CLOSE_SHARE_PCT"'
+    label: Failed Checks Closed with an App Link (%)
+    format: number_1
 
   app_callback_share_pct:
     sql: '"APP_CALLBACK_SHARE_PCT"'
+    label: App Callback Share (%)
+    format: number_1
 
   human_cost_per_min_aud:
     sql: '"HUMAN_COST_PER_MIN_AUD"'
+    label: Contact Centre Cost a Minute (A$)
+    format: audcurrency_2
 
 measures:
   count:
+    label: Scenarios
     aggregate_type: count

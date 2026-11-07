@@ -1,0 +1,25 @@
+base_view: se_sandbox_oscar__demo_brighte_capital_dbt_model_health
+label: Data Health
+group_label: Brighte Capital
+description: dbt freshness and test results for the models behind the voice
+  agent dashboard. Synthetic.
+
+joins: {}
+
+ai_context: |
+  Synthetic snapshot of the latest dbt Cloud job run for the eight models that feed the voice agent dashboard, taken at 06:10 Sydney time on 1 Nov 2026. One row per dbt model.
+  In production this would come from dbt Cloud run results loaded into Snowflake. Freshness warns after 6 hours and errors after 24.
+
+sample_queries:
+  model_health:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_brighte_capital_dbt_model_health.model_name,
+          se_sandbox_oscar__demo_brighte_capital_dbt_model_health.freshness_status,
+          se_sandbox_oscar__demo_brighte_capital_dbt_model_health.hours_since_source_load,
+          se_sandbox_oscar__demo_brighte_capital_dbt_model_health.tests_failed
+        ]
+      base_view: se_sandbox_oscar__demo_brighte_capital_dbt_model_health
+      topic: demo_brighte_capital_data_health
+    prompt: Are any voice agent models stale or failing tests?

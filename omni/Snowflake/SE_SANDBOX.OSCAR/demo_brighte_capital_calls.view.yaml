@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_brighte_capital_calls
+label: Calls
+description: One row per call handled by the voice agent, 1 Jul 2025 to 31 Oct
+  2026, Sydney dates. Synthetic data for an Omni demo, not Brighte data.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_BRIGHTE_CAPITAL_CALLS
@@ -6,66 +10,295 @@ table_name: DEMO_BRIGHTE_CAPITAL_CALLS
 dimensions:
   call_id:
     sql: '"CALL_ID"'
+    label: Call ID
     format: ID
+    description: Stable call code, for example VC-2610-004512
+    primary_key: true
 
   call_date:
     sql: '"CALL_DATE"'
+    label: Call Date
+    description: Sydney local date the call started
+    synonyms: [ date, day, week, month ]
 
   channel:
     sql: '"CHANNEL"'
+    label: Channel
+    description: Inbound phone, App callback or Outbound reminder. App callbacks
+      come from inside the signed in Brighte app, so the caller is already
+      authenticated and no identity check runs
+    synonyms: [ inbound, app callback, outbound reminder, contact channel ]
 
   intent_id:
     sql: '"INTENT_ID"'
+    label: Intent ID
     format: ID
+    description: Intent code the agent classified the call as, for example
+      INT-PAYARR for Payment arrangement
 
   customer_state:
     sql: '"CUSTOMER_STATE"'
+    label: Customer State
+    description: Customer's home state or territory, full name
+    synonyms: [ state, location, where customers live ]
 
   agent_version:
     sql: '"AGENT_VERSION"'
+    label: Agent Version
+    description: Voice agent release that handled the call. v2.4 to 30 Nov 2025,
+      v3.0 from 1 Dec 2025, v3.1 from 16 Mar 2026, v3.2 from 7 Sep 2026
+    synonyms: [ release, version, prompt version, agent build ]
 
   outcome:
     sql: '"OUTCOME"'
+    label: Outcome
+    description: Contained (the agent closed the call, including closes by texting
+      an app link), Handed off (transferred to a person) or Abandoned (caller
+      hung up first)
+    synonyms: [ call outcome, result ]
 
   is_contained:
     sql: '"IS_CONTAINED"'
+    label: Is Contained
+    description: 1 when outcome is Contained
 
   is_handoff:
     sql: '"IS_HANDOFF"'
+    label: Is Handoff
+    description: 1 when outcome is Handed off
 
   escalation_reason:
     sql: '"ESCALATION_REASON"'
+    label: Escalation Reason
+    description: Why the agent handed the call to a person; empty unless the outcome
+      is Handed off
+    synonyms: [ handoff reason, why transferred ]
 
   id_check_result:
     sql: '"ID_CHECK_RESULT"'
+    label: Identity Check Result
+    description: Passed, Failed or Not required. Not required for intents that do
+      not touch the account and for every App callback
+    synonyms: [ ID check, ID and V, verification, OTP, SMS code ]
 
   repeat_within_7d:
     sql: '"REPEAT_WITHIN_7D"'
+    label: Repeat Within 7 Days
+    description: 1 when the same customer called again about the same intent within
+      7 days of this call
 
   agent_seconds:
     sql: '"AGENT_SECONDS"'
+    label: Agent Seconds
+    description: Seconds the caller spent with the voice agent
 
   human_seconds:
     sql: '"HUMAN_SECONDS"'
+    label: Human Seconds
+    description: Seconds with a person after a handoff; 0 unless handed off
 
   handle_seconds:
     sql: '"HANDLE_SECONDS"'
+    label: Handle Seconds
+    description: Agent seconds plus human seconds
 
   turns:
     sql: '"TURNS"'
+    label: Turns
+    description: Conversation turns with the voice agent
 
   sentiment:
     sql: '"SENTIMENT"'
+    label: Sentiment
+    description: Positive, Neutral or Negative, scored on the agent part of the call
 
   ai_cost_aud:
     sql: '"AI_COST_AUD"'
+    label: AI Cost (A$)
+    format: audcurrency_2
+    description: Voice model and telephony cost for the agent part of the call,
+      illustrative rates
 
   human_cost_aud:
     sql: '"HUMAN_COST_AUD"'
+    label: Human Cost (A$)
+    format: audcurrency_2
+    description: Loaded contact centre cost of the human part of the call, illustrative rate
 
   total_cost_aud:
     sql: '"TOTAL_COST_AUD"'
+    label: Total Cost (A$)
+    format: audcurrency_2
+    description: AI cost plus human cost
 
 measures:
   count:
     aggregate_type: count
+
+  call_count:
+    label: Calls
+    description: Calls handled by the voice agent
+    aggregate_type: count
+    synonyms: [ calls, volume, call volume, conversations ]
+
+  contained_calls:
+    sql: '"IS_CONTAINED"'
+    label: Contained Calls
+    description: Calls the agent closed itself, including closes by texting an app link
+    aggregate_type: sum
+
+  containment_rate:
+    sql: ${se_sandbox_oscar__demo_brighte_capital_calls.contained_calls} /
+      NULLIF(${se_sandbox_oscar__demo_brighte_capital_calls.call_count}, 0)
+    label: Containment Rate
+    format: percent_1
+    description: Headline containment as the agent reports it, contained calls over
+      all calls. A call closed by texting an app link counts as contained. A
+      ratio of sums; never average weekly or intent rates
+    synonyms: [ containment, contained, resolved by the agent, self serve rate ]
+
+  handoff_count:
+    sql: '"IS_HANDOFF"'
+    label: Handoffs
+    description: Calls handed to a person
+    aggregate_type: sum
+    synonyms: [ handoffs, escalations, transfers ]
+
+  handoff_rate:
+    sql: ${se_sandbox_oscar__demo_brighte_capital_calls.handoff_count} /
+      NULLIF(${se_sandbox_oscar__demo_brighte_capital_calls.call_count}, 0)
+    label: Handoff Rate
+    format: percent_1
+    description: Handed off calls over all calls
+    synonyms: [ handoff, transfer, escalation, warm transfer, handed to a person ]
+
+  repeat_calls:
+    sql: '"REPEAT_WITHIN_7D"'
+    label: Calls Followed by a Repeat
+    description: Calls followed by another call from the same customer about the
+      same intent within 7 days
+    aggregate_type: sum
+
+  repeat_call_rate:
+    sql: ${se_sandbox_oscar__demo_brighte_capital_calls.repeat_calls} /
+      NULLIF(${se_sandbox_oscar__demo_brighte_capital_calls.call_count}, 0)
+    label: Repeat Call Rate (7 Days)
+    format: percent_1
+    description: Share of calls followed by another call from the same customer
+      about the same intent within 7 days. A ratio of sums
+    synonyms:
+      [
+        repeat calls,
+        callbacks,
+        call backs,
+        repeat contact,
+        first contact resolution
+      ]
+
+  total_handle_seconds:
+    sql: '"HANDLE_SECONDS"'
+    label: Total Handle Seconds
+    aggregate_type: sum
+
+  avg_handle_minutes:
+    sql: ${se_sandbox_oscar__demo_brighte_capital_calls.total_handle_seconds} / 60.0
+      / NULLIF(${se_sandbox_oscar__demo_brighte_capital_calls.call_count}, 0)
+    label: Avg Handle Minutes
+    format: number_1
+    description: Average handle time per call across agent and human time, in minutes
+    synonyms: [ AHT, handle time, call duration, call length ]
+
+  total_turns:
+    sql: '"TURNS"'
+    label: Total Turns
+    aggregate_type: sum
+
+  avg_turns:
+    sql: ${se_sandbox_oscar__demo_brighte_capital_calls.total_turns} /
+      NULLIF(${se_sandbox_oscar__demo_brighte_capital_calls.call_count}, 0)
+    label: Avg Turns per Call
+    format: number_1
+    description: Average conversation turns with the voice agent per call
+    synonyms: [ turns, conversation turns, back and forth ]
+
+  total_human_seconds:
+    sql: '"HUMAN_SECONDS"'
+    label: Total Human Seconds
+    aggregate_type: sum
+
+  avg_human_minutes:
+    sql: ${se_sandbox_oscar__demo_brighte_capital_calls.total_human_seconds} / 60.0
+      / NULLIF(${se_sandbox_oscar__demo_brighte_capital_calls.handoff_count}, 0)
+    label: Avg Human Minutes per Handoff
+    format: number_1
+    description: Minutes with a person per handed off call, not per call
+    synonyms: [ human minutes, agent desk time, contact centre minutes ]
+
+  negative_calls:
+    label: Negative Sentiment Calls
+    aggregate_type: count
+    filters:
+      sentiment:
+        is: Negative
+
+  negative_sentiment_rate:
+    sql: ${se_sandbox_oscar__demo_brighte_capital_calls.negative_calls} /
+      NULLIF(${se_sandbox_oscar__demo_brighte_capital_calls.call_count}, 0)
+    label: Negative Sentiment Rate
+    format: percent_1
+    description: Share of calls scored Negative
+    synonyms: [ sentiment, unhappy callers, negative calls ]
+
+  failed_checks:
+    label: Failed Identity Checks
+    aggregate_type: count
+    filters:
+      id_check_result:
+        is: Failed
+
+  checks_attempted:
+    label: Identity Checks Attempted
+    aggregate_type: count
+    filters:
+      id_check_result:
+        is: [ Passed, Failed ]
+
+  id_check_failure_rate:
+    sql: ${se_sandbox_oscar__demo_brighte_capital_calls.failed_checks} /
+      NULLIF(${se_sandbox_oscar__demo_brighte_capital_calls.checks_attempted},
+      0)
+    label: Identity Check Failure Rate
+    format: percent_1
+    description: Failed identity checks over checks attempted. Calls with no check
+      (Not required) are excluded
+    synonyms: [ ID check, ID and V, verification, identity check, OTP, SMS code ]
+
+  total_cost:
+    sql: '"TOTAL_COST_AUD"'
+    label: Total Cost
+    format: audcurrency_0
+    description: Voice model, telephony and contact centre cost in AUD
+    aggregate_type: sum
+    synonyms: [ cost, spend, total cost ]
+
+  cost_per_call:
+    sql: ${se_sandbox_oscar__demo_brighte_capital_calls.total_cost} /
+      NULLIF(${se_sandbox_oscar__demo_brighte_capital_calls.call_count}, 0)
+    label: Cost per Call
+    format: audcurrency_2
+    description: Total cost over calls, in AUD
+    synonyms: [ cost per call, unit cost, cost to serve ]
+
+  total_ai_cost:
+    sql: '"AI_COST_AUD"'
+    label: AI Cost
+    format: audcurrency_0
+    aggregate_type: sum
+
+  ai_cost_per_call:
+    sql: ${se_sandbox_oscar__demo_brighte_capital_calls.total_ai_cost} /
+      NULLIF(${se_sandbox_oscar__demo_brighte_capital_calls.call_count}, 0)
+    label: AI Cost per Call
+    format: audcurrency_2
+    description: Voice model and telephony cost per call, in AUD
+    synonyms: [ model cost, AI cost, GPT cost, voice model cost ]

@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__demo_brighte_capital_dbt_model_health
+label: dbt Model Health
+description: Synthetic snapshot of the latest dbt Cloud job run for the eight
+  models that feed the voice agent dashboard, 06:10 Sydney on 1 Nov 2026. In
+  production this reads dbt Cloud run results loaded into Snowflake.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_BRIGHTE_CAPITAL_DBT_MODEL_HEALTH
@@ -6,28 +11,51 @@ table_name: DEMO_BRIGHTE_CAPITAL_DBT_MODEL_HEALTH
 dimensions:
   model_name:
     sql: '"MODEL_NAME"'
+    label: dbt Model
+    primary_key: true
+    synonyms: [ model, dbt model, table ]
 
   layer:
     sql: '"LAYER"'
+    label: Layer
+    description: Staging, Intermediate or Mart
 
   last_run_at:
     sql: '"LAST_RUN_AT"'
+    label: Last Run At
+    description: Sydney local time the model last built successfully
 
   hours_since_source_load:
     sql: '"HOURS_SINCE_SOURCE_LOAD"'
+    label: Hours Since Source Load
+    format: number_1
 
   freshness_status:
     sql: '"FRESHNESS_STATUS"'
+    label: Freshness
+    description: Pass, Warn or Error from dbt source freshness (warn after 6 hours,
+      error after 24)
+    synonyms: [ data health, freshness, stale, last refresh ]
 
   tests_passed:
     sql: '"TESTS_PASSED"'
+    label: Tests Passed
 
   tests_warned:
     sql: '"TESTS_WARNED"'
+    label: Tests Warned
 
   tests_failed:
     sql: '"TESTS_FAILED"'
+    label: Tests Failed
+    synonyms: [ tests, dbt tests, test failures ]
 
 measures:
   count:
+    label: Models
     aggregate_type: count
+
+  total_tests_failed:
+    sql: '"TESTS_FAILED"'
+    label: Total Tests Failed
+    aggregate_type: sum

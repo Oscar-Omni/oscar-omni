@@ -1,0 +1,65 @@
+base_view: se_sandbox_oscar__demo_brighte_capital_calls
+label: Voice Agent Calls
+group_label: Brighte Capital
+description: Voice agent performance, one row per call, with its intent.
+  Synthetic data for an Omni demo.
+
+joins:
+  se_sandbox_oscar__demo_brighte_capital_intents: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_brighte_capital_calls
+    join_to_view: se_sandbox_oscar__demo_brighte_capital_intents
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_brighte_capital_calls.intent_id} =
+      ${se_sandbox_oscar__demo_brighte_capital_intents.intent_id}
+    relationship_type: many_to_one
+
+ai_context: |
+  Synthetic voice agent call data for an Omni demo, not Brighte data. One row per call handled by the voice agent, 1 Jul 2025 to 31 Oct 2026, dates in Sydney time.
+  Containment (calls.containment_rate) is the headline: a call the agent closed itself, including calls it closed by texting an app link. Those link closes often come back as repeat calls.
+  A repeat call means the same customer called again about the same intent within 7 days (calls.repeat_call_rate).
+  Financial hardship and complaints always go to a person by policy, so they are never contained and that is expected.
+  App callbacks are already authenticated in the app, so they never run an identity check. calls.id_check_failure_rate counts only calls where a check ran.
+  Average human minutes are per handed off call, not per call.
+  Agent releases: v2.4 to 30 Nov 2025, v3.0 from 1 Dec 2025, v3.1 from 16 Mar 2026, v3.2 from 7 Sep 2026.
+  Rates are ratios of sums over calls; never average weekly, intent or channel rates. Use the model's rate measures. Money is AUD.
+  When comparing periods, keep the exact dates asked for. When asked why something changed, describe what changed, where and when, broken down by intent, channel, agent version and identity check result; do not invent a business reason the data cannot show.
+
+sample_queries:
+  containment_and_repeats_by_month:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_brighte_capital_calls.call_date[month]",
+          se_sandbox_oscar__demo_brighte_capital_calls.call_count,
+          se_sandbox_oscar__demo_brighte_capital_calls.containment_rate,
+          se_sandbox_oscar__demo_brighte_capital_calls.repeat_call_rate
+        ]
+      base_view: se_sandbox_oscar__demo_brighte_capital_calls
+      filters:
+        se_sandbox_oscar__demo_brighte_capital_calls.call_date:
+          between_dates: [ 2026-05-01, 2026-10-31 ]
+      topic: demo_brighte_capital_voice_agent_calls
+    prompt: What was the voice agent's containment rate and repeat call rate by
+      month from 1 May 2026 to 31 October 2026?
+  payment_arrangement_repeats_breakdown:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_brighte_capital_calls.agent_version,
+          se_sandbox_oscar__demo_brighte_capital_calls.channel,
+          se_sandbox_oscar__demo_brighte_capital_calls.id_check_result,
+          se_sandbox_oscar__demo_brighte_capital_calls.call_count,
+          se_sandbox_oscar__demo_brighte_capital_calls.repeat_call_rate,
+          se_sandbox_oscar__demo_brighte_capital_calls.containment_rate
+        ]
+      base_view: se_sandbox_oscar__demo_brighte_capital_calls
+      filters:
+        se_sandbox_oscar__demo_brighte_capital_intents.intent_name:
+          is: Payment arrangement
+        se_sandbox_oscar__demo_brighte_capital_calls.call_date:
+          between_dates: [ 2026-05-01, 2026-10-31 ]
+      topic: demo_brighte_capital_voice_agent_calls
+    prompt: For payment arrangements, break down repeat call rate by agent version,
+      channel and identity check result from 1 May 2026 to 31 October 2026
