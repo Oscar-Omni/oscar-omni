@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_property_me_arr_scenarios
+label: ARR Scenarios
+description: Three FY27 board case slots for the ARR Waterfall and FY27 Board
+  Case app. Illustrative synthetic assumptions, not PropertyMe plans.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_PROPERTY_ME_ARR_SCENARIOS
@@ -6,32 +10,50 @@ table_name: DEMO_PROPERTY_ME_ARR_SCENARIOS
 dimensions:
   scenario_id:
     sql: '"SCENARIO_ID"'
+    label: Scenario ID
     format: ID
+    description: SCN-RUN, SCN-SAVE or SCN-GROW
+    primary_key: true
 
   scenario_name:
     sql: '"SCENARIO_NAME"'
+    label: Scenario
+    synonyms: [ scenario, case, slot, board case ]
 
   slot_order:
     sql: '"SLOT_ORDER"'
+    label: Slot Order
 
   is_baseline:
     sql: '"IS_BASELINE"'
+    label: Is Baseline
+    description: True for the read only Run rate slot
 
   default_target_exit_arr_aud:
     sql: '"DEFAULT_TARGET_EXIT_ARR_AUD"'
+    label: Default Target Closing ARR 30 Jun 2027 (A$)
+    format: audcurrency_0
+    description: Seeded synthetic board target for closing ARR at 30 Jun 2027; the
+      target_exit_arr_aud input column overrides it once saved
+    synonyms: [ target, board target, exit ARR target, reforecast ]
 
   new_logos_per_month:
     sql: '"NEW_LOGOS_PER_MONTH"'
+    label: New Agencies a Month
 
   logo_churn_pct_month:
     sql: '"LOGO_CHURN_PCT_MONTH"'
+    label: Agencies Churning Each Month (%)
 
   mepay_attach_per_month:
     sql: '"MEPAY_ATTACH_PER_MONTH"'
+    label: MePay Fast Attaches a Month
 
   downgrade_save_pct:
     sql: '"DOWNGRADE_SAVE_PCT"'
+    label: At Risk Advanced Uplift Kept (%)
 
 measures:
   count:
+    label: Scenarios
     aggregate_type: count

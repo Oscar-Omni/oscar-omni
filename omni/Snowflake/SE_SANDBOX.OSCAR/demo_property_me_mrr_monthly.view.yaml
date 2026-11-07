@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__demo_property_me_mrr_monthly
+label: MRR Monthly
+description: One row per agency, product and month in which the agency had MRR
+  on that product at the start or end of the month, 1 Aug 2024 to 31 Oct 2026.
+  Synthetic billing history for an Omni demo, not PropertyMe data. Money is AUD.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_PROPERTY_ME_MRR_MONTHLY
@@ -6,82 +11,345 @@ table_name: DEMO_PROPERTY_ME_MRR_MONTHLY
 dimensions:
   mrr_row_id:
     sql: '"MRR_ROW_ID"'
+    label: MRR Row ID
     format: ID
+    description: agency_id|product_id|YYYY-MM, for example AGY-01417|PRD-MPM|2026-09
+    primary_key: true
 
   month_start:
     sql: '"MONTH_START"'
+    label: Month
+    description: First day of the billing cycle the row describes. Every billing
+      cycle starts on the first. This is the recognised month
+    synonyms: [ month, billing month, recognised month, cycle ]
 
   agency_id:
     sql: '"AGENCY_ID"'
+    label: Agency ID
     format: ID
 
   product_id:
     sql: '"PRODUCT_ID"'
+    label: Product ID
     format: ID
+    description: PRD-MPM Manage PM, PRD-MPF MePay Fast, PRD-TRL Trustless, PRD-CRM
+      Grow CRM, PRD-WEB Agency websites
 
   country:
     sql: '"COUNTRY"'
+    label: Country
+    description: Australia or New Zealand
+    synonyms: [ country, Australia, New Zealand, AU, NZ ]
 
   state_name:
     sql: '"STATE_NAME"'
+    label: State or Region
+    description: Australian state or territory by its full name (for example New
+      South Wales), or the New Zealand region (for example Auckland)
+    synonyms: [ state, region, location, where agencies are ]
 
   pum_band:
     sql: '"PUM_BAND"'
+    label: Size Band (PUM)
+    description: Agency size band by Manage PM billed properties at the end of the
+      month (at the start for a churn month). 200 to 499, 500 to 999, 1,000 to
+      2,499 or 2,500 plus
+    order_by_field: pum_band_order
+    synonyms: [ size band, agency size, properties under management, PUM, portfolio size ]
 
   tier_open:
     sql: '"TIER_OPEN"'
+    label: Starting Tier
+    description: Manage PM tier billed in the previous cycle; empty on other
+      products and on a new logo month
+    synonyms: [ tier, plan, Basic, Standard, Advanced, Premier, starting tier ]
 
   tier_close:
     sql: '"TIER_CLOSE"'
+    label: Billed Tier
+    description: Manage PM tier billed this cycle; empty on other products and on a
+      churn month
+    synonyms: [ current tier, tier after, billed tier ]
 
   movement_reason:
     sql: '"MOVEMENT_REASON"'
+    label: Movement Reason
+    description: New logo, Property growth, User growth, Tier upgrade, Add on
+      attach, Property decrease, User decrease, Tier downgrade, Add on removal,
+      Churn or No change. One reason per row
+    synonyms: [ movement, reason, movement type, bridge category, waterfall category ]
 
   effective_date:
     sql: '"EFFECTIVE_DATE"'
+    label: Effective Date
+    description: Date the change took effect in billing; empty on No change rows. A
+      change that takes effect mid cycle sits in the month before month_start,
+      because it is recognised from the next billing cycle, never pro rata
+    synonyms: [ effective date, change date, mid cycle ]
 
   billed_units:
     sql: '"BILLED_UNITS"'
+    label: Billed Units
+    description: Billed properties (at least 200) for Manage PM, MePay Fast and
+      Trustless; users for Grow CRM; 1 for Agency websites
+    synonyms: [ properties, doors, billed properties, users, seats ]
 
   opening_mrr_aud:
     sql: '"OPENING_MRR_AUD"'
+    label: Opening MRR (A$)
+    format: audcurrency_2
+    hidden: true
 
   new_mrr_aud:
     sql: '"NEW_MRR_AUD"'
+    label: New MRR (A$)
+    format: audcurrency_2
+    hidden: true
 
   expansion_mrr_aud:
     sql: '"EXPANSION_MRR_AUD"'
+    label: Expansion MRR (A$)
+    format: audcurrency_2
+    hidden: true
 
   contraction_mrr_aud:
     sql: '"CONTRACTION_MRR_AUD"'
+    label: Contraction MRR (A$)
+    format: audcurrency_2
+    hidden: true
 
   churn_mrr_aud:
     sql: '"CHURN_MRR_AUD"'
+    label: Churn MRR (A$)
+    format: audcurrency_2
+    hidden: true
 
   closing_mrr_aud:
     sql: '"CLOSING_MRR_AUD"'
+    label: Closing MRR (A$)
+    format: audcurrency_2
+    hidden: true
 
   lost_mrr_aud:
     sql: '"LOST_MRR_AUD"'
+    label: Lost MRR (A$)
+    format: audcurrency_2
+    hidden: true
 
   net_new_mrr_aud:
     sql: '"NET_NEW_MRR_AUD"'
+    label: Net New MRR (A$)
+    format: audcurrency_2
+    hidden: true
 
   retention_delta_mrr_aud:
     sql: '"RETENTION_DELTA_MRR_AUD"'
+    label: Retention Delta MRR (A$)
+    format: audcurrency_2
+    hidden: true
 
   logo_open_flag:
     sql: '"LOGO_OPEN_FLAG"'
+    label: Logo Open Flag
+    description: 1 on the Manage PM row when the agency was billing at the start of
+      the month
+    hidden: true
 
   logo_new_flag:
     sql: '"LOGO_NEW_FLAG"'
+    label: Logo New Flag
+    description: 1 on the Manage PM row in the agency's new logo month
+    hidden: true
 
   logo_churn_flag:
     sql: '"LOGO_CHURN_FLAG"'
+    label: Logo Churn Flag
+    description: 1 on the Manage PM row in the month the agency stopped billing for
+      every product
 
   aime_active_pct:
     sql: '"AIME_ACTIVE_PCT"'
+    label: AiMe Active Share (%)
+    format: number_1
+    description: Share of the agency's property managers who used AiMe in at least
+      three weeks of the previous cycle. Only on Manage PM rows whose starting
+      tier is Advanced or Premier
+
+  pum_band_order:
+    sql: CASE "PUM_BAND" WHEN '200 to 499' THEN 1 WHEN '500 to 999' THEN 2 WHEN
+      '1,000 to 2,499' THEN 3 ELSE 4 END
+    hidden: true
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
+
+  opening_mrr_sum:
+    sql: ${se_sandbox_oscar__demo_property_me_mrr_monthly.opening_mrr_aud}
+    hidden: true
+    aggregate_type: sum
+
+  lost_mrr_sum:
+    sql: ${se_sandbox_oscar__demo_property_me_mrr_monthly.lost_mrr_aud}
+    hidden: true
+    aggregate_type: sum
+
+  retention_delta_mrr_sum:
+    sql: ${se_sandbox_oscar__demo_property_me_mrr_monthly.retention_delta_mrr_aud}
+    hidden: true
+    aggregate_type: sum
+
+  closing_arr:
+    sql: ${se_sandbox_oscar__demo_property_me_mrr_monthly.closing_mrr_aud} * 12
+    label: Closing ARR
+    format: audcurrency_0
+    description: SUM(closing MRR) x 12. ARR billed in the month's cycle. A month end
+      stock, so group by month or filter to one month; never sum it across
+      months
+    aggregate_type: sum
+    synonyms: [ ARR, annual recurring revenue, run rate, book of business ]
+
+  opening_arr:
+    sql: ${se_sandbox_oscar__demo_property_me_mrr_monthly.opening_mrr_aud} * 12
+    label: Opening ARR
+    format: audcurrency_0
+    description: SUM(opening MRR) x 12. ARR at the start of the month. A stock, same
+      rule as Closing ARR
+    aggregate_type: sum
+    synonyms: [ opening ARR, starting ARR, ARR at the start ]
+
+  new_arr:
+    sql: ${se_sandbox_oscar__demo_property_me_mrr_monthly.new_mrr_aud} * 12
+    label: New ARR
+    format: audcurrency_0
+    description: SUM(new MRR) x 12. ARR from an agency's first billed month. Adds
+      across months
+    aggregate_type: sum
+    synonyms: [ new ARR, new business, new logo ARR, new agencies revenue ]
+
+  expansion_arr:
+    sql: ${se_sandbox_oscar__demo_property_me_mrr_monthly.expansion_mrr_aud} * 12
+    label: Expansion ARR
+    format: audcurrency_0
+    description: SUM(expansion MRR) x 12. Property or user growth, tier upgrades and
+      add on attach by agencies already billing. Mid cycle upgrades are
+      recognised from the next billing cycle, never pro rata
+    aggregate_type: sum
+    synonyms: [ expansion, upsell, upgrades, attach, cross sell ]
+
+  contraction_arr:
+    sql: ${se_sandbox_oscar__demo_property_me_mrr_monthly.contraction_mrr_aud} * 12
+    label: Contraction ARR
+    format: audcurrency_0
+    description: SUM(contraction MRR) x 12, stored positive and shown as a fall in
+      the waterfall. Property or user decreases, tier downgrades and add on
+      removals by agencies that keep billing. A downgrade that takes effect mid
+      cycle is recognised from the next billing cycle, never pro rata, so its
+      effective date can sit in the month before
+    aggregate_type: sum
+    synonyms: [ contraction, downgrades, downsell, shrinkage ]
+
+  churn_arr:
+    sql: ${se_sandbox_oscar__demo_property_me_mrr_monthly.churn_mrr_aud} * 12
+    label: Churn ARR
+    format: audcurrency_0
+    description: SUM(churn MRR) x 12. ARR lost in the month an agency stops billing
+      for every product. Excludes contraction
+    aggregate_type: sum
+    synonyms: [ churned ARR, lost agencies revenue, cancellations ]
+
+  gross_arr_lost:
+    sql: ${se_sandbox_oscar__demo_property_me_mrr_monthly.lost_mrr_aud} * 12
+    label: Gross ARR Lost
+    format: audcurrency_0
+    description: SUM(lost MRR) x 12. Churn ARR plus contraction ARR
+    aggregate_type: sum
+    synonyms: [ gross churn, gross ARR lost, leakage, ARR lost ]
+
+  net_new_arr:
+    sql: ${se_sandbox_oscar__demo_property_me_mrr_monthly.net_new_mrr_aud} * 12
+    label: Net New ARR
+    format: audcurrency_0
+    description: SUM(net new MRR) x 12. New + expansion - contraction - churn, which
+      equals closing minus opening. Can be negative and is reported as negative
+    aggregate_type: sum
+    synonyms: [ net new ARR, net movement, ARR growth in the period, waterfall net ]
+
+  grr_annualised:
+    sql: POWER(1 - ${se_sandbox_oscar__demo_property_me_mrr_monthly.lost_mrr_sum} /
+      NULLIF(${se_sandbox_oscar__demo_property_me_mrr_monthly.opening_mrr_sum},
+      0), 12)
+    label: GRR (annualised)
+    format: percent_1
+    description: Gross revenue retention, annualised. The period's average monthly
+      gross loss rate (lost MRR over opening MRR, a ratio of sums across months
+      and agencies) compounded over 12 months. Never average monthly GRR values
+    synonyms: [ GRR, gross retention, gross revenue retention, gross dollar retention ]
+
+  nrr_annualised:
+    sql: POWER(1 +
+      ${se_sandbox_oscar__demo_property_me_mrr_monthly.retention_delta_mrr_sum}
+      /
+      NULLIF(${se_sandbox_oscar__demo_property_me_mrr_monthly.opening_mrr_sum},
+      0), 12)
+    label: NRR (annualised)
+    format: percent_1
+    description: Net revenue retention, annualised. The period's average monthly
+      change in MRR from agencies already billing (expansion minus contraction
+      and churn, over opening MRR) compounded over 12 months. Excludes new
+      logos. Never average monthly NRR values
+    synonyms: [ NRR, net retention, net revenue retention, NDR, net dollar retention ]
+
+  core_contraction_arr:
+    sql: ${se_sandbox_oscar__demo_property_me_mrr_monthly.contraction_mrr_aud} * 12
+    label: Manage PM Contraction ARR
+    format: audcurrency_0
+    description: Contraction ARR on Manage PM rows only
+    aggregate_type: sum
+    filters:
+      product_id:
+        is: PRD-MPM
+    synonyms: [ core contraction, Manage PM contraction ]
+
+  new_logos:
+    sql: ${se_sandbox_oscar__demo_property_me_mrr_monthly.logo_new_flag}
+    label: New Agencies
+    format: number_0
+    description: Agencies in their first billed month
+    aggregate_type: sum
+    synonyms: [ new agencies, new logos, new customers, wins ]
+
+  churned_agencies:
+    sql: ${se_sandbox_oscar__demo_property_me_mrr_monthly.logo_churn_flag}
+    label: Churned Agencies
+    format: number_0
+    description: Agencies that stopped billing for every product
+    aggregate_type: sum
+    synonyms: [ churned agencies, lost agencies, cancelled agencies, logos lost ]
+
+  agency_months_open:
+    sql: ${se_sandbox_oscar__demo_property_me_mrr_monthly.logo_open_flag}
+    label: Agencies Billing at Month Start
+    format: number_0
+    description: Agencies billing at the start of each month, summed over months.
+      For one month it is the agencies billing at its start
+    aggregate_type: sum
+    synonyms: [ agencies, customers, active agencies, billing agencies ]
+
+  movement_count:
+    label: Movement Rows
+    format: number_0
+    description: Agency product month rows. Filtered to one movement reason and
+      product it counts the agencies with that movement in each month
+    aggregate_type: count
+
+  avg_aime_active_pct:
+    sql: ${se_sandbox_oscar__demo_property_me_mrr_monthly.aime_active_pct}
+    label: Avg AiMe Active Share (%)
+    format: number_1
+    description: Average AiMe active share over Manage PM rows on Advanced or
+      Premier at the start of the month. Rows without AiMe are excluded, never
+      counted as zero
+    aggregate_type: average
+    synonyms: [ AiMe usage, AiMe adoption, AI usage, AiMe active ]

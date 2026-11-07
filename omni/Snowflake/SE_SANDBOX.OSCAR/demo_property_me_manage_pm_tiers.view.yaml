@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_property_me_manage_pm_tiers
+label: Manage PM Tiers
+description: One row per Manage PM tier with its illustrative price per 100
+  billed properties a month.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_PROPERTY_ME_MANAGE_PM_TIERS
@@ -6,16 +10,27 @@ table_name: DEMO_PROPERTY_ME_MANAGE_PM_TIERS
 dimensions:
   tier_name:
     sql: '"TIER_NAME"'
+    label: Tier
+    description: Basic, Standard, Advanced or Premier
+    order_by_field: tier_rank
+    primary_key: true
 
   tier_rank:
     sql: '"TIER_RANK"'
+    label: Tier Rank
+    description: 1 Basic to 4 Premier
 
   list_price_per_100_aud:
     sql: '"LIST_PRICE_PER_100_AUD"'
+    label: List Price per 100 Properties (A$, illustrative)
+    format: audcurrency_2
 
   includes_aime:
     sql: '"INCLUDES_AIME"'
+    label: Includes AiMe
+    description: True for Advanced and Premier, which include the AiMe AI features
 
 measures:
   count:
+    hidden: true
     aggregate_type: count

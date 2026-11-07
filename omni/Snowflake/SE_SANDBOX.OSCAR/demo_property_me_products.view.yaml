@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_property_me_products
+label: Products
+description: One row per billed product, with its family and board revenue
+  stream. Prices are illustrative.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_PROPERTY_ME_PRODUCTS
@@ -6,26 +10,55 @@ table_name: DEMO_PROPERTY_ME_PRODUCTS
 dimensions:
   product_id:
     sql: '"PRODUCT_ID"'
+    label: Product ID
     format: ID
+    primary_key: true
 
   product_name:
     sql: '"PRODUCT_NAME"'
+    label: Product
+    description: Manage PM, MePay Fast, Trustless, Grow CRM or Agency websites
+    synonyms:
+      [
+        product,
+        add on,
+        MePay,
+        MePay Fast,
+        Trustless,
+        Grow,
+        Grow CRM,
+        websites
+      ]
 
   product_family:
     sql: '"PRODUCT_FAMILY"'
+    label: Product Family
+    description: Manage PM, Payments (MePay Fast and Trustless), CRM or Websites
+    synonyms: [ product family, payments, CRM, websites, line of business ]
 
   stream_group:
     sql: '"STREAM_GROUP"'
+    label: Stream
+    description: The governed mapping of products to board revenue streams. Core is
+      Manage PM; New streams are Payments, CRM and Websites
+    synonyms: [ core, core product, Manage PM, new streams, new revenue streams, stream ]
 
   pricing_unit:
     sql: '"PRICING_UNIT"'
+    label: Pricing Unit
 
   list_price_aud:
     sql: '"LIST_PRICE_AUD"'
+    label: List Price (A$, illustrative)
+    format: audcurrency_2
+    description: Illustrative monthly list price per pricing unit; empty for Manage
+      PM, which is priced by tier
 
   billing_start_month:
     sql: '"BILLING_START_MONTH"'
+    label: Billing Start Month
 
 measures:
   count:
+    hidden: true
     aggregate_type: count

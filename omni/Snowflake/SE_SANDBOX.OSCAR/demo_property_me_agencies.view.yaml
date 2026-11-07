@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_property_me_agencies
+label: Agencies
+description: One row per real estate agency that billed at any point in the
+  window. Invented names on real home cities. Synthetic.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_PROPERTY_ME_AGENCIES
@@ -6,23 +10,44 @@ table_name: DEMO_PROPERTY_ME_AGENCIES
 dimensions:
   agency_id:
     sql: '"AGENCY_ID"'
+    label: Agency ID
     format: ID
+    description: Stable agency code, AGY-00001 to AGY-02700
+    primary_key: true
 
   agency_name:
     sql: '"AGENCY_NAME"'
+    label: Agency
+    description: Invented agency name with its real home city, for example Kestrel &
+      Vine Property, Townsville
+    synonyms: [ agency, customer, account ]
 
   billing_currency:
     sql: '"BILLING_CURRENCY"'
+    label: Billing Currency
+    description: AUD for Australian agencies, NZD for New Zealand agencies
+      (converted to AUD at 0.91, an illustrative budget rate)
 
   first_billed_month:
     sql: '"FIRST_BILLED_MONTH"'
+    label: First Billed Month
+    description: First month the agency ever billed; may sit before the window
 
   advanced_upgrade_month:
     sql: '"ADVANCED_UPGRADE_MONTH"'
+    label: Advanced Upgrade Month
+    description: Month an upgrade to the Advanced tier was first recognised inside
+      the window; empty when the agency never moved up to Advanced in the window
+    synonyms: [ upgrade month, moved to Advanced ]
 
   aime_campaign_cohort:
     sql: '"AIME_CAMPAIGN_COHORT"'
+    label: AiMe Campaign Cohort
+    description: True for agencies that moved from Standard to Advanced during the
+      May to June 2026 AiMe upgrade campaign (synthetic event)
+    synonyms: [ AiMe campaign, upgrade campaign, campaign cohort ]
 
 measures:
   count:
+    label: Agencies (count)
     aggregate_type: count
