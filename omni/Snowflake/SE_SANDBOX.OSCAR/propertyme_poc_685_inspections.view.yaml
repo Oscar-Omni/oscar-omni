@@ -1,0 +1,41 @@
+# Reference this view as se_sandbox_oscar__propertyme_poc_685_inspections
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: PROPERTYME_POC_685_INSPECTIONS
+
+dimensions:
+  synthetic_label:
+    sql: '"SYNTHETIC_LABEL"'
+
+  agency_id:
+    sql: '"AGENCY_ID"'
+    format: ID
+
+  inspection_id:
+    sql: '"INSPECTION_ID"'
+    format: ID
+
+  property_id:
+    sql: '"PROPERTY_ID"'
+    format: ID
+
+  tenancy_id:
+    sql: '"TENANCY_ID"'
+    format: ID
+
+  manager_id:
+    sql: '"MANAGER_ID"'
+    format: ID
+
+  scheduled_at:
+    sql: '"SCHEDULED_AT"'
+
+  completed_at:
+    sql: '"COMPLETED_AT"'
+
+  inspection_type:
+    sql: '"INSPECTION_TYPE"'
+
+measures:
+  count:
+    aggregate_type: count

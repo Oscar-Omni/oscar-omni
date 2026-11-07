@@ -1,0 +1,37 @@
+# Reference this view as se_sandbox_oscar__propertyme_poc_685_quotes
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: PROPERTYME_POC_685_QUOTES
+
+dimensions:
+  synthetic_label:
+    sql: '"SYNTHETIC_LABEL"'
+
+  agency_id:
+    sql: '"AGENCY_ID"'
+    format: ID
+
+  quote_id:
+    sql: '"QUOTE_ID"'
+    format: ID
+
+  job_id:
+    sql: '"JOB_ID"'
+    format: ID
+
+  supplier_id:
+    sql: '"SUPPLIER_ID"'
+    format: ID
+
+  quoted_at:
+    sql: '"QUOTED_AT"'
+
+  quote_cents:
+    sql: '"QUOTE_CENTS"'
+
+  accepted:
+    sql: '"ACCEPTED"'
+
+measures:
+  count:
+    aggregate_type: count

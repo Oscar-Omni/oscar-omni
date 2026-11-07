@@ -1,0 +1,30 @@
+# Reference this view as se_sandbox_oscar__propertyme_poc_685_status_events
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: PROPERTYME_POC_685_STATUS_EVENTS
+
+dimensions:
+  synthetic_label:
+    sql: '"SYNTHETIC_LABEL"'
+
+  agency_id:
+    sql: '"AGENCY_ID"'
+    format: ID
+
+  event_id:
+    sql: '"EVENT_ID"'
+    format: ID
+
+  job_id:
+    sql: '"JOB_ID"'
+    format: ID
+
+  status:
+    sql: '"STATUS"'
+
+  occurred_at:
+    sql: '"OCCURRED_AT"'
+
+measures:
+  count:
+    aggregate_type: count

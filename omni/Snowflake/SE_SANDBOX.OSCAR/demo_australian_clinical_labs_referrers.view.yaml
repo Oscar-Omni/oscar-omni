@@ -1,0 +1,23 @@
+# Reference this view as se_sandbox_oscar__demo_australian_clinical_labs_referrers
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_AUSTRALIAN_CLINICAL_LABS_REFERRERS
+
+dimensions:
+  referrer_id:
+    sql: '"REFERRER_ID"'
+    format: ID
+
+  referrer_name:
+    sql: '"REFERRER_NAME"'
+
+  bdm_name:
+    sql: '"BDM_NAME"'
+
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

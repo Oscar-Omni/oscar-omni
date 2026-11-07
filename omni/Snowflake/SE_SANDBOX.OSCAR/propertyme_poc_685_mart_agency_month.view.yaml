@@ -1,0 +1,37 @@
+# Reference this view as se_sandbox_oscar__propertyme_poc_685_mart_agency_month
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: PROPERTYME_POC_685_MART_AGENCY_MONTH
+
+dimensions:
+  synthetic_label:
+    sql: '"SYNTHETIC_LABEL"'
+
+  agency_id:
+    sql: '"AGENCY_ID"'
+    format: ID
+
+  month_start:
+    sql: '"MONTH_START"'
+
+  jobs_created:
+    sql: '"JOBS_CREATED"'
+
+  completed_jobs:
+    sql: '"COMPLETED_JOBS"'
+
+  repair_spend_cents:
+    sql: '"REPAIR_SPEND_CENTS"'
+
+  open_jobs:
+    sql: '"OPEN_JOBS"'
+
+  properties_managed:
+    sql: '"PROPERTIES_MANAGED"'
+
+  jobs_per_100_properties:
+    sql: '"JOBS_PER_100_PROPERTIES"'
+
+measures:
+  count:
+    aggregate_type: count

@@ -1,0 +1,38 @@
+# Reference this view as se_sandbox_oscar__demo_australian_clinical_labs_scenario_slots
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_AUSTRALIAN_CLINICAL_LABS_SCENARIO_SLOTS
+
+dimensions:
+  scenario_id:
+    sql: '"SCENARIO_ID"'
+    format: ID
+
+  slot_name:
+    sql: '"SLOT_NAME"'
+
+  slot_order:
+    sql: '"SLOT_ORDER"'
+
+  is_baseline:
+    sql: '"IS_BASELINE"'
+
+  lab_id:
+    sql: '"LAB_ID"'
+    format: ID
+
+  gap_closed_pct:
+    sql: '"GAP_CLOSED_PCT"'
+
+  added_cost_aud_per_month:
+    sql: '"ADDED_COST_AUD_PER_MONTH"'
+
+  roster_saving_aud_per_month:
+    sql: '"ROSTER_SAVING_AUD_PER_MONTH"'
+
+  months_to_start:
+    sql: '"MONTHS_TO_START"'
+
+measures:
+  count:
+    aggregate_type: count

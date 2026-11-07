@@ -1,0 +1,19 @@
+# Reference this view as se_sandbox_oscar__propertyme_poc_685_agencies
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: PROPERTYME_POC_685_AGENCIES
+
+dimensions:
+  synthetic_label:
+    sql: '"SYNTHETIC_LABEL"'
+
+  agency_id:
+    sql: '"AGENCY_ID"'
+    format: ID
+
+  agency_name:
+    sql: '"AGENCY_NAME"'
+
+measures:
+  count:
+    aggregate_type: count

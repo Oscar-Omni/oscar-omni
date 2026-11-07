@@ -1,0 +1,57 @@
+# Reference this view as se_sandbox_oscar__propertyme_poc_685_maintenance_jobs
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: PROPERTYME_POC_685_MAINTENANCE_JOBS
+
+dimensions:
+  synthetic_label:
+    sql: '"SYNTHETIC_LABEL"'
+
+  agency_id:
+    sql: '"AGENCY_ID"'
+    format: ID
+
+  job_id:
+    sql: '"JOB_ID"'
+    format: ID
+
+  property_id:
+    sql: '"PROPERTY_ID"'
+    format: ID
+
+  inspection_id:
+    sql: '"INSPECTION_ID"'
+    format: ID
+
+  finding_id:
+    sql: '"FINDING_ID"'
+    format: ID
+
+  supplier_id:
+    sql: '"SUPPLIER_ID"'
+    format: ID
+
+  category:
+    sql: '"CATEGORY"'
+
+  priority:
+    sql: '"PRIORITY"'
+
+  status:
+    sql: '"STATUS"'
+
+  created_at:
+    sql: '"CREATED_AT"'
+
+  approved_at:
+    sql: '"APPROVED_AT"'
+
+  completed_at:
+    sql: '"COMPLETED_AT"'
+
+  illustrative_target_hours:
+    sql: '"ILLUSTRATIVE_TARGET_HOURS"'
+
+measures:
+  count:
+    aggregate_type: count

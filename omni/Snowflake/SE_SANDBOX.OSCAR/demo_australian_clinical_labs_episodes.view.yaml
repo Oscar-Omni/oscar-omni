@@ -1,0 +1,56 @@
+# Reference this view as se_sandbox_oscar__demo_australian_clinical_labs_episodes
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_AUSTRALIAN_CLINICAL_LABS_EPISODES
+
+dimensions:
+  episode_id:
+    sql: '"EPISODE_ID"'
+    format: ID
+
+  collected_date:
+    sql: '"COLLECTED_DATE"'
+
+  day_type:
+    sql: '"DAY_TYPE"'
+
+  cc_id:
+    sql: '"CC_ID"'
+    format: ID
+
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  lab_id:
+    sql: '"LAB_ID"'
+    format: ID
+
+  referrer_id:
+    sql: '"REFERRER_ID"'
+    format: ID
+
+  referral_source:
+    sql: '"REFERRAL_SOURCE"'
+
+  test_code:
+    sql: '"TEST_CODE"'
+
+  items_billed:
+    sql: '"ITEMS_BILLED"'
+
+  revenue_aud:
+    sql: '"REVENUE_AUD"'
+
+  tat_hours:
+    sql: '"TAT_HOURS"'
+
+  lab_tat_hours:
+    sql: '"LAB_TAT_HOURS"'
+
+  on_time:
+    sql: '"ON_TIME"'
+
+measures:
+  count:
+    aggregate_type: count

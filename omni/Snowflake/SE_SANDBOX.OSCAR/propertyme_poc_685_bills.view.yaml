@@ -1,0 +1,37 @@
+# Reference this view as se_sandbox_oscar__propertyme_poc_685_bills
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: PROPERTYME_POC_685_BILLS
+
+dimensions:
+  synthetic_label:
+    sql: '"SYNTHETIC_LABEL"'
+
+  agency_id:
+    sql: '"AGENCY_ID"'
+    format: ID
+
+  bill_id:
+    sql: '"BILL_ID"'
+    format: ID
+
+  job_id:
+    sql: '"JOB_ID"'
+    format: ID
+
+  supplier_id:
+    sql: '"SUPPLIER_ID"'
+    format: ID
+
+  billed_at:
+    sql: '"BILLED_AT"'
+
+  total_cents:
+    sql: '"TOTAL_CENTS"'
+
+  currency:
+    sql: '"CURRENCY"'
+
+measures:
+  count:
+    aggregate_type: count

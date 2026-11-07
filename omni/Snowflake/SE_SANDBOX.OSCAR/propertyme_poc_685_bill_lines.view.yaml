@@ -1,0 +1,34 @@
+# Reference this view as se_sandbox_oscar__propertyme_poc_685_bill_lines
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: PROPERTYME_POC_685_BILL_LINES
+
+dimensions:
+  synthetic_label:
+    sql: '"SYNTHETIC_LABEL"'
+
+  agency_id:
+    sql: '"AGENCY_ID"'
+    format: ID
+
+  bill_line_id:
+    sql: '"BILL_LINE_ID"'
+    format: ID
+
+  bill_id:
+    sql: '"BILL_ID"'
+    format: ID
+
+  job_id:
+    sql: '"JOB_ID"'
+    format: ID
+
+  line_type:
+    sql: '"LINE_TYPE"'
+
+  amount_cents:
+    sql: '"AMOUNT_CENTS"'
+
+measures:
+  count:
+    aggregate_type: count

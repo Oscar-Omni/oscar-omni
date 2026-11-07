@@ -1,0 +1,21 @@
+# Reference this view as se_sandbox_oscar__demo_australian_clinical_labs_tests
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_AUSTRALIAN_CLINICAL_LABS_TESTS
+
+dimensions:
+  test_code:
+    sql: '"TEST_CODE"'
+
+  test_name:
+    sql: '"TEST_NAME"'
+
+  discipline:
+    sql: '"DISCIPLINE"'
+
+  tat_target_hours:
+    sql: '"TAT_TARGET_HOURS"'
+
+measures:
+  count:
+    aggregate_type: count

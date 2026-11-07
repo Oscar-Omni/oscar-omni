@@ -1,0 +1,16 @@
+# Reference this view as se_sandbox_oscar__demo_healthdirect_australia_calls_handle_bak_20261107
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_HEALTHDIRECT_AUSTRALIA_CALLS_HANDLE_BAK_20261107
+
+dimensions:
+  call_id:
+    sql: '"CALL_ID"'
+    format: ID
+
+  handle_seconds:
+    sql: '"HANDLE_SECONDS"'
+
+measures:
+  count:
+    aggregate_type: count

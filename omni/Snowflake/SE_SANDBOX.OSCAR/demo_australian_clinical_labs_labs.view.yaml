@@ -1,0 +1,19 @@
+# Reference this view as se_sandbox_oscar__demo_australian_clinical_labs_labs
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_AUSTRALIAN_CLINICAL_LABS_LABS
+
+dimensions:
+  lab_id:
+    sql: '"LAB_ID"'
+    format: ID
+
+  lab_name:
+    sql: '"LAB_NAME"'
+
+  lab_type:
+    sql: '"LAB_TYPE"'
+
+measures:
+  count:
+    aggregate_type: count

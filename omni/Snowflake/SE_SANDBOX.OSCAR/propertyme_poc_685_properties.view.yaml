@@ -1,0 +1,30 @@
+# Reference this view as se_sandbox_oscar__propertyme_poc_685_properties
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: PROPERTYME_POC_685_PROPERTIES
+
+dimensions:
+  synthetic_label:
+    sql: '"SYNTHETIC_LABEL"'
+
+  agency_id:
+    sql: '"AGENCY_ID"'
+    format: ID
+
+  property_id:
+    sql: '"PROPERTY_ID"'
+    format: ID
+
+  manager_id:
+    sql: '"MANAGER_ID"'
+    format: ID
+
+  property_label:
+    sql: '"PROPERTY_LABEL"'
+
+  state:
+    sql: '"STATE"'
+
+measures:
+  count:
+    aggregate_type: count

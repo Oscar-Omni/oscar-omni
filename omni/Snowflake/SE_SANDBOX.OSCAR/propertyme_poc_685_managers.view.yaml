@@ -1,0 +1,23 @@
+# Reference this view as se_sandbox_oscar__propertyme_poc_685_managers
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: PROPERTYME_POC_685_MANAGERS
+
+dimensions:
+  synthetic_label:
+    sql: '"SYNTHETIC_LABEL"'
+
+  agency_id:
+    sql: '"AGENCY_ID"'
+    format: ID
+
+  manager_id:
+    sql: '"MANAGER_ID"'
+    format: ID
+
+  manager_name:
+    sql: '"MANAGER_NAME"'
+
+measures:
+  count:
+    aggregate_type: count
