@@ -1,0 +1,23 @@
+# Reference this view as se_sandbox_oscar__demo_australian_clinical_labs_collection_centres_bak_20261107
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_AUSTRALIAN_CLINICAL_LABS_COLLECTION_CENTRES_BAK_20261107
+
+dimensions:
+  cc_id:
+    sql: '"CC_ID"'
+    format: ID
+
+  cc_name:
+    sql: '"CC_NAME"'
+
+  town:
+    sql: '"TOWN"'
+
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count
