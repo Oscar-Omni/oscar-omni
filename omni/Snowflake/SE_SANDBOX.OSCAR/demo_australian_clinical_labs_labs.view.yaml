@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_australian_clinical_labs_labs
+label: Labs
+description: Synthetic processing laboratories, hubs (core labs) and regional labs
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_AUSTRALIAN_CLINICAL_LABS_LABS
@@ -6,14 +9,22 @@ table_name: DEMO_AUSTRALIAN_CLINICAL_LABS_LABS
 dimensions:
   lab_id:
     sql: '"LAB_ID"'
+    label: Lab ID
     format: ID
+    primary_key: true
 
   lab_name:
     sql: '"LAB_NAME"'
+    label: Lab
+    description: Synthetic lab name, for example SA Country Lab or SA Hub Lab
+    synonyms: [ lab, processing lab, core lab, hub ]
 
   lab_type:
     sql: '"LAB_TYPE"'
+    label: Lab Type
+    description: Hub (core lab) or Regional
 
 measures:
   count:
+    label: Labs
     aggregate_type: count

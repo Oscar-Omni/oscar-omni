@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_australian_clinical_labs_episodes
+label: Patient Episodes
+description: One row per patient episode, a pathology request collected once.
+  Synthetic sample for an Omni demo, not ACL data.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_AUSTRALIAN_CLINICAL_LABS_EPISODES
@@ -6,51 +10,219 @@ table_name: DEMO_AUSTRALIAN_CLINICAL_LABS_EPISODES
 dimensions:
   episode_id:
     sql: '"EPISODE_ID"'
+    label: Episode ID
     format: ID
+    primary_key: true
 
   collected_date:
     sql: '"COLLECTED_DATE"'
+    label: Collected Date
+    description: Date the specimen was collected
+    synonyms: [ collection date, date collected ]
 
   day_type:
     sql: '"DAY_TYPE"'
+    label: Collection Day
+    description: Weekday, Saturday or Sunday, from the collection date. Weekend
+      means Saturday or Sunday.
+    synonyms: [ Saturday, Sunday, weekday, collection day ]
 
   cc_id:
     sql: '"CC_ID"'
+    label: Collection Centre ID
     format: ID
 
   region_id:
     sql: '"REGION_ID"'
+    label: Region ID
     format: ID
+    description: Service region of the collection centre, for example SA-CTY for SA Country
 
   lab_id:
     sql: '"LAB_ID"'
+    label: Lab ID
     format: ID
+    description: Laboratory that tested the episode
 
   referrer_id:
     sql: '"REFERRER_ID"'
+    label: Referrer ID
     format: ID
 
   referral_source:
     sql: '"REFERRAL_SOURCE"'
+    label: Referral Source
+    description: GP, Specialist or Hospital
+    synonyms: [ channel, referral stream ]
 
   test_code:
     sql: '"TEST_CODE"'
+    label: Main Test Code
+    description: The main test, the one that sets the episode's turnaround target
 
   items_billed:
     sql: '"ITEMS_BILLED"'
+    label: Items Billed (per episode)
+    format: NUMBER_0
 
   revenue_aud:
     sql: '"REVENUE_AUD"'
+    label: Revenue per Episode Row (A$)
+    format: CURRENCY_2
 
   tat_hours:
     sql: '"TAT_HOURS"'
+    label: TAT Hours from Collection
+    format: NUMBER_1
+    description: Turnaround from collection to final result, in hours
 
   lab_tat_hours:
     sql: '"LAB_TAT_HOURS"'
+    label: Lab TAT Hours from Receipt
+    format: NUMBER_1
+    description: Turnaround from lab receipt to final result, in hours; always below
+      TAT from collection
 
   on_time:
     sql: '"ON_TIME"'
+    label: On Time Flag
+    format: NUMBER_0
+    description: 1 when TAT from collection is within the main test's target, else 0
 
 measures:
   count:
     aggregate_type: count
+
+  episode_count:
+    label: Patient Episodes
+    format: NUMBER_0
+    description: Patient episodes
+    aggregate_type: count
+    synonyms: [ episodes, patient episodes, requests ]
+
+  revenue:
+    sql: ${revenue_aud}
+    label: Revenue (A$)
+    format: CURRENCY_0
+    description: Revenue billed in AUD
+    aggregate_type: sum
+    synonyms: [ revenue, billing ]
+
+  items_billed_total:
+    sql: ${items_billed}
+    label: Items Billed
+    format: NUMBER_0
+    description: Items billed across episodes
+    aggregate_type: sum
+    synonyms: [ items, items billed, services ]
+
+  revenue_per_episode:
+    sql: ${revenue} / NULLIF(${episode_count}, 0)
+    label: Revenue per Episode (A$)
+    format: CURRENCY_2
+    description: Revenue divided by patient episodes, a ratio of sums
+    synonyms: [ yield, revenue per episode ]
+
+  on_time_results:
+    sql: ${on_time}
+    label: Results On Time
+    format: NUMBER_0
+    description: Episodes resulted within their main test's target
+    aggregate_type: sum
+
+  on_time_rate:
+    sql: ${on_time_results} / NULLIF(${episode_count}, 0)
+    label: Results On Time %
+    format: PERCENT_1
+    description: Share of episodes resulted within target, sum of on time over
+      episodes. Never average centre, lab or month rates.
+    synonyms: [ on time, within TAT, results on time ]
+
+  late_result_rate:
+    sql: 1 - ${on_time_results} / NULLIF(${episode_count}, 0)
+    label: Late Results %
+    format: PERCENT_1
+    description: Share of episodes that missed their target, the complement of
+      results on time
+    synonyms: [ late results, missed TAT ]
+
+  weekend_episodes:
+    label: Weekend Episodes
+    format: NUMBER_0
+    description: Patient episodes collected on a Saturday or Sunday
+    aggregate_type: count
+    filters:
+      day_type:
+        is: [ Saturday, Sunday ]
+    synonyms: [ weekend work, weekend episodes ]
+
+  weekend_on_time_results:
+    sql: ${on_time}
+    label: Weekend Results On Time
+    format: NUMBER_0
+    aggregate_type: sum
+    filters:
+      day_type:
+        is: [ Saturday, Sunday ]
+
+  weekend_on_time_rate:
+    sql: ${weekend_on_time_results} / NULLIF(${weekend_episodes}, 0)
+    label: Weekend Results On Time %
+    format: PERCENT_1
+    description: Results on time over weekend collections only, a ratio of sums over
+      weekend rows
+    synonyms: [ weekend on time, weekend TAT performance ]
+
+  weekend_late_result_rate:
+    sql: 1 - ${weekend_on_time_results} / NULLIF(${weekend_episodes}, 0)
+    label: Weekend Late Results %
+    format: PERCENT_1
+    description: Late share of weekend collections; bright means bad on the map
+    synonyms: [ weekend late results ]
+
+  avg_tat_hours:
+    sql: ${tat_hours}
+    label: Avg TAT from Collection (hours)
+    format: NUMBER_1
+    description: Average turnaround from collection to final result. TAT without a
+      qualifier means this one.
+    aggregate_type: average
+    synonyms: [ TAT, turnaround, turnaround from collection ]
+
+  p90_tat_hours:
+    sql: ${tat_hours}
+    label: P90 TAT from Collection (hours)
+    format: NUMBER_1
+    description: 90th percentile turnaround from collection, computed from episode
+      rows. Never average or add P90s across months, centres or tests.
+    aggregate_type: percentile
+    percentile: 90
+    synonyms: [ 90th percentile TAT, P90 TAT ]
+
+  avg_lab_tat_hours:
+    sql: ${lab_tat_hours}
+    label: Avg Lab TAT from Receipt (hours)
+    format: NUMBER_1
+    description: Average turnaround from lab receipt to final result
+    aggregate_type: average
+    synonyms: [ lab TAT, turnaround from lab receipt, in lab time ]
+
+  p90_lab_tat_hours:
+    sql: ${lab_tat_hours}
+    label: P90 Lab TAT from Receipt (hours)
+    format: NUMBER_1
+    description: 90th percentile turnaround from lab receipt, computed from episode
+      rows; same rule as P90 TAT
+    aggregate_type: percentile
+    percentile: 90
+    synonyms: [ 90th percentile lab TAT, P90 lab TAT ]
+
+  gp_episodes:
+    label: GP Episodes
+    format: NUMBER_0
+    description: Patient episodes referred by GP practices
+    aggregate_type: count
+    filters:
+      referral_source:
+        is: GP
+    synonyms: [ GP referrals, GP volume ]

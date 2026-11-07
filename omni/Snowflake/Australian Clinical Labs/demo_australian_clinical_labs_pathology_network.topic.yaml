@@ -1,0 +1,137 @@
+base_view: se_sandbox_oscar__demo_australian_clinical_labs_episodes
+label: Pathology Network
+group_label: Australian Clinical Labs
+description: Synthetic patient episodes with turnaround from collection and from
+  lab receipt, by state, region, lab, centre, referrer and main test. Synthetic
+  data for an Omni demo, not ACL data.
+
+joins:
+  se_sandbox_oscar__demo_australian_clinical_labs_regions: {}
+  se_sandbox_oscar__demo_australian_clinical_labs_collection_centres: {}
+  se_sandbox_oscar__demo_australian_clinical_labs_labs: {}
+  se_sandbox_oscar__demo_australian_clinical_labs_referrers: {}
+  se_sandbox_oscar__demo_australian_clinical_labs_tests: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_australian_clinical_labs_episodes
+    join_to_view: se_sandbox_oscar__demo_australian_clinical_labs_regions
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_australian_clinical_labs_episodes.region_id} =
+      ${se_sandbox_oscar__demo_australian_clinical_labs_regions.region_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_australian_clinical_labs_episodes
+    join_to_view: se_sandbox_oscar__demo_australian_clinical_labs_collection_centres
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_australian_clinical_labs_episodes.cc_id} =
+      ${se_sandbox_oscar__demo_australian_clinical_labs_collection_centres.cc_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_australian_clinical_labs_episodes
+    join_to_view: se_sandbox_oscar__demo_australian_clinical_labs_labs
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_australian_clinical_labs_episodes.lab_id} =
+      ${se_sandbox_oscar__demo_australian_clinical_labs_labs.lab_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_australian_clinical_labs_episodes
+    join_to_view: se_sandbox_oscar__demo_australian_clinical_labs_referrers
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_australian_clinical_labs_episodes.referrer_id}
+      = ${se_sandbox_oscar__demo_australian_clinical_labs_referrers.referrer_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_australian_clinical_labs_episodes
+    join_to_view: se_sandbox_oscar__demo_australian_clinical_labs_tests
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_australian_clinical_labs_episodes.test_code} =
+      ${se_sandbox_oscar__demo_australian_clinical_labs_tests.test_code}
+    relationship_type: many_to_one
+
+ai_context: |-
+  Synthetic pathology network data for an Omni demo, not ACL data. One row per patient episode, collected 1 Jul 2024 to 31 Oct 2026. Never use dates outside that window.
+
+  ACL's financial year runs 1 July to 30 June, so FY27 to date is 1 Jul to 31 Oct 2026 and the same period last year is 1 Jul to 31 Oct 2025. Filter collected_date to each named period exactly and name both periods.
+
+  Weekend means day_type Saturday or Sunday on the collection date. For weekend questions use weekend_episodes, weekend_on_time_rate and weekend_late_result_rate, or filter day_type to Saturday and Sunday.
+
+  There are two turnaround definitions. TAT from collection is tat_hours, avg_tat_hours and p90_tat_hours. Lab TAT from lab receipt is lab_tat_hours, avg_lab_tat_hours and p90_lab_tat_hours. When someone says TAT without saying which, use from collection and say so. The gap between the two averages is time before the lab receives the sample (courier and waiting time); to say whether extra time is before or inside the lab, compare avg_tat_hours with avg_lab_tat_hours.
+
+  On time means tat_hours within the main test's target in tests.tat_target_hours, which are illustrative internal targets. Rates are ratios of sums over episodes: never average centre, lab or month rates, and never average or add P90s.
+
+  The test on an episode is its main test, the one that sets its target. State maps and state questions use regions.state_name; regions are service regions inside a state, for example SA Country and Adelaide Metro in South Australia. Processing labs are labs.lab_name. BDM territories (referrers.bdm_name) and practices are coded and synthetic. Money is AUD. Describe what changed and when; do not invent business reasons.
+
+sample_queries:
+  weekend_on_time_by_state_fy27:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_australian_clinical_labs_regions.state_name,
+          se_sandbox_oscar__demo_australian_clinical_labs_episodes.weekend_on_time_rate,
+          se_sandbox_oscar__demo_australian_clinical_labs_episodes.weekend_episodes
+        ]
+      base_view: se_sandbox_oscar__demo_australian_clinical_labs_episodes
+      filters:
+        se_sandbox_oscar__demo_australian_clinical_labs_episodes.collected_date:
+          between_dates: [ 2026-07-01, 2026-11-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_australian_clinical_labs_episodes.weekend_on_time_rate
+      topic: demo_australian_clinical_labs_pathology_network
+    prompt: Which state had the lowest weekend results on time between 1 July 2026
+      and 31 October 2026?
+  bdm_monthly_summary:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_australian_clinical_labs_referrers.bdm_name,
+          "se_sandbox_oscar__demo_australian_clinical_labs_episodes.collected\
+            _date[month]",
+          se_sandbox_oscar__demo_australian_clinical_labs_episodes.episode_count,
+          se_sandbox_oscar__demo_australian_clinical_labs_episodes.revenue
+        ]
+      base_view: se_sandbox_oscar__demo_australian_clinical_labs_episodes
+      filters:
+        se_sandbox_oscar__demo_australian_clinical_labs_episodes.collected_date:
+          between_dates: [ 2025-10-01, 2026-11-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_australian_clinical_labs_episodes.collected_date[month]
+      topic: demo_australian_clinical_labs_pathology_network
+    prompt: Patient episodes and revenue by BDM for each month from 1 October 2025
+      to 31 October 2026
+  top_tests_october:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_australian_clinical_labs_tests.test_name,
+          se_sandbox_oscar__demo_australian_clinical_labs_episodes.episode_count
+        ]
+      base_view: se_sandbox_oscar__demo_australian_clinical_labs_episodes
+      filters:
+        se_sandbox_oscar__demo_australian_clinical_labs_episodes.collected_date:
+          between_dates: [ 2026-10-01, 2026-11-01 ]
+      limit: 10
+      sorts:
+        - field: se_sandbox_oscar__demo_australian_clinical_labs_episodes.episode_count
+          desc: true
+      topic: demo_australian_clinical_labs_pathology_network
+    prompt: Top 10 main tests by patient episodes in October 2026
+  weekend_by_lab_weekly:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_australian_clinical_labs_episodes.collected\
+            _date[week]",
+          se_sandbox_oscar__demo_australian_clinical_labs_labs.lab_name,
+          se_sandbox_oscar__demo_australian_clinical_labs_episodes.weekend_episodes
+        ]
+      base_view: se_sandbox_oscar__demo_australian_clinical_labs_episodes
+      filters:
+        se_sandbox_oscar__demo_australian_clinical_labs_episodes.collected_date:
+          between_dates: [ 2026-08-01, 2026-11-01 ]
+        se_sandbox_oscar__demo_australian_clinical_labs_episodes.day_type:
+          is: [ Saturday, Sunday ]
+      sorts:
+        - field: se_sandbox_oscar__demo_australian_clinical_labs_episodes.collected_date[week]
+      topic: demo_australian_clinical_labs_pathology_network
+    prompt: Weekend episodes tested at each lab for every weekend from 1 August to
+      31 October 2026

@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_australian_clinical_labs_collection_centres
+label: Collection Centres
+description: Synthetic collection centres in real towns, each a town plus a
+  synthetic centre number
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_AUSTRALIAN_CLINICAL_LABS_COLLECTION_CENTRES
@@ -6,18 +10,26 @@ table_name: DEMO_AUSTRALIAN_CLINICAL_LABS_COLLECTION_CENTRES
 dimensions:
   cc_id:
     sql: '"CC_ID"'
+    label: Collection Centre ID
     format: ID
+    primary_key: true
 
   cc_name:
     sql: '"CC_NAME"'
+    label: Collection Centre
+    description: Real town plus a synthetic centre number, for example Port Augusta CC 001
+    synonyms: [ ACC, collection centre, CC ]
 
   town:
     sql: '"TOWN"'
+    label: Town
 
   region_id:
     sql: '"REGION_ID"'
+    label: Home Region ID
     format: ID
 
 measures:
   count:
+    label: Collection Centres
     aggregate_type: count

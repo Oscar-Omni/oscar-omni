@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_australian_clinical_labs_scenario_slots
+label: Weekend Cover Scenario Slots
+description: Three saved what if slots for SA Country Lab weekend cover, used by
+  the SA Country Weekend Cover Planner app. Synthetic.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_AUSTRALIAN_CLINICAL_LABS_SCENARIO_SLOTS
@@ -6,33 +10,52 @@ table_name: DEMO_AUSTRALIAN_CLINICAL_LABS_SCENARIO_SLOTS
 dimensions:
   scenario_id:
     sql: '"SCENARIO_ID"'
+    label: Scenario ID
     format: ID
+    description: Stable slot id, SCN-BASE, SCN-A or SCN-B
+    primary_key: true
 
   slot_name:
     sql: '"SLOT_NAME"'
+    label: Scenario
+    synonyms: [ scenario, slot, option ]
 
   slot_order:
     sql: '"SLOT_ORDER"'
+    label: Slot Order
+    format: NUMBER_0
 
   is_baseline:
     sql: '"IS_BASELINE"'
+    label: Is Baseline
+    description: True only for SCN-BASE, which is read only
 
   lab_id:
     sql: '"LAB_ID"'
+    label: Lab ID
     format: ID
 
   gap_closed_pct:
     sql: '"GAP_CLOSED_PCT"'
+    label: Gap Closed % (default)
+    format: NUMBER_1
 
   added_cost_aud_per_month:
     sql: '"ADDED_COST_AUD_PER_MONTH"'
+    label: Added Cost a Month (A$, default)
+    format: CURRENCY_0
 
   roster_saving_aud_per_month:
     sql: '"ROSTER_SAVING_AUD_PER_MONTH"'
+    label: Roster Saving a Month (A$, default)
+    format: CURRENCY_0
 
   months_to_start:
     sql: '"MONTHS_TO_START"'
+    label: Months to Start (default)
+    format: NUMBER_0
 
 measures:
   count:
+    label: Scenario Slots
     aggregate_type: count

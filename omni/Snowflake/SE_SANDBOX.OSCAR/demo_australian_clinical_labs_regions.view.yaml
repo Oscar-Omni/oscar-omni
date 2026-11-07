@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_australian_clinical_labs_regions
+label: Regions
+description: Synthetic service regions inside real Australian states and territories
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_AUSTRALIAN_CLINICAL_LABS_REGIONS
@@ -6,17 +9,29 @@ table_name: DEMO_AUSTRALIAN_CLINICAL_LABS_REGIONS
 dimensions:
   region_id:
     sql: '"REGION_ID"'
+    label: Region ID
     format: ID
+    primary_key: true
 
   region_name:
     sql: '"REGION_NAME"'
+    label: Region
+    description: Service region, for example SA Country or Adelaide Metro
+    synonyms: [ region, SA Country, country SA ]
 
   state_name:
     sql: '"STATE_NAME"'
+    label: State
+    description: Full state or territory name, matching the admin1 map shapes
+    synonyms: [ state, territory ]
 
   area_type:
     sql: '"AREA_TYPE"'
+    label: Area Type
+    description: Metro or Regional
+    synonyms: [ metro, regional ]
 
 measures:
   count:
+    label: Regions
     aggregate_type: count

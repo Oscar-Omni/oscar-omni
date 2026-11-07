@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_australian_clinical_labs_tests
+label: Main Tests
+description: The main test on each episode, the one that sets its turnaround target
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_AUSTRALIAN_CLINICAL_LABS_TESTS
@@ -6,16 +9,30 @@ table_name: DEMO_AUSTRALIAN_CLINICAL_LABS_TESTS
 dimensions:
   test_code:
     sql: '"TEST_CODE"'
+    label: Test Code
+    primary_key: true
 
   test_name:
     sql: '"TEST_NAME"'
+    label: Main Test
+    description: Generic test name, for example Full blood count
+    synonyms: [ test, top tests, tests ordered ]
 
   discipline:
     sql: '"DISCIPLINE"'
+    label: Discipline
+    description: Biochemistry, Haematology, Microbiology, Molecular, Histopathology
+      or Cytology
+    synonyms: [ department, discipline, chem, haem, micro ]
 
   tat_target_hours:
     sql: '"TAT_TARGET_HOURS"'
+    label: TAT Target (hours, illustrative)
+    format: NUMBER_0
+    description: Illustrative internal turnaround target from collection, not a
+      regulated standard
 
 measures:
   count:
+    label: Tests
     aggregate_type: count

@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_australian_clinical_labs_referrers
+label: Referrers
+description: Coded synthetic GP practices, specialist rooms and hospital
+  contracts, never real practices
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_AUSTRALIAN_CLINICAL_LABS_REFERRERS
@@ -6,18 +10,29 @@ table_name: DEMO_AUSTRALIAN_CLINICAL_LABS_REFERRERS
 dimensions:
   referrer_id:
     sql: '"REFERRER_ID"'
+    label: Referrer ID
     format: ID
+    primary_key: true
 
   referrer_name:
     sql: '"REFERRER_NAME"'
+    label: Referrer
+    description: Coded synthetic name, for example GP practice SA-CTY-G007
+    synonyms: [ practice, requesting doctor, referrer ]
 
   bdm_name:
     sql: '"BDM_NAME"'
+    label: BDM Territory
+    description: Coded synthetic BDM territory that owns the relationship, never a
+      real person
+    synonyms: [ BDM, territory, account manager ]
 
   region_id:
     sql: '"REGION_ID"'
+    label: Referrer Region ID
     format: ID
 
 measures:
   count:
+    label: Referrers
     aggregate_type: count
