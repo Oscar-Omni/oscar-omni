@@ -1,0 +1,87 @@
+# Reference this view as se_sandbox_oscar__demo_property_me_mrr_monthly
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_PROPERTY_ME_MRR_MONTHLY
+
+dimensions:
+  mrr_row_id:
+    sql: '"MRR_ROW_ID"'
+    format: ID
+
+  month_start:
+    sql: '"MONTH_START"'
+
+  agency_id:
+    sql: '"AGENCY_ID"'
+    format: ID
+
+  product_id:
+    sql: '"PRODUCT_ID"'
+    format: ID
+
+  country:
+    sql: '"COUNTRY"'
+
+  state_name:
+    sql: '"STATE_NAME"'
+
+  pum_band:
+    sql: '"PUM_BAND"'
+
+  tier_open:
+    sql: '"TIER_OPEN"'
+
+  tier_close:
+    sql: '"TIER_CLOSE"'
+
+  movement_reason:
+    sql: '"MOVEMENT_REASON"'
+
+  effective_date:
+    sql: '"EFFECTIVE_DATE"'
+
+  billed_units:
+    sql: '"BILLED_UNITS"'
+
+  opening_mrr_aud:
+    sql: '"OPENING_MRR_AUD"'
+
+  new_mrr_aud:
+    sql: '"NEW_MRR_AUD"'
+
+  expansion_mrr_aud:
+    sql: '"EXPANSION_MRR_AUD"'
+
+  contraction_mrr_aud:
+    sql: '"CONTRACTION_MRR_AUD"'
+
+  churn_mrr_aud:
+    sql: '"CHURN_MRR_AUD"'
+
+  closing_mrr_aud:
+    sql: '"CLOSING_MRR_AUD"'
+
+  lost_mrr_aud:
+    sql: '"LOST_MRR_AUD"'
+
+  net_new_mrr_aud:
+    sql: '"NET_NEW_MRR_AUD"'
+
+  retention_delta_mrr_aud:
+    sql: '"RETENTION_DELTA_MRR_AUD"'
+
+  logo_open_flag:
+    sql: '"LOGO_OPEN_FLAG"'
+
+  logo_new_flag:
+    sql: '"LOGO_NEW_FLAG"'
+
+  logo_churn_flag:
+    sql: '"LOGO_CHURN_FLAG"'
+
+  aime_active_pct:
+    sql: '"AIME_ACTIVE_PCT"'
+
+measures:
+  count:
+    aggregate_type: count

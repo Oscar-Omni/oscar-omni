@@ -1,0 +1,28 @@
+# Reference this view as se_sandbox_oscar__demo_property_me_agencies
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_PROPERTY_ME_AGENCIES
+
+dimensions:
+  agency_id:
+    sql: '"AGENCY_ID"'
+    format: ID
+
+  agency_name:
+    sql: '"AGENCY_NAME"'
+
+  billing_currency:
+    sql: '"BILLING_CURRENCY"'
+
+  first_billed_month:
+    sql: '"FIRST_BILLED_MONTH"'
+
+  advanced_upgrade_month:
+    sql: '"ADVANCED_UPGRADE_MONTH"'
+
+  aime_campaign_cohort:
+    sql: '"AIME_CAMPAIGN_COHORT"'
+
+measures:
+  count:
+    aggregate_type: count

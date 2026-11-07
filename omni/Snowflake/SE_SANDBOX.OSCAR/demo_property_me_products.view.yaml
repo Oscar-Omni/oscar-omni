@@ -1,0 +1,31 @@
+# Reference this view as se_sandbox_oscar__demo_property_me_products
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_PROPERTY_ME_PRODUCTS
+
+dimensions:
+  product_id:
+    sql: '"PRODUCT_ID"'
+    format: ID
+
+  product_name:
+    sql: '"PRODUCT_NAME"'
+
+  product_family:
+    sql: '"PRODUCT_FAMILY"'
+
+  stream_group:
+    sql: '"STREAM_GROUP"'
+
+  pricing_unit:
+    sql: '"PRICING_UNIT"'
+
+  list_price_aud:
+    sql: '"LIST_PRICE_AUD"'
+
+  billing_start_month:
+    sql: '"BILLING_START_MONTH"'
+
+measures:
+  count:
+    aggregate_type: count

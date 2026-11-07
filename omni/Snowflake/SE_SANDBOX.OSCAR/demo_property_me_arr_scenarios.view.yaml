@@ -1,0 +1,37 @@
+# Reference this view as se_sandbox_oscar__demo_property_me_arr_scenarios
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_PROPERTY_ME_ARR_SCENARIOS
+
+dimensions:
+  scenario_id:
+    sql: '"SCENARIO_ID"'
+    format: ID
+
+  scenario_name:
+    sql: '"SCENARIO_NAME"'
+
+  slot_order:
+    sql: '"SLOT_ORDER"'
+
+  is_baseline:
+    sql: '"IS_BASELINE"'
+
+  default_target_exit_arr_aud:
+    sql: '"DEFAULT_TARGET_EXIT_ARR_AUD"'
+
+  new_logos_per_month:
+    sql: '"NEW_LOGOS_PER_MONTH"'
+
+  logo_churn_pct_month:
+    sql: '"LOGO_CHURN_PCT_MONTH"'
+
+  mepay_attach_per_month:
+    sql: '"MEPAY_ATTACH_PER_MONTH"'
+
+  downgrade_save_pct:
+    sql: '"DOWNGRADE_SAVE_PCT"'
+
+measures:
+  count:
+    aggregate_type: count

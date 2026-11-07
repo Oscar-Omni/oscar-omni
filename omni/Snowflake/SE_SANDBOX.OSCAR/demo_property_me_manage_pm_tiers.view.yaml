@@ -1,0 +1,21 @@
+# Reference this view as se_sandbox_oscar__demo_property_me_manage_pm_tiers
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_PROPERTY_ME_MANAGE_PM_TIERS
+
+dimensions:
+  tier_name:
+    sql: '"TIER_NAME"'
+
+  tier_rank:
+    sql: '"TIER_RANK"'
+
+  list_price_per_100_aud:
+    sql: '"LIST_PRICE_PER_100_AUD"'
+
+  includes_aime:
+    sql: '"INCLUDES_AIME"'
+
+measures:
+  count:
+    aggregate_type: count
