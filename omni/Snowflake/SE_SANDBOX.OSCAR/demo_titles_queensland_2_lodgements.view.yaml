@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_titles_queensland_2_lodgements
+label: Lodgements
+description: One row per dealing lodged with the registry. Synthetic demo data,
+  lodged 1 Jul 2024 to 31 Oct 2026, outcomes as at 12 Nov 2026.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_TITLES_QUEENSLAND_2_LODGEMENTS
@@ -6,49 +10,176 @@ table_name: DEMO_TITLES_QUEENSLAND_2_LODGEMENTS
 dimensions:
   lodgement_id:
     sql: '"LODGEMENT_ID"'
+    label: Dealing number
     format: ID
+    description: Synthetic dealing number, D followed by nine digits
+    primary_key: true
 
   lodged_date:
     sql: '"LODGED_DATE"'
+    label: Lodged date
+    description: Business day the dealing was lodged. The dashboard and FY27 to date
+      (1 Jul to 31 Oct 2026) filter on this date.
+    synonyms: [ lodgement date, date lodged ]
 
   registered_date:
     sql: '"REGISTERED_DATE"'
+    label: Registered date
+    description: Date the dealing was registered; empty while still open on 12 Nov 2026
+    synonyms: [ registration date ]
 
   region_id:
     sql: '"REGION_ID"'
+    label: Land region code
     format: ID
+    description: Code of the land region where the title sits, for example GC for Gold Coast
 
   party_id:
     sql: '"PARTY_ID"'
+    label: Lodging party id
     format: ID
+    description: Coded synthetic lodging party, for example VIC-C014
 
   party_state:
     sql: '"PARTY_STATE"'
+    label: Lodging party state
+    description: Home state or territory of the lodging party, not where the land
+      is. All land is in Queensland.
+    synonyms: [ party state, interstate firms, lodging party state ]
 
   dealing_type_code:
     sql: '"DEALING_TYPE_CODE"'
+    label: Dealing type code
+    description: Short dealing type code, for example TRF for Transfer
 
   channel:
     sql: '"CHANNEL"'
+    label: Channel
+    description: eConveyancing, eLodgement or Paper
+    synonyms: [ lodgement channel, eConveyancing, eLodgement, paper ]
 
   requisitioned:
     sql: '"REQUISITIONED"'
+    label: Requisitioned (1 or 0)
+    description: 1 when an examiner issued at least one requisition, else 0
 
   requisition_reason:
     sql: '"REQUISITION_REASON"'
+    label: Requisition reason
+    description: Main requisition reason, one of seven fixed categories; empty when
+      not requisitioned
+    synonyms: [ defect, why it was requisitioned ]
 
   requisition_business_days:
     sql: '"REQUISITION_BUSINESS_DAYS"'
+    label: Business days waiting on customer
+    description: Business days the dealing waited on the customer to answer
+      requisitions; 0 when registered with no requisition; empty while open
 
   elapsed_business_days:
     sql: '"ELAPSED_BUSINESS_DAYS"'
+    label: Business days to register
+    description: Business days from lodgement to registration, end to end; empty while open
 
   within_target:
     sql: '"WITHIN_TARGET"'
+    label: Within target (1 or 0)
+    description: 1 when registered within the dealing type's illustrative target; 0
+      when registered late or open past target on 12 Nov 2026; empty when open
+      and not yet past target
 
   fee_aud:
     sql: '"FEE_AUD"'
+    label: Fee (A$)
+    format: AUDCURRENCY_2
+    description: Illustrative lodgement fee paid, indexed each 1 July
 
 measures:
   count:
     aggregate_type: count
+
+  lodgement_count:
+    label: Lodgements
+    format: NUMBER_0
+    description: Dealings lodged
+    aggregate_type: count
+    synonyms: [ lodgements, dealings, lodged dealings, volume ]
+
+  fee_revenue_aud:
+    sql: ${se_sandbox_oscar__demo_titles_queensland_2_lodgements.fee_aud}
+    label: Fee revenue
+    format: AUDCURRENCY_0
+    description: Illustrative lodgement fees paid, by lodged date, AUD
+    aggregate_type: sum
+    synonyms: [ fees, fee revenue, revenue ]
+
+  requisitioned_count:
+    sql: ${se_sandbox_oscar__demo_titles_queensland_2_lodgements.requisitioned}
+    label: Requisitions
+    format: NUMBER_0
+    description: Dealings with at least one requisition
+    aggregate_type: sum
+    synonyms: [ requisitions, requisitioned dealings ]
+
+  requisition_rate:
+    sql: ${se_sandbox_oscar__demo_titles_queensland_2_lodgements.requisitioned_count}
+      /
+      NULLIF(${se_sandbox_oscar__demo_titles_queensland_2_lodgements.lodgement_count},
+      0)
+    label: Requisition rate
+    format: PERCENT_1
+    description: Requisitions over dealings lodged. A ratio over dealing rows; never
+      average region, party or month rates.
+    synonyms: [ requisition rate, defect rate ]
+
+  registered_count:
+    sql: CASE WHEN
+      ${se_sandbox_oscar__demo_titles_queensland_2_lodgements.registered_date}
+      IS NOT NULL THEN 1 ELSE 0 END
+    label: Registered
+    format: NUMBER_0
+    description: Dealings registered by 12 Nov 2026
+    aggregate_type: sum
+    synonyms: [ registered, registrations ]
+
+  within_target_rate:
+    sql: ${se_sandbox_oscar__demo_titles_queensland_2_lodgements.within_target}
+    label: Within target
+    format: PERCENT_1
+    description: Share of decided dealings registered within their dealing type's
+      illustrative target. Open dealings not yet past target are excluded.
+    aggregate_type: average
+    synonyms: [ within target, service standard, on time ]
+
+  avg_processing_days:
+    sql: ${se_sandbox_oscar__demo_titles_queensland_2_lodgements.elapsed_business_days}
+    label: Processing time
+    format: NUMBER_1
+    description: Average business days from lodgement to registration, end to end,
+      including time waiting on customers to answer requisitions. Registered
+      dealings only. Owner Customer and Marketing (persona).
+    aggregate_type: average
+    synonyms: [ processing time, turnaround, days to register, end to end ]
+
+  avg_customer_wait_days:
+    sql: ${se_sandbox_oscar__demo_titles_queensland_2_lodgements.requisition_business_days}
+    label: Time waiting on customers
+    format: NUMBER_1
+    description: Average business days a registered dealing waited on the customer
+      to answer requisitions, over all registered dealings (0 when none). Same
+      rows as Processing time, so the two subtract cleanly.
+    aggregate_type: average
+    synonyms: [ time waiting on customers, time with the customer ]
+
+  avg_requisition_response_days:
+    sql: CASE WHEN
+      ${se_sandbox_oscar__demo_titles_queensland_2_lodgements.requisitioned} = 1
+      THEN
+      ${se_sandbox_oscar__demo_titles_queensland_2_lodgements.requisition_business_days}
+      END
+    label: Requisition response time
+    format: NUMBER_1
+    description: Average business days customers took to answer requisitions,
+      requisitioned and registered dealings only
+    aggregate_type: average
+    synonyms: [ requisition response time, days to answer a requisition ]

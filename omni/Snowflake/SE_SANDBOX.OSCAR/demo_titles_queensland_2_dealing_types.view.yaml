@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_titles_queensland_2_dealing_types
+label: Dealing types
+description: Dealing types with illustrative internal targets, not published
+  service standards.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_TITLES_QUEENSLAND_2_DEALING_TYPES
@@ -6,16 +10,29 @@ table_name: DEMO_TITLES_QUEENSLAND_2_DEALING_TYPES
 dimensions:
   dealing_type_code:
     sql: '"DEALING_TYPE_CODE"'
+    label: Dealing type code
+    primary_key: true
 
   dealing_type_name:
     sql: '"DEALING_TYPE_NAME"'
+    label: Dealing type
+    description: Dealing type, for example Transfer
+    synonyms: [ dealing type, instrument, transfer, mortgage, release, caveat ]
 
   dealing_group:
     sql: '"DEALING_GROUP"'
+    label: Dealing group
+    description: Transfers, Finance, Caveats, Estates, Plans and easements, Leases or Other
+    synonyms: [ dealing group ]
 
   target_business_days:
     sql: '"TARGET_BUSINESS_DAYS"'
+    label: Target business days (illustrative)
+    description: Illustrative internal target from lodgement to registration, not a
+      published service standard
+    synonyms: [ target days, target ]
 
 measures:
   count:
+    label: Dealing types
     aggregate_type: count

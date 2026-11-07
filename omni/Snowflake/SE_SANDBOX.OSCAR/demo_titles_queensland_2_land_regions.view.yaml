@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_titles_queensland_2_land_regions
+label: Land regions
+description: Queensland land regions, where the land sits. Real geography,
+  synthetic numbers.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_TITLES_QUEENSLAND_2_LAND_REGIONS
@@ -6,14 +10,23 @@ table_name: DEMO_TITLES_QUEENSLAND_2_LAND_REGIONS
 dimensions:
   region_id:
     sql: '"REGION_ID"'
+    label: Land region code
     format: ID
+    primary_key: true
 
   region_name:
     sql: '"REGION_NAME"'
+    label: Land region
+    description: Land region shown on charts, for example Gold Coast
+    synonyms: [ region, land region, Gold Coast ]
 
   area_type:
     sql: '"AREA_TYPE"'
+    label: Area
+    description: South East Queensland or Regional Queensland
+    synonyms: [ SEQ, South East Queensland, regional ]
 
 measures:
   count:
+    label: Land regions
     aggregate_type: count

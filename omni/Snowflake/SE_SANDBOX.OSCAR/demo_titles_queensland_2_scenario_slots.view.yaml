@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_titles_queensland_2_scenario_slots
+label: Scenario slots
+description: Three saved what if slots for the synthetic Gold Coast settlement
+  program. SCN-BASE is the read only baseline.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_TITLES_QUEENSLAND_2_SCENARIO_SLOTS
@@ -6,42 +10,57 @@ table_name: DEMO_TITLES_QUEENSLAND_2_SCENARIO_SLOTS
 dimensions:
   scenario_id:
     sql: '"SCENARIO_ID"'
+    label: Scenario id
     format: ID
+    primary_key: true
 
   slot_name:
     sql: '"SLOT_NAME"'
+    label: Scenario
+    synonyms: [ scenario, slot, option ]
 
   slot_order:
     sql: '"SLOT_ORDER"'
+    label: Slot order
 
   is_baseline:
     sql: '"IS_BASELINE"'
+    label: Baseline
 
   party_id:
     sql: '"PARTY_ID"'
+    label: Lodging party id
     format: ID
 
   program_lodgements_per_month:
     sql: '"PROGRAM_LODGEMENTS_PER_MONTH"'
+    label: Program transfers a month
 
   requisition_rate_pct:
     sql: '"REQUISITION_RATE_PCT"'
+    label: Program transfers requisitioned (%)
 
   response_business_days:
     sql: '"RESPONSE_BUSINESS_DAYS"'
+    label: Business days to answer a requisition
 
   examiner_minutes_per_requisition:
     sql: '"EXAMINER_MINUTES_PER_REQUISITION"'
+    label: Examiner minutes per requisition
 
   examiner_cost_aud_per_hour:
     sql: '"EXAMINER_COST_AUD_PER_HOUR"'
+    label: Loaded examiner cost an hour (A$)
 
   option_cost_aud_per_month:
     sql: '"OPTION_COST_AUD_PER_MONTH"'
+    label: Option cost a month (A$)
 
   months_to_start:
     sql: '"MONTHS_TO_START"'
+    label: Months to start
 
 measures:
   count:
+    label: Scenario slots
     aggregate_type: count
