@@ -30,7 +30,7 @@ dimensions:
     description: True for the read only Run rate slot
 
   default_target_exit_arr_aud:
-    sql: '"DEFAULT_TARGET_EXIT_ARR_AUD"'
+    sql: "20500000"
     label: Default Target Closing ARR 30 Jun 2027 (A$)
     format: audcurrency_0
     description: Seeded synthetic board target for closing ARR at 30 Jun 2027; the
