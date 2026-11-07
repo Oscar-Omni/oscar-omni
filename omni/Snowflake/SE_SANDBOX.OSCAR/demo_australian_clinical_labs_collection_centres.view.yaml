@@ -29,6 +29,16 @@ dimensions:
     label: Home Region ID
     format: ID
 
+  lga:
+    sql: '"LGA"'
+    label: LGA
+    description: Local government area (council) the centre's town sits in, written
+      as council short name plus state, for example Whyalla (SA). From the
+      Geoscape Administrative Boundaries on data.gov.au. ACT has no councils, so
+      its centres show as Australian Capital Territory (ACT). Use it for council
+      or LGA maps and breakdowns.
+    synonyms: [ local government area, council, shire, LGA region ]
+
 measures:
   count:
     label: Collection Centres
