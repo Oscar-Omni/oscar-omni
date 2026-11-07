@@ -40,9 +40,17 @@ dimensions:
 
   symptom_group:
     sql: '"SYMPTOM_GROUP"'
-    label: Symptom Group
-    description: Main presenting symptom group
-    synonyms: [ symptoms, presenting problem ]
+    label: Call Reason
+    description: Main reason for the call, the presenting symptom group the nurse triaged
+    synonyms:
+      [
+        reason,
+        call reason,
+        reason for call,
+        symptom group,
+        symptoms,
+        presenting problem
+      ]
 
   caller_intent:
     sql: '"CALLER_INTENT"'
@@ -92,7 +100,8 @@ dimensions:
     sql: '"HANDLE_SECONDS"'
     label: Handle Seconds
     format: number_0
-    description: Seconds the nurse spent on the call, including any GP transfer
+    description: Seconds the nurse spent on the conversation, from answer to wrap
+      up, including any GP transfer
 
 measures:
   count:
@@ -168,7 +177,18 @@ measures:
 
   avg_handle_minutes:
     sql: ${total_handle_seconds} / NULLIF(${helpline_calls}, 0) / 60
-    label: Average Handle Minutes
+    label: Average Handle Time (min)
     format: number_1
-    description: sum(handle_seconds) / sum(call_count) / 60
-    synonyms: [ handle time, AHT ]
+    description: Average handle time per conversation in minutes,
+      sum(handle_seconds) / sum(call_count) / 60. A ratio of sums; never average
+      monthly or reason level values.
+    synonyms: [ AHT, average handle time, handle time, call length, minutes per call ]
+
+  total_handle_hours:
+    sql: ${total_handle_seconds} / 3600
+    label: Nurse Handle Hours
+    format: number_0
+    description: Total nurse time spent on conversations in hours,
+      sum(handle_seconds) / 3600. Use it to show where nurse time goes by
+      reason.
+    synonyms: [ handle hours, nurse hours, nurse time, total handle time ]
