@@ -1,0 +1,19 @@
+# Reference this view as se_sandbox_oscar__demo_titles_queensland_2_lodging_parties
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_TITLES_QUEENSLAND_2_LODGING_PARTIES
+
+dimensions:
+  party_id:
+    sql: '"PARTY_ID"'
+    format: ID
+
+  party_name:
+    sql: '"PARTY_NAME"'
+
+  party_type:
+    sql: '"PARTY_TYPE"'
+
+measures:
+  count:
+    aggregate_type: count

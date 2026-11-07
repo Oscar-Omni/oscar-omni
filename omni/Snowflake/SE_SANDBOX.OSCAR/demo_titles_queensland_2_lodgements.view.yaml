@@ -1,0 +1,54 @@
+# Reference this view as se_sandbox_oscar__demo_titles_queensland_2_lodgements
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_TITLES_QUEENSLAND_2_LODGEMENTS
+
+dimensions:
+  lodgement_id:
+    sql: '"LODGEMENT_ID"'
+    format: ID
+
+  lodged_date:
+    sql: '"LODGED_DATE"'
+
+  registered_date:
+    sql: '"REGISTERED_DATE"'
+
+  region_id:
+    sql: '"REGION_ID"'
+    format: ID
+
+  party_id:
+    sql: '"PARTY_ID"'
+    format: ID
+
+  party_state:
+    sql: '"PARTY_STATE"'
+
+  dealing_type_code:
+    sql: '"DEALING_TYPE_CODE"'
+
+  channel:
+    sql: '"CHANNEL"'
+
+  requisitioned:
+    sql: '"REQUISITIONED"'
+
+  requisition_reason:
+    sql: '"REQUISITION_REASON"'
+
+  requisition_business_days:
+    sql: '"REQUISITION_BUSINESS_DAYS"'
+
+  elapsed_business_days:
+    sql: '"ELAPSED_BUSINESS_DAYS"'
+
+  within_target:
+    sql: '"WITHIN_TARGET"'
+
+  fee_aud:
+    sql: '"FEE_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

@@ -1,0 +1,47 @@
+# Reference this view as se_sandbox_oscar__demo_titles_queensland_2_scenario_slots
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_TITLES_QUEENSLAND_2_SCENARIO_SLOTS
+
+dimensions:
+  scenario_id:
+    sql: '"SCENARIO_ID"'
+    format: ID
+
+  slot_name:
+    sql: '"SLOT_NAME"'
+
+  slot_order:
+    sql: '"SLOT_ORDER"'
+
+  is_baseline:
+    sql: '"IS_BASELINE"'
+
+  party_id:
+    sql: '"PARTY_ID"'
+    format: ID
+
+  program_lodgements_per_month:
+    sql: '"PROGRAM_LODGEMENTS_PER_MONTH"'
+
+  requisition_rate_pct:
+    sql: '"REQUISITION_RATE_PCT"'
+
+  response_business_days:
+    sql: '"RESPONSE_BUSINESS_DAYS"'
+
+  examiner_minutes_per_requisition:
+    sql: '"EXAMINER_MINUTES_PER_REQUISITION"'
+
+  examiner_cost_aud_per_hour:
+    sql: '"EXAMINER_COST_AUD_PER_HOUR"'
+
+  option_cost_aud_per_month:
+    sql: '"OPTION_COST_AUD_PER_MONTH"'
+
+  months_to_start:
+    sql: '"MONTHS_TO_START"'
+
+measures:
+  count:
+    aggregate_type: count

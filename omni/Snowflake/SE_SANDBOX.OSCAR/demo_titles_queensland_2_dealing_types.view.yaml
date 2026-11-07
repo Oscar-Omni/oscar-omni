@@ -1,0 +1,21 @@
+# Reference this view as se_sandbox_oscar__demo_titles_queensland_2_dealing_types
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_TITLES_QUEENSLAND_2_DEALING_TYPES
+
+dimensions:
+  dealing_type_code:
+    sql: '"DEALING_TYPE_CODE"'
+
+  dealing_type_name:
+    sql: '"DEALING_TYPE_NAME"'
+
+  dealing_group:
+    sql: '"DEALING_GROUP"'
+
+  target_business_days:
+    sql: '"TARGET_BUSINESS_DAYS"'
+
+measures:
+  count:
+    aggregate_type: count
