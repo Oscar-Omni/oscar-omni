@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: se_sandbox_oscar__demo_brighte_capital_scenario_slots
 label: Voice Agent Scenarios
 group_label: Brighte Capital
