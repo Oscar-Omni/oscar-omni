@@ -103,6 +103,16 @@ dimensions:
     description: Seconds the nurse spent on the conversation, from answer to wrap
       up, including any GP transfer
 
+  comparison_period:
+    sql: CASE WHEN ${month_start} >= '2025-10-01' THEN 'Oct 2025 to Sep 2026' WHEN
+      ${month_start} >= '2024-10-01' THEN 'Oct 2024 to Sep 2025' ELSE 'Jul to
+      Sep 2024' END
+    label: Twelve Month Period
+    description: The latest twelve months (Oct 2025 to Sep 2026) against the twelve
+      months before (Oct 2024 to Sep 2025). Use it to put a reason's handle time
+      this year next to last year.
+    synonyms: [ this year vs last year, past year, last twelve months, year on year ]
+
 measures:
   count:
     hidden: true
