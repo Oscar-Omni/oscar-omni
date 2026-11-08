@@ -1,0 +1,126 @@
+base_view: se_sandbox_oscar__demo_property_me_mrr_monthly
+label: ARR Movements
+group_label: PropertyMe
+description: Governed ARR waterfall for the board and ELT. One row per agency,
+  product and month, 1 Aug 2024 to 31 Oct 2026, with agency, product and tier.
+  Synthetic data for an Omni demo.
+
+joins:
+  se_sandbox_oscar__demo_property_me_agencies: {}
+  se_sandbox_oscar__demo_property_me_products: {}
+  se_sandbox_oscar__demo_property_me_manage_pm_tiers: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_property_me_mrr_monthly
+    join_to_view: se_sandbox_oscar__demo_property_me_agencies
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_property_me_mrr_monthly.agency_id} =
+      ${se_sandbox_oscar__demo_property_me_agencies.agency_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_property_me_mrr_monthly
+    join_to_view: se_sandbox_oscar__demo_property_me_products
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_property_me_mrr_monthly.product_id} =
+      ${se_sandbox_oscar__demo_property_me_products.product_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_property_me_mrr_monthly
+    join_to_view: se_sandbox_oscar__demo_property_me_manage_pm_tiers
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_property_me_mrr_monthly.tier_close} =
+      ${se_sandbox_oscar__demo_property_me_manage_pm_tiers.tier_name}
+    relationship_type: many_to_one
+
+ai_context: |
+  Synthetic agency billing history for an Omni demo, not PropertyMe data. One row per agency, product and month (month_start, the first of the month) from 1 Aug 2024 to 31 Oct 2026. Money is AUD. ARR is MRR x 12.
+  Billing cycles start on the first of the month. A change that takes effect mid cycle (upgrade, downgrade, property change, add on) is recognised from the next billing cycle, never pro rata, so effective_date can sit in the month before month_start.
+  New Zealand agencies are billed in NZD and converted at a fixed budget rate of 0.91 AUD per NZD. ARR excludes usage billed SMS and one off fees.
+  Movements are classified at agency level. New logo is an agency's first billed month. Churn is the month it stops billing for every product. An existing agency adding a product is Add on attach (expansion); dropping one while keeping Manage PM is Add on removal (contraction).
+  Core is Manage PM. New streams are payments (MePay Fast, Trustless), Grow CRM and agency websites, per products.stream_group.
+  closing_arr and opening_arr are month end stocks: group by month or filter to one month and never sum them across months. Flows (new_arr, expansion_arr, contraction_arr, churn_arr, gross_arr_lost, net_new_arr) add across months.
+  grr_annualised and nrr_annualised compound the period's average monthly rate over 12 months; never average monthly rates and never rewrite them in SQL.
+  The word churn on its own is ambiguous. Ask whether the user means ARR lost to agencies leaving (churn_arr), gross ARR lost including contraction (gross_arr_lost), GRR (grr_annualised) or a count of agencies (churned_agencies), and offer those choices. There is no governed agency (logo) churn rate in the model; say so rather than inventing a formula.
+  tier_open is the agency's Manage PM tier before the month's movement (the starting tier); tier_close is the tier billed after it.
+  State negative values as negative. Do the arithmetic in the query, not in prose. Describe what changed, where and when; do not claim a business reason the data cannot show.
+  The AiMe upgrade campaign of May to June 2026 is a synthetic event flagged on agencies.aime_campaign_cohort.
+
+sample_queries:
+  net_new_fy27_by_stream:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_property_me_products.stream_group,
+          se_sandbox_oscar__demo_property_me_mrr_monthly.net_new_arr,
+          se_sandbox_oscar__demo_property_me_mrr_monthly.gross_arr_lost,
+          se_sandbox_oscar__demo_property_me_mrr_monthly.grr_annualised,
+          se_sandbox_oscar__demo_property_me_mrr_monthly.nrr_annualised
+        ]
+      base_view: se_sandbox_oscar__demo_property_me_mrr_monthly
+      filters:
+        se_sandbox_oscar__demo_property_me_mrr_monthly.month_start:
+          between_dates: [ 2026-07-01, 2026-10-31 ]
+      topic: demo_property_me_arr_movements
+    prompt: What was net new ARR from 1 Jul 2026 to 31 Oct 2026, core against new
+      streams?
+  arr_waterfall_fy27_by_reason:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_property_me_mrr_monthly.movement_reason,
+          se_sandbox_oscar__demo_property_me_mrr_monthly.new_arr,
+          se_sandbox_oscar__demo_property_me_mrr_monthly.expansion_arr,
+          se_sandbox_oscar__demo_property_me_mrr_monthly.contraction_arr,
+          se_sandbox_oscar__demo_property_me_mrr_monthly.churn_arr
+        ]
+      base_view: se_sandbox_oscar__demo_property_me_mrr_monthly
+      filters:
+        se_sandbox_oscar__demo_property_me_mrr_monthly.month_start:
+          between_dates: [ 2026-07-01, 2026-10-31 ]
+      topic: demo_property_me_arr_movements
+    prompt: Show the ARR waterfall for 1 Jul 2026 to 31 Oct 2026 by movement reason
+  gross_arr_lost_by_reason_and_tier_by_month:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_property_me_mrr_monthly.month_start[month]",
+          se_sandbox_oscar__demo_property_me_mrr_monthly.movement_reason,
+          se_sandbox_oscar__demo_property_me_mrr_monthly.tier_open,
+          se_sandbox_oscar__demo_property_me_mrr_monthly.churn_arr,
+          se_sandbox_oscar__demo_property_me_mrr_monthly.contraction_arr,
+          se_sandbox_oscar__demo_property_me_mrr_monthly.gross_arr_lost
+        ]
+      base_view: se_sandbox_oscar__demo_property_me_mrr_monthly
+      filters:
+        se_sandbox_oscar__demo_property_me_mrr_monthly.month_start:
+          between_dates: [ 2026-07-01, 2026-10-31 ]
+      topic: demo_property_me_arr_movements
+    prompt: Break gross ARR lost into churn and contraction by movement reason and
+      starting tier by month from 1 Jul 2026 to 31 Oct 2026
+  grr_by_state_fy27:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_property_me_mrr_monthly.state_name,
+          se_sandbox_oscar__demo_property_me_mrr_monthly.grr_annualised
+        ]
+      base_view: se_sandbox_oscar__demo_property_me_mrr_monthly
+      filters:
+        se_sandbox_oscar__demo_property_me_mrr_monthly.month_start:
+          between_dates: [ 2026-07-01, 2026-10-31 ]
+      topic: demo_property_me_arr_movements
+    prompt: What was GRR (annualised) by state from 1 Jul to 31 Oct 2026?
+  arr_lost_agencies_aug_sep_2026:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_property_me_agencies.agency_name,
+          se_sandbox_oscar__demo_property_me_mrr_monthly.movement_reason,
+          se_sandbox_oscar__demo_property_me_mrr_monthly.gross_arr_lost
+        ]
+      base_view: se_sandbox_oscar__demo_property_me_mrr_monthly
+      filters:
+        se_sandbox_oscar__demo_property_me_mrr_monthly.month_start:
+          between_dates: [ 2026-08-01, 2026-09-30 ]
+      topic: demo_property_me_arr_movements
+    prompt: Which agencies lost the most ARR in August and September 2026?

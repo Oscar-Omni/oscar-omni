@@ -1,0 +1,28 @@
+base_view: se_sandbox_oscar__demo_property_me_arr_scenarios
+label: ARR Board Case Scenarios
+group_label: PropertyMe
+description: Three saved FY27 board case slots for the ARR Waterfall and FY27
+  Board Case app. Synthetic.
+
+joins: {}
+
+ai_context: |
+  Three saved FY27 board case slots (Run rate, Save the Advanced cohort, Save plus payments push) for the ARR Waterfall and FY27 Board Case app. One row per slot. Values are illustrative synthetic assumptions, not PropertyMe plans.
+  target_exit_arr_aud and scenario_json are Omni input columns written by the app; when saved they override the seeded default target and assumptions.
+  scenario, case or board case means scenario_name; target or reforecast means the closing ARR target at 30 Jun 2027.
+
+sample_queries:
+  board_case_assumptions:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_property_me_arr_scenarios.scenario_name,
+          se_sandbox_oscar__demo_property_me_arr_scenarios.default_target_exit_arr_aud,
+          se_sandbox_oscar__demo_property_me_arr_scenarios.new_logos_per_month,
+          se_sandbox_oscar__demo_property_me_arr_scenarios.logo_churn_pct_month,
+          se_sandbox_oscar__demo_property_me_arr_scenarios.mepay_attach_per_month,
+          se_sandbox_oscar__demo_property_me_arr_scenarios.downgrade_save_pct
+        ]
+      base_view: se_sandbox_oscar__demo_property_me_arr_scenarios
+      topic: demo_property_me_arr_scenarios
+    prompt: What does each FY27 board case assume?
