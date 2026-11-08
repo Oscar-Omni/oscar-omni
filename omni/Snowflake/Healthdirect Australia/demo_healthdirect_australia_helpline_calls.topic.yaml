@@ -1,0 +1,215 @@
+hidden: true
+
+base_view: se_sandbox_oscar__demo_healthdirect_australia_calls
+label: Helpline Calls
+group_label: Healthdirect Australia
+description: Nurse triage helpline calls with triage outcomes, ED diversion,
+  answer and handle times. One row per call. Synthetic data, not Healthdirect's
+  figures.
+
+joins:
+  se_sandbox_oscar__demo_healthdirect_australia_regions: {}
+  se_sandbox_oscar__demo_healthdirect_australia_months: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_healthdirect_australia_calls
+    join_to_view: se_sandbox_oscar__demo_healthdirect_australia_regions
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_healthdirect_australia_calls.region_id} =
+      ${se_sandbox_oscar__demo_healthdirect_australia_regions.region_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_healthdirect_australia_calls
+    join_to_view: se_sandbox_oscar__demo_healthdirect_australia_months
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_healthdirect_australia_calls.month_start} =
+      ${se_sandbox_oscar__demo_healthdirect_australia_months.month_start}
+    relationship_type: many_to_one
+
+ai_context: |-
+  Synthetic helpline data for an Omni demo: one row per conversation offered to nurse triage, July 2024 to September 2026. Region names are real ABS areas; every figure is synthetic and is never Healthdirect's real number. Money is not in this topic, so never quote dollars.
+
+  The headline is average handle time. AHT, handle time and minutes per call mean avg_handle_minutes, always sum(handle_seconds) / sum(call_count) / 60; never average monthly or reason level values. Reason, call reason and reason for call mean calls.symptom_group (labelled Call Reason). Nurse time and handle hours mean total_handle_hours. To explain a change in AHT, compare the same months a year apart (October 2024 to September 2025 against October 2025 to September 2026, or a single month against the same month last year), split by symptom_group, and show each reason's AHT in both periods with its share of calls and its change in minutes. Then split the reasons that grew most by months.month_start month so the climb is visible month by month. A reason's contribution to the climb is its share of calls times its change in AHT.
+
+  ED diversion means ed_diversion_rate, always sum(ed_diverted) / sum(intended_ed): of callers who planned to go to ED, the share advised to a lower level of care. It is over callers planning ED, not over all calls. Never average rates across regions or months. Calls means helpline_calls. Callers planning ED means intended_ed_calls; redirected from ED means ed_diversions. Triage outcome, advice and disposition all mean calls.disposition. Caller intention means caller_intent. Grade of service and answered in 10 mean answered_within_10_min_rate. Wait time and speed of answer mean avg_wait_minutes. Jurisdiction means regions.state; regional NSW means region Rest of NSW.
+
+  After hours means calls.hour_band = 'After hours'; in hours means 'In hours'. There is no time of day field. Victoria and Queensland have no helpline calls in this data (they run their own lines), so a region list has eleven regions.
+
+  Use months.month_start for every date filter with an exclusive end: 1 October 2025 to 30 September 2026 is month_start between 2025-10-01 and 2026-10-01. Right now or currently means the latest month, September 2026. The past year or the last twelve months means 2025-10-01 to 2026-10-01, compared with 2024-10-01 to 2025-10-01. Lead with the headline numbers and keep answers short.
+
+sample_queries:
+  aht_by_reason_last_12_months:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_healthdirect_australia_calls.symptom_group,
+          se_sandbox_oscar__demo_healthdirect_australia_calls.helpline_calls,
+          se_sandbox_oscar__demo_healthdirect_australia_calls.avg_handle_minutes,
+          se_sandbox_oscar__demo_healthdirect_australia_calls.total_handle_hours
+        ]
+      base_view: se_sandbox_oscar__demo_healthdirect_australia_calls
+      filters:
+        se_sandbox_oscar__demo_healthdirect_australia_months.month_start:
+          between_dates: [ 2025-10-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_healthdirect_australia_calls.avg_handle_minutes
+          desc: true
+      topic: demo_healthdirect_australia_helpline_calls
+    prompt: What was average handle time by call reason from October 2025 to
+      September 2026?
+  aht_by_reason_prior_12_months:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_healthdirect_australia_calls.symptom_group,
+          se_sandbox_oscar__demo_healthdirect_australia_calls.helpline_calls,
+          se_sandbox_oscar__demo_healthdirect_australia_calls.avg_handle_minutes,
+          se_sandbox_oscar__demo_healthdirect_australia_calls.total_handle_hours
+        ]
+      base_view: se_sandbox_oscar__demo_healthdirect_australia_calls
+      filters:
+        se_sandbox_oscar__demo_healthdirect_australia_months.month_start:
+          between_dates: [ 2024-10-01, 2025-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_healthdirect_australia_calls.avg_handle_minutes
+          desc: true
+      topic: demo_healthdirect_australia_helpline_calls
+    prompt: What was average handle time by call reason from October 2024 to
+      September 2025?
+  aht_by_month_and_reason:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_healthdirect_australia_months.month_start[m\
+            onth]",
+          se_sandbox_oscar__demo_healthdirect_australia_calls.symptom_group,
+          se_sandbox_oscar__demo_healthdirect_australia_calls.avg_handle_minutes
+        ]
+      base_view: se_sandbox_oscar__demo_healthdirect_australia_calls
+      filters:
+        se_sandbox_oscar__demo_healthdirect_australia_months.month_start:
+          between_dates: [ 2024-10-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_healthdirect_australia_months.month_start[month]
+      topic: demo_healthdirect_australia_helpline_calls
+    prompt: How has average handle time for each call reason moved month by month
+      over the last two years?
+  ed_diversion_by_region_current:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_healthdirect_australia_regions.region,
+          se_sandbox_oscar__demo_healthdirect_australia_calls.intended_ed_calls,
+          se_sandbox_oscar__demo_healthdirect_australia_calls.ed_diversion_rate
+        ]
+      base_view: se_sandbox_oscar__demo_healthdirect_australia_calls
+      filters:
+        se_sandbox_oscar__demo_healthdirect_australia_months.month_start:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_healthdirect_australia_calls.ed_diversion_rate
+      topic: demo_healthdirect_australia_helpline_calls
+    prompt: What was the ED diversion rate by region from 1 April 2026 to 30
+      September 2026?
+  ed_diversion_by_region_prior:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_healthdirect_australia_regions.region,
+          se_sandbox_oscar__demo_healthdirect_australia_calls.intended_ed_calls,
+          se_sandbox_oscar__demo_healthdirect_australia_calls.ed_diversion_rate
+        ]
+      base_view: se_sandbox_oscar__demo_healthdirect_australia_calls
+      filters:
+        se_sandbox_oscar__demo_healthdirect_australia_months.month_start:
+          between_dates: [ 2025-04-01, 2025-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_healthdirect_australia_calls.ed_diversion_rate
+      topic: demo_healthdirect_australia_helpline_calls
+    prompt: What was the ED diversion rate by region from 1 April 2025 to 30
+      September 2025?
+  rest_of_nsw_by_month_and_hour_band:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_healthdirect_australia_months.month_start[m\
+            onth]",
+          se_sandbox_oscar__demo_healthdirect_australia_calls.hour_band,
+          se_sandbox_oscar__demo_healthdirect_australia_calls.intended_ed_calls,
+          se_sandbox_oscar__demo_healthdirect_australia_calls.ed_diversion_rate
+        ]
+      base_view: se_sandbox_oscar__demo_healthdirect_australia_calls
+      filters:
+        se_sandbox_oscar__demo_healthdirect_australia_months.month_start:
+          between_dates: [ 2026-04-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_healthdirect_australia_regions.region:
+          is: Rest of NSW
+      sorts:
+        - field: se_sandbox_oscar__demo_healthdirect_australia_months.month_start[month]
+      topic: demo_healthdirect_australia_helpline_calls
+    prompt: How did after hours and in hours ED diversion in Rest of NSW move month
+      by month from April to September 2026?
+  rest_of_nsw_after_hours_outcomes_jul_sep:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_healthdirect_australia_calls.disposition,
+          se_sandbox_oscar__demo_healthdirect_australia_calls.helpline_calls
+        ]
+      base_view: se_sandbox_oscar__demo_healthdirect_australia_calls
+      filters:
+        se_sandbox_oscar__demo_healthdirect_australia_months.month_start:
+          between_dates: [ 2026-07-01, 2026-10-01 ]
+        se_sandbox_oscar__demo_healthdirect_australia_regions.region:
+          is: Rest of NSW
+        se_sandbox_oscar__demo_healthdirect_australia_calls.hour_band:
+          is: After hours
+        se_sandbox_oscar__demo_healthdirect_australia_calls.caller_intent:
+          is: Emergency department
+      sorts:
+        - field: se_sandbox_oscar__demo_healthdirect_australia_calls.helpline_calls
+          desc: true
+      topic: demo_healthdirect_australia_helpline_calls
+    prompt: Which triage outcomes did after hours callers planning ED in Rest of NSW
+      get in July to September 2026?
+  rest_of_nsw_after_hours_outcomes_apr_jun:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_healthdirect_australia_calls.disposition,
+          se_sandbox_oscar__demo_healthdirect_australia_calls.helpline_calls
+        ]
+      base_view: se_sandbox_oscar__demo_healthdirect_australia_calls
+      filters:
+        se_sandbox_oscar__demo_healthdirect_australia_months.month_start:
+          between_dates: [ 2026-04-01, 2026-07-01 ]
+        se_sandbox_oscar__demo_healthdirect_australia_regions.region:
+          is: Rest of NSW
+        se_sandbox_oscar__demo_healthdirect_australia_calls.hour_band:
+          is: After hours
+        se_sandbox_oscar__demo_healthdirect_australia_calls.caller_intent:
+          is: Emergency department
+      sorts:
+        - field: se_sandbox_oscar__demo_healthdirect_australia_calls.helpline_calls
+          desc: true
+      topic: demo_healthdirect_australia_helpline_calls
+    prompt: Which triage outcomes did after hours callers planning ED in Rest of NSW
+      get in April to June 2026?
+  wait_and_handle_by_month:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_healthdirect_australia_months.month_start[m\
+            onth]",
+          se_sandbox_oscar__demo_healthdirect_australia_calls.avg_wait_minutes,
+          se_sandbox_oscar__demo_healthdirect_australia_calls.avg_handle_minutes
+        ]
+      base_view: se_sandbox_oscar__demo_healthdirect_australia_calls
+      filters:
+        se_sandbox_oscar__demo_healthdirect_australia_months.month_start:
+          between_dates: [ 2025-07-01, 2026-10-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_healthdirect_australia_months.month_start[month]
+      topic: demo_healthdirect_australia_helpline_calls
+    prompt: What was average wait and handle time by month from July 2025 to
+      September 2026?

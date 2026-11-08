@@ -1,0 +1,110 @@
+hidden: true
+
+base_view: aged_care_facility_daily
+label: RN Care Minutes (Baptist Care demo)
+group_label: Aged Care
+description: Aged Care Operations for the RN care minutes demo, with full state
+  names for the region map
+
+joins:
+  aged_care_facilities: {}
+
+views:
+  aged_care_facilities:
+    dimensions:
+      state_name:
+        sql: CASE ${aged_care_facilities.state} WHEN 'NSW' THEN 'New South Wales' WHEN
+          'ACT' THEN 'Australian Capital Territory' WHEN 'WA' THEN 'Western
+          Australia' END
+        label: State Name
+        description: Full state or territory name, matching the admin1 map shapes
+
+      facility_name:
+        synonyms: [ home, aged care home, facility ]
+
+      state:
+        synonyms: [ state, territory ]
+
+      mmm_category:
+        synonyms: [ remoteness, Modified Monash category ]
+
+  aged_care_facility_daily:
+    measures:
+      occupancy_rate:
+        synonyms: [ occupancy ]
+
+      total_anacc_revenue:
+        synonyms: [ funding, AN-ACC funding, subsidy ]
+
+      revenue_per_occupied_bed_day:
+        synonyms: [ revenue per bed day ]
+
+      average_variable_nwau:
+        synonyms: [ case mix, acuity, NWAU ]
+
+      rn_minutes_compliance_rate:
+        synonyms: [ RN compliance, RN care minutes compliance ]
+
+      care_minutes_compliance_rate:
+        synonyms: [ care minutes compliance ]
+
+      avg_rn_minutes_delivered:
+        synonyms: [ RN minutes, RN minutes delivered ]
+
+      avg_rn_minutes_target:
+        synonyms: [ RN target, RN minutes target ]
+
+ai_context: |
+  Daily operational performance for a residential aged care provider, one row per home per day, joined to one row
+  per home. Synthetic demo data in a BaptistCare style: 35 invented homes across NSW, ACT and WA, 1 Oct 2024 to
+  31 Aug 2026. Never use dates outside that window.
+  Map occupancy to occupancy_rate, funding or revenue to total_anacc_revenue, case mix or acuity to
+  average_variable_nwau, RN compliance to rn_minutes_compliance_rate, RN minutes to avg_rn_minutes_delivered,
+  RN target to avg_rn_minutes_target, home to facility_name, remoteness to mmm_category.
+  rn_minutes_compliance_rate and care_minutes_compliance_rate are the share of home days that met the home's
+  target, not the quarterly regulatory test, which averages minutes per resident per day over the quarter.
+  avg_rn_minutes_delivered and avg_rn_minutes_target are RN minutes per resident per day, averaged over home days.
+  Keep delivered and target separate when asked why compliance moved: compliance can rise because delivered
+  minutes rose or because case mix adjusted targets fell.
+  The mandatory sector averages are 215 total and 44 RN minutes per resident per day from 1 Oct 2024, case mix
+  adjusted per home. The AN-ACC price was $282.44 per NWAU from 1 Oct 2024 and $295.64 from 1 Oct 2025.
+  For a period comparison, filter date to each period exactly and name both periods. Do not invent causes.
+
+sample_queries:
+  rn_compliance_by_state_2026:
+    query:
+      fields:
+        [
+          aged_care_facilities.state,
+          aged_care_facility_daily.rn_minutes_compliance_rate
+        ]
+      base_view: aged_care_facility_daily
+      filters:
+        aged_care_facility_daily.date:
+          between_dates: [ 2026-03-01, 2026-08-31 ]
+      sorts:
+        - field: aged_care_facility_daily.rn_minutes_compliance_rate
+      topic: demo_baptist_care_rn_care_minutes
+    prompt: What was the RN care minutes compliance rate by state from 1 March 2026
+      to 31 August 2026?
+  lowest_rn_compliance_homes_2026:
+    query:
+      fields:
+        [
+          aged_care_facilities.facility_name,
+          aged_care_facility_daily.rn_minutes_compliance_rate,
+          aged_care_facility_daily.avg_rn_minutes_delivered,
+          aged_care_facility_daily.avg_rn_minutes_target,
+          aged_care_facility_daily.average_variable_nwau
+        ]
+      base_view: aged_care_facility_daily
+      filters:
+        aged_care_facility_daily.date:
+          between_dates: [ 2026-03-01, 2026-08-31 ]
+      limit: 5
+      sorts:
+        - field: aged_care_facility_daily.rn_minutes_compliance_rate
+      topic: demo_baptist_care_rn_care_minutes
+    prompt: Which five homes had the lowest RN compliance from 1 March 2026 to 31
+      August 2026, with RN minutes delivered and target and average variable
+      NWAU?
