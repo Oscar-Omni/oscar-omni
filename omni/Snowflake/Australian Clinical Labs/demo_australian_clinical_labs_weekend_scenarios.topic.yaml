@@ -1,4 +1,4 @@
-hidden: true
+hidden: false
 
 base_view: se_sandbox_oscar__demo_australian_clinical_labs_scenario_slots
 label: Weekend Cover Scenarios
