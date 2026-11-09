@@ -1,0 +1,35 @@
+base_view: se_sandbox_oscar__demo_grameenphone_roaming_trips
+label: Roaming
+group_label: Grameenphone
+description: International roaming trips by panel subscribers, one row per trip.
+  Synthetic data for an Omni demo.
+
+joins:
+  se_sandbox_oscar__demo_grameenphone_subscribers: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_grameenphone_roaming_trips
+    join_to_view: se_sandbox_oscar__demo_grameenphone_subscribers
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_grameenphone_roaming_trips.subscriber_id} =
+      ${se_sandbox_oscar__demo_grameenphone_subscribers.subscriber_id}
+    relationship_type: many_to_one
+
+ai_context: |
+  Synthetic international roaming trips by panel subscribers, 1 Oct 2025 to 31 Oct 2026, one row per trip dated by trip_start_date. Money is BDT; write it as Tk.
+  country_name holds Natural Earth English country names. Seasonal peaks around Umrah and Hajj travel to Saudi Arabia are synthetic and dated only approximately.
+
+sample_queries:
+  roaming_revenue_by_country_12m:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_grameenphone_roaming_trips.country_name,
+          se_sandbox_oscar__demo_grameenphone_roaming_trips.roaming_revenue
+        ]
+      base_view: se_sandbox_oscar__demo_grameenphone_roaming_trips
+      filters:
+        se_sandbox_oscar__demo_grameenphone_roaming_trips.trip_start_date:
+          between_dates: [ 2025-11-01, 2026-10-31 ]
+      topic: demo_grameenphone_roaming
+    prompt: Which countries earned the most roaming revenue from Nov 2025 to Oct 2026?

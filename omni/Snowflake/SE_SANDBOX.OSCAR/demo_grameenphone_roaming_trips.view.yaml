@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_grameenphone_roaming_trips
+label: Roaming trips
+description: One row per international roaming trip by a panel subscriber (synthetic)
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_GRAMEENPHONE_ROAMING_TRIPS
@@ -6,24 +9,45 @@ table_name: DEMO_GRAMEENPHONE_ROAMING_TRIPS
 dimensions:
   trip_id:
     sql: '"TRIP_ID"'
+    label: Trip ID
     format: ID
+    primary_key: true
 
   subscriber_id:
     sql: '"SUBSCRIBER_ID"'
     format: ID
+    hidden: true
 
   country_name:
     sql: '"COUNTRY_NAME"'
+    label: Destination country
+    synonyms: [ destination, country, roaming country ]
 
   trip_start_date:
     sql: '"TRIP_START_DATE"'
+    label: Trip start date
 
   roaming_days:
     sql: '"ROAMING_DAYS"'
+    label: Roaming days
 
   roaming_revenue_bdt:
     sql: '"ROAMING_REVENUE_BDT"'
+    hidden: true
 
 measures:
   count:
     aggregate_type: count
+
+  roaming_revenue:
+    sql: ${roaming_revenue_bdt}
+    label: Roaming revenue
+    format: '"Tk "#,##0'
+    aggregate_type: sum
+    synonyms: [ IR revenue ]
+
+  roaming_trip_count:
+    label: Roaming trips
+    format: "#,##0"
+    aggregate_type: count
+    synonyms: [ trips, roamers ]

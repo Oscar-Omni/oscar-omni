@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_grameenphone_clusters
+label: Clusters
+description: Sales clusters (invented names on real districts)
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_GRAMEENPHONE_CLUSTERS
@@ -6,10 +9,15 @@ table_name: DEMO_GRAMEENPHONE_CLUSTERS
 dimensions:
   cluster_id:
     sql: '"CLUSTER_ID"'
+    label: Cluster ID
     format: ID
+    primary_key: true
 
   cluster_name:
     sql: '"CLUSTER_NAME"'
+    label: Cluster
+    description: Cluster inside the region, for example Cumilla or Dhaka North
+    synonyms: [ cluster, district cluster, Comilla, Kumilla ]
 
 measures:
   count:

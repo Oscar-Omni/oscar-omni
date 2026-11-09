@@ -1,0 +1,95 @@
+base_view: se_sandbox_oscar__demo_grameenphone_usage_daily
+label: Subscriber usage
+group_label: Grameenphone
+description: Subscriber level usage and pack revenue per day, 1 Oct 2025 to 31
+  Oct 2026, with subscribers and clusters. Synthetic data for an Omni demo.
+
+joins:
+  se_sandbox_oscar__demo_grameenphone_subscribers: {}
+  se_sandbox_oscar__demo_grameenphone_clusters: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_grameenphone_usage_daily
+    join_to_view: se_sandbox_oscar__demo_grameenphone_subscribers
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_grameenphone_usage_daily.subscriber_id} =
+      ${se_sandbox_oscar__demo_grameenphone_subscribers.subscriber_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_grameenphone_usage_daily
+    join_to_view: se_sandbox_oscar__demo_grameenphone_clusters
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_grameenphone_usage_daily.cluster_id} =
+      ${se_sandbox_oscar__demo_grameenphone_clusters.cluster_id}
+    relationship_type: many_to_one
+
+ai_context: |
+  Synthetic subscriber panel for an Omni demo, not Grameenphone data. One row per subscriber per day on the network from 1 Oct 2025 to 31 Oct 2026. Money is BDT; write it as Tk.
+  Revenue is recognised on the purchase day, so a 30 day pack shows on the day it was bought.
+  region is the division, which users call the circle or region; cluster_name is the cluster inside it. value_tier is a fixed baseline from Jul to Sep 2026 revenue, not a monthly tier.
+  The Booster 10GB 7 Day pack (synthetic, Tk 149) launched on 1 Oct 2026. subscribers.booster_first_date is each subscriber's first Booster; subscribers whose booster_first_date falls 1 to 7 Oct 2026 are the launch week lock base.
+  To compare windows of different lengths, divide revenue by subscriber_days. Never compare arpu or totals across windows of unequal length. There is no governed revenue per subscriber day measure in the main model yet; compute revenue / subscriber_days in the query and say so.
+  arpu is revenue per active subscriber in the selected period, so it is monthly ARPU only when grouped by month.
+  When comparing groups, show the percent change and active_subscribers for each group, and lead with groups of at least 20 subscribers; call groups smaller than that too small to read on their own. When a question breaks results down by cluster and value tier, give the cluster totals first, then the tiers inside the clusters that moved most.
+  Show subscribers by msisdn_masked and never invent numbers. Describe what changed, where and when; do not claim a business reason the data cannot show. Say the data is synthetic.
+
+sample_queries:
+  data_revenue_by_region_oct_2026:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_grameenphone_usage_daily.region,
+          se_sandbox_oscar__demo_grameenphone_usage_daily.data_revenue
+        ]
+      base_view: se_sandbox_oscar__demo_grameenphone_usage_daily
+      filters:
+        se_sandbox_oscar__demo_grameenphone_usage_daily.usage_date:
+          between_dates: [ 2026-10-01, 2026-10-31 ]
+      topic: demo_grameenphone_subscriber_usage
+    prompt: What was data revenue by region from 1 Oct 2026 to 31 Oct 2026?
+  data_revenue_by_region_sep_2026:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_grameenphone_usage_daily.region,
+          se_sandbox_oscar__demo_grameenphone_usage_daily.data_revenue
+        ]
+      base_view: se_sandbox_oscar__demo_grameenphone_usage_daily
+      filters:
+        se_sandbox_oscar__demo_grameenphone_usage_daily.usage_date:
+          between_dates: [ 2026-09-01, 2026-09-30 ]
+      topic: demo_grameenphone_subscriber_usage
+    prompt: What was data revenue by region from 1 Sep 2026 to 30 Sep 2026?
+  booster_share_by_cluster_oct_2026:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_grameenphone_clusters.cluster_name,
+          se_sandbox_oscar__demo_grameenphone_usage_daily.booster_share
+        ]
+      base_view: se_sandbox_oscar__demo_grameenphone_usage_daily
+      filters:
+        se_sandbox_oscar__demo_grameenphone_usage_daily.usage_date:
+          between_dates: [ 2026-10-01, 2026-10-31 ]
+      topic: demo_grameenphone_subscriber_usage
+    prompt: Which clusters lean most on the Booster in October 2026?
+  lock_base_after_by_cluster_tier:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_grameenphone_clusters.cluster_name,
+          se_sandbox_oscar__demo_grameenphone_usage_daily.value_tier,
+          se_sandbox_oscar__demo_grameenphone_usage_daily.active_subscribers,
+          se_sandbox_oscar__demo_grameenphone_usage_daily.revenue,
+          se_sandbox_oscar__demo_grameenphone_usage_daily.subscriber_days,
+          se_sandbox_oscar__demo_grameenphone_usage_daily.monthly_pack_revenue
+        ]
+      base_view: se_sandbox_oscar__demo_grameenphone_usage_daily
+      filters:
+        se_sandbox_oscar__demo_grameenphone_usage_daily.usage_date:
+          between_dates: [ 2026-10-08, 2026-10-31 ]
+        se_sandbox_oscar__demo_grameenphone_subscribers.booster_first_date:
+          between_dates: [ 2026-10-01, 2026-10-07 ]
+      topic: demo_grameenphone_subscriber_usage
+    prompt: For the launch week lock base, show subscribers, revenue and subscriber
+      days by cluster and value tier from 8 to 31 Oct 2026

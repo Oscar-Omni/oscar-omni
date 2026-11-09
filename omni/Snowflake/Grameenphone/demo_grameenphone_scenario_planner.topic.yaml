@@ -1,0 +1,9 @@
+base_view: se_sandbox_oscar__demo_grameenphone_scenario_slots
+label: Scenario planner
+group_label: Grameenphone
+description: Saved scenario slots for the Booster win back planner app
+
+joins: {}
+
+ai_context: |
+  Three saved scenario slots for the Booster win back planner. Percent columns hold 0 to 100. Saving changes a slot's current values; there is no history.

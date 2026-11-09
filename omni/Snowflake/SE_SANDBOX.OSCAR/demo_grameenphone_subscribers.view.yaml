@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_grameenphone_subscribers
+label: Subscribers
+description: One row per subscriber in the synthetic panel, with masked numbers
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_GRAMEENPHONE_SUBSCRIBERS
@@ -6,23 +9,42 @@ table_name: DEMO_GRAMEENPHONE_SUBSCRIBERS
 dimensions:
   subscriber_id:
     sql: '"SUBSCRIBER_ID"'
+    label: Subscriber ID
     format: ID
+    primary_key: true
 
   msisdn_masked:
     sql: '"MSISDN_MASKED"'
+    label: MSISDN (masked)
+    description: Masked synthetic number, never a real number
+    synonyms: [ MSISDN, number, customer, subscriber ]
 
   connection_type:
     sql: '"CONNECTION_TYPE"'
+    label: Connection type
+    description: Prepaid or Postpaid
 
   device_class:
     sql: '"DEVICE_CLASS"'
+    label: Device class
+    description: Smartphone or Feature phone
 
   join_date:
     sql: '"JOIN_DATE"'
+    label: Join date
 
   booster_first_date:
     sql: '"BOOSTER_FIRST_DATE"'
+    label: Booster first date
+    description: Date of the subscriber's first Booster 10GB 7 Day pack; empty if
+      never bought. 1 to 7 Oct 2026 marks the launch week lock base
+    synonyms: [ lock base, locked base, log base, launch week takers, campaign takers ]
 
 measures:
   count:
+    aggregate_type: count
+
+  subscriber_count:
+    label: Subscribers
+    format: "#,##0"
     aggregate_type: count

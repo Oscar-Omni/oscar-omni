@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_grameenphone_usage_daily
+label: Usage daily
+description: One row per subscriber per day on the network, 1 Oct 2025 to 31 Oct
+  2026 (synthetic). Money is BDT; revenue lands on the purchase day.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_GRAMEENPHONE_USAGE_DAILY
@@ -6,48 +10,190 @@ table_name: DEMO_GRAMEENPHONE_USAGE_DAILY
 dimensions:
   subscriber_id:
     sql: '"SUBSCRIBER_ID"'
+    label: Subscriber ID
     format: ID
+    description: Synthetic subscriber key; joins to subscribers
 
   usage_date:
     sql: '"USAGE_DATE"'
+    label: Usage date
+    description: Calendar day of usage and purchase
 
   region:
     sql: '"REGION"'
+    label: Region (circle)
+    description: Subscriber's home division, which users call the circle or region.
+      Fixed per subscriber
+    synonyms: [ circle, division, zone ]
 
   cluster_id:
     sql: '"CLUSTER_ID"'
+    label: Cluster ID
     format: ID
+    hidden: true
 
   value_tier:
     sql: '"VALUE_TIER"'
+    label: Value tier
+    description: High, Mid or Low from average monthly revenue 1 Jul to 30 Sep 2026
+      (top 20%, next 40%, bottom 40%). A fixed baseline, not a monthly tier
+    synonyms: [ segment, value segment, high value ]
 
   data_mb:
     sql: '"DATA_MB"'
+    description: Mobile data used that day in MB
+    hidden: true
 
   booster_packs:
     sql: '"BOOSTER_PACKS"'
+    description: Booster 10GB 7 Day packs bought that day
+    hidden: true
 
   booster_revenue_bdt:
     sql: '"BOOSTER_REVENUE_BDT"'
+    hidden: true
 
   monthly_pack_revenue_bdt:
     sql: '"MONTHLY_PACK_REVENUE_BDT"'
+    hidden: true
 
   short_pack_revenue_bdt:
     sql: '"SHORT_PACK_REVENUE_BDT"'
+    hidden: true
 
   payg_data_revenue_bdt:
     sql: '"PAYG_DATA_REVENUE_BDT"'
+    hidden: true
 
   voice_revenue_bdt:
     sql: '"VOICE_REVENUE_BDT"'
+    hidden: true
 
   data_revenue_bdt:
     sql: '"DATA_REVENUE_BDT"'
+    hidden: true
 
   revenue_bdt:
     sql: '"REVENUE_BDT"'
+    hidden: true
+
+  usage_key:
+    sql: ${subscriber_id} || '|' || TO_VARCHAR(${usage_date})
+    description: Subscriber and day; one row each
+    hidden: true
+    primary_key: true
 
 measures:
   count:
     aggregate_type: count
+
+  revenue:
+    sql: ${revenue_bdt}
+    label: Revenue
+    format: '"Tk "#,##0'
+    description: Data plus voice revenue, recognised on the purchase day (a billing view)
+    aggregate_type: sum
+    synonyms: [ total revenue, income ]
+
+  data_revenue:
+    sql: ${data_revenue_bdt}
+    label: Data revenue
+    format: '"Tk "#,##0'
+    description: Booster, 30 day pack, short pack and pay as you go data revenue
+    aggregate_type: sum
+    synonyms: [ data income ]
+
+  booster_revenue:
+    sql: ${booster_revenue_bdt}
+    label: Booster revenue
+    format: '"Tk "#,##0'
+    description: Booster 10GB 7 Day pack revenue (synthetic, Tk 149 a pack). Zero
+      before 1 Oct 2026
+    aggregate_type: sum
+    synonyms: [ 10GB pack, Booster, campaign pack, new pack ]
+
+  monthly_pack_revenue:
+    sql: ${monthly_pack_revenue_bdt}
+    label: 30 day pack revenue
+    format: '"Tk "#,##0'
+    description: 30 day data pack revenue (25GB Tk 499, 50GB Tk 799, illustrative)
+    aggregate_type: sum
+    synonyms: [ monthly pack, 30 day pack, regular pack ]
+
+  short_pack_revenue:
+    sql: ${short_pack_revenue_bdt}
+    label: Short pack revenue
+    format: '"Tk "#,##0'
+    description: 1, 3 and 7 day data packs other than the Booster
+    aggregate_type: sum
+
+  payg_data_revenue:
+    sql: ${payg_data_revenue_bdt}
+    label: Pay as you go data revenue
+    format: '"Tk "#,##0'
+    aggregate_type: sum
+
+  voice_revenue:
+    sql: ${voice_revenue_bdt}
+    label: Voice revenue
+    format: '"Tk "#,##0'
+    aggregate_type: sum
+
+  active_subscribers:
+    sql: ${subscriber_id}
+    label: Active subscribers
+    format: "#,##0"
+    description: Subscribers with at least one day on the network in the period
+    aggregate_type: count_distinct
+
+  subscriber_days:
+    label: Subscriber days
+    format: "#,##0"
+    description: Subscriber days on the network. The denominator for any per day
+      comparison of windows with different lengths
+    aggregate_type: count
+    synonyms: [ active days ]
+
+  arpu:
+    sql: ${revenue} / NULLIF(${active_subscribers}, 0)
+    label: ARPU
+    format: '"Tk "#,##0.0'
+    description: Revenue per active subscriber in the period; grouped by month it is
+      monthly ARPU. Not comparable across windows of different lengths
+    synonyms: [ revenue per user ]
+
+  data_share:
+    sql: ${data_revenue} / NULLIF(${revenue}, 0)
+    label: Data share of revenue
+    format: PERCENT_1
+
+  booster_share:
+    sql: ${booster_revenue} / NULLIF(${data_revenue}, 0)
+    label: Booster share of data revenue
+    format: PERCENT_1
+    description: How far data revenue leans on the Booster
+
+  booster_takers:
+    sql: ${subscriber_id}
+    label: Booster takers
+    format: "#,##0"
+    description: Subscribers who bought at least one Booster in the period
+    aggregate_type: count_distinct
+    filters:
+      booster_packs:
+        greater_than: 0
+    synonyms: [ takers, pack takers ]
+
+  data_gb:
+    sql: ${data_mb} / 1024.0
+    label: Data used (GB)
+    format: "#,##0"
+    aggregate_type: sum
+    synonyms: [ traffic, data usage, GB ]
+
+  avg_daily_mb:
+    sql: ${data_mb}
+    label: Average daily data per subscriber (MB)
+    format: "#,##0"
+    description: Average data per subscriber day in MB
+    aggregate_type: average

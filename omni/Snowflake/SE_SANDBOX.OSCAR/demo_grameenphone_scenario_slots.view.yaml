@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_grameenphone_scenario_slots
+label: Scenario slots
+description: Saved win back scenario slots for the Booster win back planner
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_GRAMEENPHONE_SCENARIO_SLOTS
@@ -6,29 +9,44 @@ table_name: DEMO_GRAMEENPHONE_SCENARIO_SLOTS
 dimensions:
   scenario_id:
     sql: '"SCENARIO_ID"'
+    label: Scenario ID
     format: ID
+    primary_key: true
 
   scenario_name:
     sql: '"SCENARIO_NAME"'
+    label: Scenario
+    synonyms: [ scenario, slot, plan ]
 
   offer:
     sql: '"OFFER"'
+    label: Offer
 
   reach_pct:
     sql: '"REACH_PCT"'
+    label: Reach (%)
 
   recovery_pct:
     sql: '"RECOVERY_PCT"'
+    label: Revenue recovered per accepter (%)
 
   acceptance_rate_pct:
     sql: '"ACCEPTANCE_RATE_PCT"'
+    label: Acceptance rate (%)
 
   discount_bdt:
     sql: '"DISCOUNT_BDT"'
+    label: Discount a month (Tk)
 
   sort_order:
     sql: '"SORT_ORDER"'
+    label: Sort order
 
 measures:
   count:
+    aggregate_type: count
+
+  slot_count:
+    label: Scenario slots
+    format: "#,##0"
     aggregate_type: count
