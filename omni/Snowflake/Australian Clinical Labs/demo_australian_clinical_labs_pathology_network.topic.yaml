@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: se_sandbox_oscar__demo_australian_clinical_labs_episodes
 label: Pathology Network
 group_label: Australian Clinical Labs
