@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: se_sandbox_oscar__demo_grameenphone_scenario_slots
 label: Scenario planner
 group_label: Grameenphone
