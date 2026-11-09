@@ -1,0 +1,28 @@
+# Reference this view as se_sandbox_oscar__demo_grameenphone_subscribers
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_GRAMEENPHONE_SUBSCRIBERS
+
+dimensions:
+  subscriber_id:
+    sql: '"SUBSCRIBER_ID"'
+    format: ID
+
+  msisdn_masked:
+    sql: '"MSISDN_MASKED"'
+
+  connection_type:
+    sql: '"CONNECTION_TYPE"'
+
+  device_class:
+    sql: '"DEVICE_CLASS"'
+
+  join_date:
+    sql: '"JOIN_DATE"'
+
+  booster_first_date:
+    sql: '"BOOSTER_FIRST_DATE"'
+
+measures:
+  count:
+    aggregate_type: count

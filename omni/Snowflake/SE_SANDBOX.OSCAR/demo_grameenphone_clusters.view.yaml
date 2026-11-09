@@ -1,0 +1,16 @@
+# Reference this view as se_sandbox_oscar__demo_grameenphone_clusters
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_GRAMEENPHONE_CLUSTERS
+
+dimensions:
+  cluster_id:
+    sql: '"CLUSTER_ID"'
+    format: ID
+
+  cluster_name:
+    sql: '"CLUSTER_NAME"'
+
+measures:
+  count:
+    aggregate_type: count

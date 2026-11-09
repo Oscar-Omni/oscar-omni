@@ -1,0 +1,29 @@
+# Reference this view as se_sandbox_oscar__demo_grameenphone_roaming_trips
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_GRAMEENPHONE_ROAMING_TRIPS
+
+dimensions:
+  trip_id:
+    sql: '"TRIP_ID"'
+    format: ID
+
+  subscriber_id:
+    sql: '"SUBSCRIBER_ID"'
+    format: ID
+
+  country_name:
+    sql: '"COUNTRY_NAME"'
+
+  trip_start_date:
+    sql: '"TRIP_START_DATE"'
+
+  roaming_days:
+    sql: '"ROAMING_DAYS"'
+
+  roaming_revenue_bdt:
+    sql: '"ROAMING_REVENUE_BDT"'
+
+measures:
+  count:
+    aggregate_type: count

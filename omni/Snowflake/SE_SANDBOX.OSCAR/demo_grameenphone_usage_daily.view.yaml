@@ -1,0 +1,53 @@
+# Reference this view as se_sandbox_oscar__demo_grameenphone_usage_daily
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_GRAMEENPHONE_USAGE_DAILY
+
+dimensions:
+  subscriber_id:
+    sql: '"SUBSCRIBER_ID"'
+    format: ID
+
+  usage_date:
+    sql: '"USAGE_DATE"'
+
+  region:
+    sql: '"REGION"'
+
+  cluster_id:
+    sql: '"CLUSTER_ID"'
+    format: ID
+
+  value_tier:
+    sql: '"VALUE_TIER"'
+
+  data_mb:
+    sql: '"DATA_MB"'
+
+  booster_packs:
+    sql: '"BOOSTER_PACKS"'
+
+  booster_revenue_bdt:
+    sql: '"BOOSTER_REVENUE_BDT"'
+
+  monthly_pack_revenue_bdt:
+    sql: '"MONTHLY_PACK_REVENUE_BDT"'
+
+  short_pack_revenue_bdt:
+    sql: '"SHORT_PACK_REVENUE_BDT"'
+
+  payg_data_revenue_bdt:
+    sql: '"PAYG_DATA_REVENUE_BDT"'
+
+  voice_revenue_bdt:
+    sql: '"VOICE_REVENUE_BDT"'
+
+  data_revenue_bdt:
+    sql: '"DATA_REVENUE_BDT"'
+
+  revenue_bdt:
+    sql: '"REVENUE_BDT"'
+
+measures:
+  count:
+    aggregate_type: count

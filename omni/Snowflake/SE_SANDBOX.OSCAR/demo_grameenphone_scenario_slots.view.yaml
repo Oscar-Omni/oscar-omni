@@ -1,0 +1,34 @@
+# Reference this view as se_sandbox_oscar__demo_grameenphone_scenario_slots
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_GRAMEENPHONE_SCENARIO_SLOTS
+
+dimensions:
+  scenario_id:
+    sql: '"SCENARIO_ID"'
+    format: ID
+
+  scenario_name:
+    sql: '"SCENARIO_NAME"'
+
+  offer:
+    sql: '"OFFER"'
+
+  reach_pct:
+    sql: '"REACH_PCT"'
+
+  recovery_pct:
+    sql: '"RECOVERY_PCT"'
+
+  acceptance_rate_pct:
+    sql: '"ACCEPTANCE_RATE_PCT"'
+
+  discount_bdt:
+    sql: '"DISCOUNT_BDT"'
+
+  sort_order:
+    sql: '"SORT_ORDER"'
+
+measures:
+  count:
+    aggregate_type: count
