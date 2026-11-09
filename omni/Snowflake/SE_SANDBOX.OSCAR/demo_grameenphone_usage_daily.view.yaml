@@ -83,6 +83,16 @@ dimensions:
     hidden: true
     primary_key: true
 
+  division_map_name:
+    sql: CASE ${se_sandbox_oscar__demo_grameenphone_usage_daily.region} WHEN
+      'Chattogram' THEN 'Chittagong' WHEN 'Barishal' THEN 'Barisal' WHEN
+      'Rajshahi' THEN 'Rajshani' ELSE
+      ${se_sandbox_oscar__demo_grameenphone_usage_daily.region} END
+    label: Division (map name)
+    description: Region spelled as in the geoBoundaries Bangladesh ADM1 map file
+      (Chittagong, Barisal, Rajshani). Used only by the dashboard map.
+    hidden: true
+
 measures:
   count:
     aggregate_type: count
