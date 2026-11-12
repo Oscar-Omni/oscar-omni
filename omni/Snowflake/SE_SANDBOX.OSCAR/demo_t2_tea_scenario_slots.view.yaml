@@ -1,0 +1,31 @@
+# Reference this view as se_sandbox_oscar__demo_t2_tea_scenario_slots
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_T2_TEA_SCENARIO_SLOTS
+
+dimensions:
+  scenario_id:
+    sql: '"SCENARIO_ID"'
+    format: ID
+
+  scenario_name:
+    sql: '"SCENARIO_NAME"'
+
+  scenario_note:
+    sql: '"SCENARIO_NOTE"'
+
+  seed_expedite_share_pct:
+    sql: '"SEED_EXPEDITE_SHARE_PCT"'
+
+  seed_freight_cost_aud:
+    sql: '"SEED_FREIGHT_COST_AUD"'
+
+  sell_through_pct:
+    sql: '"SELL_THROUGH_PCT"'
+
+  sort_order:
+    sql: '"SORT_ORDER"'
+
+measures:
+  count:
+    aggregate_type: count

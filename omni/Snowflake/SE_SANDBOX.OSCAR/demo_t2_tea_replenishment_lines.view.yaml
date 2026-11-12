@@ -1,0 +1,39 @@
+# Reference this view as se_sandbox_oscar__demo_t2_tea_replenishment_lines
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_T2_TEA_REPLENISHMENT_LINES
+
+dimensions:
+  order_line_id:
+    sql: '"ORDER_LINE_ID"'
+    format: ID
+
+  order_date:
+    sql: '"ORDER_DATE"'
+
+  location_id:
+    sql: '"LOCATION_ID"'
+    format: ID
+
+  sku_id:
+    sql: '"SKU_ID"'
+    format: ID
+
+  channel:
+    sql: '"CHANNEL"'
+
+  category:
+    sql: '"CATEGORY"'
+
+  state_name:
+    sql: '"STATE_NAME"'
+
+  units_ordered:
+    sql: '"UNITS_ORDERED"'
+
+  units_shipped:
+    sql: '"UNITS_SHIPPED"'
+
+measures:
+  count:
+    aggregate_type: count

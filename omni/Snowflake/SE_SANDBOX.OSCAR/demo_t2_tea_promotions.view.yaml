@@ -1,0 +1,31 @@
+# Reference this view as se_sandbox_oscar__demo_t2_tea_promotions
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_T2_TEA_PROMOTIONS
+
+dimensions:
+  promo_id:
+    sql: '"PROMO_ID"'
+    format: ID
+
+  promo_name:
+    sql: '"PROMO_NAME"'
+
+  promo_type:
+    sql: '"PROMO_TYPE"'
+
+  applies_to:
+    sql: '"APPLIES_TO"'
+
+  start_date:
+    sql: '"START_DATE"'
+
+  end_date:
+    sql: '"END_DATE"'
+
+  discount_pct:
+    sql: '"DISCOUNT_PCT"'
+
+measures:
+  count:
+    aggregate_type: count

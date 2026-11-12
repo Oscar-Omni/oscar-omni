@@ -1,0 +1,51 @@
+# Reference this view as se_sandbox_oscar__demo_t2_tea_sales_daily
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_T2_TEA_SALES_DAILY
+
+dimensions:
+  trade_date:
+    sql: '"TRADE_DATE"'
+
+  location_id:
+    sql: '"LOCATION_ID"'
+    format: ID
+
+  sku_id:
+    sql: '"SKU_ID"'
+    format: ID
+
+  channel:
+    sql: '"CHANNEL"'
+
+  category:
+    sql: '"CATEGORY"'
+
+  state_name:
+    sql: '"STATE_NAME"'
+
+  promo_id:
+    sql: '"PROMO_ID"'
+    format: ID
+
+  units:
+    sql: '"UNITS"'
+
+  net_sales_aud:
+    sql: '"NET_SALES_AUD"'
+
+  discount_aud:
+    sql: '"DISCOUNT_AUD"'
+
+  gross_margin_aud:
+    sql: '"GROSS_MARGIN_AUD"'
+
+  ranged_day:
+    sql: '"RANGED_DAY"'
+
+  in_stock_day:
+    sql: '"IN_STOCK_DAY"'
+
+measures:
+  count:
+    aggregate_type: count

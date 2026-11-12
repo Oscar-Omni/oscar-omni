@@ -1,0 +1,25 @@
+# Reference this view as se_sandbox_oscar__demo_t2_tea_locations
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_T2_TEA_LOCATIONS
+
+dimensions:
+  location_id:
+    sql: '"LOCATION_ID"'
+    format: ID
+
+  location_name:
+    sql: '"LOCATION_NAME"'
+
+  city:
+    sql: '"CITY"'
+
+  country_name:
+    sql: '"COUNTRY_NAME"'
+
+  store_format:
+    sql: '"STORE_FORMAT"'
+
+measures:
+  count:
+    aggregate_type: count

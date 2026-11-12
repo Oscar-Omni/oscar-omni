@@ -1,0 +1,22 @@
+# Reference this view as se_sandbox_oscar__demo_t2_tea_products
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_T2_TEA_PRODUCTS
+
+dimensions:
+  sku_id:
+    sql: '"SKU_ID"'
+    format: ID
+
+  product_name:
+    sql: '"PRODUCT_NAME"'
+
+  category:
+    sql: '"CATEGORY"'
+
+  origin_country:
+    sql: '"ORIGIN_COUNTRY"'
+
+measures:
+  count:
+    aggregate_type: count
