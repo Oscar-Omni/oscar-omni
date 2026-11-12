@@ -1,4 +1,7 @@
 # Reference this view as se_sandbox_oscar__demo_t2_tea_products
+label: Products (synthetic)
+description: 60 SKUs with invented or generic tea names. Synthetic range, not T2's.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_T2_TEA_PRODUCTS
@@ -6,17 +9,30 @@ table_name: DEMO_T2_TEA_PRODUCTS
 dimensions:
   sku_id:
     sql: '"SKU_ID"'
+    label: SKU ID
     format: ID
+    primary_key: true
 
   product_name:
     sql: '"PRODUCT_NAME"'
+    label: Product
+    synonyms: [ SKU, product, tea, blend, matcha ]
 
   category:
     sql: '"CATEGORY"'
+    label: Product category
+    hidden: true
 
   origin_country:
     sql: '"ORIGIN_COUNTRY"'
+    label: Origin country
+    description: Country the tea or item ships from
+    synonyms: [ Japanese green tea, origin, sourced from ]
 
 measures:
   count:
+    aggregate_type: count
+
+  product_count:
+    label: Products
     aggregate_type: count

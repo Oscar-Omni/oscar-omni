@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_t2_tea_locations
+label: Locations (synthetic)
+description: 58 stores named by city and number, two online storefronts and 24
+  wholesale accounts. Synthetic; no name is a real T2 site.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_T2_TEA_LOCATIONS
@@ -6,20 +10,35 @@ table_name: DEMO_T2_TEA_LOCATIONS
 dimensions:
   location_id:
     sql: '"LOCATION_ID"'
+    label: Location ID
     format: ID
+    primary_key: true
 
   location_name:
     sql: '"LOCATION_NAME"'
+    label: Location
+    description: City plus a number for stores (Perth store 02), Online Australia or
+      Online New Zealand, Wholesale NN city for accounts
+    synonyms: [ store, boutique, shop, site ]
 
   city:
     sql: '"CITY"'
+    label: City
 
   country_name:
     sql: '"COUNTRY_NAME"'
+    label: Country
 
   store_format:
     sql: '"STORE_FORMAT"'
+    label: Store format
+    description: Shopping centre, CBD street or Airport for stores; Online; Cafe,
+      Hotel or Grocer for wholesale
 
 measures:
   count:
+    aggregate_type: count
+
+  location_count:
+    label: Locations
     aggregate_type: count

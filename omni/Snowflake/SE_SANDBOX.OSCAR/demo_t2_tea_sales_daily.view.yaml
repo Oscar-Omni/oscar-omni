@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__demo_t2_tea_sales_daily
+label: Trading (synthetic)
+description: One row per location, SKU and trade date, 1 Jul to 31 Oct 2026.
+  Every ranged SKU day for stores and online, zero sale days included, plus
+  wholesale dispatch days. Synthetic data for an Omni demo, AUD ex GST.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_T2_TEA_SALES_DAILY
@@ -6,46 +11,166 @@ table_name: DEMO_T2_TEA_SALES_DAILY
 dimensions:
   trade_date:
     sql: '"TRADE_DATE"'
+    label: Trade date
+    description: Trading day, 1 Jul to 31 Oct 2026
+    synonyms: [ date, day, trading day ]
 
   location_id:
     sql: '"LOCATION_ID"'
+    label: Location ID
     format: ID
+    description: Store, online storefront or wholesale account; joins to locations
 
   sku_id:
     sql: '"SKU_ID"'
+    label: SKU ID
     format: ID
 
   channel:
     sql: '"CHANNEL"'
+    label: Channel
+    description: Stores, Ecommerce or Wholesale; fixed per location
+    synonyms: [ retail, stores, online, ecomm, web, wholesale, B2B ]
 
   category:
     sql: '"CATEGORY"'
+    label: Category
+    description: Black tea, Green tea, Herbal tea, Fruit tea, Gift packs or Teaware
+    synonyms: [ tea type, range ]
 
   state_name:
     sql: '"STATE_NAME"'
+    label: State or region
+    description: Australian state or New Zealand region of a store or wholesale
+      account; Online for ecommerce rows
+    synonyms: [ state, region, market ]
 
   promo_id:
     sql: '"PROMO_ID"'
+    label: Promotion ID
     format: ID
+    description: Promotion live on the row's category and date; null when none
 
   units:
     sql: '"UNITS"'
+    hidden: true
 
   net_sales_aud:
     sql: '"NET_SALES_AUD"'
+    hidden: true
 
   discount_aud:
     sql: '"DISCOUNT_AUD"'
+    hidden: true
 
   gross_margin_aud:
     sql: '"GROSS_MARGIN_AUD"'
+    hidden: true
 
   ranged_day:
     sql: '"RANGED_DAY"'
+    hidden: true
 
   in_stock_day:
     sql: '"IN_STOCK_DAY"'
+    hidden: true
+
+  row_key:
+    sql: ${location_id} || '|' || ${sku_id} || '|' || TO_CHAR(${trade_date},
+      'YYYY-MM-DD')
+    hidden: true
+    primary_key: true
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
+
+  net_sales:
+    sql: ${net_sales_aud}
+    label: Net sales
+    format: usdcurrency_0
+    description: Net sales after discount, ex GST, AUD. New Zealand converted at a
+      fixed synthetic 0.91 AUD per NZD
+    aggregate_type: sum
+    synonyms: [ sales, revenue, takings, turnover ]
+
+  units_sold:
+    sql: ${units}
+    label: Units sold
+    format: number_0
+    description: Units sold in stores and online, or dispatched to wholesale accounts
+    aggregate_type: sum
+    synonyms: [ units, volume, items ]
+
+  gross_margin:
+    sql: ${gross_margin_aud}
+    label: Gross margin
+    format: usdcurrency_0
+    description: Net sales less landed cost of goods, AUD
+    aggregate_type: sum
+    synonyms: [ GP dollars, margin dollars ]
+
+  gross_margin_pct:
+    sql: ${gross_margin} / NULLIF(${net_sales}, 0)
+    label: Gross margin %
+    format: percent_1
+    description: Gross margin divided by net sales, computed at the grain of the query
+    synonyms: [ GM, GP, margin, margin %, gross margin percent ]
+
+  discount:
+    sql: ${discount_aud}
+    label: Discount
+    format: usdcurrency_0
+    description: Promotional discount given, ex GST
+    aggregate_type: sum
+
+  discount_rate:
+    sql: ${discount} / NULLIF(${net_sales} + ${discount}, 0)
+    label: Discount rate
+    format: percent_1
+    description: Discount over sales before discount
+    synonyms: [ discount depth, markdown rate ]
+
+  avg_net_price:
+    sql: ${net_sales} / NULLIF(${units_sold}, 0)
+    label: Average net price
+    format: usdcurrency_2
+    description: Net sales per unit
+    synonyms: [ ASP, average price, price per unit ]
+
+  ranged_days:
+    sql: ${ranged_day}
+    label: Ranged SKU days
+    format: number_0
+    description: SKU days the item was ranged, stores and online only; wholesale
+      rows carry none
+    aggregate_type: sum
+
+  in_stock_days:
+    sql: ${in_stock_day}
+    label: In-stock SKU days
+    format: number_0
+    description: Ranged SKU days with stock at open
+    aggregate_type: sum
+
+  out_of_stock_days:
+    sql: ${ranged_days} - ${in_stock_days}
+    label: Out of stock SKU days
+    format: number_0
+    description: Ranged SKU days with no stock at open
+    synonyms: [ stock outs, OOS, out of stocks, empty shelf days ]
+
+  in_stock_rate:
+    sql: ${in_stock_days} / NULLIF(${ranged_days}, 0)
+    label: In-stock rate
+    format: percent_1
+    description: In-stock SKU days over ranged SKU days, stores and online only,
+      computed at the grain of the query. Never average daily rates
+    synonyms: [ availability, on shelf availability, OSA, in stock ]
+
+  out_of_stock_rate:
+    sql: ${out_of_stock_days} / NULLIF(${ranged_days}, 0)
+    label: Out of stock rate
+    format: percent_1
+    description: Out of stock SKU days over ranged SKU days; one minus the in-stock rate

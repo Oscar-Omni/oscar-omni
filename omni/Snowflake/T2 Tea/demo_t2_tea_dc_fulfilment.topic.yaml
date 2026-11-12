@@ -1,0 +1,63 @@
+base_view: se_sandbox_oscar__demo_t2_tea_replenishment_lines
+label: DC fulfilment
+group_label: T2 Tea
+description: Order lines picked at the Melbourne distribution centre, 1 Jul to
+  31 Oct 2026, with locations and products. Synthetic data for an Omni demo.
+
+joins:
+  se_sandbox_oscar__demo_t2_tea_locations: {}
+  se_sandbox_oscar__demo_t2_tea_products: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_t2_tea_replenishment_lines
+    join_to_view: se_sandbox_oscar__demo_t2_tea_locations
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_t2_tea_replenishment_lines.location_id} =
+      ${se_sandbox_oscar__demo_t2_tea_locations.location_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_t2_tea_replenishment_lines
+    join_to_view: se_sandbox_oscar__demo_t2_tea_products
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_t2_tea_replenishment_lines.sku_id} =
+      ${se_sandbox_oscar__demo_t2_tea_products.sku_id}
+    relationship_type: many_to_one
+
+ai_context: |
+  Synthetic order lines picked at the Melbourne distribution centre for an Omni demo, 1 Jul to 31 Oct 2026, one row per location, SKU and order date: store replenishment twice a week per ranged SKU, the daily ecommerce pick per SKU and wholesale account orders. Say the data is synthetic.
+  Fill rate is units shipped over units ordered; short units are ordered minus shipped. Never average line level fill rates.
+  channel and state_name describe the ordering location.
+  When stock is short the DC fills ecommerce first, then stores and wholesale.
+  This is a unit fill rate, not on time in full.
+
+sample_queries:
+  fill_rate_by_channel_category_oct_2026:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_t2_tea_replenishment_lines.channel,
+          se_sandbox_oscar__demo_t2_tea_replenishment_lines.category,
+          se_sandbox_oscar__demo_t2_tea_replenishment_lines.fill_rate
+        ]
+      base_view: se_sandbox_oscar__demo_t2_tea_replenishment_lines
+      filters:
+        se_sandbox_oscar__demo_t2_tea_replenishment_lines.order_date:
+          between_dates: [ 2026-10-01, 2026-10-31 ]
+      topic: demo_t2_tea_dc_fulfilment
+    prompt: What was the DC fill rate by channel and category from 1 to 31 October
+      2026?
+  green_tea_short_units_oct_2026:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_t2_tea_replenishment_lines.channel,
+          se_sandbox_oscar__demo_t2_tea_replenishment_lines.short_units
+        ]
+      base_view: se_sandbox_oscar__demo_t2_tea_replenishment_lines
+      filters:
+        se_sandbox_oscar__demo_t2_tea_replenishment_lines.order_date:
+          between_dates: [ 2026-10-01, 2026-10-31 ]
+        se_sandbox_oscar__demo_t2_tea_replenishment_lines.category:
+          is: Green tea
+      topic: demo_t2_tea_dc_fulfilment
+    prompt: How many green tea units were short shipped by channel in October 2026?

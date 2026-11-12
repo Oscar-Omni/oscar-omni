@@ -1,4 +1,6 @@
 # Reference this view as se_sandbox_oscar__demo_t2_tea_promotions
+label: Promotions (synthetic)
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_T2_TEA_PROMOTIONS
@@ -6,26 +8,40 @@ table_name: DEMO_T2_TEA_PROMOTIONS
 dimensions:
   promo_id:
     sql: '"PROMO_ID"'
+    label: Promotion ID
     format: ID
+    primary_key: true
 
   promo_name:
     sql: '"PROMO_NAME"'
+    label: Promotion
+    synonyms: [ promo, promotion, offer, sale event ]
 
   promo_type:
     sql: '"PROMO_TYPE"'
+    label: Promotion type
 
   applies_to:
     sql: '"APPLIES_TO"'
+    label: Applies to categories
 
   start_date:
     sql: '"START_DATE"'
+    label: Promotion start
 
   end_date:
     sql: '"END_DATE"'
+    label: Promotion end
+    description: Last day of the promotion, inclusive
 
   discount_pct:
     sql: '"DISCOUNT_PCT"'
+    label: Headline discount %
 
 measures:
   count:
+    aggregate_type: count
+
+  promotion_count:
+    label: Promotions
     aggregate_type: count

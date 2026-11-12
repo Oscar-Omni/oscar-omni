@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_t2_tea_scenario_slots
+label: Scenario slots
+description: Three saved scenario slots for the Green tea recovery planner app.
+  Percent columns hold 0 to 100; freight is AUD per unit.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_T2_TEA_SCENARIO_SLOTS
@@ -6,26 +10,39 @@ table_name: DEMO_T2_TEA_SCENARIO_SLOTS
 dimensions:
   scenario_id:
     sql: '"SCENARIO_ID"'
+    label: Scenario ID
     format: ID
+    primary_key: true
 
   scenario_name:
     sql: '"SCENARIO_NAME"'
+    label: Scenario
+    synonyms: [ scenario, slot, option, plan ]
 
   scenario_note:
     sql: '"SCENARIO_NOTE"'
+    label: Scenario note
 
   seed_expedite_share_pct:
     sql: '"SEED_EXPEDITE_SHARE_PCT"'
+    label: Seed airfreight share %
 
   seed_freight_cost_aud:
     sql: '"SEED_FREIGHT_COST_AUD"'
+    label: Seed freight per unit (AUD)
 
   sell_through_pct:
     sql: '"SELL_THROUGH_PCT"'
+    label: Sell through %
 
   sort_order:
     sql: '"SORT_ORDER"'
+    label: Sort order
 
 measures:
   count:
+    aggregate_type: count
+
+  scenario_count:
+    label: Scenarios
     aggregate_type: count
