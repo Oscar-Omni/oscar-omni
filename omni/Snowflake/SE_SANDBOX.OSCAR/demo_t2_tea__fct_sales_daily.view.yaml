@@ -1,0 +1,125 @@
+# Reference this view as se_sandbox_oscar__demo_t2_tea__fct_sales_daily
+#This description was pulled from dbt.
+description: Daily sales by store, product, channel and promotion, with store
+  and product attributes joined on.
+
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_T2_TEA__FCT_SALES_DAILY
+
+dimensions:
+  sales_key:
+    sql: '"SALES_KEY"'
+    #This description was pulled from dbt.
+    description: One row per trade date, store, product, channel and promotion.
+    primary_key: true
+
+  trade_date:
+    sql: '"TRADE_DATE"'
+    #This description was pulled from dbt.
+    description: Trading day the sales were booked.
+
+  location_id:
+    sql: '"LOCATION_ID"'
+    format: ID
+    #This description was pulled from dbt.
+    description: Store the sales were made in.
+
+  location_name:
+    sql: '"LOCATION_NAME"'
+
+  city:
+    sql: '"CITY"'
+
+  store_format:
+    sql: '"STORE_FORMAT"'
+
+  state_name:
+    sql: '"STATE_NAME"'
+
+  sku_id:
+    sql: '"SKU_ID"'
+    format: ID
+
+  product_name:
+    sql: '"PRODUCT_NAME"'
+
+  category:
+    sql: '"CATEGORY"'
+
+  origin_country:
+    sql: '"ORIGIN_COUNTRY"'
+
+  channel:
+    sql: '"CHANNEL"'
+
+  promo_id:
+    sql: '"PROMO_ID"'
+    format: ID
+
+  units:
+    sql: '"UNITS"'
+
+  net_sales_aud:
+    sql: '"NET_SALES_AUD"'
+    #This description was pulled from dbt.
+    description: Sales after discounts, in Australian dollars, excluding GST.
+
+  discount_aud:
+    sql: '"DISCOUNT_AUD"'
+    #This description was pulled from dbt.
+    description: Promotional discount given, in Australian dollars.
+
+  gross_sales_aud:
+    sql: '"GROSS_SALES_AUD"'
+    #This description was pulled from dbt.
+    description: Net sales plus discount, the shelf price value of what sold.
+
+  gross_margin_aud:
+    sql: '"GROSS_MARGIN_AUD"'
+    #This description was pulled from dbt.
+    description: Net sales less cost of goods, in Australian dollars.
+
+  ranged_day:
+    sql: '"RANGED_DAY"'
+
+  in_stock_day:
+    sql: '"IN_STOCK_DAY"'
+
+measures:
+  count:
+    aggregate_type: count
+
+#The info below was pulled from your dbt repository and is read-only.
+dbt:
+  name: demo_t2_tea__fct_sales_daily
+  target_schema: OSCAR
+  description: Daily sales by store, product, channel and promotion, with store
+    and product attributes joined on.
+  config:
+    materialized: table
+  code: |-
+    select
+        md5(concat_ws('|', s.trade_date, s.location_id, s.sku_id, s.channel, coalesce(s.promo_id, ''))) as sales_key,
+        s.trade_date,
+        s.location_id,
+        l.location_name,
+        l.city,
+        l.store_format,
+        s.state_name,
+        s.sku_id,
+        p.product_name,
+        s.category,
+        p.origin_country,
+        s.channel,
+        s.promo_id,
+        s.units,
+        s.net_sales_aud,
+        s.discount_aud,
+        s.net_sales_aud + s.discount_aud as gross_sales_aud,
+        s.gross_margin_aud,
+        s.ranged_day,
+        s.in_stock_day
+    from {{ source('demo_t2_tea', 'sales_daily') }} as s
+    left join {{ source('demo_t2_tea', 'locations') }} as l on l.location_id = s.location_id
+    left join {{ source('demo_t2_tea', 'products') }} as p on p.sku_id = s.sku_id

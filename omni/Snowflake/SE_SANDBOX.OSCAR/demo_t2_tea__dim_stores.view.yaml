@@ -1,0 +1,56 @@
+# Reference this view as se_sandbox_oscar__demo_t2_tea__dim_stores
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_T2_TEA__DIM_STORES
+
+dimensions:
+  location_id:
+    sql: '"LOCATION_ID"'
+    format: ID
+    primary_key: true
+
+  location_name:
+    sql: '"LOCATION_NAME"'
+
+  city:
+    sql: '"CITY"'
+
+  country_name:
+    sql: '"COUNTRY_NAME"'
+
+  store_format:
+    sql: '"STORE_FORMAT"'
+
+  first_trade_date:
+    sql: '"FIRST_TRADE_DATE"'
+
+  last_trade_date:
+    sql: '"LAST_TRADE_DATE"'
+
+  lifetime_net_sales_aud:
+    sql: '"LIFETIME_NET_SALES_AUD"'
+
+measures:
+  count:
+    aggregate_type: count
+
+#The info below was pulled from your dbt repository and is read-only.
+dbt:
+  name: demo_t2_tea__dim_stores
+  target_schema: OSCAR
+  config:
+    materialized: table
+  code: |-
+    select
+        l.location_id,
+        l.location_name,
+        l.city,
+        l.country_name,
+        l.store_format,
+        min(s.trade_date) as first_trade_date,
+        max(s.trade_date) as last_trade_date,
+        sum(s.net_sales_aud) as lifetime_net_sales_aud
+    from {{ source('demo_t2_tea', 'locations') }} as l
+    left join {{ source('demo_t2_tea', 'sales_daily') }} as s on s.location_id = l.location_id
+    group by all
+  referenced_by: [ demo_t2_tea__fct_sales_daily ]
