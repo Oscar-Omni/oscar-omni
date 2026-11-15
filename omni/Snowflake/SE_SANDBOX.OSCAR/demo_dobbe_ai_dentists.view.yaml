@@ -1,0 +1,23 @@
+# Reference this view as se_sandbox_oscar__demo_dobbe_ai_dentists
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_DOBBE_AI_DENTISTS
+
+dimensions:
+  dentist_id:
+    sql: '"DENTIST_ID"'
+    format: ID
+
+  practice_id:
+    sql: '"PRACTICE_ID"'
+    format: ID
+
+  dentist_label:
+    sql: '"DENTIST_LABEL"'
+
+  experience_cohort:
+    sql: '"EXPERIENCE_COHORT"'
+
+measures:
+  count:
+    aggregate_type: count

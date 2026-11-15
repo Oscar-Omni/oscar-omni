@@ -1,0 +1,75 @@
+# Reference this view as se_sandbox_oscar__demo_dobbe_ai_appointments
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_DOBBE_AI_APPOINTMENTS
+
+dimensions:
+  appointment_id:
+    sql: '"APPOINTMENT_ID"'
+    format: ID
+
+  appointment_date:
+    sql: '"APPOINTMENT_DATE"'
+
+  practice_id:
+    sql: '"PRACTICE_ID"'
+    format: ID
+
+  dentist_id:
+    sql: '"DENTIST_ID"'
+    format: ID
+
+  region:
+    sql: '"REGION"'
+
+  state_name:
+    sql: '"STATE_NAME"'
+
+  plan_tier:
+    sql: '"PLAN_TIER"'
+
+  experience_cohort:
+    sql: '"EXPERIENCE_COHORT"'
+
+  attended:
+    sql: '"ATTENDED"'
+
+  no_show:
+    sql: '"NO_SHOW"'
+
+  radiographs_taken:
+    sql: '"RADIOGRAPHS_TAKEN"'
+
+  xray_analysed:
+    sql: '"XRAY_ANALYSED"'
+
+  xray_model_version:
+    sql: '"XRAY_MODEL_VERSION"'
+
+  findings_flagged:
+    sql: '"FINDINGS_FLAGGED"'
+
+  findings_overridden:
+    sql: '"FINDINGS_OVERRIDDEN"'
+
+  note_generated:
+    sql: '"NOTE_GENERATED"'
+
+  note_minutes_saved:
+    sql: '"NOTE_MINUTES_SAVED"'
+
+  xray_minutes_saved:
+    sql: '"XRAY_MINUTES_SAVED"'
+
+  front_desk_tasks_automated:
+    sql: '"FRONT_DESK_TASKS_AUTOMATED"'
+
+  front_desk_minutes_saved:
+    sql: '"FRONT_DESK_MINUTES_SAVED"'
+
+  minutes_saved:
+    sql: '"MINUTES_SAVED"'
+
+measures:
+  count:
+    aggregate_type: count

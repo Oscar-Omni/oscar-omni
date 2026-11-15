@@ -1,0 +1,46 @@
+# Reference this view as se_sandbox_oscar__demo_dobbe_ai_treatment_plans
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_DOBBE_AI_TREATMENT_PLANS
+
+dimensions:
+  plan_id:
+    sql: '"PLAN_ID"'
+    format: ID
+
+  appointment_id:
+    sql: '"APPOINTMENT_ID"'
+    format: ID
+
+  practice_id:
+    sql: '"PRACTICE_ID"'
+    format: ID
+
+  dentist_id:
+    sql: '"DENTIST_ID"'
+    format: ID
+
+  proposed_date:
+    sql: '"PROPOSED_DATE"'
+
+  region:
+    sql: '"REGION"'
+
+  letter_timing:
+    sql: '"LETTER_TIMING"'
+
+  same_day_letter:
+    sql: '"SAME_DAY_LETTER"'
+
+  plan_value_aud:
+    sql: '"PLAN_VALUE_AUD"'
+
+  accepted:
+    sql: '"ACCEPTED"'
+
+  accepted_value_aud:
+    sql: '"ACCEPTED_VALUE_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

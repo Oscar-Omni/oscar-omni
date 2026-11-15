@@ -1,0 +1,28 @@
+# Reference this view as se_sandbox_oscar__demo_brighte_capital_2_partner_sites
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_BRIGHTE_CAPITAL_2_PARTNER_SITES
+
+dimensions:
+  partner_site_id:
+    sql: '"PARTNER_SITE_ID"'
+    format: ID
+
+  partner_name:
+    sql: '"PARTNER_NAME"'
+
+  partner_tier:
+    sql: '"PARTNER_TIER"'
+
+  site_name:
+    sql: '"SITE_NAME"'
+
+  site_town:
+    sql: '"SITE_TOWN"'
+
+  site_state:
+    sql: '"SITE_STATE"'
+
+measures:
+  count:
+    aggregate_type: count

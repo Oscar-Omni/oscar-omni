@@ -1,0 +1,84 @@
+# Reference this view as se_sandbox_oscar__demo_brighte_capital_2_applications
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_BRIGHTE_CAPITAL_2_APPLICATIONS
+
+dimensions:
+  application_id:
+    sql: '"APPLICATION_ID"'
+    format: ID
+
+  partner_name:
+    sql: '"PARTNER_NAME"'
+
+  partner_site_id:
+    sql: '"PARTNER_SITE_ID"'
+    format: ID
+
+  sales_rep_id:
+    sql: '"SALES_REP_ID"'
+    format: ID
+
+  product_category:
+    sql: '"PRODUCT_CATEGORY"'
+
+  customer_state:
+    sql: '"CUSTOMER_STATE"'
+
+  postcode_region:
+    sql: '"POSTCODE_REGION"'
+
+  loan_amount_aud:
+    sql: '"LOAN_AMOUNT_AUD"'
+
+  term_months:
+    sql: '"TERM_MONTHS"'
+
+  submitted_date:
+    sql: '"SUBMITTED_DATE"'
+
+  decision_date:
+    sql: '"DECISION_DATE"'
+
+  approved_date:
+    sql: '"APPROVED_DATE"'
+
+  installed_date:
+    sql: '"INSTALLED_DATE"'
+
+  docs_received_date:
+    sql: '"DOCS_RECEIVED_DATE"'
+
+  settled_date:
+    sql: '"SETTLED_DATE"'
+
+  current_status:
+    sql: '"CURRENT_STATUS"'
+
+  installation_status:
+    sql: '"INSTALLATION_STATUS"'
+
+  pending_document:
+    sql: '"PENDING_DOCUMENT"'
+
+  days_awaiting_settlement:
+    sql: '"DAYS_AWAITING_SETTLEMENT"'
+
+  decline_category:
+    sql: '"DECLINE_CATEGORY"'
+
+  decline_reason_detail:
+    sql: '"DECLINE_REASON_DETAIL"'
+
+  credit_score_band:
+    sql: '"CREDIT_SCORE_BAND"'
+
+  verified_income_band:
+    sql: '"VERIFIED_INCOME_BAND"'
+
+  hardship_flag:
+    sql: '"HARDSHIP_FLAG"'
+
+measures:
+  count:
+    aggregate_type: count

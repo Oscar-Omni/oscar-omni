@@ -1,0 +1,23 @@
+# Reference this view as se_sandbox_oscar__demo_brighte_capital_2_sales_reps
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_BRIGHTE_CAPITAL_2_SALES_REPS
+
+dimensions:
+  sales_rep_id:
+    sql: '"SALES_REP_ID"'
+    format: ID
+
+  partner_name:
+    sql: '"PARTNER_NAME"'
+
+  partner_site_id:
+    sql: '"PARTNER_SITE_ID"'
+    format: ID
+
+  rep_name:
+    sql: '"REP_NAME"'
+
+measures:
+  count:
+    aggregate_type: count

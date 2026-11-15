@@ -1,0 +1,64 @@
+# Reference this view as se_sandbox_oscar__demo_brighte_capital_2_application_events
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_BRIGHTE_CAPITAL_2_APPLICATION_EVENTS
+
+dimensions:
+  event_id:
+    sql: '"EVENT_ID"'
+    format: ID
+
+  application_id:
+    sql: '"APPLICATION_ID"'
+    format: ID
+
+  partner_name:
+    sql: '"PARTNER_NAME"'
+
+  partner_site_id:
+    sql: '"PARTNER_SITE_ID"'
+    format: ID
+
+  sales_rep_id:
+    sql: '"SALES_REP_ID"'
+    format: ID
+
+  product_category:
+    sql: '"PRODUCT_CATEGORY"'
+
+  event_type:
+    sql: '"EVENT_TYPE"'
+
+  event_date:
+    sql: '"EVENT_DATE"'
+
+  is_submitted:
+    sql: '"IS_SUBMITTED"'
+
+  is_decision:
+    sql: '"IS_DECISION"'
+
+  is_approved:
+    sql: '"IS_APPROVED"'
+
+  is_declined:
+    sql: '"IS_DECLINED"'
+
+  is_settled:
+    sql: '"IS_SETTLED"'
+
+  days_to_decision:
+    sql: '"DAYS_TO_DECISION"'
+
+  days_to_settle:
+    sql: '"DAYS_TO_SETTLE"'
+
+  approved_amount_aud:
+    sql: '"APPROVED_AMOUNT_AUD"'
+
+  settled_amount_aud:
+    sql: '"SETTLED_AMOUNT_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

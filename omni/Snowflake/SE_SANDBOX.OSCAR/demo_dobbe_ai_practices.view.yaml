@@ -1,0 +1,34 @@
+# Reference this view as se_sandbox_oscar__demo_dobbe_ai_practices
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_DOBBE_AI_PRACTICES
+
+dimensions:
+  practice_id:
+    sql: '"PRACTICE_ID"'
+    format: ID
+
+  practice_name:
+    sql: '"PRACTICE_NAME"'
+
+  city:
+    sql: '"CITY"'
+
+  state_name:
+    sql: '"STATE_NAME"'
+
+  country_name:
+    sql: '"COUNTRY_NAME"'
+
+  region:
+    sql: '"REGION"'
+
+  plan_tier:
+    sql: '"PLAN_TIER"'
+
+  chairs:
+    sql: '"CHAIRS"'
+
+measures:
+  count:
+    aggregate_type: count
