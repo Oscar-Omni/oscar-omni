@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_dobbe_ai_dentists
+label: Dentists
+description: One row per dentist using Dobbe (synthetic), labelled by practice
+  and letter, never by name.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_DOBBE_AI_DENTISTS
@@ -6,18 +10,29 @@ table_name: DEMO_DOBBE_AI_DENTISTS
 dimensions:
   dentist_id:
     sql: '"DENTIST_ID"'
+    label: Dentist ID
     format: ID
+    primary_key: true
 
   practice_id:
     sql: '"PRACTICE_ID"'
     format: ID
+    hidden: true
 
   dentist_label:
     sql: '"DENTIST_LABEL"'
+    label: Dentist
+    description: Practice name plus dentist letter, for example Houston practice 02,
+      dentist A
+    synonyms: [ dentist, clinician, provider ]
 
   experience_cohort:
     sql: '"EXPERIENCE_COHORT"'
+    label: Dentist experience cohort
+    description: Early career (under 5 years), Mid career (5 to 14 years) or
+      Experienced (15 years or more)
 
 measures:
   count:
+    label: Dentists
     aggregate_type: count

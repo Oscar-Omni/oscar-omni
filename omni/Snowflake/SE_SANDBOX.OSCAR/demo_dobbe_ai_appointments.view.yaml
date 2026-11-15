@@ -1,4 +1,9 @@
 # Reference this view as se_sandbox_oscar__demo_dobbe_ai_appointments
+label: Appointments
+description: One row per booked dental appointment at a Dobbe practice, attended
+  or no show, weekdays 1 Nov 2025 to 31 Oct 2026 (synthetic). Every AI feature
+  is a column on the visit.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_DOBBE_AI_APPOINTMENTS
@@ -6,70 +11,220 @@ table_name: DEMO_DOBBE_AI_APPOINTMENTS
 dimensions:
   appointment_id:
     sql: '"APPOINTMENT_ID"'
+    label: Appointment ID
     format: ID
+    primary_key: true
 
   appointment_date:
     sql: '"APPOINTMENT_DATE"'
+    label: Appointment date
 
   practice_id:
     sql: '"PRACTICE_ID"'
+    label: Practice ID
     format: ID
 
   dentist_id:
     sql: '"DENTIST_ID"'
+    label: Dentist ID
     format: ID
 
   region:
     sql: '"REGION"'
+    label: Region
+    description: Australia or North America
+    synonyms: [ market, AU, NA, US and Canada ]
 
   state_name:
     sql: '"STATE_NAME"'
+    label: State or province
+    description: Natural Earth admin1 name of the practice's state or province
+    synonyms: [ state, province ]
 
   plan_tier:
     sql: '"PLAN_TIER"'
+    label: Plan tier
+    description: Dobbe plan of the practice, Starter, Pro or Group
+    synonyms: [ plan, tier, subscription ]
 
   experience_cohort:
     sql: '"EXPERIENCE_COHORT"'
+    label: Experience cohort
+    description: Dentist's years in practice band, Early career (under 5), Mid
+      career (5 to 14) or Experienced (15 or more)
+    synonyms: [ cohort, experience, seniority, senior dentists, early career ]
 
   attended:
     sql: '"ATTENDED"'
+    label: Attended (flag)
+    description: 1 when the patient attended, 0 for a no show
 
   no_show:
     sql: '"NO_SHOW"'
+    label: No show (flag)
 
   radiographs_taken:
     sql: '"RADIOGRAPHS_TAKEN"'
+    label: Radiographs taken (flag)
+    description: 1 when radiographs were taken, so the visit was eligible for AI
+      X-ray analysis
 
   xray_analysed:
     sql: '"XRAY_ANALYSED"'
+    label: X-ray analysed (flag)
 
   xray_model_version:
     sql: '"XRAY_MODEL_VERSION"'
+    label: X-ray model version
+    description: X-ray model that ran, xr-2.8 before 2 Mar 2026, xr-3.0 from 2 Mar
+      2026, xr-3.1 in North America from 21 Sep 2026. Null when no analysis ran.
+    synonyms: [ model version, X-ray model, release, xr-3.1 ]
 
   findings_flagged:
     sql: '"FINDINGS_FLAGGED"'
+    label: Findings flagged on visit
+    hidden: true
 
   findings_overridden:
     sql: '"FINDINGS_OVERRIDDEN"'
+    label: Findings overridden on visit
+    hidden: true
 
   note_generated:
     sql: '"NOTE_GENERATED"'
+    label: AI note drafted (flag)
 
   note_minutes_saved:
     sql: '"NOTE_MINUTES_SAVED"'
+    hidden: true
 
   xray_minutes_saved:
     sql: '"XRAY_MINUTES_SAVED"'
+    hidden: true
 
   front_desk_tasks_automated:
     sql: '"FRONT_DESK_TASKS_AUTOMATED"'
+    hidden: true
 
   front_desk_minutes_saved:
     sql: '"FRONT_DESK_MINUTES_SAVED"'
+    hidden: true
 
   minutes_saved:
     sql: '"MINUTES_SAVED"'
+    hidden: true
 
 measures:
   count:
     aggregate_type: count
+
+  appointment_count:
+    label: Appointments
+    format: number_0
+    description: Booked appointments, attended and no show
+    aggregate_type: count
+
+  attended_appointments:
+    sql: '"ATTENDED"'
+    label: Attended appointments
+    format: number_0
+    aggregate_type: sum
+
+  no_show_rate:
+    sql: SUM("NO_SHOW") / NULLIF(COUNT(*), 0)
+    label: No show rate
+    format: percent_1
+    description: Share of booked appointments the patient missed
+    synonyms: [ no shows, DNAs, missed appointments ]
+
+  radiograph_appointments:
+    sql: '"RADIOGRAPHS_TAKEN"'
+    label: Radiograph appointments
+    format: number_0
+    description: Appointments where radiographs were taken, so eligible for AI X-ray
+      analysis
+    aggregate_type: sum
+    synonyms: [ X-ray visits, eligible appointments ]
+
+  xray_analyses:
+    sql: '"XRAY_ANALYSED"'
+    label: X-ray analyses
+    format: number_0
+    description: Appointments where Dobbe's AI X-ray analysis ran
+    aggregate_type: sum
+    synonyms: [ AI reads, scans analysed ]
+
+  xray_adoption_rate:
+    sql: SUM("XRAY_ANALYSED") / NULLIF(SUM("RADIOGRAPHS_TAKEN"), 0)
+    label: X-ray adoption
+    format: percent_1
+    description: The one definition of X-ray adoption. AI X-ray analyses over
+      radiograph appointments, never over all appointments.
+    synonyms: [ X-ray usage, AI X-ray use, radiograph analysis rate, X ray adoption ]
+
+  findings_flagged_total:
+    sql: '"FINDINGS_FLAGGED"'
+    label: Findings flagged
+    format: number_0
+    description: Findings the AI flagged on analysed radiographs
+    aggregate_type: sum
+    synonyms: [ findings, flags, detections ]
+
+  findings_overridden_total:
+    sql: '"FINDINGS_OVERRIDDEN"'
+    label: Findings overridden
+    format: number_0
+    description: Flagged findings the dentist rejected or changed
+    aggregate_type: sum
+
+  override_rate:
+    sql: SUM("FINDINGS_OVERRIDDEN") / NULLIF(SUM("FINDINGS_FLAGGED"), 0)
+    label: Override rate
+    format: percent_1
+    description: Share of AI X-ray findings the dentist rejected or changed
+    synonyms: [ overrides, rejected findings, dentist disagreed ]
+
+  finding_acceptance_rate:
+    sql: (SUM("FINDINGS_FLAGGED") - SUM("FINDINGS_OVERRIDDEN")) /
+      NULLIF(SUM("FINDINGS_FLAGGED"), 0)
+    label: Finding acceptance rate
+    format: percent_1
+    description: The one definition of finding acceptance. AI X-ray findings the
+      dentist kept over findings flagged. X-ray quality, not treatment plan
+      acceptance.
+    synonyms:
+      [
+        finding acceptance,
+        accepted findings,
+        X-ray acceptance,
+        trust in findings
+      ]
+
+  notes_drafted:
+    sql: '"NOTE_GENERATED"'
+    label: AI notes drafted
+    format: number_0
+    aggregate_type: sum
+    synonyms: [ AI notes, clinical notes generated ]
+
+  note_adoption_rate:
+    sql: SUM("NOTE_GENERATED") / NULLIF(SUM("ATTENDED"), 0)
+    label: AI notes adoption
+    format: percent_1
+    description: Attended visits with an AI drafted clinical note over attended visits
+    synonyms: [ notes adoption, AI notes usage, scribe adoption ]
+
+  hours_saved:
+    sql: SUM("MINUTES_SAVED") / 60
+    label: Hours saved
+    format: number_0
+    description: The one definition of time saved. Note, X-ray charting and front
+      desk minutes saved, in hours.
+    synonyms: [ time saved, minutes saved ]
+
+  front_desk_tasks:
+    sql: '"FRONT_DESK_TASKS_AUTOMATED"'
+    label: Front desk tasks automated
+    format: number_0
+    aggregate_type: sum
+    synonyms: [ front desk automation, reminders, confirmations, recalls ]

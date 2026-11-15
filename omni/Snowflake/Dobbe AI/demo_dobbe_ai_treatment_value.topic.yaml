@@ -1,0 +1,83 @@
+base_view: se_sandbox_oscar__demo_dobbe_ai_treatment_plans
+label: Treatment value
+group_label: Dobbe AI
+description: Treatment plans proposed at Dobbe practices, AI patient letter
+  timing and acceptance, in AUD (synthetic demo data). For Dobbe's founders and
+  customer team and the practice scorecard app.
+
+joins:
+  se_sandbox_oscar__demo_dobbe_ai_practices: {}
+  se_sandbox_oscar__demo_dobbe_ai_dentists: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_dobbe_ai_treatment_plans
+    join_to_view: se_sandbox_oscar__demo_dobbe_ai_practices
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_dobbe_ai_treatment_plans.practice_id} =
+      ${se_sandbox_oscar__demo_dobbe_ai_practices.practice_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_dobbe_ai_treatment_plans
+    join_to_view: se_sandbox_oscar__demo_dobbe_ai_dentists
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_dobbe_ai_treatment_plans.dentist_id} =
+      ${se_sandbox_oscar__demo_dobbe_ai_dentists.dentist_id}
+    relationship_type: many_to_one
+
+ai_context: |-
+  Synthetic treatment plans for an Omni demo, not Dobbe's figures. One row per plan proposed at an attended appointment, 1 Nov 2025 to 31 Oct 2026. plan_value_aud is AUD; North American values are converted at fixed synthetic rates. accepted is 1 when the patient accepted within 30 days, and every plan is resolved, including late October ones (a simplification).
+
+  letter_timing is when the AI patient letter went out: Same day, Next day, 2+ days or Not sent. Plan acceptance rate is accepted plans over plans proposed; it is not finding acceptance, which lives in the AI adoption topic. Same day letters went from about 26% of plans to about 57% across the year, with a jump from 1 Jun 2026 when letters could be sent at checkout. The higher acceptance on same day letters is an observed difference, not a controlled test; say so when asked about cause.
+
+  Compute rates from summed numerators and denominators with the governed measures, never by averaging rates. Use treatment_plans.proposed_date for every date filter, end exclusive.
+
+sample_queries:
+  acceptance_by_letter_timing:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_dobbe_ai_treatment_plans.letter_timing,
+          se_sandbox_oscar__demo_dobbe_ai_treatment_plans.plan_count,
+          se_sandbox_oscar__demo_dobbe_ai_treatment_plans.plan_acceptance_rate
+        ]
+      base_view: se_sandbox_oscar__demo_dobbe_ai_treatment_plans
+      filters:
+        se_sandbox_oscar__demo_dobbe_ai_treatment_plans.proposed_date:
+          between_dates: [ 2026-08-01, 2026-11-01 ]
+      topic: demo_dobbe_ai_treatment_value
+    prompt: What was plan acceptance by letter timing from 1 August to 31 October 2026?
+  accepted_value_sep_oct:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_dobbe_ai_treatment_plans.proposed_date[mont\
+            h]",
+          se_sandbox_oscar__demo_dobbe_ai_treatment_plans.accepted_value,
+          se_sandbox_oscar__demo_dobbe_ai_treatment_plans.plan_acceptance_rate
+        ]
+      base_view: se_sandbox_oscar__demo_dobbe_ai_treatment_plans
+      filters:
+        se_sandbox_oscar__demo_dobbe_ai_treatment_plans.proposed_date:
+          between_dates: [ 2026-09-01, 2026-11-01 ]
+      topic: demo_dobbe_ai_treatment_value
+    prompt: How did accepted treatment value change from 1 to 31 October 2026
+      compared with 1 to 30 September 2026?
+  melbourne_04_dentist_letters:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_dobbe_ai_dentists.dentist_label,
+          se_sandbox_oscar__demo_dobbe_ai_treatment_plans.plan_count,
+          se_sandbox_oscar__demo_dobbe_ai_treatment_plans.same_day_letter_rate
+        ]
+      base_view: se_sandbox_oscar__demo_dobbe_ai_treatment_plans
+      filters:
+        se_sandbox_oscar__demo_dobbe_ai_treatment_plans.proposed_date:
+          between_dates: [ 2026-08-01, 2026-11-01 ]
+        se_sandbox_oscar__demo_dobbe_ai_practices.practice_name:
+          is: Melbourne practice 04
+      sorts:
+        - field: se_sandbox_oscar__demo_dobbe_ai_treatment_plans.same_day_letter_rate
+      topic: demo_dobbe_ai_treatment_value
+    prompt: Which dentists at Melbourne practice 04 sent the fewest same day letters
+      from 1 August to 31 October 2026?

@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_dobbe_ai_practices
+label: Practices
+description: One row per dental practice on Dobbe (synthetic). 64 practices, 36
+  Australia and 28 North America.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_DOBBE_AI_PRACTICES
@@ -6,29 +10,47 @@ table_name: DEMO_DOBBE_AI_PRACTICES
 dimensions:
   practice_id:
     sql: '"PRACTICE_ID"'
+    label: Practice ID
     format: ID
+    primary_key: true
 
   practice_name:
     sql: '"PRACTICE_NAME"'
+    label: Practice
+    description: City plus a number, for example Houston practice 02. Synthetic,
+      never a real practice.
+    synonyms: [ practice, clinic, customer, account ]
 
   city:
     sql: '"CITY"'
+    label: City
 
   state_name:
     sql: '"STATE_NAME"'
+    label: State or province
+    synonyms: [ state, province ]
 
   country_name:
     sql: '"COUNTRY_NAME"'
+    label: Country
 
   region:
     sql: '"REGION"'
+    label: Region
+    description: Australia or North America
+    synonyms: [ market, AU, NA ]
 
   plan_tier:
     sql: '"PLAN_TIER"'
+    label: Plan tier
+    description: Dobbe plan, Starter, Pro or Group (synthetic)
+    synonyms: [ plan, tier, subscription ]
 
   chairs:
     sql: '"CHAIRS"'
+    label: Dental chairs
 
 measures:
   count:
+    label: Practices
     aggregate_type: count

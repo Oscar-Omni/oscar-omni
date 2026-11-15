@@ -1,4 +1,8 @@
 # Reference this view as se_sandbox_oscar__demo_dobbe_ai_treatment_plans
+label: Treatment plans
+description: One row per treatment plan proposed at an attended appointment, 1
+  Nov 2025 to 31 Oct 2026 (synthetic). Money in AUD.
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_DOBBE_AI_TREATMENT_PLANS
@@ -6,41 +10,105 @@ table_name: DEMO_DOBBE_AI_TREATMENT_PLANS
 dimensions:
   plan_id:
     sql: '"PLAN_ID"'
+    label: Plan ID
     format: ID
+    primary_key: true
 
   appointment_id:
     sql: '"APPOINTMENT_ID"'
+    label: Appointment ID
     format: ID
 
   practice_id:
     sql: '"PRACTICE_ID"'
+    label: Practice ID
     format: ID
 
   dentist_id:
     sql: '"DENTIST_ID"'
+    label: Dentist ID
     format: ID
 
   proposed_date:
     sql: '"PROPOSED_DATE"'
+    label: Proposed date
 
   region:
     sql: '"REGION"'
+    label: Region
+    synonyms: [ market ]
 
   letter_timing:
     sql: '"LETTER_TIMING"'
+    label: Letter timing
+    description: When the AI patient letter for the plan went out, Same day, Next
+      day, 2+ days or Not sent
+    synonyms: [ patient letter, treatment letter, follow up letter ]
 
   same_day_letter:
     sql: '"SAME_DAY_LETTER"'
+    label: Same day letter (flag)
 
   plan_value_aud:
     sql: '"PLAN_VALUE_AUD"'
+    label: Plan value (AUD)
+    format: '"A$"#,##0'
 
   accepted:
     sql: '"ACCEPTED"'
+    label: Accepted (flag)
+    description: 1 when the patient accepted the plan within 30 days
 
   accepted_value_aud:
     sql: '"ACCEPTED_VALUE_AUD"'
+    hidden: true
 
 measures:
   count:
     aggregate_type: count
+
+  plan_count:
+    label: Treatment plans
+    format: number_0
+    aggregate_type: count
+    synonyms: [ cases, plans proposed ]
+
+  accepted_plans:
+    sql: '"ACCEPTED"'
+    label: Accepted plans
+    format: number_0
+    aggregate_type: sum
+
+  plan_acceptance_rate:
+    sql: SUM("ACCEPTED") / NULLIF(COUNT(*), 0)
+    label: Plan acceptance rate
+    format: percent_1
+    description: The one definition of plan acceptance. Plans accepted within 30
+      days over plans proposed. Not finding acceptance.
+    synonyms: [ case acceptance, treatment acceptance, conversion ]
+
+  accepted_value:
+    sql: '"ACCEPTED_VALUE_AUD"'
+    label: Accepted treatment value (AUD)
+    format: '"A$"#,##0'
+    aggregate_type: sum
+    synonyms: [ accepted treatment, case value accepted ]
+
+  plan_value:
+    sql: '"PLAN_VALUE_AUD"'
+    label: Proposed treatment value (AUD)
+    format: '"A$"#,##0'
+    aggregate_type: sum
+
+  avg_plan_value:
+    sql: SUM("PLAN_VALUE_AUD") / NULLIF(COUNT(*), 0)
+    label: Average plan value (AUD)
+    format: '"A$"#,##0'
+    synonyms: [ case size ]
+
+  same_day_letter_rate:
+    sql: SUM("SAME_DAY_LETTER") / NULLIF(COUNT(*), 0)
+    label: Same day letter rate
+    format: percent_1
+    description: Plans whose AI patient letter went out the day they were proposed
+    synonyms: [ same day letters, same day share ]

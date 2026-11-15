@@ -1,0 +1,109 @@
+base_view: se_sandbox_oscar__demo_dobbe_ai_appointments
+label: AI adoption
+group_label: Dobbe AI
+description: AI feature adoption and quality across Dobbe practices, one row per
+  booked appointment (synthetic demo data). For Dobbe's product and engineering
+  team and Claude agents through Omni's MCP server.
+
+joins:
+  se_sandbox_oscar__demo_dobbe_ai_practices: {}
+  se_sandbox_oscar__demo_dobbe_ai_dentists: {}
+
+relationships:
+  - join_from_view: se_sandbox_oscar__demo_dobbe_ai_appointments
+    join_to_view: se_sandbox_oscar__demo_dobbe_ai_practices
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_dobbe_ai_appointments.practice_id} =
+      ${se_sandbox_oscar__demo_dobbe_ai_practices.practice_id}
+    relationship_type: many_to_one
+
+  - join_from_view: se_sandbox_oscar__demo_dobbe_ai_appointments
+    join_to_view: se_sandbox_oscar__demo_dobbe_ai_dentists
+    join_type: always_left
+    on_sql: ${se_sandbox_oscar__demo_dobbe_ai_appointments.dentist_id} =
+      ${se_sandbox_oscar__demo_dobbe_ai_dentists.dentist_id}
+    relationship_type: many_to_one
+
+ai_context: |-
+  Synthetic product usage data for an Omni demo, not Dobbe's figures. One row per booked appointment at 64 synthetic practices (36 Australia, 28 North America), weekdays 1 Nov 2025 to 31 Oct 2026. Say the data is synthetic.
+
+  X-ray adoption is appointments.xray_adoption_rate: AI X-ray analyses over appointments where radiographs were taken, never over all appointments. Override rate is findings the dentist rejected over findings the AI flagged; finding acceptance rate is one minus that. Acceptance alone is ambiguous: finding acceptance is X-ray quality in this topic, plan acceptance is treatment plans in the Treatment value topic; say which one you used. Notes adoption is AI drafted notes over attended visits. Hours saved is note, X-ray charting and front desk minutes over 60.
+
+  experience_cohort is the dentist's years in practice band. xray_model_version is the X-ray model that ran: xr-2.8 until 1 Mar 2026, xr-3.0 from 2 Mar 2026, and xr-3.1 for North American practices from 21 Sep 2026 while Australia stayed on xr-3.0. A practice stopped using X-ray analysis in a period when it took radiographs but ran no analyses; to find stopped practices compare xray_analyses by practices.practice_name across the two periods and keep practices with analyses in the first and none in the second.
+
+  Compute every rate from summed numerators and denominators with the governed measures; never average rates across practices, dentists or days. Use appointments.appointment_date for every date filter, end exclusive. Describe what changed, where and when; do not claim a clinical cause the data cannot show.
+
+sample_queries:
+  stopped_practices_sep_oct:
+    query:
+      fields:
+        [
+          se_sandbox_oscar__demo_dobbe_ai_practices.practice_name,
+          se_sandbox_oscar__demo_dobbe_ai_appointments.region,
+          "se_sandbox_oscar__demo_dobbe_ai_appointments.appointment_date[mont\
+            h]",
+          se_sandbox_oscar__demo_dobbe_ai_appointments.radiograph_appointments,
+          se_sandbox_oscar__demo_dobbe_ai_appointments.xray_analyses
+        ]
+      base_view: se_sandbox_oscar__demo_dobbe_ai_appointments
+      filters:
+        se_sandbox_oscar__demo_dobbe_ai_appointments.appointment_date:
+          between_dates: [ 2026-09-01, 2026-11-01 ]
+      sorts:
+        - field: se_sandbox_oscar__demo_dobbe_ai_appointments.xray_analyses
+      topic: demo_dobbe_ai_ai_adoption
+    prompt: Which practices ran AI X-ray analyses from 1 to 30 September 2026 but
+      none from 1 to 31 October 2026?
+  xray_adoption_by_region_month:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_dobbe_ai_appointments.appointment_date[mont\
+            h]",
+          se_sandbox_oscar__demo_dobbe_ai_appointments.region,
+          se_sandbox_oscar__demo_dobbe_ai_appointments.xray_adoption_rate
+        ]
+      base_view: se_sandbox_oscar__demo_dobbe_ai_appointments
+      filters:
+        se_sandbox_oscar__demo_dobbe_ai_appointments.appointment_date:
+          between_dates: [ 2026-09-01, 2026-11-01 ]
+      topic: demo_dobbe_ai_ai_adoption
+    prompt: What was X-ray adoption by region from 1 to 31 October 2026 compared
+      with 1 to 30 September 2026?
+  na_cohort_override_aug_oct:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_dobbe_ai_appointments.appointment_date[mont\
+            h]",
+          se_sandbox_oscar__demo_dobbe_ai_appointments.experience_cohort,
+          se_sandbox_oscar__demo_dobbe_ai_appointments.xray_model_version,
+          se_sandbox_oscar__demo_dobbe_ai_appointments.xray_adoption_rate,
+          se_sandbox_oscar__demo_dobbe_ai_appointments.override_rate
+        ]
+      base_view: se_sandbox_oscar__demo_dobbe_ai_appointments
+      filters:
+        se_sandbox_oscar__demo_dobbe_ai_appointments.appointment_date:
+          between_dates: [ 2026-08-01, 2026-11-01 ]
+        se_sandbox_oscar__demo_dobbe_ai_appointments.region:
+          is: North America
+      topic: demo_dobbe_ai_ai_adoption
+    prompt: For North American practices, what was the override rate by experience
+      cohort and X-ray model version from 1 to 31 October 2026 against 1 to 31
+      August 2026?
+  hours_saved_by_tier:
+    query:
+      fields:
+        [
+          "se_sandbox_oscar__demo_dobbe_ai_appointments.appointment_date[mont\
+            h]",
+          se_sandbox_oscar__demo_dobbe_ai_appointments.plan_tier,
+          se_sandbox_oscar__demo_dobbe_ai_appointments.hours_saved
+        ]
+      base_view: se_sandbox_oscar__demo_dobbe_ai_appointments
+      filters:
+        se_sandbox_oscar__demo_dobbe_ai_appointments.appointment_date:
+          between_dates: [ 2026-09-01, 2026-11-01 ]
+      topic: demo_dobbe_ai_ai_adoption
+    prompt: How many hours did Dobbe save by plan tier from 1 to 31 October 2026
+      compared with 1 to 30 September 2026?
