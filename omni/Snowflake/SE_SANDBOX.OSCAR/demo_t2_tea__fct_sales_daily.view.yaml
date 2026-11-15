@@ -90,6 +90,29 @@ measures:
   count:
     aggregate_type: count
 
+  total_net_sales:
+    sql: ${net_sales_aud}
+    label: Net Sales
+    format: currency_0
+    aggregate_type: sum
+
+  total_units:
+    sql: ${units}
+    label: Units
+    format: number_0
+    aggregate_type: sum
+
+  total_gross_margin:
+    sql: ${gross_margin_aud}
+    label: Gross Margin
+    format: currency_0
+    aggregate_type: sum
+
+  gross_margin_pct:
+    sql: ${total_gross_margin} / NULLIF(${total_net_sales}, 0)
+    label: Gross Margin %
+    format: percent_1
+
 #The info below was pulled from your dbt repository and is read-only.
 dbt:
   name: demo_t2_tea__fct_sales_daily
