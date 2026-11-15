@@ -1,4 +1,6 @@
 # Reference this view as se_sandbox_oscar__demo_t2_tea__dim_stores
+label: Stores
+
 catalog: SE_SANDBOX
 schema: OSCAR
 table_name: DEMO_T2_TEA__DIM_STORES
