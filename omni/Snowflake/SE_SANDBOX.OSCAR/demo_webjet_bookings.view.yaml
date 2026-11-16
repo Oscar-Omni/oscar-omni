@@ -1,0 +1,43 @@
+# Reference this view as se_sandbox_oscar__demo_webjet_bookings
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_WEBJET_BOOKINGS
+
+dimensions:
+  booking_id:
+    sql: '"BOOKING_ID"'
+    format: ID
+
+  booking_date:
+    sql: '"BOOKING_DATE"'
+
+  product_id:
+    sql: '"PRODUCT_ID"'
+    format: ID
+
+  channel_id:
+    sql: '"CHANNEL_ID"'
+    format: ID
+
+  destination_id:
+    sql: '"DESTINATION_ID"'
+    format: ID
+
+  customer_state:
+    sql: '"CUSTOMER_STATE"'
+
+  ttv_aud:
+    sql: '"TTV_AUD"'
+
+  service_fee_aud:
+    sql: '"SERVICE_FEE_AUD"'
+
+  revenue_aud:
+    sql: '"REVENUE_AUD"'
+
+  acquisition_cost_aud:
+    sql: '"ACQUISITION_COST_AUD"'
+
+measures:
+  count:
+    aggregate_type: count

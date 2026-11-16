@@ -1,0 +1,28 @@
+# Reference this view as se_sandbox_oscar__demo_webjet_scenario_slots
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_WEBJET_SCENARIO_SLOTS
+
+dimensions:
+  scenario_id:
+    sql: '"SCENARIO_ID"'
+    format: ID
+
+  scenario_name:
+    sql: '"SCENARIO_NAME"'
+
+  scenario_note:
+    sql: '"SCENARIO_NOTE"'
+
+  seed_meta_service_fee_aud:
+    sql: '"SEED_META_SERVICE_FEE_AUD"'
+
+  seed_meta_bookings_per_month:
+    sql: '"SEED_META_BOOKINGS_PER_MONTH"'
+
+  sort_order:
+    sql: '"SORT_ORDER"'
+
+measures:
+  count:
+    aggregate_type: count

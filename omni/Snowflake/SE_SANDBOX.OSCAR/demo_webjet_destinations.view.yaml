@@ -1,0 +1,22 @@
+# Reference this view as se_sandbox_oscar__demo_webjet_destinations
+catalog: SE_SANDBOX
+schema: OSCAR
+table_name: DEMO_WEBJET_DESTINATIONS
+
+dimensions:
+  destination_id:
+    sql: '"DESTINATION_ID"'
+    format: ID
+
+  destination_name:
+    sql: '"DESTINATION_NAME"'
+
+  country_name:
+    sql: '"COUNTRY_NAME"'
+
+  destination_region:
+    sql: '"DESTINATION_REGION"'
+
+measures:
+  count:
+    aggregate_type: count
