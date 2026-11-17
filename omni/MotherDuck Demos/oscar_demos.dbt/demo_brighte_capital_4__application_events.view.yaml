@@ -28,6 +28,7 @@ dimensions:
     label: Event type
     description: Submitted, Approved, Declined, Withdrawn or Settled
     synonyms: [ stage, funnel stage ]
+    ai_context: afnafka;nka
 
   partner_id:
     label: Partner ID
@@ -293,6 +294,13 @@ measures:
     label: Average settled loan
     format: audcurrency_0
     description: Settled amount over loans settled
+
+  days_install_wait_median:
+    sql: ${oscar_demos_dbt__demo_brighte_capital_4__application_events.days_install_wait}
+    label: Install wait days (row) Median
+    description: "(Median) Install wait days (row): Approval to installation
+      complete, on Settled rows"
+    aggregate_type: median
 
 #The info below was pulled from your dbt repository and is read-only.
 dbt:
