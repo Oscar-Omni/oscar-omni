@@ -130,6 +130,128 @@ dimensions:
       depot's Area served.
     synonyms: [ LGA, local government area, council area ]
 
+  route_lga_code:
+    sql: CASE ${route_id} WHEN 'BLG-31' THEN '17420' WHEN 'BLG-33' THEN '14000' WHEN
+      'BLG-34' THEN '11650' WHEN 'BLG-36' THEN '17420' WHEN 'BLG-38' THEN
+      '14500' WHEN 'BLG-42' THEN '17420' WHEN 'BLG-45' THEN '15990' WHEN
+      'BLG-47' THEN '14700' WHEN 'BLG-52' THEN '14000' WHEN 'BLG-58' THEN
+      '11650' WHEN 'BNK-31' THEN '14170' WHEN 'BNK-33' THEN '11300' WHEN
+      'BNK-34' THEN '14100' WHEN 'BNK-36' THEN '14170' WHEN 'BNK-38' THEN
+      '17200' WHEN 'BNK-42' THEN '14170' WHEN 'BNK-45' THEN '11520' WHEN
+      'BNK-47' THEN '15950' WHEN 'BNK-52' THEN '11300' WHEN 'BNK-58' THEN
+      '14100' WHEN 'BOB-31' THEN '71000' WHEN 'BOB-33' THEN '72800' WHEN
+      'BOB-34' THEN '74560' WHEN 'BOB-36' THEN '71000' WHEN 'BOB-38' THEN
+      '70540' WHEN 'BOB-42' THEN '71000' WHEN 'BOB-45' THEN '72300' WHEN
+      'BOB-47' THEN '70700' WHEN 'BOB-52' THEN '72800' WHEN 'BOB-58' THEN
+      '74560' WHEN 'CRW-31' THEN '15900' WHEN 'CRW-33' THEN '16400' WHEN
+      'CRW-34' THEN '14650' WHEN 'CRW-36' THEN '15900' WHEN 'CRW-38' THEN
+      '15050' WHEN 'CRW-42' THEN '15900' WHEN 'CRW-45' THEN '12700' WHEN
+      'CRW-47' THEN '11720' WHEN 'CRW-52' THEN '16400' WHEN 'CRW-58' THEN
+      '14650' WHEN 'GRV-31' THEN '21610' WHEN 'GRV-33' THEN '22670' WHEN
+      'GRV-34' THEN '22170' WHEN 'GRV-36' THEN '21610' WHEN 'GRV-38' THEN
+      '23670' WHEN 'GRV-42' THEN '21610' WHEN 'GRV-45' THEN '24970' WHEN
+      'GRV-47' THEN '25340' WHEN 'GRV-52' THEN '22670' WHEN 'GRV-58' THEN
+      '22170' WHEN 'IRB-31' THEN '10750' WHEN 'IRB-33' THEN '16260' WHEN
+      'IRB-34' THEN '12380' WHEN 'IRB-36' THEN '10750' WHEN 'IRB-38' THEN
+      '12850' WHEN 'IRB-42' THEN '10750' WHEN 'IRB-45' THEN '16700' WHEN
+      'IRB-47' THEN '11570' WHEN 'IRB-52' THEN '16260' WHEN 'IRB-58' THEN
+      '12380' WHEN 'JCR-31' THEN '36720' WHEN 'JCR-33' THEN '36580' WHEN
+      'JCR-34' THEN '33220' WHEN 'JCR-36' THEN '36720' WHEN 'JCR-38' THEN
+      '32330' WHEN 'JCR-42' THEN '36720' WHEN 'JCR-45' THEN '33620' WHEN
+      'JCR-47' THEN '34580' WHEN 'JCR-52' THEN '36580' WHEN 'JCR-58' THEN
+      '33220' WHEN 'KGF-31' THEN '16380' WHEN 'KGF-33' THEN '14350' WHEN
+      'KGF-34' THEN '17850' WHEN 'KGF-36' THEN '16380' WHEN 'KGF-38' THEN
+      '15700' WHEN 'KGF-42' THEN '16380' WHEN 'KGF-45' THEN '15240' WHEN
+      'KGF-47' THEN '10600' WHEN 'KGF-52' THEN '14350' WHEN 'KGF-58' THEN
+      '17850' WHEN 'KKB-31' THEN '35010' WHEN 'KKB-33' THEN '31000' WHEN
+      'KKB-34' THEN '34590' WHEN 'KKB-36' THEN '35010' WHEN 'KKB-38' THEN
+      '33960' WHEN 'KKB-42' THEN '35010' WHEN 'KKB-45' THEN '36250' WHEN
+      'KKB-47' THEN '35740' WHEN 'KKB-52' THEN '31000' WHEN 'KKB-58' THEN
+      '34590' WHEN 'LYR-31' THEN '14900' WHEN 'LYR-33' THEN '11450' WHEN
+      'LYR-34' THEN '16350' WHEN 'LYR-36' THEN '14900' WHEN 'LYR-38' THEN
+      '18400' WHEN 'LYR-42' THEN '14900' WHEN 'LYR-45' THEN '11500' WHEN
+      'LYR-47' THEN '18450' WHEN 'LYR-52' THEN '11450' WHEN 'LYR-58' THEN
+      '16350' WHEN 'RSL-31' THEN '23270' WHEN 'RSL-33' THEN '25060' WHEN
+      'RSL-34' THEN '24700' WHEN 'RSL-36' THEN '23270' WHEN 'RSL-38' THEN
+      '27070' WHEN 'RSL-42' THEN '23270' WHEN 'RSL-45' THEN '21890' WHEN
+      'RSL-47' THEN '24330' WHEN 'RSL-52' THEN '25060' WHEN 'RSL-58' THEN
+      '24700' WHEN 'SLT-31' THEN '27260' WHEN 'SLT-33' THEN '25150' WHEN
+      'SLT-34' THEN '23110' WHEN 'SLT-36' THEN '27260' WHEN 'SLT-38' THEN
+      '21180' WHEN 'SLT-42' THEN '27260' WHEN 'SLT-45' THEN '24650' WHEN
+      'SLT-47' THEN '22750' WHEN 'SLT-52' THEN '25150' WHEN 'SLT-58' THEN
+      '23110' WHEN 'SPX-31' THEN '70200' WHEN 'SPX-33' THEN '72330' WHEN
+      'SPX-34' THEN '70620' WHEN 'SPX-36' THEN '70200' WHEN 'SPX-38' THEN
+      '70420' WHEN 'SPX-42' THEN '70200' WHEN 'SPX-45' THEN '73600' WHEN
+      'SPX-47' THEN '72200' WHEN 'SPX-52' THEN '72330' WHEN 'SPX-58' THEN
+      '70620' END
+    label: Route LGA code
+    description: ABS 2024 local government area code of the main area the route
+      serves. Use with LGA region maps.
+
+  route_lga:
+    sql: CASE ${route_id} WHEN 'BLG-31' THEN 'The Hills' WHEN 'BLG-33' THEN
+      'Hornsby' WHEN 'BLG-34' THEN 'Central Coast (NSW)' WHEN 'BLG-36' THEN 'The
+      Hills' WHEN 'BLG-38' THEN 'Ku-ring-gai' WHEN 'BLG-42' THEN 'The Hills'
+      WHEN 'BLG-45' THEN 'Northern Beaches' WHEN 'BLG-47' THEN 'Lane Cove' WHEN
+      'BLG-52' THEN 'Hornsby' WHEN 'BLG-58' THEN 'Central Coast (NSW)' WHEN
+      'BNK-31' THEN 'Inner West' WHEN 'BNK-33' THEN 'Burwood' WHEN 'BNK-34' THEN
+      'Hunters Hill' WHEN 'BNK-36' THEN 'Inner West' WHEN 'BNK-38' THEN 'Sydney'
+      WHEN 'BNK-42' THEN 'Inner West' WHEN 'BNK-45' THEN 'Canada Bay' WHEN
+      'BNK-47' THEN 'North Sydney' WHEN 'BNK-52' THEN 'Burwood' WHEN 'BNK-58'
+      THEN 'Hunters Hill' WHEN 'BOB-31' THEN 'Darwin' WHEN 'BOB-33' THEN
+      'Palmerston' WHEN 'BOB-34' THEN 'Wagait' WHEN 'BOB-36' THEN 'Darwin' WHEN
+      'BOB-38' THEN 'Belyuen' WHEN 'BOB-42' THEN 'Darwin' WHEN 'BOB-45' THEN
+      'Litchfield' WHEN 'BOB-47' THEN 'Coomalie' WHEN 'BOB-52' THEN 'Palmerston'
+      WHEN 'BOB-58' THEN 'Wagait' WHEN 'CRW-31' THEN 'Newcastle' WHEN 'CRW-33'
+      THEN 'Port Stephens' WHEN 'CRW-34' THEN 'Lake Macquarie' WHEN 'CRW-36'
+      THEN 'Newcastle' WHEN 'CRW-38' THEN 'Maitland' WHEN 'CRW-42' THEN
+      'Newcastle' WHEN 'CRW-45' THEN 'Dungog' WHEN 'CRW-47' THEN 'Cessnock' WHEN
+      'CRW-52' THEN 'Port Stephens' WHEN 'CRW-58' THEN 'Lake Macquarie' WHEN
+      'GRV-31' THEN 'Casey' WHEN 'GRV-33' THEN 'Greater Dandenong' WHEN 'GRV-34'
+      THEN 'Frankston' WHEN 'GRV-36' THEN 'Casey' WHEN 'GRV-38' THEN 'Knox' WHEN
+      'GRV-42' THEN 'Casey' WHEN 'GRV-45' THEN 'Monash' WHEN 'GRV-47' THEN
+      'Mornington Peninsula' WHEN 'GRV-52' THEN 'Greater Dandenong' WHEN
+      'GRV-58' THEN 'Frankston' WHEN 'IRB-31' THEN 'Blacktown' WHEN 'IRB-33'
+      THEN 'Parramatta' WHEN 'IRB-34' THEN 'Cumberland' WHEN 'IRB-36' THEN
+      'Blacktown' WHEN 'IRB-38' THEN 'Fairfield' WHEN 'IRB-42' THEN 'Blacktown'
+      WHEN 'IRB-45' THEN 'Ryde' WHEN 'IRB-47' THEN 'Canterbury-Bankstown' WHEN
+      'IRB-52' THEN 'Parramatta' WHEN 'IRB-58' THEN 'Cumberland' WHEN 'JCR-31'
+      THEN 'Sunshine Coast' WHEN 'JCR-33' THEN 'Somerset' WHEN 'JCR-34' THEN
+      'Fraser Coast' WHEN 'JCR-36' THEN 'Sunshine Coast' WHEN 'JCR-38' THEN
+      'Cherbourg' WHEN 'JCR-42' THEN 'Sunshine Coast' WHEN 'JCR-45' THEN
+      'Gympie' WHEN 'JCR-47' THEN 'Lockyer Valley' WHEN 'JCR-52' THEN 'Somerset'
+      WHEN 'JCR-58' THEN 'Fraser Coast' WHEN 'KGF-31' THEN 'Port
+      Macquarie-Hastings' WHEN 'KGF-33' THEN 'Kempsey' WHEN 'KGF-34' THEN
+      'Walcha' WHEN 'KGF-36' THEN 'Port Macquarie-Hastings' WHEN 'KGF-38' THEN
+      'Nambucca Valley' WHEN 'KGF-42' THEN 'Port Macquarie-Hastings' WHEN
+      'KGF-45' THEN 'Mid-Coast' WHEN 'KGF-47' THEN 'Bellingen' WHEN 'KGF-52'
+      THEN 'Kempsey' WHEN 'KGF-58' THEN 'Walcha' WHEN 'KKB-31' THEN 'Moreton
+      Bay' WHEN 'KKB-33' THEN 'Brisbane' WHEN 'KKB-34' THEN 'Logan' WHEN
+      'KKB-36' THEN 'Moreton Bay' WHEN 'KKB-38' THEN 'Ipswich' WHEN 'KKB-42'
+      THEN 'Moreton Bay' WHEN 'KKB-45' THEN 'Redland' WHEN 'KKB-47' THEN 'Noosa'
+      WHEN 'KKB-52' THEN 'Brisbane' WHEN 'KKB-58' THEN 'Logan' WHEN 'LYR-31'
+      THEN 'Liverpool' WHEN 'LYR-33' THEN 'Camden' WHEN 'LYR-34' THEN 'Penrith'
+      WHEN 'LYR-36' THEN 'Liverpool' WHEN 'LYR-38' THEN 'Wollondilly' WHEN
+      'LYR-42' THEN 'Liverpool' WHEN 'LYR-45' THEN 'Campbelltown (NSW)' WHEN
+      'LYR-47' THEN 'Wollongong' WHEN 'LYR-52' THEN 'Camden' WHEN 'LYR-58' THEN
+      'Penrith' WHEN 'RSL-31' THEN 'Hume' WHEN 'RSL-33' THEN 'Moonee Valley'
+      WHEN 'RSL-34' THEN 'Merri-bek' WHEN 'RSL-36' THEN 'Hume' WHEN 'RSL-38'
+      THEN 'Whittlesea' WHEN 'RSL-42' THEN 'Hume' WHEN 'RSL-45' THEN 'Darebin'
+      WHEN 'RSL-47' THEN 'Maribyrnong' WHEN 'RSL-52' THEN 'Moonee Valley' WHEN
+      'RSL-58' THEN 'Merri-bek' WHEN 'SLT-31' THEN 'Wyndham' WHEN 'SLT-33' THEN
+      'Moorabool' WHEN 'SLT-34' THEN 'Hobsons Bay' WHEN 'SLT-36' THEN 'Wyndham'
+      WHEN 'SLT-38' THEN 'Brimbank' WHEN 'SLT-42' THEN 'Wyndham' WHEN 'SLT-45'
+      THEN 'Melton' WHEN 'SLT-47' THEN 'Greater Geelong' WHEN 'SLT-52' THEN
+      'Moorabool' WHEN 'SLT-58' THEN 'Hobsons Bay' WHEN 'SPX-31' THEN 'Alice
+      Springs' WHEN 'SPX-33' THEN 'MacDonnell' WHEN 'SPX-34' THEN 'Central
+      Desert' WHEN 'SPX-36' THEN 'Alice Springs' WHEN 'SPX-38' THEN 'Barkly'
+      WHEN 'SPX-42' THEN 'Alice Springs' WHEN 'SPX-45' THEN 'Roper Gulf' WHEN
+      'SPX-47' THEN 'Katherine' WHEN 'SPX-52' THEN 'MacDonnell' WHEN 'SPX-58'
+      THEN 'Central Desert' END
+    label: Route LGA
+    description: Local government area the route mainly serves (ABS 2024 name).
+    synonyms: [ LGA, local government area, council area ]
+
 measures:
   count:
     hidden: true
