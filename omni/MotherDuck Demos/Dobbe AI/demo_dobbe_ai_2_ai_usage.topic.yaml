@@ -1,0 +1,129 @@
+hidden: false
+
+base_view: oscar_demos_omnise__demo_dobbe_ai_2_appointments
+label: Dobbe AI usage (synthetic)
+group_label: Dobbe AI
+description: Synthetic Dobbe AI usage across 48 fictional dental practices in
+  Australia and North America, one row per booked appointment, 1 Nov 2025 to 31
+  Oct 2026, AUD.
+
+joins:
+  oscar_demos_omnise__demo_dobbe_ai_2_practices: {}
+  oscar_demos_omnise__demo_dobbe_ai_2_dentists: {}
+  oscar_demos_omnise__demo_dobbe_ai_2_xray_releases: {}
+
+relationships:
+  - join_from_view: oscar_demos_omnise__demo_dobbe_ai_2_appointments
+    join_to_view: oscar_demos_omnise__demo_dobbe_ai_2_practices
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_dobbe_ai_2_appointments.practice_id} =
+      ${oscar_demos_omnise__demo_dobbe_ai_2_practices.practice_id}
+    relationship_type: many_to_one
+
+  - join_from_view: oscar_demos_omnise__demo_dobbe_ai_2_appointments
+    join_to_view: oscar_demos_omnise__demo_dobbe_ai_2_dentists
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_dobbe_ai_2_appointments.dentist_id} =
+      ${oscar_demos_omnise__demo_dobbe_ai_2_dentists.dentist_id}
+    relationship_type: many_to_one
+
+  - join_from_view: oscar_demos_omnise__demo_dobbe_ai_2_appointments
+    join_to_view: oscar_demos_omnise__demo_dobbe_ai_2_xray_releases
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_dobbe_ai_2_appointments.xray_release_id} =
+      ${oscar_demos_omnise__demo_dobbe_ai_2_xray_releases.release_id}
+    relationship_type: many_to_one
+
+ai_context: |
+  Synthetic sample of Dobbe AI usage across 48 fictional dental practices in Australia and North America, 1 Nov 2025 to 31 Oct 2026, money in AUD everywhere (North America included). Say the data is synthetic. One row per booked appointment.
+  X-ray AI use is X-ray AI analyses over appointments with radiographs taken, never over all appointments. Finding override rate is overridden findings over flagged findings, counted per finding, not per appointment. AI notes adoption is AI drafted notes over attended appointments. Treatment acceptance is plans accepted within 14 days over plans proposed, by plan count, not value. Same-day letter rate is plans with a same-day AI patient letter over plans proposed. Hours saved uses one synthetic rule: 6 minutes per AI note, 4 per AI letter, 1.5 per automated front desk task.
+  A practice stopped using X-ray analysis in a month when it took radiographs but ran no AI analyses (X-ray AI use of 0%).
+  X-ray model releases are xr-3.0-au, xr-3.0-na and xr-3.1-na; xr-3.1-na replaced xr-3.0-na in North America on 3 Aug 2026. Release names and dates are invented for the demo.
+  Dentist specialty lives on Dentists (Dentist specialty). Patient age band is on Appointments. Use Practice (practice name) for practices and Practice group for groups such as Saguaro Kids Dental Group. Use Region, State or province and Plan from Appointments.
+  Practice and group names are fictional; states, provinces and cities are real. Dentists are codes only. There is no patient level data.
+  When asked to compare periods, use the exact dates given and name both periods.
+
+sample_queries:
+  xray_ai_use_by_practice_jul_2026:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_dobbe_ai_2_practices.practice_name,
+          oscar_demos_omnise__demo_dobbe_ai_2_appointments.xray_ai_use_rate,
+          oscar_demos_omnise__demo_dobbe_ai_2_appointments.xray_appointments,
+          oscar_demos_omnise__demo_dobbe_ai_2_appointments.xray_ai_analyses
+        ]
+      base_view: oscar_demos_omnise__demo_dobbe_ai_2_appointments
+      filters:
+        oscar_demos_omnise__demo_dobbe_ai_2_appointments.appointment_date:
+          between_dates: [ 2026-07-01, 2026-07-31 ]
+      topic: demo_dobbe_ai_2_ai_usage
+    prompt: X-ray AI use by practice from 1 July to 31 July 2026
+  xray_ai_use_by_practice_oct_2026:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_dobbe_ai_2_practices.practice_name,
+          oscar_demos_omnise__demo_dobbe_ai_2_appointments.xray_ai_use_rate,
+          oscar_demos_omnise__demo_dobbe_ai_2_appointments.xray_appointments,
+          oscar_demos_omnise__demo_dobbe_ai_2_appointments.xray_ai_analyses
+        ]
+      base_view: oscar_demos_omnise__demo_dobbe_ai_2_appointments
+      filters:
+        oscar_demos_omnise__demo_dobbe_ai_2_appointments.appointment_date:
+          between_dates: [ 2026-10-01, 2026-10-31 ]
+      topic: demo_dobbe_ai_2_ai_usage
+    prompt: Which practices stopped using X-ray analysis in October 2026? X-ray AI
+      use by practice from 1 October to 31 October 2026
+  override_by_specialty_and_release_after:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_dobbe_ai_2_dentists.specialty,
+          oscar_demos_omnise__demo_dobbe_ai_2_appointments.xray_release_id,
+          oscar_demos_omnise__demo_dobbe_ai_2_appointments.finding_override_rate,
+          oscar_demos_omnise__demo_dobbe_ai_2_appointments.total_findings_flagged
+        ]
+      base_view: oscar_demos_omnise__demo_dobbe_ai_2_appointments
+      filters:
+        oscar_demos_omnise__demo_dobbe_ai_2_appointments.appointment_date:
+          between_dates: [ 2026-08-03, 2026-10-31 ]
+        oscar_demos_omnise__demo_dobbe_ai_2_appointments.region:
+          is: North America
+      topic: demo_dobbe_ai_2_ai_usage
+    prompt: Finding override rate by dentist specialty and X-ray model release in
+      North America from 3 August to 31 October 2026
+  acceptance_by_letter_timing_au:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_dobbe_ai_2_appointments.letter_timing,
+          oscar_demos_omnise__demo_dobbe_ai_2_appointments.treatment_acceptance_rate,
+          oscar_demos_omnise__demo_dobbe_ai_2_appointments.plans_proposed
+        ]
+      base_view: oscar_demos_omnise__demo_dobbe_ai_2_appointments
+      filters:
+        oscar_demos_omnise__demo_dobbe_ai_2_appointments.appointment_date:
+          between_dates: [ 2026-06-01, 2026-10-31 ]
+        oscar_demos_omnise__demo_dobbe_ai_2_appointments.region:
+          is: Australia
+      topic: demo_dobbe_ai_2_ai_usage
+    prompt: How does treatment acceptance differ by letter timing in Australia from
+      1 June to 31 October 2026?
+  hours_saved_growth_by_month:
+    query:
+      fields:
+        [
+          "oscar_demos_omnise__demo_dobbe_ai_2_appointments.appointment_date[\
+            month]",
+          oscar_demos_omnise__demo_dobbe_ai_2_appointments.hours_saved
+        ]
+      base_view: oscar_demos_omnise__demo_dobbe_ai_2_appointments
+      filters:
+        oscar_demos_omnise__demo_dobbe_ai_2_appointments.appointment_date:
+          between_dates: [ 2026-05-01, 2026-10-31 ]
+        oscar_demos_omnise__demo_dobbe_ai_2_appointments.plan_tier:
+          is: Growth
+      topic: demo_dobbe_ai_2_ai_usage
+    prompt: Hours saved by month for Growth plan practices from 1 May to 31 October
+      2026

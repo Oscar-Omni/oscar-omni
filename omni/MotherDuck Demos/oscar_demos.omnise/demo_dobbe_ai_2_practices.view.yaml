@@ -1,23 +1,62 @@
 # Reference this view as oscar_demos_omnise__demo_dobbe_ai_2_practices
+label: Practices
+description: Synthetic sample. One row per fictional dental practice using
+  Dobbe; names are fictional, suburbs, cities, states and provinces are real.
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_dobbe_ai_2_practices
 
 dimensions:
-  practice_name: {}
-  group_name: {}
-  region: {}
-  country: {}
-  state_name: {}
-  city: {}
-  plan_tier: {}
-  practice_type: {}
-  chairs: {}
-  go_live_date: {}
-
   practice_id:
+    label: Practice ID
     format: ID
+    primary_key: true
+
+  practice_name:
+    label: Practice
+    description: Fictional practice name with its real suburb or city.
+    synonyms: [ practice, clinic, customer ]
+
+  group_name:
+    label: Practice group
+    description: Saguaro Kids Dental Group or Independent.
+    synonyms: [ group, DSO, practice group ]
+
+  region:
+    label: Practice region
+    description: Australia or North America.
+
+  country:
+    label: Country
+    description: Australia, United States or Canada.
+
+  state_name:
+    label: Practice state or province
+
+  city:
+    label: City or suburb
+
+  plan_tier:
+    label: Practice plan
+    description: Starter, Growth or Enterprise (fictional tiers).
+
+  practice_type:
+    label: Practice type
+    description: General or Paediatric specialty.
+    synonyms: [ kids practice, paediatric practice ]
+
+  chairs:
+    label: Chairs
+    format: "#,##0"
+    description: Dental chairs.
+
+  go_live_date:
+    label: Go live date
+    description: First day on Dobbe.
 
 measures:
   count:
+    label: Practices
+    format: "#,##0"
     aggregate_type: count

@@ -1,0 +1,34 @@
+hidden: false
+
+base_view: oscar_demos_omnise__demo_dobbe_ai_2_scenario_slots
+label: Practice scenarios (synthetic)
+group_label: Dobbe AI
+description: Three fixed scenario slots for the synthetic practice scorecard
+  app. Not usage data.
+
+joins:
+  oscar_demos_omnise__demo_dobbe_ai_2_practices: {}
+
+relationships:
+  - join_from_view: oscar_demos_omnise__demo_dobbe_ai_2_scenario_slots
+    join_to_view: oscar_demos_omnise__demo_dobbe_ai_2_practices
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_dobbe_ai_2_scenario_slots.practice_id} =
+      ${oscar_demos_omnise__demo_dobbe_ai_2_practices.practice_id}
+    relationship_type: many_to_one
+
+ai_context: |
+  Three fixed scenario slots (baseline, letters_first, full_workflow) for the synthetic practice scorecard app, preset to Wattlebird Dental Hawthorn. Saved values live in the app's input columns saved_label and saved_assumptions keyed on scenario_id. Not usage data; use the Dobbe AI usage topic for appointments.
+
+sample_queries:
+  scenario_slots:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_dobbe_ai_2_scenario_slots.scenario_id,
+          oscar_demos_omnise__demo_dobbe_ai_2_scenario_slots.default_label,
+          oscar_demos_omnise__demo_dobbe_ai_2_practices.practice_name
+        ]
+      base_view: oscar_demos_omnise__demo_dobbe_ai_2_scenario_slots
+      topic: demo_dobbe_ai_2_practice_scenarios
+    prompt: Which scenario slots are saved for Wattlebird Dental Hawthorn?

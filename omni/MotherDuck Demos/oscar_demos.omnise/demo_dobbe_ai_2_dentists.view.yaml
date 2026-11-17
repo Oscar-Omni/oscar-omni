@@ -1,17 +1,39 @@
 # Reference this view as oscar_demos_omnise__demo_dobbe_ai_2_dentists
+label: Dentists
+description: Synthetic sample. One row per fictional dentist using Dobbe,
+  identified by code only.
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_dobbe_ai_2_dentists
 
 dimensions:
-  specialty: {}
-
   dentist_id:
+    label: Dentist ID
     format: ID
+    primary_key: true
 
   practice_id:
+    label: Dentist practice ID
     format: ID
+    hidden: true
+
+  specialty:
+    label: Dentist specialty
+    description: General dentistry, Paediatric dentistry or Endodontics.
+    synonyms:
+      [
+        specialty,
+        cohort,
+        paediatric,
+        pediatric,
+        kids dentists,
+        general dentists,
+        endo
+      ]
 
 measures:
   count:
+    label: Dentists
+    format: "#,##0"
     aggregate_type: count

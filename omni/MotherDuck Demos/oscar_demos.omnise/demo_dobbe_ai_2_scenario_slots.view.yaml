@@ -1,20 +1,36 @@
 # Reference this view as oscar_demos_omnise__demo_dobbe_ai_2_scenario_slots
+label: Scenario slots
+description: Three fixed scenario slots for the synthetic practice scorecard
+  app. Saved values live in the app's input columns keyed on scenario_id.
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_dobbe_ai_2_scenario_slots
 
 dimensions:
-  slot_order: {}
-  default_label: {}
-  editable: {}
-  default_assumptions_json: {}
-
   scenario_id:
+    label: Scenario
     format: ID
+    primary_key: true
+    synonyms: [ scenario, slot ]
 
   practice_id:
+    label: Scenario practice ID
     format: ID
+
+  slot_order:
+    label: Slot order
+
+  default_label:
+    label: Default label
+
+  editable:
+    label: Editable
+
+  default_assumptions_json:
+    label: Default assumptions (JSON)
 
 measures:
   count:
+    hidden: true
     aggregate_type: count

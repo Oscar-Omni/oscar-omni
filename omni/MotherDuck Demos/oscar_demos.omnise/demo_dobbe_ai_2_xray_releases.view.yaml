@@ -1,17 +1,34 @@
 # Reference this view as oscar_demos_omnise__demo_dobbe_ai_2_xray_releases
+label: X-ray releases
+description: One row per AI X-ray model release per region. Release names and
+  dates are invented for the demo.
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_dobbe_ai_2_xray_releases
 
 dimensions:
-  model_version: {}
-  region: {}
-  released_on: {}
-  retired_on: {}
-
   release_id:
+    label: Release ID
     format: ID
+    primary_key: true
+
+  model_version:
+    label: Model version
+    description: 3.0 or 3.1 (fictional).
+
+  region:
+    label: Release region
+
+  released_on:
+    label: Released on
+    description: First day the release analysed radiographs in that region.
+
+  retired_on:
+    label: Retired on
+    description: Last day in service; empty while current.
 
 measures:
   count:
+    hidden: true
     aggregate_type: count

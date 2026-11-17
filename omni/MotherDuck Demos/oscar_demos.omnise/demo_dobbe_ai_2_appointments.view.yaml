@@ -1,41 +1,293 @@
 # Reference this view as oscar_demos_omnise__demo_dobbe_ai_2_appointments
+label: Appointments
+description: Synthetic sample. One row per booked appointment at a Dobbe
+  practice, attended or not, 1 Nov 2025 to 31 Oct 2026, with what Dobbe's AI did
+  at it. Money in AUD everywhere. Data as at 15 Nov 2026.
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_dobbe_ai_2_appointments
 
 dimensions:
-  appointment_date: {}
-  region: {}
-  state_name: {}
-  plan_tier: {}
-  patient_age_band: {}
-  attended: {}
-  xray_taken: {}
-  xray_ai_analysed: {}
-  findings_flagged: {}
-  findings_overridden: {}
-  ai_note_generated: {}
-  front_desk_tasks: {}
-  minutes_saved: {}
-  plan_proposed: {}
-  plan_value_aud: {}
-  letter_timing: {}
-  letter_same_day: {}
-  plan_accepted: {}
-  accepted_value_aud: {}
-
   appointment_id:
+    label: Appointment ID
     format: ID
+    primary_key: true
+
+  appointment_date:
+    label: Appointment date
+    description: Day of the appointment.
+    synonyms: [ date, visit date ]
 
   practice_id:
+    label: Practice ID
     format: ID
 
   dentist_id:
+    label: Dentist
     format: ID
+    description: Treating dentist code, practice ID plus D and a number, for example
+      P-NA-07-D1. Codes only, no names.
+    synonyms: [ dentist, clinician, provider ]
+
+  region:
+    label: Region
+    description: Australia or North America.
+    synonyms: [ market, AU, NA, North America, Australia ]
+
+  state_name:
+    label: State or province
+    description: State or province of the practice (Victoria, Texas, Ontario...).
+    synonyms: [ state, province ]
+
+  plan_tier:
+    label: Plan
+    description: Dobbe plan of the practice, Starter, Growth or Enterprise
+      (fictional tiers).
+    synonyms: [ tier, Dobbe plan ]
+
+  patient_age_band:
+    label: Patient age band
+    description: Child (0 to 12), Teen (13 to 17) or Adult (18+). No other patient
+      attribute is stored.
+    synonyms: [ age band, children, kids, child patients, adults ]
+
+  attended:
+    label: Attended flag
+    hidden: true
+
+  xray_taken:
+    label: Radiographs taken flag
+    hidden: true
+
+  xray_ai_analysed:
+    label: X-ray AI analysed flag
+    hidden: true
 
   xray_release_id:
+    label: X-ray model release
     format: ID
+    description: AI X-ray model release that analysed the radiographs, xr-3.0-au,
+      xr-3.0-na or xr-3.1-na. Empty when no AI analysis ran.
+    synonyms: [ model version, model release, X-ray model, release ]
+
+  findings_flagged:
+    label: Findings flagged (per appointment)
+    hidden: true
+
+  findings_overridden:
+    label: Findings overridden (per appointment)
+    hidden: true
+
+  ai_note_generated:
+    label: AI note flag
+    hidden: true
+
+  front_desk_tasks:
+    label: Front desk tasks (per booking)
+    hidden: true
+
+  minutes_saved:
+    label: Minutes saved (per appointment)
+    hidden: true
+
+  plan_proposed:
+    label: Plan proposed flag
+    hidden: true
+
+  plan_value_aud:
+    label: Plan value (AUD)
+    format: '"A$"#,##0'
+    description: Value of the proposed treatment plan; empty when no plan was proposed.
+
+  letter_timing:
+    label: Letter timing
+    description: When the AI patient letter explaining a proposed plan went out,
+      Same day, Next day or later, or No letter. Empty when no plan was
+      proposed.
+    synonyms: [ letter speed, patient letter ]
+
+  letter_same_day:
+    label: Same-day letter flag
+    hidden: true
+
+  plan_accepted:
+    label: Plan accepted flag
+    hidden: true
+
+  accepted_value_aud:
+    label: Accepted value (AUD, per appointment)
+    hidden: true
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
+
+  booked_appointments:
+    label: Booked appointments
+    format: "#,##0"
+    description: Appointments booked, attended or not.
+    aggregate_type: count
+    synonyms: [ bookings, appointments, visits booked ]
+
+  attended_appointments:
+    sql: ${attended}
+    label: Attended appointments
+    format: "#,##0"
+    description: Appointments the patient attended.
+    aggregate_type: sum
+    synonyms: [ visits, attended visits ]
+
+  no_show_rate:
+    sql: (${booked_appointments} - ${attended_appointments}) /
+      NULLIF(${booked_appointments}, 0)
+    label: No show rate
+    format: PERCENT_1
+    description: Booked appointments the patient did not attend, over booked appointments.
+    synonyms: [ no shows, missed appointments, DNA ]
+
+  xray_appointments:
+    sql: ${xray_taken}
+    label: Appointments with radiographs
+    format: "#,##0"
+    description: Attended appointments where radiographs were taken.
+    aggregate_type: sum
+    synonyms: [ X-ray appointments, radiographs taken ]
+
+  xray_ai_analyses:
+    sql: ${xray_ai_analysed}
+    label: X-ray AI analyses
+    format: "#,##0"
+    description: Appointments whose radiographs were run through Dobbe's AI X-ray analysis.
+    aggregate_type: sum
+    synonyms: [ X-ray analyses, AI X-ray reads, analysed radiographs ]
+
+  xray_ai_use_rate:
+    sql: ${xray_ai_analyses} / NULLIF(${xray_appointments}, 0)
+    label: X-ray AI use
+    format: PERCENT_1
+    description: Dobbe's adoption measure for X-ray analysis. Appointments with
+      radiographs that went through AI analysis, over appointments with
+      radiographs. Never over all appointments.
+    synonyms:
+      [
+        X-ray adoption,
+        X-ray analysis usage,
+        radiograph AI usage,
+        X-ray AI adoption
+      ]
+
+  total_findings_flagged:
+    sql: ${findings_flagged}
+    label: Findings flagged
+    format: "#,##0"
+    description: AI findings flagged on analysed radiographs.
+    aggregate_type: sum
+    synonyms: [ AI findings, detections ]
+
+  total_findings_overridden:
+    sql: ${findings_overridden}
+    label: Findings overridden
+    format: "#,##0"
+    description: Flagged findings the dentist rejected or overrode.
+    aggregate_type: sum
+    synonyms: [ rejected findings, overridden findings ]
+
+  finding_override_rate:
+    sql: ${total_findings_overridden} / NULLIF(${total_findings_flagged}, 0)
+    label: Finding override rate
+    format: PERCENT_1
+    description: Dobbe's X-ray quality measure. Overridden findings over flagged
+      findings, counted per finding, not per appointment.
+    synonyms:
+      [
+        override rate,
+        rejected findings rate,
+        false positive rate as dentists see it
+      ]
+
+  ai_notes:
+    sql: ${ai_note_generated}
+    label: AI clinical notes
+    format: "#,##0"
+    description: Clinical notes drafted by Dobbe's AI and signed off by the dentist.
+    aggregate_type: sum
+    synonyms: [ AI notes, clinical notes ]
+
+  ai_notes_adoption:
+    sql: ${ai_notes} / NULLIF(${attended_appointments}, 0)
+    label: AI notes adoption
+    format: PERCENT_1
+    description: Attended appointments with an AI drafted note, over attended appointments.
+    synonyms: [ notes adoption, clinical notes usage, note coverage ]
+
+  hours_saved:
+    sql: ${minutes_saved} / 60.0
+    label: Hours saved
+    format: "#,##0"
+    description: Clinician and front desk hours saved, from the synthetic rule of 6
+      minutes per AI note, 4 per AI patient letter and 1.5 per automated front
+      desk task. The one time saved definition.
+    aggregate_type: sum
+    synonyms: [ time saved, minutes saved, admin time saved ]
+
+  front_desk_tasks_automated:
+    sql: ${front_desk_tasks}
+    label: Front desk tasks automated
+    format: "#,##0"
+    description: Reminders, confirmations, rebookings and insurance checks Dobbe automated.
+    aggregate_type: sum
+    synonyms: [ front desk automation, reminders, confirmations ]
+
+  plans_proposed:
+    sql: ${plan_proposed}
+    label: Plans proposed
+    format: "#,##0"
+    description: Treatment plans proposed.
+    aggregate_type: sum
+    synonyms: [ treatment plans, proposed plans ]
+
+  plans_accepted:
+    sql: ${plan_accepted}
+    label: Plans accepted
+    format: "#,##0"
+    description: Proposed plans accepted within 14 days.
+    aggregate_type: sum
+
+  treatment_acceptance_rate:
+    sql: ${plans_accepted} / NULLIF(${plans_proposed}, 0)
+    label: Treatment acceptance
+    format: PERCENT_1
+    description: Plans accepted within 14 days over plans proposed, counted by plan,
+      not by value.
+    synonyms: [ case acceptance, plan acceptance, conversion ]
+
+  proposed_value:
+    sql: ${plan_value_aud}
+    label: Proposed treatment value
+    format: '"A$"#,##0'
+    description: Value of proposed treatment plans, AUD.
+    aggregate_type: sum
+
+  accepted_value:
+    sql: ${accepted_value_aud}
+    label: Accepted treatment value
+    format: '"A$"#,##0'
+    description: Value of accepted treatment plans, AUD.
+    aggregate_type: sum
+    synonyms: [ production accepted, case value, accepted treatment ]
+
+  same_day_letters:
+    sql: ${letter_same_day}
+    label: Same-day letters
+    format: "#,##0"
+    description: Proposed plans whose AI patient letter went out the same day.
+    aggregate_type: sum
+
+  same_day_letter_rate:
+    sql: ${same_day_letters} / NULLIF(${plans_proposed}, 0)
+    label: Same-day letter rate
+    format: PERCENT_1
+    description: Proposed plans with a same-day AI patient letter, over proposed plans.
+    synonyms: [ same-day letters, same-day patient letters, letter speed ]
