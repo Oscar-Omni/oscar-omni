@@ -1,0 +1,14 @@
+# Reference this view as oscar_demos_omnise__omnise_about
+label: OmniSE schema marker
+hidden: true
+
+catalog: oscar_demos
+schema: omnise
+table_name: omnise_about
+
+dimensions:
+  note: {}
+
+measures:
+  count:
+    aggregate_type: count

@@ -1,0 +1,16 @@
+# Reference this view as oscar_demos_omnise__demo_qantas_partners
+catalog: oscar_demos
+schema: omnise
+table_name: demo_qantas_partners
+
+dimensions:
+  partner_name: {}
+  partner_category: {}
+  price_per_1000_points_aud: {}
+
+  partner_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

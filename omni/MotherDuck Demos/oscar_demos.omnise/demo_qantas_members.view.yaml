@@ -1,0 +1,24 @@
+# Reference this view as oscar_demos_omnise__demo_qantas_members
+catalog: oscar_demos
+schema: omnise
+table_name: demo_qantas_members
+
+dimensions:
+  join_date: {}
+  home_state: {}
+  current_tier: {}
+  engaged_eligible: {}
+  engaged_60d: {}
+
+  member_id:
+    format: ID
+
+  join_partner_id:
+    format: ID
+
+  join_campaign_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

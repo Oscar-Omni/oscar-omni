@@ -1,0 +1,19 @@
+# Reference this view as oscar_demos_demo_t2_tea__scenario_slots
+catalog: oscar_demos
+schema: demo_t2_tea
+table_name: scenario_slots
+
+dimensions:
+  scenario_name: {}
+  scenario_note: {}
+  seed_expedite_share_pct: {}
+  seed_freight_cost_aud: {}
+  sell_through_pct: {}
+  sort_order: {}
+
+  scenario_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

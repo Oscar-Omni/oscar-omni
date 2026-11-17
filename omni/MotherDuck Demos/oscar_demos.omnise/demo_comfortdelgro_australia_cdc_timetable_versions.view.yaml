@@ -1,0 +1,31 @@
+# Reference this view as oscar_demos_omnise__demo_comfortdelgro_australia_cdc_timetable_versions
+label: Timetable versions
+description: Timetable versions per depot from the scheduling extract.
+
+catalog: oscar_demos
+schema: omnise
+table_name: demo_comfortdelgro_australia_cdc_timetable_versions
+
+dimensions:
+  timetable_version_id:
+    format: ID
+    hidden: true
+    primary_key: true
+
+  depot_id:
+    format: ID
+    hidden: true
+
+  version_name:
+    label: Timetable name
+
+  effective_from:
+    label: Effective from
+
+  effective_to:
+    label: Effective to
+
+measures:
+  count:
+    hidden: true
+    aggregate_type: count

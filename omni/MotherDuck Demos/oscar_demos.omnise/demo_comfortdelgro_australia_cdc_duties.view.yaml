@@ -1,0 +1,113 @@
+# Reference this view as oscar_demos_omnise__demo_comfortdelgro_australia_cdc_duties
+label: Driver duties
+description: Synthetic sample. One row per rostered driver duty on a service
+  day, as planned and as paid.
+
+catalog: oscar_demos
+schema: omnise
+table_name: demo_comfortdelgro_australia_cdc_duties
+
+dimensions:
+  duty_id:
+    label: Duty ID
+    format: ID
+    primary_key: true
+
+  service_date:
+    label: Service date
+
+  depot_id:
+    label: Depot ID
+    format: ID
+
+  finish_band:
+    label: Finish band
+    description: Band the duty signs off in; same values as trip time band.
+    synonyms: [ sign off time ]
+
+  planned_paid_hours:
+    label: Planned paid hours
+    hidden: true
+
+  actual_paid_hours:
+    label: Actual paid hours
+    hidden: true
+
+  overtime_hours:
+    label: Overtime hours
+    format: "0.00"
+    description: Paid hours above roster on the duty.
+
+  planned_labour_cost_aud:
+    label: Planned labour cost (AUD)
+    hidden: true
+
+  actual_labour_cost_aud:
+    label: Actual labour cost (AUD)
+    hidden: true
+
+measures:
+  count:
+    hidden: true
+    aggregate_type: count
+
+  duty_count:
+    label: Duties
+    format: "#,##0"
+    description: Driver duties worked.
+    aggregate_type: count
+    synonyms: [ shifts, runs ]
+
+  planned_hours:
+    sql: ${planned_paid_hours}
+    label: Rostered hours
+    format: "#,##0"
+    description: Rostered paid hours.
+    aggregate_type: sum
+    synonyms: [ planned hours ]
+
+  paid_hours:
+    sql: ${actual_paid_hours}
+    label: Paid hours
+    format: "#,##0"
+    description: Paid hours as worked.
+    aggregate_type: sum
+    synonyms: [ hours worked ]
+
+  total_overtime_hours:
+    sql: ${overtime_hours}
+    label: Overtime hours
+    format: "#,##0"
+    description: Paid hours above roster.
+    aggregate_type: sum
+    synonyms: [ OT hours, overtime, hours over roster ]
+
+  planned_labour_cost:
+    sql: ${planned_labour_cost_aud}
+    label: Planned labour cost
+    format: '"A$"#,##0'
+    description: Rostered labour cost at synthetic rates, AUD.
+    aggregate_type: sum
+    synonyms: [ rostered labour cost, budgeted labour ]
+
+  actual_labour_cost:
+    sql: ${actual_labour_cost_aud}
+    label: Labour cost
+    format: '"A$"#,##0'
+    description: Labour cost as paid at synthetic rates, AUD.
+    aggregate_type: sum
+    synonyms: [ wages cost, driver cost ]
+
+  labour_cost_variance:
+    sql: ${actual_labour_cost} - ${planned_labour_cost}
+    label: Labour cost variance
+    format: '"A$"#,##0'
+    description: Labour cost above plan, AUD.
+    synonyms: [ labour over plan ]
+
+  labour_cost_adherence:
+    sql: ${actual_labour_cost} / NULLIF(${planned_labour_cost}, 0)
+    label: Labour cost adherence
+    format: PERCENT_1
+    description: Actual labour cost over planned labour cost.
+    synonyms: [ labour adherence ]

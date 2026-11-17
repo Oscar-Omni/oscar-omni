@@ -1,0 +1,34 @@
+# Reference this view as oscar_demos_omnise__demo_brighte_capital_4_scenario_slots
+label: Recovery plan slots
+description: Saved recovery plan slots for the Kestrel settlement recovery planner app
+
+catalog: oscar_demos
+schema: omnise
+table_name: demo_brighte_capital_4_scenario_slots
+
+dimensions:
+  scenario_id:
+    label: Plan ID
+    format: ID
+    primary_key: true
+
+  scenario_name:
+    label: Plan
+    synonyms: [ plan, scenario, slot ]
+
+  scenario_note:
+    label: Plan note
+
+  seed_backlog_clear_pct:
+    label: Seed backlog cleared per month (%)
+
+  seed_cert_days:
+    label: Seed certificate days
+
+  sort_order:
+    label: Sort order
+
+measures:
+  count:
+    hidden: true
+    aggregate_type: count

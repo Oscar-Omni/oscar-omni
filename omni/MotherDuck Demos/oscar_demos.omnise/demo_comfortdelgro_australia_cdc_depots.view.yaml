@@ -1,0 +1,35 @@
+# Reference this view as oscar_demos_omnise__demo_comfortdelgro_australia_cdc_depots
+label: Depots
+description: Fictional depot names on real geography.
+
+catalog: oscar_demos
+schema: omnise
+table_name: demo_comfortdelgro_australia_cdc_depots
+
+dimensions:
+  depot_id:
+    label: Depot ID
+    format: ID
+    primary_key: true
+
+  depot_name:
+    label: Depot
+    description: Fictional depot name.
+    synonyms: [ garage ]
+
+  region:
+    label: Depot region
+    hidden: true
+
+  state_name:
+    label: Depot state
+    hidden: true
+
+  area:
+    label: Area served
+    description: Real area the fictional depot serves.
+
+measures:
+  count:
+    hidden: true
+    aggregate_type: count

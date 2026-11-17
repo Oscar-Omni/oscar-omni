@@ -1,0 +1,35 @@
+# Reference this view as oscar_demos_omnise__demo_comfortdelgro_australia_cdc_scenario_slots
+label: Scenario slots
+description: Three saved timetable scenarios for the Ironbark PM peak planner
+  app; not operational data.
+
+catalog: oscar_demos
+schema: omnise
+table_name: demo_comfortdelgro_australia_cdc_scenario_slots
+
+dimensions:
+  scenario_id:
+    label: Scenario ID
+    format: ID
+    primary_key: true
+
+  scenario_name:
+    label: Scenario
+    synonyms: [ slot, option ]
+
+  scenario_note:
+    label: Note
+
+  seed_added_run_min:
+    label: Seed added running minutes
+
+  seed_standby_drivers:
+    label: Seed standby drivers
+
+  sort_order:
+    label: Sort order
+
+measures:
+  count:
+    hidden: true
+    aggregate_type: count

@@ -1,0 +1,229 @@
+# Reference this view as oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips
+label: Trips
+description: Synthetic sample. One row per planned trip on a service day,
+  whether it ran in full, in part or not at all.
+
+catalog: oscar_demos
+schema: omnise
+table_name: demo_comfortdelgro_australia_cdc_trips
+
+dimensions:
+  trip_id:
+    label: Trip ID
+    format: ID
+    primary_key: true
+
+  service_date:
+    label: Service date
+    description: Service day the trip was planned for.
+
+  depot_id:
+    label: Depot ID
+    format: ID
+
+  region:
+    label: Region
+    description: NSW Metro, Regional NSW, Victoria, Queensland or Northern Territory.
+    synonyms: [ business unit ]
+
+  state_name:
+    label: State
+    description: Full state name (New South Wales, Victoria, Queensland, Northern
+      Territory).
+
+  route_id:
+    label: Route
+    format: ID
+    description: Fictional route code, depot code plus route number, for example IRB-31.
+    synonyms: [ service, line ]
+
+  timetable_version_id:
+    label: Timetable version
+    format: ID
+    description: Timetable version in force for the depot on the service date, from
+      the scheduling extract.
+    synonyms: [ schedule version, timetable change ]
+
+  time_band:
+    label: Time band
+    description: AM peak, Inter peak, PM peak or Evening on weekdays; Weekend for
+      Saturdays, Sundays and public holidays.
+    synonyms: [ peak, period of day ]
+
+  trip_status:
+    label: Trip status
+    description: Operated (ran in full), Part operated (short worked or curtailed)
+      or Not operated.
+
+  missed_cause:
+    label: Missed cause
+    description: Why a trip was not delivered in full. Late running knock-on means
+      it was cancelled or cut short to recover from earlier late running. Empty
+      when Operated.
+    synonyms: [ reason, cause, why missed ]
+
+  delivered_trip:
+    label: Delivered trip flag
+    hidden: true
+
+  missed_trip:
+    label: Missed trip flag
+    hidden: true
+
+  on_time_trip:
+    label: On-time trip flag
+    hidden: true
+
+  departure_delay_min:
+    label: Departure delay (min)
+    format: "0.0"
+    description: Departure from the first timepoint against timetable, negative when
+      early. Empty when Not operated.
+
+  planned_run_min:
+    label: Planned running time (min)
+    format: "0.0"
+    description: Scheduled running time from the timetable version.
+
+  actual_run_min:
+    label: Actual running time (min)
+    format: "0.0"
+    description: Tracked running time on Operated trips.
+
+  run_time_overrun_min:
+    label: Running time overrun (min)
+    format: "0.0"
+    description: Actual minus planned running time on Operated trips.
+
+  planned_km:
+    label: Planned km
+    hidden: true
+
+  delivered_km:
+    label: Delivered km
+    hidden: true
+
+  abatement_aud:
+    label: Abatement (AUD)
+    format: '"A$"#,##0'
+    description: Synthetic contract deduction on a missed trip; 0 on Operated trips.
+
+measures:
+  count:
+    hidden: true
+    aggregate_type: count
+
+  planned_trips:
+    label: Planned trips
+    format: "#,##0"
+    description: Trips in the timetable for the period, whether or not they ran.
+    aggregate_type: count
+    synonyms: [ scheduled trips, timetabled trips, scheduled services ]
+
+  delivered_trips:
+    sql: ${delivered_trip}
+    label: Delivered trips
+    format: "#,##0"
+    description: Planned trips that ran in full.
+    aggregate_type: sum
+
+  missed_trips:
+    sql: ${missed_trip}
+    label: Missed trips
+    format: "#,##0"
+    description: Planned trips not delivered in full, Part operated plus Not operated.
+    aggregate_type: sum
+    synonyms: [ missed services, lost trips, cancellations, trips not run ]
+
+  on_time_trips:
+    sql: ${on_time_trip}
+    label: On-time trips
+    format: "#,##0"
+    description: Delivered trips that departed between 1 minute early and 5 minutes
+      late (a synthetic rule).
+    aggregate_type: sum
+
+  on_time_running:
+    sql: ${on_time_trips} / NULLIF(${delivered_trips}, 0)
+    label: On-time running
+    format: PERCENT_1
+    description: On-time trips over delivered trips.
+    synonyms: [ OTP, on-time performance, punctuality ]
+
+  missed_trip_rate:
+    sql: ${missed_trips} / NULLIF(${planned_trips}, 0)
+    label: Missed trip rate
+    format: PERCENT_2
+    description: Missed trips over planned trips.
+    synonyms: [ missed service rate ]
+
+  service_delivery_rate:
+    sql: ${delivered_trips} / NULLIF(${planned_trips}, 0)
+    label: Service delivery rate
+    format: PERCENT_2
+    description: Delivered trips over planned trips.
+    synonyms: [ service delivery, delivered in full ]
+
+  planned_service_km:
+    sql: ${planned_km}
+    label: Planned service km
+    format: "#,##0"
+    description: Timetabled service km.
+    aggregate_type: sum
+    synonyms: [ timetabled km, scheduled km ]
+
+  delivered_service_km:
+    sql: ${delivered_km}
+    label: Delivered service km
+    format: "#,##0"
+    description: Service km actually run.
+    aggregate_type: sum
+    synonyms: [ operated km, km run ]
+
+  km_delivery_rate:
+    sql: ${delivered_service_km} / NULLIF(${planned_service_km}, 0)
+    label: Service km delivered
+    format: PERCENT_2
+    description: Delivered service km over planned service km.
+    synonyms: [ km delivery, km delivered ]
+
+  abatements:
+    sql: ${abatement_aud}
+    label: Abatements
+    format: '"A$"#,##0'
+    description: Synthetic contract deductions on missed trips in the period, AUD.
+    aggregate_type: sum
+    synonyms: [ penalties, deductions, contract deductions ]
+
+  avg_departure_delay_min:
+    sql: ${departure_delay_min}
+    label: Average departure delay (min)
+    format: "0.0"
+    description: Average departure against timetable at the first timepoint, trips
+      that departed.
+    aggregate_type: average
+    synonyms: [ late, lateness, departure delay ]
+
+  avg_planned_run_min:
+    sql: ${planned_run_min}
+    label: Average planned running time (min)
+    format: "0.0"
+    description: Average scheduled running time per trip from the timetable version.
+    aggregate_type: average
+    synonyms: [ scheduled running time, planned running time ]
+
+  avg_actual_run_min:
+    sql: ${actual_run_min}
+    label: Average actual running time (min)
+    format: "0.0"
+    description: Average tracked running time per delivered trip.
+    aggregate_type: average
+    synonyms: [ actual running time, tracked running time ]
+
+  total_run_time_overrun_min:
+    sql: ${run_time_overrun_min}
+    label: Total running time overrun (min)
+    format: "#,##0"
+    description: Total minutes delivered trips ran over (or under, when negative)
+      their scheduled running time.
+    aggregate_type: sum

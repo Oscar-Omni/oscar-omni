@@ -1,0 +1,187 @@
+# Reference this view as oscar_demos_omnise__demo_brighte_capital_3_applications
+label: Applications
+description: One row per synthetic finance application submitted through a
+  partner, with where it stood at 31 Oct 2026.
+
+catalog: oscar_demos
+schema: omnise
+table_name: demo_brighte_capital_3_applications
+
+dimensions:
+  application_id:
+    label: Application ID
+    format: ID
+    primary_key: true
+
+  partner_name:
+    label: Partner
+    hidden: true
+
+  partner_site_id:
+    format: ID
+    hidden: true
+
+  sales_rep_id:
+    format: ID
+    hidden: true
+
+  product_category:
+    label: Product Category
+    synonyms: [ product, battery, solar, EV charger ]
+
+  customer_state:
+    label: Household State
+    description: Household's state, full name
+    synonyms: [ state ]
+
+  postcode_region:
+    label: Postcode Region
+    description: Household's ABS SA4 region
+    synonyms: [ region, SA4 ]
+
+  loan_amount_aud:
+    label: Loan Amount
+    format: audcurrency_0
+    synonyms: [ loan size, amount financed ]
+
+  term_months:
+    label: Term (Months)
+    synonyms: [ loan term ]
+
+  submitted_date:
+    label: Submitted Date
+
+  decision_date:
+    label: Decision Date
+
+  approved_date:
+    label: Approved Date
+
+  installed_date:
+    label: Installed Date
+    synonyms: [ install date ]
+
+  docs_received_date:
+    label: Documents Received Date
+    description: Date Brighte received the last required installation document
+    synonyms: [ docs received ]
+
+  settled_date:
+    label: Settled Date
+
+  current_status:
+    label: Current Status
+    description: Latest status at 31 Oct 2026
+    synonyms: [ status ]
+
+  installation_status:
+    label: Installation Status
+    description: At 31 Oct 2026; Awaiting install, Documents pending, Documents
+      received or Not applicable
+    synonyms: [ install docs, paperwork status ]
+
+  pending_document:
+    label: Pending Document
+    description: The document an installed job is waiting on at 31 Oct 2026
+    synonyms: [ paperwork, installation certificate, missing document ]
+
+  days_awaiting_settlement:
+    label: Days Awaiting Settlement
+    description: Days since approval at 31 Oct 2026 for applications approved and
+      not yet settled
+
+  decline_category:
+    label: Decline Category
+    description: Partner visible decline category
+    synonyms: [ decline reason ]
+
+  decline_reason_detail:
+    label: Decline Reason Detail
+    description: Credit sensitive detailed reason
+
+  credit_score_band:
+    label: Credit Score Band
+    description: Credit sensitive
+
+  verified_income_band:
+    label: Verified Income Band
+    description: Credit sensitive
+
+  hardship_flag:
+    label: Hardship Flag
+    description: Credit sensitive; hidden from partner users
+    hidden: true
+
+measures:
+  count:
+    aggregate_type: count
+
+  application_count:
+    label: Applications
+    format: number_0
+    description: Distinct applications
+    aggregate_type: count
+
+  total_loan_amount_aud:
+    sql: ${oscar_demos_omnise__demo_brighte_capital_3_applications.loan_amount_aud}
+    label: Total Loan Amount
+    format: audcurrency_0
+    aggregate_type: sum
+
+  avg_loan_amount_aud:
+    sql: ${oscar_demos_omnise__demo_brighte_capital_3_applications.loan_amount_aud}
+    label: Average Loan Amount
+    format: audcurrency_0
+    aggregate_type: average
+    synonyms: [ average loan, average loan size ]
+
+  awaiting_settlement:
+    sql: CASE WHEN
+      ${oscar_demos_omnise__demo_brighte_capital_3_applications.current_status}
+      = 'Approved' THEN 1 ELSE 0 END
+    label: Awaiting Settlement
+    format: number_0
+    description: Approved, not yet settled or withdrawn, at 31 Oct 2026. A point in
+      time count; never sum across dates.
+    aggregate_type: sum
+    synonyms: [ pipeline, awaiting settlement ]
+
+  documents_pending:
+    sql: CASE WHEN
+      ${oscar_demos_omnise__demo_brighte_capital_3_applications.installation_status}
+      = 'Documents pending' THEN 1 ELSE 0 END
+    label: Jobs Waiting on Documents
+    format: number_0
+    description: Installed jobs waiting on a document at 31 Oct 2026
+    aggregate_type: sum
+    synonyms: [ backlog, stuck jobs, waiting on paperwork, documents pending ]
+
+  documents_pending_amount_aud:
+    sql: CASE WHEN
+      ${oscar_demos_omnise__demo_brighte_capital_3_applications.installation_status}
+      = 'Documents pending' THEN
+      ${oscar_demos_omnise__demo_brighte_capital_3_applications.loan_amount_aud}
+      ELSE 0 END
+    label: Finance Waiting on Documents
+    format: audcurrency_0
+    description: Finance the partner is waiting to be paid because a document is
+      missing, at 31 Oct 2026
+    aggregate_type: sum
+    synonyms: [ money owed to us, finance waiting ]
+
+  days_awaiting_settlement_total:
+    sql: ${oscar_demos_omnise__demo_brighte_capital_3_applications.days_awaiting_settlement}
+    label: Days Awaiting Settlement Total
+    format: number_0
+    hidden: true
+    aggregate_type: sum
+
+  avg_days_awaiting_settlement:
+    sql: ${oscar_demos_omnise__demo_brighte_capital_3_applications.days_awaiting_settlement_total}
+      /
+      NULLIF(${oscar_demos_omnise__demo_brighte_capital_3_applications.awaiting_settlement},
+      0)
+    label: Average Days Awaiting Settlement
+    format: number_1
+    description: Average days since approval for applications still awaiting
+      settlement at 31 Oct 2026

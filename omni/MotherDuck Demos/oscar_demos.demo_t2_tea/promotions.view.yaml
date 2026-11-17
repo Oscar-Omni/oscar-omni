@@ -1,0 +1,19 @@
+# Reference this view as oscar_demos_demo_t2_tea__promotions
+catalog: oscar_demos
+schema: demo_t2_tea
+table_name: promotions
+
+dimensions:
+  promo_name: {}
+  promo_type: {}
+  applies_to: {}
+  start_date: {}
+  end_date: {}
+  discount_pct: {}
+
+  promo_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

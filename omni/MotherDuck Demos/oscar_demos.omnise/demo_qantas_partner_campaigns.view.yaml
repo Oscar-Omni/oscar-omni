@@ -1,0 +1,22 @@
+# Reference this view as oscar_demos_omnise__demo_qantas_partner_campaigns
+catalog: oscar_demos
+schema: omnise
+table_name: demo_qantas_partner_campaigns
+
+dimensions:
+  campaign_name: {}
+  campaign_type: {}
+  start_date: {}
+  end_date: {}
+  offer_points: {}
+  min_spend_aud: {}
+
+  campaign_id:
+    format: ID
+
+  partner_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

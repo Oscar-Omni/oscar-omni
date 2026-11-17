@@ -1,0 +1,34 @@
+# Reference this view as oscar_demos_demo_t2_tea__products
+label: Products (synthetic)
+description: 60 SKUs with invented or generic tea names. Synthetic range, not T2's.
+
+catalog: oscar_demos
+schema: demo_t2_tea
+table_name: products
+
+dimensions:
+  sku_id:
+    label: SKU ID
+    format: ID
+    primary_key: true
+
+  product_name:
+    label: Product
+    synonyms: [ SKU, product, tea, blend, matcha ]
+
+  category:
+    label: Product category
+    hidden: true
+
+  origin_country:
+    label: Origin country
+    description: Country the tea or item ships from
+    synonyms: [ Japanese green tea, origin, sourced from ]
+
+measures:
+  count:
+    aggregate_type: count
+
+  product_count:
+    label: Products
+    aggregate_type: count

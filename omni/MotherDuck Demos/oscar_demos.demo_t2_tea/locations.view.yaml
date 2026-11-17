@@ -1,0 +1,39 @@
+# Reference this view as oscar_demos_demo_t2_tea__locations
+label: Locations (synthetic)
+description: 58 stores named by city and number, two online storefronts and 24
+  wholesale accounts. Synthetic; no name is a real T2 site.
+
+catalog: oscar_demos
+schema: demo_t2_tea
+table_name: locations
+
+dimensions:
+  location_id:
+    label: Location ID
+    format: ID
+    primary_key: true
+
+  location_name:
+    label: Location
+    description: City plus a number for stores (Perth store 02), Online Australia or
+      Online New Zealand, Wholesale NN city for accounts
+    synonyms: [ store, boutique, shop, site ]
+
+  city:
+    label: City
+
+  country_name:
+    label: Country
+
+  store_format:
+    label: Store format
+    description: Shopping centre, CBD street or Airport for stores; Online; Cafe,
+      Hotel or Grocer for wholesale
+
+measures:
+  count:
+    aggregate_type: count
+
+  location_count:
+    label: Locations
+    aggregate_type: count

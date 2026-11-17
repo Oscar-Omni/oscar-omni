@@ -1,0 +1,72 @@
+# Reference this view as oscar_demos_dbt__demo_brighte_capital_4__applications
+label: Applications
+description: One row per synthetic finance application submitted 1 Sep 2024 to
+  31 Oct 2026, with its status as at 31 Oct 2026. Use it for what is awaiting
+  settlement now and its document status.
+
+catalog: oscar_demos
+schema: dbt
+table_name: demo_brighte_capital_4__applications
+
+dimensions:
+  application_id:
+    label: Application ID
+    format: ID
+    primary_key: true
+
+  submitted_date:
+    label: Submitted date
+
+  loan_amount_aud:
+    label: Loan amount
+    format: audcurrency_0
+    synonyms: [ loan size, amount financed ]
+
+  current_status:
+    label: Current status
+    description: As at 31 Oct 2026, Settled, Approved awaiting settlement, Declined,
+      Withdrawn or In assessment
+    synonyms: [ pipeline, awaiting settlement, backlog, status ]
+
+  install_doc_status:
+    label: Install document status
+    description: As at 31 Oct 2026, Complete, Installation certificate pending,
+      Customer sign off pending, Installation not yet complete or Not applicable
+    synonyms: [ document status, certificate pending, paperwork status ]
+
+  docs_pending_days:
+    label: Days documents pending
+    description: For jobs waiting on a document, days from installation complete to
+      31 Oct 2026
+
+  credit_score_band:
+    label: Credit score band
+    description: Excellent, Very good, Good, Fair or Below threshold. Credit sensitive
+    synonyms: [ credit band, credit score ]
+
+measures:
+  count:
+    hidden: true
+    aggregate_type: count
+
+  application_count:
+    label: Applications (status)
+    format: number_0
+    description: Distinct applications, for status as at 31 Oct 2026; never use
+      event rows for status questions
+    aggregate_type: count
+
+  total_loan_amount:
+    sql: ${loan_amount_aud}
+    label: Total loan amount (status)
+    format: audcurrency_0
+    description: Loan amount over distinct applications, for status as at 31 Oct 2026
+    aggregate_type: sum
+
+#The info below was pulled from your dbt repository and is read-only.
+dbt:
+  name: demo_brighte_capital_4__applications
+  target_schema: dbt
+  config:
+    materialized: table
+  code: select * from {{ source('demo_brighte_capital_4', 'applications') }}

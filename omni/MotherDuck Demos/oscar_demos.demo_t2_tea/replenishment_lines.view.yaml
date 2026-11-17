@@ -1,0 +1,87 @@
+# Reference this view as oscar_demos_demo_t2_tea__replenishment_lines
+label: DC order lines (synthetic)
+description: One row per order line picked at the Melbourne distribution centre,
+  1 Jul to 31 Oct 2026. Store replenishment twice a week per ranged SKU, the
+  daily ecommerce pick per SKU and wholesale account orders. Synthetic data for
+  an Omni demo.
+
+catalog: oscar_demos
+schema: demo_t2_tea
+table_name: replenishment_lines
+
+dimensions:
+  order_line_id:
+    label: Order line ID
+    format: ID
+    primary_key: true
+
+  order_date:
+    label: Order date
+    description: Date the DC picked the line
+
+  location_id:
+    label: Location ID
+    format: ID
+
+  sku_id:
+    label: SKU ID
+    format: ID
+
+  channel:
+    label: Channel
+    description: Stores, Ecommerce or Wholesale, the ordering location's channel
+    synonyms: [ stores, online, wholesale ]
+
+  category:
+    label: Category
+    synonyms: [ tea type ]
+
+  state_name:
+    label: State or region
+    description: State or region of the ordering location; Online for ecommerce
+
+  units_ordered:
+    hidden: true
+
+  units_shipped:
+    hidden: true
+
+measures:
+  count:
+    aggregate_type: count
+
+  order_lines:
+    label: Order lines
+    format: number_0
+    description: DC order lines picked
+    aggregate_type: count
+    synonyms: [ replen lines, picks ]
+
+  total_units_ordered:
+    sql: ${units_ordered}
+    label: Units ordered
+    format: number_0
+    aggregate_type: sum
+    synonyms: [ ordered, demand on the DC ]
+
+  total_units_shipped:
+    sql: ${units_shipped}
+    label: Units shipped
+    format: number_0
+    aggregate_type: sum
+    synonyms: [ shipped, dispatched, despatched ]
+
+  short_units:
+    sql: ${total_units_ordered} - ${total_units_shipped}
+    label: Short units
+    format: number_0
+    description: Units ordered but not shipped
+    synonyms: [ shorts, short shipped, cuts, shortfall ]
+
+  fill_rate:
+    sql: ${total_units_shipped} / NULLIF(${total_units_ordered}, 0)
+    label: DC fill rate
+    format: percent_1
+    description: Units shipped over units ordered, computed at the grain of the
+      query. A unit fill rate, not on time in full
+    synonyms: [ fill rate, DC fill, service level, in full ]

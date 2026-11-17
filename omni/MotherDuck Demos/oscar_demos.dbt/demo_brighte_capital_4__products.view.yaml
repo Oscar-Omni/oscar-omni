@@ -1,0 +1,32 @@
+# Reference this view as oscar_demos_dbt__demo_brighte_capital_4__products
+label: Products
+description: Product categories Brighte finances
+
+catalog: oscar_demos
+schema: dbt
+table_name: demo_brighte_capital_4__products
+
+dimensions:
+  product_id:
+    label: Product ID
+    format: ID
+    primary_key: true
+
+  product_category:
+    label: Product
+    description: Solar, Battery, Solar and battery, EV charger or Heating and
+      cooling. Battery jobs means Battery and Solar and battery
+    synonyms: [ product, product type, battery jobs, EV chargers ]
+
+measures:
+  count:
+    hidden: true
+    aggregate_type: count
+
+#The info below was pulled from your dbt repository and is read-only.
+dbt:
+  name: demo_brighte_capital_4__products
+  target_schema: dbt
+  config:
+    materialized: table
+  code: select * from {{ source('demo_brighte_capital_4', 'products') }}

@@ -1,0 +1,113 @@
+hidden: true
+
+base_view: oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips
+label: Service delivery (synthetic)
+group_label: CDC
+description: Synthetic CDC bus service delivery, one row per planned trip,
+  planned against actual, 1 Nov 2024 to 31 Oct 2026, AUD.
+
+joins:
+  oscar_demos_omnise__demo_comfortdelgro_australia_cdc_routes: {}
+  oscar_demos_omnise__demo_comfortdelgro_australia_cdc_depots: {}
+  oscar_demos_omnise__demo_comfortdelgro_australia_cdc_timetable_versions: {}
+
+relationships:
+  - join_from_view: oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips
+    join_to_view: oscar_demos_omnise__demo_comfortdelgro_australia_cdc_routes
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips.route_id} =
+      ${oscar_demos_omnise__demo_comfortdelgro_australia_cdc_routes.route_id}
+    relationship_type: many_to_one
+
+  - join_from_view: oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips
+    join_to_view: oscar_demos_omnise__demo_comfortdelgro_australia_cdc_depots
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips.depot_id} =
+      ${oscar_demos_omnise__demo_comfortdelgro_australia_cdc_depots.depot_id}
+    relationship_type: many_to_one
+
+  - join_from_view: oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips
+    join_to_view: oscar_demos_omnise__demo_comfortdelgro_australia_cdc_timetable_versions
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips.timetable_version_id}
+      =
+      ${oscar_demos_omnise__demo_comfortdelgro_australia_cdc_timetable_versions.timetable_version_id}
+    relationship_type: many_to_one
+
+ai_context: |
+  Synthetic sample of CDC bus service delivery, 1 Nov 2024 to 31 Oct 2026, money in AUD, sample scale not network scale. Say the data is synthetic.
+  One row per planned trip on a service day. Planned trips counts every timetabled trip. A trip is delivered when it ran in full and missed when it was Part operated or Not operated, so delivered plus missed equals planned. Count missed trips with Missed trips, never only Not operated.
+  On-time running is on-time trips over delivered trips, never over planned trips; a delivered trip is on time when it departed between 1 minute early and 5 minutes late, a synthetic rule.
+  Missed trip rate is missed over planned trips. Abatements are synthetic contract deductions on missed trips, not real contract rates.
+  Time band is AM peak, Inter peak, PM peak or Evening on weekdays and Weekend for Saturdays, Sundays and public holidays.
+  Planned running minutes come from the timetable version in the scheduling extract; actual running minutes come from vehicle tracking on delivered trips.
+  Missed cause Late running knock-on means a trip was cancelled or cut short to recover from earlier late running.
+  Use Depot (depot name) for depots and Region on the trips view for regions. Depot names and route codes are fictional; regions and states are real geography.
+  When asked to compare periods, use the exact dates given and name both periods.
+
+sample_queries:
+  missed_and_abatements_by_depot_aug_oct_2026:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_comfortdelgro_australia_cdc_depots.depot_name,
+          oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips.missed_trips,
+          oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips.abatements
+        ]
+      base_view: oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips
+      filters:
+        oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips.service_date:
+          between_dates: [ 2026-08-01, 2026-10-31 ]
+      topic: demo_comfortdelgro_australia_cdc_service_delivery
+    prompt: Missed trips and abatements by depot from 1 August to 31 October 2026
+  routes_by_missed_trips_aug_oct_2026:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips.route_id,
+          oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips.missed_trips,
+          oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips.abatements
+        ]
+      base_view: oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips
+      filters:
+        oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips.service_date:
+          between_dates: [ 2026-08-01, 2026-10-31 ]
+      topic: demo_comfortdelgro_australia_cdc_service_delivery
+    prompt: Which routes account for most missed trips from 1 Aug to 31 Oct 2026?
+  ironbark_missed_by_band_and_cause:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips.time_band,
+          oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips.missed_cause,
+          oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips.missed_trips
+        ]
+      base_view: oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips
+      filters:
+        oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips.service_date:
+          between_dates: [ 2026-08-01, 2026-10-31 ]
+        oscar_demos_omnise__demo_comfortdelgro_australia_cdc_depots.depot_name:
+          is: Ironbark
+      topic: demo_comfortdelgro_australia_cdc_service_delivery
+    prompt: Ironbark missed trips by time band and missed cause from 1 August to 31
+      October 2026
+  irb31_running_time_by_week:
+    query:
+      fields:
+        [
+          "oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips.service\
+            _date[week]",
+          oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips.avg_planned_run_min,
+          oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips.avg_actual_run_min
+        ]
+      base_view: oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips
+      filters:
+        oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips.service_date:
+          between_dates: [ 2026-02-02, 2026-10-31 ]
+        oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips.route_id:
+          is: IRB-31
+        oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips.time_band:
+          is: PM peak
+      topic: demo_comfortdelgro_australia_cdc_service_delivery
+    prompt: Average planned and actual running time by week for IRB-31 in the PM
+      peak from 2 Feb to 31 Oct 2026

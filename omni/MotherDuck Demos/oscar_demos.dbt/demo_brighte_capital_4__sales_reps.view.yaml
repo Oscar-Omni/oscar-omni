@@ -1,0 +1,31 @@
+# Reference this view as oscar_demos_dbt__demo_brighte_capital_4__sales_reps
+label: Sales reps
+description: Partner sales reps, labelled by partner and number (synthetic, no
+  personal names)
+
+catalog: oscar_demos
+schema: dbt
+table_name: demo_brighte_capital_4__sales_reps
+
+dimensions:
+  rep_id:
+    label: Rep ID
+    format: ID
+    primary_key: true
+
+  rep_name:
+    label: Sales rep
+    synonyms: [ rep, sales rep, salesperson ]
+
+measures:
+  count:
+    hidden: true
+    aggregate_type: count
+
+#The info below was pulled from your dbt repository and is read-only.
+dbt:
+  name: demo_brighte_capital_4__sales_reps
+  target_schema: dbt
+  config:
+    materialized: table
+  code: select * from {{ source('demo_brighte_capital_4', 'sales_reps') }}

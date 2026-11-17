@@ -1,0 +1,15 @@
+# Reference this view as oscar_demos_omnise__demo_webjet_2_channels
+catalog: oscar_demos
+schema: omnise
+table_name: demo_webjet_2_channels
+
+dimensions:
+  channel_name: {}
+  channel_type: {}
+
+  channel_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

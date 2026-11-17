@@ -1,0 +1,118 @@
+# Reference this view as oscar_demos_dbt__demo_t2_tea__fct_sales_daily
+#This description was pulled from dbt.
+description: Daily sales by store, product, channel and promotion, with store
+  and product attributes joined on.
+
+catalog: oscar_demos
+schema: dbt
+table_name: demo_t2_tea__fct_sales_daily
+
+dimensions:
+  location_name: {}
+  city: {}
+  store_format: {}
+  state_name: {}
+  product_name: {}
+  category: {}
+  origin_country: {}
+  channel: {}
+  units: {}
+  ranged_day: {}
+  in_stock_day: {}
+
+  sales_key:
+    #This description was pulled from dbt.
+    description: One row per trade date, store, product, channel and promotion.
+    primary_key: true
+
+  trade_date:
+    #This description was pulled from dbt.
+    description: Trading day the sales were booked.
+
+  location_id:
+    format: ID
+    #This description was pulled from dbt.
+    description: Store the sales were made in.
+
+  sku_id:
+    format: ID
+
+  promo_id:
+    format: ID
+
+  net_sales_aud:
+    #This description was pulled from dbt.
+    description: Sales after discounts, in Australian dollars, excluding GST.
+
+  discount_aud:
+    #This description was pulled from dbt.
+    description: Promotional discount given, in Australian dollars.
+
+  gross_sales_aud:
+    #This description was pulled from dbt.
+    description: Net sales plus discount, the shelf price value of what sold.
+
+  gross_margin_aud:
+    #This description was pulled from dbt.
+    description: Net sales less cost of goods, in Australian dollars.
+
+measures:
+  count:
+    aggregate_type: count
+
+  total_net_sales:
+    sql: ${net_sales_aud}
+    label: Net Sales
+    format: currency_0
+    aggregate_type: sum
+
+  total_units:
+    sql: ${units}
+    label: Units
+    format: number_0
+    aggregate_type: sum
+
+  total_gross_margin:
+    sql: ${gross_margin_aud}
+    label: Gross Margin
+    format: currency_0
+    aggregate_type: sum
+
+  gross_margin_pct:
+    sql: ${total_gross_margin} / NULLIF(${total_net_sales}, 0)
+    label: Gross Margin %
+    format: percent_1
+
+#The info below was pulled from your dbt repository and is read-only.
+dbt:
+  name: demo_t2_tea__fct_sales_daily
+  target_schema: dbt
+  description: Daily sales by store, product, channel and promotion, with store
+    and product attributes joined on.
+  config:
+    materialized: table
+  code: |-
+    select
+        md5(concat_ws('|', s.trade_date, s.location_id, s.sku_id, s.channel, coalesce(s.promo_id, ''))) as sales_key,
+        s.trade_date,
+        s.location_id,
+        l.location_name,
+        l.city,
+        l.store_format,
+        s.state_name,
+        s.sku_id,
+        p.product_name,
+        s.category,
+        p.origin_country,
+        s.channel,
+        s.promo_id,
+        s.units,
+        s.net_sales_aud,
+        s.discount_aud,
+        s.net_sales_aud + s.discount_aud as gross_sales_aud,
+        s.gross_margin_aud,
+        s.ranged_day,
+        s.in_stock_day
+    from {{ source('demo_t2_tea', 'sales_daily') }} as s
+    left join {{ source('demo_t2_tea', 'locations') }} as l on l.location_id = s.location_id
+    left join {{ source('demo_t2_tea', 'products') }} as p on p.sku_id = s.sku_id

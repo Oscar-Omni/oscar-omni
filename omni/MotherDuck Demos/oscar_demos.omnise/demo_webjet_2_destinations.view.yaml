@@ -1,0 +1,16 @@
+# Reference this view as oscar_demos_omnise__demo_webjet_2_destinations
+catalog: oscar_demos
+schema: omnise
+table_name: demo_webjet_2_destinations
+
+dimensions:
+  destination_name: {}
+  country_name: {}
+  destination_region: {}
+
+  destination_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

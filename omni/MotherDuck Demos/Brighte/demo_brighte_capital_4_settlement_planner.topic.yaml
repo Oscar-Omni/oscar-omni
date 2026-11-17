@@ -1,0 +1,10 @@
+base_view: oscar_demos_omnise__demo_brighte_capital_4_scenario_slots
+label: Settlement planner slots (synthetic)
+group_label: Brighte
+description: Saved recovery plan slots for the Kestrel settlement recovery
+  planner app; not lending data.
+
+joins: {}
+
+ai_context: |
+  Three saved recovery plan slots (SCN-PACE, SCN-CHASE, SCN-OFFICER) for the Kestrel settlement planner app. Not lending data. Synthetic.

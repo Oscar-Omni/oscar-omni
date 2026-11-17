@@ -1,0 +1,32 @@
+# Reference this view as oscar_demos_omnise__demo_qantas_points_transactions
+catalog: oscar_demos
+schema: omnise
+table_name: demo_qantas_points_transactions
+
+dimensions:
+  txn_date: {}
+  partner_category: {}
+  transaction_type: {}
+  redemption_type: {}
+  member_tier: {}
+  member_state: {}
+  earn_pts: {}
+  bonus_pts: {}
+  redeem_pts: {}
+  billing_aud: {}
+
+  txn_id:
+    format: ID
+
+  member_id:
+    format: ID
+
+  partner_id:
+    format: ID
+
+  campaign_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

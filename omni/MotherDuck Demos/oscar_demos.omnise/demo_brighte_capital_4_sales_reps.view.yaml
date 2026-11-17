@@ -1,0 +1,24 @@
+# Reference this view as oscar_demos_omnise__demo_brighte_capital_4_sales_reps
+label: Sales reps
+description: Partner sales reps, labelled by partner and number (synthetic, no
+  personal names)
+hidden: true
+
+catalog: oscar_demos
+schema: omnise
+table_name: demo_brighte_capital_4_sales_reps
+
+dimensions:
+  rep_id:
+    label: Rep ID
+    format: ID
+    primary_key: true
+
+  rep_name:
+    label: Sales rep
+    synonyms: [ rep, sales rep, salesperson ]
+
+measures:
+  count:
+    hidden: true
+    aggregate_type: count

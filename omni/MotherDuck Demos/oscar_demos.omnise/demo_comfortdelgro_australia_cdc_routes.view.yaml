@@ -1,0 +1,26 @@
+# Reference this view as oscar_demos_omnise__demo_comfortdelgro_australia_cdc_routes
+label: Routes
+
+catalog: oscar_demos
+schema: omnise
+table_name: demo_comfortdelgro_australia_cdc_routes
+
+dimensions:
+  route_id:
+    label: Route ID
+    format: ID
+    hidden: true
+    primary_key: true
+
+  depot_id:
+    format: ID
+    hidden: true
+
+  route_type:
+    label: Route type
+    description: Trunk, Local or School.
+
+measures:
+  count:
+    hidden: true
+    aggregate_type: count

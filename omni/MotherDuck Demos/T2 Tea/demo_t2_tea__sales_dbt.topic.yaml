@@ -1,0 +1,14 @@
+hidden: true
+
+base_view: oscar_demos_dbt__demo_t2_tea__fct_sales_daily
+label: Sales (dbt)
+group_label: T2 Tea
+description: Daily store sales built by the oscar-dbt project, with store
+  attributes. Synthetic data for an Omni demo.
+
+joins:
+  oscar_demos_dbt__demo_t2_tea__dim_stores: {}
+
+ai_context: |
+  Synthetic T2 Tea store sales for an Omni demo, one row per trade date, store, product, channel and promotion, modelled in dbt. Say the data is synthetic.
+  Net sales exclude GST. Gross margin % is gross margin over net sales, never an average of row level margins.

@@ -1,0 +1,29 @@
+# Reference this view as oscar_demos_demo_t2_tea__sales_daily
+catalog: oscar_demos
+schema: demo_t2_tea
+table_name: sales_daily
+
+dimensions:
+  trade_date: {}
+  channel: {}
+  category: {}
+  state_name: {}
+  units: {}
+  net_sales_aud: {}
+  discount_aud: {}
+  gross_margin_aud: {}
+  ranged_day: {}
+  in_stock_day: {}
+
+  location_id:
+    format: ID
+
+  sku_id:
+    format: ID
+
+  promo_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

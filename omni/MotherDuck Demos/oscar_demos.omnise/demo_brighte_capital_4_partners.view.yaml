@@ -1,0 +1,31 @@
+# Reference this view as oscar_demos_omnise__demo_brighte_capital_4_partners
+label: Partners
+description: Fictional retailer and installer partners that sell Brighte finance (synthetic)
+hidden: true
+
+catalog: oscar_demos
+schema: omnise
+table_name: demo_brighte_capital_4_partners
+
+dimensions:
+  partner_id:
+    label: Partner ID
+    format: ID
+    primary_key: true
+
+  partner_name:
+    label: Partner
+    description: Partner name; matches the demo_tenant user attribute used by the
+      access filter
+    synonyms: [ partner, vendor, installer, retailer ]
+
+  partner_type:
+    label: Partner type
+
+  home_state:
+    label: Partner home state
+
+measures:
+  count:
+    hidden: true
+    aggregate_type: count

@@ -1,0 +1,25 @@
+hidden: true
+
+base_view: oscar_demos_omnise__demo_comfortdelgro_australia_cdc_scenario_slots
+label: PM peak planner slots (synthetic)
+group_label: CDC
+description: Three saved timetable scenarios for the Ironbark PM peak planner app.
+
+joins: {}
+
+ai_context: |
+  Three saved timetable scenarios (SCN-RESTORE, SCN-STANDBY, SCN-PARTIAL) for the Ironbark PM peak planner app; not operational data.
+
+sample_queries:
+  saved_scenarios:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_comfortdelgro_australia_cdc_scenario_slots.scenario_id,
+          oscar_demos_omnise__demo_comfortdelgro_australia_cdc_scenario_slots.scenario_name,
+          oscar_demos_omnise__demo_comfortdelgro_australia_cdc_scenario_slots.seed_added_run_min,
+          oscar_demos_omnise__demo_comfortdelgro_australia_cdc_scenario_slots.seed_standby_drivers
+        ]
+      base_view: oscar_demos_omnise__demo_comfortdelgro_australia_cdc_scenario_slots
+      topic: demo_comfortdelgro_australia_cdc_pm_peak_planner
+    prompt: Which timetable scenarios are saved?

@@ -1,0 +1,60 @@
+hidden: true
+
+base_view: oscar_demos_omnise__demo_comfortdelgro_australia_cdc_duties
+label: Labour adherence (synthetic)
+group_label: CDC
+description: Synthetic CDC driver duties, rostered against paid hours and labour
+  cost, 1 Nov 2024 to 31 Oct 2026, AUD.
+
+joins:
+  oscar_demos_omnise__demo_comfortdelgro_australia_cdc_depots: {}
+
+relationships:
+  - join_from_view: oscar_demos_omnise__demo_comfortdelgro_australia_cdc_duties
+    join_to_view: oscar_demos_omnise__demo_comfortdelgro_australia_cdc_depots
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_comfortdelgro_australia_cdc_duties.depot_id}
+      = ${oscar_demos_omnise__demo_comfortdelgro_australia_cdc_depots.depot_id}
+    relationship_type: many_to_one
+
+ai_context: |
+  Synthetic sample of CDC driver duties, 1 Nov 2024 to 31 Oct 2026, money in AUD at synthetic hourly rates. Say the data is synthetic.
+  One row per rostered driver duty on a service day. Rostered (planned) paid hours are as rostered; paid hours are as worked and never below rostered. Overtime hours are paid hours above roster.
+  Labour cost adherence is actual labour cost over planned labour cost; labour cost variance is actual minus planned.
+  Finish band is the band the duty signs off in: AM peak, Inter peak, PM peak, Evening or Weekend.
+  This topic has no route or trip detail; it meets service delivery only by depot and date. Count duties with Duties.
+  When asked to compare periods, use the exact dates given and name both periods.
+
+sample_queries:
+  ironbark_overtime_by_month_and_band:
+    query:
+      fields:
+        [
+          "oscar_demos_omnise__demo_comfortdelgro_australia_cdc_duties.servic\
+            e_date[month]",
+          oscar_demos_omnise__demo_comfortdelgro_australia_cdc_duties.finish_band,
+          oscar_demos_omnise__demo_comfortdelgro_australia_cdc_duties.total_overtime_hours
+        ]
+      base_view: oscar_demos_omnise__demo_comfortdelgro_australia_cdc_duties
+      filters:
+        oscar_demos_omnise__demo_comfortdelgro_australia_cdc_duties.service_date:
+          between_dates: [ 2026-02-01, 2026-10-31 ]
+        oscar_demos_omnise__demo_comfortdelgro_australia_cdc_depots.depot_name:
+          is: Ironbark
+      topic: demo_comfortdelgro_australia_cdc_labour_adherence
+    prompt: Ironbark overtime hours by month and finish band from Feb to Oct 2026
+  labour_adherence_by_depot_aug_oct_2026:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_comfortdelgro_australia_cdc_depots.depot_name,
+          oscar_demos_omnise__demo_comfortdelgro_australia_cdc_duties.planned_labour_cost,
+          oscar_demos_omnise__demo_comfortdelgro_australia_cdc_duties.actual_labour_cost,
+          oscar_demos_omnise__demo_comfortdelgro_australia_cdc_duties.labour_cost_adherence
+        ]
+      base_view: oscar_demos_omnise__demo_comfortdelgro_australia_cdc_duties
+      filters:
+        oscar_demos_omnise__demo_comfortdelgro_australia_cdc_duties.service_date:
+          between_dates: [ 2026-08-01, 2026-10-31 ]
+      topic: demo_comfortdelgro_australia_cdc_labour_adherence
+    prompt: Labour cost adherence by depot from 1 August to 31 October 2026

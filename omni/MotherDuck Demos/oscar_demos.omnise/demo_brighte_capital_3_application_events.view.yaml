@@ -1,0 +1,319 @@
+# Reference this view as oscar_demos_omnise__demo_brighte_capital_3_application_events
+label: Application Events
+description: One row per status event on a synthetic partner finance application
+  (Submitted, Conditionally approved, Approved, Declined, Withdrawn, Settled),
+  dated by event_date.
+
+catalog: oscar_demos
+schema: omnise
+table_name: demo_brighte_capital_3_application_events
+
+dimensions:
+  event_id:
+    label: Event ID
+    format: ID
+    primary_key: true
+
+  application_id:
+    label: Application ID
+    format: ID
+
+  partner_name:
+    label: Partner
+    hidden: true
+
+  partner_site_id:
+    format: ID
+    hidden: true
+
+  sales_rep_id:
+    format: ID
+    hidden: true
+
+  product_category:
+    label: Product Category
+    description: Solar PV, Home battery (including solar and battery bundles), EV
+      charger, Heat pump hot water, Heating and cooling
+    synonyms: [ product, battery, solar, EV charger, hot water, aircon, reverse cycle ]
+
+  event_type:
+    label: Event Type
+    description: Funnel stage of the event
+    synonyms: [ funnel stage, status event, conditional approval ]
+
+  event_date:
+    label: Event Date
+    description: Date the event happened; submissions by submission date, decisions
+      by decision date, settlements by settlement date
+
+  is_submitted:
+    hidden: true
+
+  is_decision:
+    hidden: true
+
+  is_approved:
+    hidden: true
+
+  is_declined:
+    hidden: true
+
+  is_settled:
+    hidden: true
+
+  days_to_decision:
+    label: Days to Decision
+    description: On Approved and Declined rows, submission to decision in days
+
+  days_to_settle:
+    label: Days to Settle
+    description: On Settled rows, approval to settlement in days
+
+  approved_amount_aud:
+    format: audcurrency_0
+    hidden: true
+
+  settled_amount_aud:
+    format: audcurrency_0
+    hidden: true
+
+measures:
+  count:
+    aggregate_type: count
+
+  event_count:
+    label: Events
+    format: number_0
+    description: Status events; only meaningful split by event type. For
+      applications use Applications Submitted.
+    drill_fields:
+      [
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.application_id,
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.event_date,
+        oscar_demos_omnise__demo_brighte_capital_3_partner_sites.site_name,
+        oscar_demos_omnise__demo_brighte_capital_3_sales_reps.rep_name,
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.product_category,
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.event_type,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.loan_amount_aud,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.installed_date,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.docs_received_date,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.installation_status,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.pending_document,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.decline_category,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.decline_reason_detail,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.credit_score_band
+      ]
+    aggregate_type: count
+
+  applications_submitted:
+    sql: ${oscar_demos_omnise__demo_brighte_capital_3_application_events.is_submitted}
+    label: Applications Submitted
+    format: number_0
+    description: Applications submitted in the period, by submission date
+    drill_fields:
+      [
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.application_id,
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.event_date,
+        oscar_demos_omnise__demo_brighte_capital_3_partner_sites.site_name,
+        oscar_demos_omnise__demo_brighte_capital_3_sales_reps.rep_name,
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.product_category,
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.event_type,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.loan_amount_aud,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.installed_date,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.docs_received_date,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.installation_status,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.pending_document,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.decline_category,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.decline_reason_detail,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.credit_score_band
+      ]
+    aggregate_type: sum
+    synonyms: [ applications, apps, submissions ]
+
+  decisions:
+    sql: ${oscar_demos_omnise__demo_brighte_capital_3_application_events.is_decision}
+    label: Decisions
+    format: number_0
+    description: Final credit decisions in the period, approved plus declined
+    aggregate_type: sum
+
+  applications_approved:
+    sql: ${oscar_demos_omnise__demo_brighte_capital_3_application_events.is_approved}
+    label: Applications Approved
+    format: number_0
+    description: Final approvals in the period, by approval date
+    drill_fields:
+      [
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.application_id,
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.event_date,
+        oscar_demos_omnise__demo_brighte_capital_3_partner_sites.site_name,
+        oscar_demos_omnise__demo_brighte_capital_3_sales_reps.rep_name,
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.product_category,
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.event_type,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.loan_amount_aud,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.installed_date,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.docs_received_date,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.installation_status,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.pending_document,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.decline_category,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.decline_reason_detail,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.credit_score_band
+      ]
+    aggregate_type: sum
+    synonyms: [ approvals ]
+
+  applications_declined:
+    sql: ${oscar_demos_omnise__demo_brighte_capital_3_application_events.is_declined}
+    label: Applications Declined
+    format: number_0
+    description: Declines in the period, by decision date
+    drill_fields:
+      [
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.application_id,
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.event_date,
+        oscar_demos_omnise__demo_brighte_capital_3_partner_sites.site_name,
+        oscar_demos_omnise__demo_brighte_capital_3_sales_reps.rep_name,
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.product_category,
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.event_type,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.loan_amount_aud,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.installed_date,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.docs_received_date,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.installation_status,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.pending_document,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.decline_category,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.decline_reason_detail,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.credit_score_band
+      ]
+    aggregate_type: sum
+    synonyms: [ declines ]
+
+  applications_settled:
+    sql: ${oscar_demos_omnise__demo_brighte_capital_3_application_events.is_settled}
+    label: Applications Settled
+    format: number_0
+    description: Loans settled in the period, by settlement date; settlement is when
+      Brighte pays the partner
+    drill_fields:
+      [
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.application_id,
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.event_date,
+        oscar_demos_omnise__demo_brighte_capital_3_partner_sites.site_name,
+        oscar_demos_omnise__demo_brighte_capital_3_sales_reps.rep_name,
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.product_category,
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.event_type,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.loan_amount_aud,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.installed_date,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.docs_received_date,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.installation_status,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.pending_document,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.decline_category,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.decline_reason_detail,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.credit_score_band
+      ]
+    aggregate_type: sum
+    synonyms: [ settlements, funded loans ]
+
+  decline_rate:
+    sql: ${oscar_demos_omnise__demo_brighte_capital_3_application_events.applications_declined}
+      /
+      NULLIF(${oscar_demos_omnise__demo_brighte_capital_3_application_events.decisions},
+      0)
+    label: Decline Rate
+    format: percent_1
+    description: Declines over final decisions (approved plus declined); withdrawn
+      applications are not decisions. Never average monthly, site or rep rates.
+    drill_fields:
+      [
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.application_id,
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.event_date,
+        oscar_demos_omnise__demo_brighte_capital_3_partner_sites.site_name,
+        oscar_demos_omnise__demo_brighte_capital_3_sales_reps.rep_name,
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.product_category,
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.event_type,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.loan_amount_aud,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.installed_date,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.docs_received_date,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.installation_status,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.pending_document,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.decline_category,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.decline_reason_detail,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.credit_score_band
+      ]
+    synonyms: [ decline rate, knock backs, knock back rate ]
+
+  approval_rate:
+    sql: ${oscar_demos_omnise__demo_brighte_capital_3_application_events.applications_approved}
+      /
+      NULLIF(${oscar_demos_omnise__demo_brighte_capital_3_application_events.decisions},
+      0)
+    label: Approval Rate
+    format: percent_1
+    description: Approvals over final decisions; one minus decline rate
+
+  days_to_decision_total:
+    sql: ${oscar_demos_omnise__demo_brighte_capital_3_application_events.days_to_decision}
+    label: Days to Decision Total
+    format: number_0
+    description: Numerator of Average Days to Decision
+    aggregate_type: sum
+
+  avg_days_to_decision:
+    sql: ${oscar_demos_omnise__demo_brighte_capital_3_application_events.days_to_decision_total}
+      /
+      NULLIF(${oscar_demos_omnise__demo_brighte_capital_3_application_events.decisions},
+      0)
+    label: Average Days to Decision
+    format: number_1
+    description: Submission to final decision for decisions made in the period
+    synonyms: [ time to decision, turnaround ]
+
+  days_to_settle_total:
+    sql: ${oscar_demos_omnise__demo_brighte_capital_3_application_events.days_to_settle}
+    label: Days to Settle Total
+    format: number_0
+    description: Numerator of Average Days to Settle
+    aggregate_type: sum
+
+  avg_days_to_settle:
+    sql: ${oscar_demos_omnise__demo_brighte_capital_3_application_events.days_to_settle_total}
+      /
+      NULLIF(${oscar_demos_omnise__demo_brighte_capital_3_application_events.applications_settled},
+      0)
+    label: Average Days to Settle
+    format: number_1
+    description: Approval to settlement for loans settled in the period, by
+      settlement month; how long a partner waits to be paid after approval
+    drill_fields:
+      [
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.application_id,
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.event_date,
+        oscar_demos_omnise__demo_brighte_capital_3_partner_sites.site_name,
+        oscar_demos_omnise__demo_brighte_capital_3_sales_reps.rep_name,
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.product_category,
+        oscar_demos_omnise__demo_brighte_capital_3_application_events.event_type,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.loan_amount_aud,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.installed_date,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.docs_received_date,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.installation_status,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.pending_document,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.decline_category,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.decline_reason_detail,
+        oscar_demos_omnise__demo_brighte_capital_3_applications.credit_score_band
+      ]
+    synonyms: [ time to settle, time to get paid, settlement time, days to settle ]
+
+  approved_finance_aud:
+    sql: ${oscar_demos_omnise__demo_brighte_capital_3_application_events.approved_amount_aud}
+    label: Approved Finance
+    format: audcurrency_0
+    description: Finance approved in the period (AUD)
+    aggregate_type: sum
+    synonyms: [ approved finance, approved amount ]
+
+  settled_finance_aud:
+    sql: ${oscar_demos_omnise__demo_brighte_capital_3_application_events.settled_amount_aud}
+    label: Settled Finance
+    format: audcurrency_0
+    description: Finance settled, paid out to partners, in the period (AUD)
+    aggregate_type: sum
+    synonyms: [ settled finance, paid out, settled amount ]

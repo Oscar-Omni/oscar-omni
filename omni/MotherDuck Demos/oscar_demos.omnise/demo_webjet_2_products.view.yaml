@@ -1,0 +1,14 @@
+# Reference this view as oscar_demos_omnise__demo_webjet_2_products
+catalog: oscar_demos
+schema: omnise
+table_name: demo_webjet_2_products
+
+dimensions:
+  product_name: {}
+
+  product_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

@@ -1,0 +1,25 @@
+# Reference this view as oscar_demos_omnise__demo_brighte_capital_4_products
+label: Products
+description: Product categories Brighte finances
+hidden: true
+
+catalog: oscar_demos
+schema: omnise
+table_name: demo_brighte_capital_4_products
+
+dimensions:
+  product_id:
+    label: Product ID
+    format: ID
+    primary_key: true
+
+  product_category:
+    label: Product
+    description: Solar, Battery, Solar and battery, EV charger or Heating and
+      cooling. Battery jobs means Battery and Solar and battery
+    synonyms: [ product, product type, battery jobs, EV chargers ]
+
+measures:
+  count:
+    hidden: true
+    aggregate_type: count
