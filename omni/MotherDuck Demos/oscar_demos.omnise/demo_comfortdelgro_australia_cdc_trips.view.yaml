@@ -108,6 +108,28 @@ dimensions:
     format: '"A$"#,##0'
     description: Synthetic contract deduction on a missed trip; 0 on Operated trips.
 
+  depot_lga_code:
+    sql: CASE ${depot_id} WHEN 'IRB' THEN '10750' WHEN 'BLG' THEN '17420' WHEN 'LYR'
+      THEN '14900' WHEN 'BNK' THEN '14170' WHEN 'CRW' THEN '15900' WHEN 'KGF'
+      THEN '16380' WHEN 'SLT' THEN '27260' WHEN 'RSL' THEN '23270' WHEN 'GRV'
+      THEN '21610' WHEN 'KKB' THEN '35010' WHEN 'JCR' THEN '36720' WHEN 'BOB'
+      THEN '71000' WHEN 'SPX' THEN '70200' END
+    label: Depot LGA code
+    description: ABS 2024 local government area code of the area the depot serves.
+      Use with LGA region maps.
+
+  depot_lga:
+    sql: CASE ${depot_id} WHEN 'IRB' THEN 'Blacktown' WHEN 'BLG' THEN 'The Hills'
+      WHEN 'LYR' THEN 'Liverpool' WHEN 'BNK' THEN 'Inner West' WHEN 'CRW' THEN
+      'Newcastle' WHEN 'KGF' THEN 'Port Macquarie-Hastings' WHEN 'SLT' THEN
+      'Wyndham' WHEN 'RSL' THEN 'Hume' WHEN 'GRV' THEN 'Casey' WHEN 'KKB' THEN
+      'Moreton Bay' WHEN 'JCR' THEN 'Sunshine Coast' WHEN 'BOB' THEN 'Darwin'
+      WHEN 'SPX' THEN 'Alice Springs' END
+    label: Depot LGA
+    description: Local government area the depot serves (ABS 2024 name), from the
+      depot's Area served.
+    synonyms: [ LGA, local government area, council area ]
+
 measures:
   count:
     hidden: true
