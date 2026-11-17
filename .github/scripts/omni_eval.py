@@ -40,12 +40,19 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-# Prompt sets to evaluate on every run. Add one entry per suite; each runs
-# independently against `main` and the branch, and shows up as its own
-# section in the PR comment. Label is just for display.
-PROMPT_SETS = [
-    {"id": "fc7d143b-896f-4787-b355-f5af073198fa", "label": "BasePromptSet"},
-]
+# Prompt sets to evaluate, per Omni model (the workflow picks MODEL_ID from the
+# folder the PR touches). Each set runs independently against `main` and the
+# branch, and shows up as its own section in the PR comment. Label is just for display.
+PROMPT_SETS = {
+    # Snowflake, omni/Snowflake
+    "d1f1d185-aa16-44d0-bc96-ba319fa23b1c": [
+        {"id": "fc7d143b-896f-4787-b355-f5af073198fa", "label": "BasePromptSet"},
+    ],
+    # MotherDuck Demos, omni/MotherDuck Demos
+    "9200dd83-80e3-4f24-9dd1-943555696b1b": [
+        {"id": "6a8c54f8-8850-4680-a603-6e02148ca1ed", "label": "Brighte partner lending"},
+    ],
+}
 
 TERMINAL_RUN_STATES = {"COMPLETE", "CANCELLED"}
 
@@ -372,11 +379,11 @@ def write_no_branch_summary(cfg):
 
 
 def main():
-    if not PROMPT_SETS:
-        sys.stderr.write("PROMPT_SETS is empty; add at least one prompt set to omni_eval.py\n")
-        sys.exit(2)
-
     cfg = Config()
+    prompt_sets = PROMPT_SETS.get(cfg.model_id)
+    if not prompt_sets:
+        sys.stderr.write(f"No prompt sets for model {cfg.model_id}; add them to PROMPT_SETS in omni_eval.py\n")
+        sys.exit(2)
 
     branch_id = resolve_branch_id(cfg)
     if not branch_id:
@@ -389,7 +396,7 @@ def main():
     # Omni allows only 2 in-progress eval runs org-wide, so prompt sets are run
     # one at a time (main + branch per set) rather than all at once.
     set_results = []
-    for prompt_set in PROMPT_SETS:
+    for prompt_set in prompt_sets:
         main_id = start_run(cfg, prompt_set["id"], "CI baseline (main)")
         branch_id_run = start_run(
             cfg, prompt_set["id"], f"CI branch eval ({cfg.branch_name})", branch_id=branch_id)

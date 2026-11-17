@@ -12,7 +12,7 @@ name: Omni AI Eval
 #   OMNI_API_KEY   Organization API key (Settings > API access)
 #   OMNI_BASE_URL  e.g. https://<your-org>.omniapp.co/api
 # Required repo variables (Settings > Secrets and variables > Actions > Variables):
-#   OMNI_MODEL_ID  Omni model id to evaluate
+#   OMNI_MODEL_ID  default Omni model (omni/Snowflake); PRs under omni/MotherDuck Demos use 9200dd83
 # Which prompt sets run is configured in .github/scripts/omni_eval.py
 # (PROMPT_SETS list), not a repo variable -- edit that list to add/remove suites.
 #
@@ -27,6 +27,9 @@ on:
       branch_name:
         description: Omni model branch to evaluate against main (manual runs only; PRs use the head branch automatically)
         required: true
+      model_id:
+        description: Omni model the branch belongs to (manual runs only; PRs pick it from the folder they change). Blank means the OMNI_MODEL_ID variable.
+        required: false
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
@@ -52,12 +55,28 @@ jobs:
         with:
           python-version: "3.12"
 
+      # The repo holds two models: omni/Snowflake (the OMNI_MODEL_ID variable) and
+      # omni/MotherDuck Demos (9200dd83). ponytail: one model per PR; a PR touching
+      # both folders is evaluated on MotherDuck Demos only.
+      - name: Pick the Omni model this PR changes
+        id: model
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          model="${{ inputs.model_id || vars.OMNI_MODEL_ID }}"
+          if [ -n "$PR" ] && gh api "repos/${{ github.repository }}/pulls/$PR/files" --paginate --jq '.[].filename' | grep -q '^omni/MotherDuck Demos/'; then
+            model=9200dd83-80e3-4f24-9dd1-943555696b1b
+          fi
+          echo "Evaluating model $model"
+          echo "id=$model" >> "$GITHUB_OUTPUT"
+
       - name: Run Omni AI eval
         id: eval
         env:
           OMNI_BASE_URL: ${{ secrets.OMNI_BASE_URL }}
           OMNI_API_KEY: ${{ secrets.OMNI_API_KEY }}
-          MODEL_ID: ${{ vars.OMNI_MODEL_ID }}
+          MODEL_ID: ${{ steps.model.outputs.id }}
           BRANCH_NAME: ${{ github.head_ref || github.event.inputs.branch_name }}
           SUMMARY_PATH: omni-eval-summary.md
           RESULTS_PATH: omni-eval-results.json
