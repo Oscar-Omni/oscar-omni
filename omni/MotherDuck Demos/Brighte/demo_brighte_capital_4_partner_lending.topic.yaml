@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: oscar_demos_dbt__demo_brighte_capital_4__application_events
 label: Partner lending (synthetic)
 group_label: Brighte

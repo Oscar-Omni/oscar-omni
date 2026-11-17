@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: oscar_demos_omnise__demo_brighte_capital_4_scenario_slots
 label: Settlement planner slots (synthetic)
 group_label: Brighte

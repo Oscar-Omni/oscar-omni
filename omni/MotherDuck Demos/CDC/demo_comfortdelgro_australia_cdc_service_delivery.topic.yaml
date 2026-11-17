@@ -1,4 +1,4 @@
-hidden: true
+hidden: false
 
 base_view: oscar_demos_omnise__demo_comfortdelgro_australia_cdc_trips
 label: Service delivery (synthetic)
