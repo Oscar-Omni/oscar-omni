@@ -1,0 +1,17 @@
+# Reference this view as oscar_demos_omnise__demo_dobbe_ai_2_dentists
+catalog: oscar_demos
+schema: omnise
+table_name: demo_dobbe_ai_2_dentists
+
+dimensions:
+  specialty: {}
+
+  dentist_id:
+    format: ID
+
+  practice_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

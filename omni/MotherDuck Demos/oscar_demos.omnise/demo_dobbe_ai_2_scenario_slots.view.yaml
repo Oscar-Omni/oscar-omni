@@ -1,0 +1,20 @@
+# Reference this view as oscar_demos_omnise__demo_dobbe_ai_2_scenario_slots
+catalog: oscar_demos
+schema: omnise
+table_name: demo_dobbe_ai_2_scenario_slots
+
+dimensions:
+  slot_order: {}
+  default_label: {}
+  editable: {}
+  default_assumptions_json: {}
+
+  scenario_id:
+    format: ID
+
+  practice_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

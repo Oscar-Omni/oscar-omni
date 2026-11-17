@@ -1,0 +1,23 @@
+# Reference this view as oscar_demos_omnise__demo_dobbe_ai_2_practices
+catalog: oscar_demos
+schema: omnise
+table_name: demo_dobbe_ai_2_practices
+
+dimensions:
+  practice_name: {}
+  group_name: {}
+  region: {}
+  country: {}
+  state_name: {}
+  city: {}
+  plan_tier: {}
+  practice_type: {}
+  chairs: {}
+  go_live_date: {}
+
+  practice_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

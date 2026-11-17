@@ -1,0 +1,41 @@
+# Reference this view as oscar_demos_omnise__demo_dobbe_ai_2_appointments
+catalog: oscar_demos
+schema: omnise
+table_name: demo_dobbe_ai_2_appointments
+
+dimensions:
+  appointment_date: {}
+  region: {}
+  state_name: {}
+  plan_tier: {}
+  patient_age_band: {}
+  attended: {}
+  xray_taken: {}
+  xray_ai_analysed: {}
+  findings_flagged: {}
+  findings_overridden: {}
+  ai_note_generated: {}
+  front_desk_tasks: {}
+  minutes_saved: {}
+  plan_proposed: {}
+  plan_value_aud: {}
+  letter_timing: {}
+  letter_same_day: {}
+  plan_accepted: {}
+  accepted_value_aud: {}
+
+  appointment_id:
+    format: ID
+
+  practice_id:
+    format: ID
+
+  dentist_id:
+    format: ID
+
+  xray_release_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

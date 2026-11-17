@@ -1,0 +1,17 @@
+# Reference this view as oscar_demos_omnise__demo_dobbe_ai_2_xray_releases
+catalog: oscar_demos
+schema: omnise
+table_name: demo_dobbe_ai_2_xray_releases
+
+dimensions:
+  model_version: {}
+  region: {}
+  released_on: {}
+  retired_on: {}
+
+  release_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count
