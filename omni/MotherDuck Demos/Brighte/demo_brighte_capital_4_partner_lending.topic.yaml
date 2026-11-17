@@ -66,6 +66,27 @@ sample_queries:
       topic: demo_brighte_capital_4_partner_lending
     prompt: Average days from approval to settlement by product for loans settled 1
       August to 31 October 2026
+  kestrel_battery_waits_by_month_2026:
+    query:
+      fields:
+        [
+          "oscar_demos_dbt__demo_brighte_capital_4__application_events.event_\
+            date[month]",
+          oscar_demos_dbt__demo_brighte_capital_4__application_events.avg_days_to_settle,
+          oscar_demos_dbt__demo_brighte_capital_4__application_events.avg_days_install_wait,
+          oscar_demos_dbt__demo_brighte_capital_4__application_events.avg_days_docs_wait
+        ]
+      base_view: oscar_demos_dbt__demo_brighte_capital_4__application_events
+      filters:
+        oscar_demos_dbt__demo_brighte_capital_4__application_events.event_date:
+          between_dates: [ 2026-01-01, 2026-10-31 ]
+        oscar_demos_dbt__demo_brighte_capital_4__partners.partner_name:
+          is: Kestrel Solar and Battery
+        oscar_demos_dbt__demo_brighte_capital_4__products.product_category:
+          is: Battery
+      topic: demo_brighte_capital_4_partner_lending
+    prompt: For Kestrel Solar and Battery battery jobs, split days to settle into
+      install wait and docs wait by month for 2026
   kestrel_certificate_backlog:
     query:
       fields:
