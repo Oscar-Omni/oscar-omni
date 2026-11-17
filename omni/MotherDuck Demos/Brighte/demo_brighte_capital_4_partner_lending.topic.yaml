@@ -45,13 +45,11 @@ relationships:
     relationship_type: many_to_one
 
 ai_context: |
-  Synthetic Brighte lending through retailer and installer partners, 1 Nov 2024 to 31 Oct 2026, money in AUD. Say the data is synthetic.
-  One row per application stage event (Submitted, Approved, Declined, Withdrawn, Settled). Every measure counts an event in the period it happened, so "settled in October" means the Settled event is dated October; filter event_date for any period.
-  Days to settle runs from approval to settlement (total days over settled loans, by settlement date) and splits into install wait plus docs wait plus 1 or 2 payout days.
-  Decline rate is declines over credit decisions (approved plus declined), never over submissions.
-  Battery jobs means product Battery and Solar and battery.
-  The applications view holds each application's status as at 31 Oct 2026. Use it for what is awaiting settlement now and its document status, and count with Applications (status), never event rows.
-  When asked to compare periods, use the exact dates given and name both periods.
+  Synthetic Brighte partner lending, 1 Nov 2024 to 31 Oct 2026, AUD. Say the data is synthetic.
+  One row per application stage event. Every measure counts an event in the period it happened; filter event_date for any period.
+  Decline rate is declines over applications submitted.
+  Battery jobs means product Battery.
+  For status as at 31 Oct 2026 (awaiting settlement, document status) use the applications view and count with Applications (status).
 
 sample_queries:
   days_to_settle_by_product_aug_oct_2026:
@@ -68,27 +66,6 @@ sample_queries:
       topic: demo_brighte_capital_4_partner_lending
     prompt: Average days from approval to settlement by product for loans settled 1
       August to 31 October 2026
-  kestrel_battery_waits_by_month_2026:
-    query:
-      fields:
-        [
-          "oscar_demos_dbt__demo_brighte_capital_4__application_events.event_\
-            date[month]",
-          oscar_demos_dbt__demo_brighte_capital_4__application_events.avg_days_to_settle,
-          oscar_demos_dbt__demo_brighte_capital_4__application_events.avg_days_install_wait,
-          oscar_demos_dbt__demo_brighte_capital_4__application_events.avg_days_docs_wait
-        ]
-      base_view: oscar_demos_dbt__demo_brighte_capital_4__application_events
-      filters:
-        oscar_demos_dbt__demo_brighte_capital_4__application_events.event_date:
-          between_dates: [ 2026-01-01, 2026-10-31 ]
-        oscar_demos_dbt__demo_brighte_capital_4__partners.partner_name:
-          is: Kestrel Solar and Battery
-        oscar_demos_dbt__demo_brighte_capital_4__products.product_category:
-          is: [ Battery, Solar and battery ]
-      topic: demo_brighte_capital_4_partner_lending
-    prompt: For Kestrel Solar and Battery battery jobs, split days to settle into
-      install wait and docs wait by month for 2026
   kestrel_certificate_backlog:
     query:
       fields:
@@ -106,23 +83,3 @@ sample_queries:
       topic: demo_brighte_capital_4_partner_lending
     prompt: How many Kestrel applications are awaiting settlement with an
       installation certificate pending, and how much is that?
-  bellbird_evc_decline_by_rep:
-    query:
-      fields:
-        [
-          "oscar_demos_dbt__demo_brighte_capital_4__application_events.event_\
-            date[month]",
-          oscar_demos_dbt__demo_brighte_capital_4__sales_reps.rep_name,
-          oscar_demos_dbt__demo_brighte_capital_4__application_events.decline_rate
-        ]
-      base_view: oscar_demos_dbt__demo_brighte_capital_4__application_events
-      filters:
-        oscar_demos_dbt__demo_brighte_capital_4__application_events.event_date:
-          between_dates: [ 2025-11-01, 2026-10-31 ]
-        oscar_demos_dbt__demo_brighte_capital_4__partners.partner_name:
-          is: Bellbird Electrical
-        oscar_demos_dbt__demo_brighte_capital_4__products.product_category:
-          is: EV charger
-      topic: demo_brighte_capital_4_partner_lending
-    prompt: Decline rate on EV chargers by sales rep at Bellbird Electrical, monthly
-      from 1 Nov 2025 to 31 Oct 2026
