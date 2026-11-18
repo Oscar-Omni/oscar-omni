@@ -8,6 +8,9 @@ schema: omnise
 table_name: demo_mantel_group_partner_member_months
 
 dimensions:
+  lga_code: {}
+  lga_name: {}
+
   member_month_id:
     label: Member month ID
     format: ID

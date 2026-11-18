@@ -8,6 +8,9 @@ schema: omnise
 table_name: demo_mantel_group_partner_members
 
 dimensions:
+  lga_code: {}
+  lga_name: {}
+
   member_id:
     label: Member ID
     format: ID
