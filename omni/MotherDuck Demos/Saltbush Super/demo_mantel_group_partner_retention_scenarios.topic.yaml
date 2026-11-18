@@ -1,0 +1,22 @@
+base_view: oscar_demos_omnise__demo_mantel_group_partner_scenario_slots
+label: Retention planner slots (synthetic)
+group_label: Saltbush Super
+description: Three fixed scenario slots for the Saltbush retention planner app.
+
+joins: {}
+
+ai_context: |
+  Three fixed scenario slots (baseline, premium_relief, call_campaign) for the synthetic retention planner app. Saved values live in the input columns saved_label and saved_assumptions keyed on scenario_id. Not member data.
+
+sample_queries:
+  saved_scenarios:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_mantel_group_partner_scenario_slots.scenario_id,
+          oscar_demos_omnise__demo_mantel_group_partner_scenario_slots.slot_order,
+          oscar_demos_omnise__demo_mantel_group_partner_scenario_slots.default_label
+        ]
+      base_view: oscar_demos_omnise__demo_mantel_group_partner_scenario_slots
+      topic: demo_mantel_group_partner_retention_scenarios
+    prompt: Which retention scenarios are saved?

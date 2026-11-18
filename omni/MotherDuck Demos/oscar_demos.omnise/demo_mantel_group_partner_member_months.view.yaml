@@ -1,38 +1,185 @@
 # Reference this view as oscar_demos_omnise__demo_mantel_group_partner_member_months
+label: Member months
+description: Synthetic sample. One row per member account per calendar month the
+  account was open, 1 Aug 2024 to 31 Oct 2026, with that month's flows in AUD.
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_mantel_group_partner_member_months
 
 dimensions:
-  month_date: {}
-  state_name: {}
-  occupation_category: {}
-  age_band: {}
-  insurance_cover: {}
-  active_member: {}
-  joined: {}
-  rolled_out: {}
-  rollover_destination: {}
-  rollover_out_aud: {}
-  rolled_in: {}
-  rollover_in_channel: {}
-  rollover_in_aud: {}
-  contributions_aud: {}
-  insurance_premium_aud: {}
-  closing_balance_aud: {}
-
   member_month_id:
+    label: Member month ID
     format: ID
+    hidden: true
+    primary_key: true
+
+  month_date:
+    label: Month
+    description: First day of the month.
 
   member_id:
+    label: Member ID
     format: ID
 
   employer_id:
+    label: Employer ID
     format: ID
+    description: Employer paying contributions that month; empty when no employer paid.
+
+  state_name:
+    label: State
+    description: Member's address state, full name (New South Wales, Western Australia).
+    synonyms: [ region ]
+
+  occupation_category:
+    label: Occupation category
+    description: Insurance occupation category, Office and professional, Light blue
+      collar or Heavy blue collar.
+    synonyms: [ occupation, job category, blue collar, white collar, miners, tradies ]
+
+  age_band:
+    label: Age band
+    description: Member's age that month, 18 to 24 through 65 plus.
+
+  insurance_cover:
+    label: Insurance cover
+    description: Default cover (insurance members get automatically), Opted up or No cover.
+    synonyms: [ cover, default cover, opted up, insurance type ]
 
   premium_schedule_id:
+    label: Premium schedule
     format: ID
+    description: Premium schedule charged that month; empty on No cover.
+    synonyms: [ repricing, rate card, premium change ]
+
+  active_member:
+    hidden: true
+
+  joined:
+    hidden: true
+
+  rolled_out:
+    hidden: true
+
+  rollover_destination:
+    label: Rollover destination
+    description: Kind of fund the balance went to, Retail fund, Other industry fund
+      or Self managed fund. Empty unless the member rolled out that month.
+    synonyms: [ destination, where they went, retail funds, SMSF ]
+
+  rollover_out_aud:
+    hidden: true
+
+  rolled_in:
+    hidden: true
+
+  rollover_in_channel:
+    label: Rollover in channel
+    description: How a balance from another fund was rolled in, Member app combine,
+      Online form or Paper form. Empty unless a balance was rolled in that
+      month.
+    synonyms: [ channel, how they joined, app combine, find and combine ]
+
+  rollover_in_aud:
+    hidden: true
+
+  contributions_aud:
+    hidden: true
+
+  insurance_premium_aud:
+    hidden: true
+
+  closing_balance_aud:
+    label: Closing balance (AUD)
+    format: '"A$"#,##0'
+    description: Balance at month end; 0 in the month the member rolled out.
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
+
+  member_months_count:
+    sql: ${active_member}
+    label: Member months
+    format: "#,##0"
+    description: Open member accounts summed across months; the denominator for
+      monthly rates.
+    aggregate_type: sum
+
+  rollovers_out:
+    sql: ${rolled_out}
+    label: Rollovers out
+    format: "#,##0"
+    description: Members who rolled their whole balance to another fund.
+    aggregate_type: sum
+    synonyms: [ leavers, members lost, exits to other funds ]
+
+  rollover_out_rate:
+    sql: ${rollovers_out} / NULLIF(${member_months_count}, 0)
+    label: Rollover out rate
+    format: PERCENT_2
+    description: Monthly rollover out rate, rollovers out over open member months. A
+      monthly rate, not annualised.
+    synonyms: [ attrition, churn, outflow rate, member loss rate ]
+
+  rollover_out_value:
+    sql: ${rollover_out_aud}
+    label: Rollover out value
+    format: '"A$"#,##0'
+    description: Balances rolled out to other funds, AUD.
+    aggregate_type: sum
+    synonyms: [ outflows, money out, FUM lost, balances rolled out ]
+
+  rollovers_in:
+    sql: ${rolled_in}
+    label: Rollovers in
+    format: "#,##0"
+    description: Balances rolled in from other funds.
+    aggregate_type: sum
+
+  rollover_in_value:
+    sql: ${rollover_in_aud}
+    label: Rollover in value
+    format: '"A$"#,##0'
+    description: Balances rolled in from other funds, AUD.
+    aggregate_type: sum
+    synonyms: [ inflows, consolidations, money in ]
+
+  net_rollover_flow:
+    sql: ${rollover_in_value} - ${rollover_out_value}
+    label: Net rollover flow
+    format: '"A$"#,##0'
+    description: Rollover in value less rollover out value, AUD. Excludes
+      contributions and benefit payments.
+    synonyms: [ net flows, net rollovers, net flow ]
+
+  new_members:
+    sql: ${joined}
+    label: New members
+    format: "#,##0"
+    description: Accounts opened.
+    aggregate_type: sum
+
+  contributions:
+    sql: ${contributions_aud}
+    label: Contributions
+    format: '"A$"#,##0'
+    description: Employer and member contributions received, AUD.
+    aggregate_type: sum
+    synonyms: [ SG, super guarantee, employer contributions ]
+
+  insurance_premiums:
+    sql: ${insurance_premium_aud}
+    label: Insurance premiums
+    format: '"A$"#,##0'
+    description: Insurance premiums deducted, AUD.
+    aggregate_type: sum
+    synonyms: [ premiums, insurance cost, insurance fees ]
+
+  avg_rollover_out_balance:
+    sql: ${rollover_out_value} / NULLIF(${rollovers_out}, 0)
+    label: Average rollover out balance
+    format: '"A$"#,##0'
+    description: Average balance per member who rolled out.

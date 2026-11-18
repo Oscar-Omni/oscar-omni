@@ -1,0 +1,130 @@
+base_view: oscar_demos_omnise__demo_mantel_group_partner_member_months
+label: Member flows (synthetic)
+group_label: Saltbush Super
+description: Synthetic Saltbush Super member flows, one row per member account
+  per month, rollovers out and in, contributions and insurance premiums, 1 Aug
+  2024 to 31 Oct 2026, AUD.
+
+joins:
+  oscar_demos_omnise__demo_mantel_group_partner_members: {}
+  oscar_demos_omnise__demo_mantel_group_partner_employers: {}
+  oscar_demos_omnise__demo_mantel_group_partner_premium_schedules: {}
+
+relationships:
+  - join_from_view: oscar_demos_omnise__demo_mantel_group_partner_member_months
+    join_to_view: oscar_demos_omnise__demo_mantel_group_partner_members
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_mantel_group_partner_member_months.member_id}
+      = ${oscar_demos_omnise__demo_mantel_group_partner_members.member_id}
+    relationship_type: many_to_one
+
+  - join_from_view: oscar_demos_omnise__demo_mantel_group_partner_member_months
+    join_to_view: oscar_demos_omnise__demo_mantel_group_partner_employers
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_mantel_group_partner_member_months.employer_id}
+      = ${oscar_demos_omnise__demo_mantel_group_partner_employers.employer_id}
+    relationship_type: many_to_one
+
+  - join_from_view: oscar_demos_omnise__demo_mantel_group_partner_member_months
+    join_to_view: oscar_demos_omnise__demo_mantel_group_partner_premium_schedules
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_mantel_group_partner_member_months.premium_schedule_id}
+      =
+      ${oscar_demos_omnise__demo_mantel_group_partner_premium_schedules.premium_schedule_id}
+    relationship_type: many_to_one
+
+ai_context: |
+  Synthetic sample of about 60,000 members of Saltbush Super, a fictional Australian industry super fund, 1 Aug 2024 to 31 Oct 2026, money in AUD. Say the data is synthetic.
+  One row per member account per month it was open. Rollover out rate is rollovers out over open member months, a monthly rate; never annualise it unless asked.
+  Rollover out value and rollover in value are balances moved between funds; net rollover flow is in less out and excludes contributions.
+  Occupation category is the insurance occupation category. Default cover is the insurance members get automatically. Premium schedules version insurance pricing by occupation and cover with effective dates.
+  Use State, Occupation category and Insurance cover from Member months; Employer state is where the employer is based. Employer and member names are fictional; states are real.
+  When asked to compare periods, use the exact dates given and name both periods.
+
+sample_queries:
+  occupation_rate_may_to_oct_2026:
+    query:
+      fields:
+        [
+          "oscar_demos_omnise__demo_mantel_group_partner_member_months.month_\
+            date[month]",
+          oscar_demos_omnise__demo_mantel_group_partner_member_months.occupation_category,
+          oscar_demos_omnise__demo_mantel_group_partner_member_months.rollover_out_rate
+        ]
+      base_view: oscar_demos_omnise__demo_mantel_group_partner_member_months
+      filters:
+        oscar_demos_omnise__demo_mantel_group_partner_member_months.month_date:
+          between_dates: [ 2026-05-01, 2026-10-31 ]
+      topic: demo_mantel_group_partner_member_flows
+    prompt: Which occupation categories had the biggest rise in rollover out rate
+      from 1 August to 31 October 2026 against 1 May to 31 July 2026?
+  heavy_blue_collar_destinations_aug_oct_2026:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_mantel_group_partner_member_months.rollover_destination,
+          oscar_demos_omnise__demo_mantel_group_partner_member_months.rollovers_out,
+          oscar_demos_omnise__demo_mantel_group_partner_member_months.rollover_out_value
+        ]
+      base_view: oscar_demos_omnise__demo_mantel_group_partner_member_months
+      filters:
+        oscar_demos_omnise__demo_mantel_group_partner_member_months.month_date:
+          between_dates: [ 2026-08-01, 2026-10-31 ]
+        oscar_demos_omnise__demo_mantel_group_partner_member_months.occupation_category:
+          is: Heavy blue collar
+      topic: demo_mantel_group_partner_member_flows
+    prompt: Where did Heavy blue collar members roll their balances to from 1 August
+      to 31 October 2026?
+  employers_members_lost_oct_2026:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_mantel_group_partner_employers.employer_name,
+          oscar_demos_omnise__demo_mantel_group_partner_employers.industry,
+          oscar_demos_omnise__demo_mantel_group_partner_member_months.rollovers_out,
+          oscar_demos_omnise__demo_mantel_group_partner_member_months.rollover_out_value
+        ]
+      base_view: oscar_demos_omnise__demo_mantel_group_partner_member_months
+      filters:
+        oscar_demos_omnise__demo_mantel_group_partner_member_months.month_date:
+          between_dates: [ 2026-10-01, 2026-10-31 ]
+      limit: 10
+      sorts:
+        - field: oscar_demos_omnise__demo_mantel_group_partner_member_months.rollovers_out
+          desc: true
+      topic: demo_mantel_group_partner_member_flows
+    prompt: Which employers lost the most members in October 2026?
+  member_app_rollovers_in_since_sep_2025:
+    query:
+      fields:
+        [
+          "oscar_demos_omnise__demo_mantel_group_partner_member_months.month_\
+            date[month]",
+          oscar_demos_omnise__demo_mantel_group_partner_member_months.rollovers_in,
+          oscar_demos_omnise__demo_mantel_group_partner_member_months.rollover_in_value
+        ]
+      base_view: oscar_demos_omnise__demo_mantel_group_partner_member_months
+      filters:
+        oscar_demos_omnise__demo_mantel_group_partner_member_months.month_date:
+          between_dates: [ 2025-09-01, 2026-10-31 ]
+        oscar_demos_omnise__demo_mantel_group_partner_member_months.rollover_in_channel:
+          is: Member app combine
+      topic: demo_mantel_group_partner_member_flows
+    prompt: How much did rollovers in through the member app grow after March 2026?
+  wa_net_rollover_flow_aug_oct_2026:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_mantel_group_partner_member_months.rollover_in_value,
+          oscar_demos_omnise__demo_mantel_group_partner_member_months.rollover_out_value,
+          oscar_demos_omnise__demo_mantel_group_partner_member_months.net_rollover_flow
+        ]
+      base_view: oscar_demos_omnise__demo_mantel_group_partner_member_months
+      filters:
+        oscar_demos_omnise__demo_mantel_group_partner_member_months.month_date:
+          between_dates: [ 2026-08-01, 2026-10-31 ]
+        oscar_demos_omnise__demo_mantel_group_partner_member_months.state_name:
+          is: Western Australia
+      topic: demo_mantel_group_partner_member_flows
+    prompt: What was net rollover flow in Western Australia from 1 August to 31
+      October 2026?

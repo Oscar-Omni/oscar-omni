@@ -1,18 +1,41 @@
 # Reference this view as oscar_demos_omnise__demo_mantel_group_partner_premium_schedules
+label: Premium schedules
+description: One row per insurance premium schedule version, by occupation
+  category and cover, with the dates it was in force.
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_mantel_group_partner_premium_schedules
 
 dimensions:
-  occupation_category: {}
-  insurance_cover: {}
-  effective_from: {}
-  effective_to: {}
-  monthly_premium_aud: {}
-
   premium_schedule_id:
+    label: Premium schedule
     format: ID
+    primary_key: true
+    synonyms: [ repricing, rate card, premium change ]
+
+  occupation_category:
+    label: Schedule occupation category
+    hidden: true
+
+  insurance_cover:
+    label: Schedule cover
+    hidden: true
+
+  effective_from:
+    label: Effective from
+    description: First month the schedule was charged.
+
+  effective_to:
+    label: Effective to
+    description: Last day the schedule was in force; empty while current.
+
+  monthly_premium_aud:
+    label: Scheduled monthly premium (AUD)
+    format: '"A$"#,##0'
+    description: Typical monthly premium on the schedule.
 
 measures:
   count:
+    hidden: true
     aggregate_type: count

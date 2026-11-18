@@ -1,17 +1,37 @@
 # Reference this view as oscar_demos_omnise__demo_mantel_group_partner_employers
+label: Employers
+description: Synthetic sample. One row per fictional employer paying
+  contributions to Saltbush Super.
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_mantel_group_partner_employers
 
 dimensions:
-  employer_name: {}
-  industry: {}
-  state_name: {}
-  size_band: {}
-
   employer_id:
+    label: Employer ID
     format: ID
+    primary_key: true
+
+  employer_name:
+    label: Employer
+    description: Fictional business name.
+    synonyms: [ employer, company, workplace ]
+
+  industry:
+    label: Industry
+    synonyms: [ sector ]
+
+  state_name:
+    label: Employer state
+    description: State the employer is based in.
+
+  size_band:
+    label: Employer size
+    description: Under 20, 20 to 199 or 200 plus members.
 
 measures:
   count:
+    label: Employers
+    format: "#,##0"
     aggregate_type: count
