@@ -38,6 +38,7 @@ ai_context: |
   One row per member account per month it was open. Rollover out rate is rollovers out over open member months, a monthly rate; never annualise it unless asked.
   Rollover out value and rollover in value are balances moved between funds; net rollover flow is in less out and excludes contributions.
   Occupation category is the insurance occupation category. Default cover is the insurance members get automatically. Premium schedules version insurance pricing by occupation and cover with effective dates.
+  Local government area is the member's home LGA (ABS 2024); use it for local area questions and LGA maps.
   Use State, Occupation category and Insurance cover from Member months; Employer state is where the employer is based. Employer and member names are fictional; states are real.
   When asked to compare periods, use the exact dates given and name both periods.
 

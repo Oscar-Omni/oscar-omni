@@ -8,9 +8,6 @@ schema: omnise
 table_name: demo_mantel_group_partner_member_months
 
 dimensions:
-  lga_code: {}
-  lga_name: {}
-
   member_month_id:
     label: Member month ID
     format: ID
@@ -97,6 +94,17 @@ dimensions:
     label: Closing balance (AUD)
     format: '"A$"#,##0'
     description: Balance at month end; 0 in the month the member rolled out.
+
+  lga_code:
+    label: LGA code
+    description: ABS 2024 local government area code of the member's home address.
+      Use with LGA region maps.
+
+  lga_name:
+    label: Local government area
+    description: ABS 2024 local government area of the member's home address, for
+      example East Pilbara or Isaac.
+    synonyms: [ LGA, council, local area, shire ]
 
 measures:
   count:

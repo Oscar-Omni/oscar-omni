@@ -8,9 +8,6 @@ schema: omnise
 table_name: demo_mantel_group_partner_members
 
 dimensions:
-  lga_code: {}
-  lga_name: {}
-
   member_id:
     label: Member ID
     format: ID
@@ -36,6 +33,12 @@ dimensions:
   member_status:
     label: Member status
     description: Open, Rolled out or Retired at 31 Oct 2026.
+
+  lga_code:
+    hidden: true
+
+  lga_name:
+    hidden: true
 
 measures:
   count:
