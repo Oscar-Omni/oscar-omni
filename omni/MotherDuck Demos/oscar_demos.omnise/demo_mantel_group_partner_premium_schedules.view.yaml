@@ -1,0 +1,18 @@
+# Reference this view as oscar_demos_omnise__demo_mantel_group_partner_premium_schedules
+catalog: oscar_demos
+schema: omnise
+table_name: demo_mantel_group_partner_premium_schedules
+
+dimensions:
+  occupation_category: {}
+  insurance_cover: {}
+  effective_from: {}
+  effective_to: {}
+  monthly_premium_aud: {}
+
+  premium_schedule_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

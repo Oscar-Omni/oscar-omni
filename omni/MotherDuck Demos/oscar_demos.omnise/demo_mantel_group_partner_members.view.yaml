@@ -1,0 +1,21 @@
+# Reference this view as oscar_demos_omnise__demo_mantel_group_partner_members
+catalog: oscar_demos
+schema: omnise
+table_name: demo_mantel_group_partner_members
+
+dimensions:
+  join_date: {}
+  state_name: {}
+  occupation_category: {}
+  insurance_cover: {}
+  member_status: {}
+
+  member_id:
+    format: ID
+
+  employer_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

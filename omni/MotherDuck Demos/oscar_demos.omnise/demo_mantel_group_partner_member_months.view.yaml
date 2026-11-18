@@ -1,0 +1,38 @@
+# Reference this view as oscar_demos_omnise__demo_mantel_group_partner_member_months
+catalog: oscar_demos
+schema: omnise
+table_name: demo_mantel_group_partner_member_months
+
+dimensions:
+  month_date: {}
+  state_name: {}
+  occupation_category: {}
+  age_band: {}
+  insurance_cover: {}
+  active_member: {}
+  joined: {}
+  rolled_out: {}
+  rollover_destination: {}
+  rollover_out_aud: {}
+  rolled_in: {}
+  rollover_in_channel: {}
+  rollover_in_aud: {}
+  contributions_aud: {}
+  insurance_premium_aud: {}
+  closing_balance_aud: {}
+
+  member_month_id:
+    format: ID
+
+  member_id:
+    format: ID
+
+  employer_id:
+    format: ID
+
+  premium_schedule_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

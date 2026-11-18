@@ -1,0 +1,17 @@
+# Reference this view as oscar_demos_omnise__demo_mantel_group_partner_employers
+catalog: oscar_demos
+schema: omnise
+table_name: demo_mantel_group_partner_employers
+
+dimensions:
+  employer_name: {}
+  industry: {}
+  state_name: {}
+  size_band: {}
+
+  employer_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count
