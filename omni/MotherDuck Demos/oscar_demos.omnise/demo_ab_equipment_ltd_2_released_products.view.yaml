@@ -1,16 +1,42 @@
 # Reference this view as oscar_demos_omnise__demo_ab_equipment_ltd_2_released_products
+label: Released products
+description: Synthetic D365 released products, 48 equipment models and 1,152
+  parts. Generic names, no manufacturer brands.
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_ab_equipment_ltd_2_released_products
 
 dimensions:
-  item_number: {}
-  product_name: {}
-  product_line: {}
+  item_number:
+    label: Item number
+    format: ID
+    primary_key: true
+    synonyms: [ part number, model ]
+
+  product_name:
+    label: Product
+    synonyms: [ item, product, model ]
 
   item_group_id:
+    label: Item group
     format: ID
+    description: Equipment or Parts.
+
+  product_line:
+    label: Product line
+    description: Material handling, Construction, Forestry or Municipal.
+    synonyms:
+      [
+        product line,
+        material handling,
+        forklifts,
+        construction,
+        forestry,
+        municipal
+      ]
 
 measures:
   count:
+    hidden: true
     aggregate_type: count

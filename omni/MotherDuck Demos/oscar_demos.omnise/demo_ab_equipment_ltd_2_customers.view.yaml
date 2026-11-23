@@ -1,18 +1,34 @@
 # Reference this view as oscar_demos_omnise__demo_ab_equipment_ltd_2_customers
+label: Customers
+description: Synthetic D365 customer accounts. C-000001 is the internal workshop
+  account; C-104400 is Northgate Distribution (synthetic), the fleet customer.
+  Names are invented.
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_ab_equipment_ltd_2_customers
 
 dimensions:
-  customer_account: {}
-  customer_name: {}
+  customer_account:
+    label: Customer account
+    format: ID
+    primary_key: true
+
+  customer_name:
+    label: Customer
+    synonyms: [ customer, account ]
 
   customer_group_id:
+    label: Customer group
     format: ID
+    synonyms: [ customer group, segment, industry ]
 
   home_site_id:
+    label: Home site ID
     format: ID
+    hidden: true
 
 measures:
   count:
+    label: Customers
     aggregate_type: count

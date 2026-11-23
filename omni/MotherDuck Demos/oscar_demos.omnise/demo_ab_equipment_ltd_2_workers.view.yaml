@@ -1,16 +1,41 @@
 # Reference this view as oscar_demos_omnise__demo_ab_equipment_ltd_2_workers
+label: Technicians
+description: Synthetic D365 workers, the workshop technicians. Labels are site
+  id plus a number, no person names.
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_ab_equipment_ltd_2_workers
 
 dimensions:
-  personnel_number: {}
-  technician_label: {}
-  technician_grade: {}
+  personnel_number:
+    label: Personnel number
+    format: ID
+    primary_key: true
+
+  technician_label:
+    label: Technician
+    synonyms: [ technician, tech, mechanic, worker ]
 
   site_id:
+    label: Home site ID
     format: ID
+    hidden: true
+
+  technician_grade:
+    label: Grade
+    description: Apprentice, Qualified or Senior.
+    synonyms: [ grade, apprentice, qualified, senior ]
 
 measures:
   count:
+    label: Technicians
     aggregate_type: count
+
+  technicians:
+    sql: ${personnel_number}
+    label: Distinct technicians
+    format: "#,##0"
+    description: Distinct technicians who posted hours in the rows selected.
+    aggregate_type: count_distinct
+    synonyms: [ headcount, techs ]

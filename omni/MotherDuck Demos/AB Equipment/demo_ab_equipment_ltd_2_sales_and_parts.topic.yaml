@@ -1,0 +1,114 @@
+base_view: oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines
+label: Sales and parts (synthetic)
+group_label: AB Equipment
+description: Synthetic D365 shaped invoiced sales order lines, equipment units
+  and parts counter and account sales, 1 Nov 2025 to 31 Oct 2026, NZD ex GST.
+
+joins:
+  oscar_demos_omnise__demo_ab_equipment_ltd_2_operational_sites: {}
+  oscar_demos_omnise__demo_ab_equipment_ltd_2_warehouses: {}
+  oscar_demos_omnise__demo_ab_equipment_ltd_2_customers: {}
+  oscar_demos_omnise__demo_ab_equipment_ltd_2_released_products: {}
+
+relationships:
+  - join_from_view: oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines
+    join_to_view: oscar_demos_omnise__demo_ab_equipment_ltd_2_operational_sites
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines.site_id}
+      = ${oscar_demos_omnise__demo_ab_equipment_ltd_2_operational_sites.site_id}
+    relationship_type: many_to_one
+
+  - join_from_view: oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines
+    join_to_view: oscar_demos_omnise__demo_ab_equipment_ltd_2_warehouses
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines.warehouse_id}
+      = ${oscar_demos_omnise__demo_ab_equipment_ltd_2_warehouses.warehouse_id}
+    relationship_type: many_to_one
+
+  - join_from_view: oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines
+    join_to_view: oscar_demos_omnise__demo_ab_equipment_ltd_2_customers
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines.customer_account}
+      =
+      ${oscar_demos_omnise__demo_ab_equipment_ltd_2_customers.customer_account}
+    relationship_type: many_to_one
+
+  - join_from_view: oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines
+    join_to_view: oscar_demos_omnise__demo_ab_equipment_ltd_2_released_products
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines.item_number}
+      =
+      ${oscar_demos_omnise__demo_ab_equipment_ltd_2_released_products.item_number}
+    relationship_type: many_to_one
+
+ai_context: |
+  Same synthetic sites and window as Workshop time. One row per invoiced D365 sales order line, money NZD ex GST. Say the data is synthetic.
+  Equipment lines are single units; parts lines are counter and account sales. Parts used on service orders are not in this topic.
+  Fill rate means parts_fill_rate: parts lines shipped complete from the selling site's own warehouse on the order day over all parts lines. Gross margin means gross_margin_pct. Revenue stream means item_group_id (Equipment or Parts). Product line comes from released_products.product_line.
+  Northgate Distribution (synthetic) is the fleet customer whose Material handling units lifted equipment sales from August 2026.
+  There is no technician time here; send utilisation questions to the Workshop time topic.
+
+sample_queries:
+  equipment_sales_by_product_line_month:
+    query:
+      fields:
+        [
+          "oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines.invo\
+            ice_date[month]",
+          oscar_demos_omnise__demo_ab_equipment_ltd_2_released_products.product_line,
+          oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines.equipment_sales
+        ]
+      base_view: oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines
+      filters:
+        oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines.item_group_id:
+          is: Equipment
+      topic: demo_ab_equipment_ltd_2_sales_and_parts
+    prompt: What were equipment sales by product line each month from November 2025
+      to October 2026?
+  top_material_handling_customers:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_ab_equipment_ltd_2_customers.customer_name,
+          oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines.equipment_units
+        ]
+      base_view: oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines
+      filters:
+        oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines.invoice_date:
+          between_dates: [ 2026-08-01, 2026-10-31 ]
+        oscar_demos_omnise__demo_ab_equipment_ltd_2_released_products.product_line:
+          is: Material handling
+      sorts:
+        - field: oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines.equipment_units
+          desc: true
+      topic: demo_ab_equipment_ltd_2_sales_and_parts
+    prompt: Which customers bought the most Material handling units from 1 August to
+      31 October 2026?
+  fill_rate_by_region:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_ab_equipment_ltd_2_operational_sites.sales_region,
+          oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines.parts_fill_rate
+        ]
+      base_view: oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines
+      filters:
+        oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines.invoice_date:
+          between_dates: [ 2026-08-01, 2026-10-31 ]
+      topic: demo_ab_equipment_ltd_2_sales_and_parts
+    prompt: What was parts fill rate by region from 1 August to 31 October 2026?
+  margin_by_region_stream:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_ab_equipment_ltd_2_operational_sites.sales_region,
+          oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines.item_group_id,
+          oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines.gross_margin_pct
+        ]
+      base_view: oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines
+      filters:
+        oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines.invoice_date:
+          between_dates: [ 2026-08-01, 2026-10-31 ]
+      topic: demo_ab_equipment_ltd_2_sales_and_parts
+    prompt: What was gross margin % for Equipment and Parts by region from 1 August
+      to 31 October 2026?

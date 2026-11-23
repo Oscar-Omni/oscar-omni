@@ -1,18 +1,31 @@
 # Reference this view as oscar_demos_omnise__demo_ab_equipment_ltd_2_warehouses
+label: Warehouses
+description: Synthetic D365 warehouses, a parts warehouse at every site plus the
+  national parts DC.
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_ab_equipment_ltd_2_warehouses
 
 dimensions:
-  warehouse_name: {}
-  warehouse_type: {}
-
   warehouse_id:
+    label: Warehouse ID
     format: ID
+    primary_key: true
+
+  warehouse_name:
+    label: Warehouse
+    synonyms: [ warehouse, DC, parts warehouse ]
 
   site_id:
+    label: Site ID
     format: ID
+    hidden: true
+
+  warehouse_type:
+    label: Warehouse type
 
 measures:
   count:
+    hidden: true
     aggregate_type: count

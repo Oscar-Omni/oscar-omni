@@ -1,35 +1,152 @@
 # Reference this view as oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines
+label: Sales order lines
+description: Synthetic D365 invoiced sales order lines, equipment units and
+  parts counter and account sales, 1 Nov 2025 to 31 Oct 2026, NZD ex GST. Parts
+  used on service orders are not here.
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_ab_equipment_ltd_2_sales_order_lines
 
 dimensions:
-  sales_order_number: {}
-  invoice_date: {}
-  sales_region: {}
-  customer_account: {}
-  item_number: {}
-  product_line: {}
-  line_amount_nzd: {}
-  cost_amount_nzd: {}
-  gross_profit_nzd: {}
-  equipment_sales_nzd: {}
-  parts_sales_nzd: {}
-  equipment_qty: {}
-  first_time_fill_flag: {}
-
   sales_line_id:
+    label: Sales line ID
     format: ID
+    hidden: true
+    primary_key: true
+
+  sales_order_number:
+    label: Sales order
+    format: ID
+    synonyms: [ sales order, order number, SO ]
+
+  invoice_date:
+    label: Invoice date
+    description: Invoice date, NZ time.
 
   site_id:
+    label: Site ID
     format: ID
+    hidden: true
+
+  sales_region:
+    hidden: true
 
   warehouse_id:
+    label: Warehouse ID
     format: ID
+    hidden: true
+
+  customer_account:
+    label: Customer account
+    format: ID
+    hidden: true
+
+  item_number:
+    label: Item number
+    format: ID
+    hidden: true
 
   item_group_id:
+    label: Revenue stream
     format: ID
+    description: D365 item group, Equipment or Parts.
+    synonyms: [ revenue stream, item group, equipment or parts ]
+
+  product_line:
+    hidden: true
+
+  line_amount_nzd:
+    hidden: true
+
+  cost_amount_nzd:
+    hidden: true
+
+  gross_profit_nzd:
+    hidden: true
+
+  equipment_sales_nzd:
+    hidden: true
+
+  parts_sales_nzd:
+    hidden: true
+
+  equipment_qty:
+    hidden: true
+
+  first_time_fill_flag:
+    hidden: true
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
+
+  net_sales:
+    sql: ${line_amount_nzd}
+    label: Net sales
+    format: '"NZ$"#,##0'
+    description: Invoiced sales ex GST, equipment and parts.
+    aggregate_type: sum
+    synonyms: [ sales, revenue, invoiced sales ]
+
+  gross_profit:
+    sql: ${gross_profit_nzd}
+    label: Gross profit
+    format: '"NZ$"#,##0'
+    description: Net sales less cost of goods sold.
+    aggregate_type: sum
+    synonyms: [ GP ]
+
+  gross_margin_pct:
+    sql: ${gross_profit} / NULLIF(${net_sales}, 0)
+    label: Gross margin %
+    format: PERCENT_1
+    description: Gross profit over net sales in the rows selected.
+    synonyms: [ margin, gross margin, GP % ]
+
+  equipment_sales:
+    sql: ${equipment_sales_nzd}
+    label: Equipment sales
+    format: '"NZ$"#,##0'
+    description: Invoiced sales of Equipment items, ex GST.
+    aggregate_type: sum
+    synonyms: [ machine sales, wholegoods ]
+
+  equipment_units:
+    sql: ${equipment_qty}
+    label: Equipment units
+    format: "#,##0"
+    description: Equipment units invoiced.
+    aggregate_type: sum
+    synonyms: [ units, machines sold, deliveries ]
+
+  parts_sales:
+    sql: ${parts_sales_nzd}
+    label: Parts sales
+    format: '"NZ$"#,##0'
+    description: Invoiced parts sales through counters and accounts, ex GST.
+    aggregate_type: sum
+    synonyms: [ parts revenue, counter sales ]
+
+  parts_lines:
+    sql: ${first_time_fill_flag}
+    label: Parts lines
+    format: "#,##0"
+    description: Parts lines invoiced.
+    aggregate_type: count
+
+  parts_filled_first_time:
+    sql: ${first_time_fill_flag}
+    label: Parts lines filled first time
+    format: "#,##0"
+    hidden: true
+    aggregate_type: sum
+
+  parts_fill_rate:
+    sql: ${parts_filled_first_time} / NULLIF(${parts_lines}, 0)
+    label: First time fill rate
+    format: PERCENT_1
+    description: Parts lines shipped complete from the selling site's own warehouse
+      on the order day over all parts lines.
+    synonyms: [ fill rate, first time fill, first pick fill, availability ]
