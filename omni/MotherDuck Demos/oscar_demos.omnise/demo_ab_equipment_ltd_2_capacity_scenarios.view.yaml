@@ -1,0 +1,17 @@
+# Reference this view as oscar_demos_omnise__demo_ab_equipment_ltd_2_capacity_scenarios
+catalog: oscar_demos
+schema: omnise
+table_name: demo_ab_equipment_ltd_2_capacity_scenarios
+
+dimensions:
+  slot_order: {}
+  default_label: {}
+  editable: {}
+  default_assumptions_json: {}
+
+  scenario_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

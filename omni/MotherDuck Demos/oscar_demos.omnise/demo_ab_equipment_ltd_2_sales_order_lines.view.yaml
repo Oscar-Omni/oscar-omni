@@ -1,0 +1,35 @@
+# Reference this view as oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines
+catalog: oscar_demos
+schema: omnise
+table_name: demo_ab_equipment_ltd_2_sales_order_lines
+
+dimensions:
+  sales_order_number: {}
+  invoice_date: {}
+  sales_region: {}
+  customer_account: {}
+  item_number: {}
+  product_line: {}
+  line_amount_nzd: {}
+  cost_amount_nzd: {}
+  gross_profit_nzd: {}
+  equipment_sales_nzd: {}
+  parts_sales_nzd: {}
+  equipment_qty: {}
+  first_time_fill_flag: {}
+
+  sales_line_id:
+    format: ID
+
+  site_id:
+    format: ID
+
+  warehouse_id:
+    format: ID
+
+  item_group_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

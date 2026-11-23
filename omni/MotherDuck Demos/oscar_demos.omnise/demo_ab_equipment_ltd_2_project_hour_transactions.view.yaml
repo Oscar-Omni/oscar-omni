@@ -1,0 +1,35 @@
+# Reference this view as oscar_demos_omnise__demo_ab_equipment_ltd_2_project_hour_transactions
+catalog: oscar_demos
+schema: omnise
+table_name: demo_ab_equipment_ltd_2_project_hour_transactions
+
+dimensions:
+  trans_date: {}
+  personnel_number: {}
+  sales_region: {}
+  island: {}
+  ta_code: {}
+  qty_hours: {}
+  recoverable_qty_hours: {}
+  job_qty_hours: {}
+  sales_amount_nzd: {}
+  cost_amount_nzd: {}
+
+  transaction_id:
+    format: ID
+
+  site_id:
+    format: ID
+
+  service_order_id:
+    format: ID
+
+  line_property_id:
+    format: ID
+
+  category_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count
