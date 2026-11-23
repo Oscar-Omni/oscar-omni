@@ -1,0 +1,69 @@
+base_view: oscar_demos_omnise__demo_grill_d_channel_sales
+label: Channel mix (synthetic)
+group_label: Grill'd
+description: Synthetic Grill'd and Coco Black net sales by order channel with
+  delivery platform commission, 1 Nov 2025 to 31 Oct 2026, AUD.
+
+joins:
+  oscar_demos_omnise__demo_grill_d_restaurants: {}
+
+relationships:
+  - join_from_view: oscar_demos_omnise__demo_grill_d_channel_sales
+    join_to_view: oscar_demos_omnise__demo_grill_d_restaurants
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_grill_d_channel_sales.restaurant_id} =
+      ${oscar_demos_omnise__demo_grill_d_restaurants.restaurant_id}
+    relationship_type: many_to_one
+
+ai_context: |
+  Same synthetic restaurants and window as Store trading. One row per restaurant per day per daypart per order channel. Say the data is synthetic.
+  Channel net sales uses the same net sales ex GST definition and totals to Store trading net sales for the same restaurants and dates.
+  Platform commission applies to Uber Eats and DoorDash only; the rates are synthetic.
+  There is no labour here; send labour % questions to the Store trading topic.
+  When asked to compare periods, use the exact dates given and name both periods.
+
+sample_queries:
+  channel_share_aug_oct_2026:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_grill_d_channel_sales.channel,
+          oscar_demos_omnise__demo_grill_d_channel_sales.channel_net_sales
+        ]
+      base_view: oscar_demos_omnise__demo_grill_d_channel_sales
+      filters:
+        oscar_demos_omnise__demo_grill_d_channel_sales.trade_date:
+          between_dates: [ 2026-08-01, 2026-10-31 ]
+      topic: demo_grill_d_channel_mix
+    prompt: What share of net sales came through each channel from 1 August to 31
+      October 2026?
+  commission_by_state_aug_oct_2026:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_grill_d_restaurants.state,
+          oscar_demos_omnise__demo_grill_d_channel_sales.platform_commission
+        ]
+      base_view: oscar_demos_omnise__demo_grill_d_channel_sales
+      filters:
+        oscar_demos_omnise__demo_grill_d_channel_sales.trade_date:
+          between_dates: [ 2026-08-01, 2026-10-31 ]
+      topic: demo_grill_d_channel_mix
+    prompt: How much platform commission did we pay by state from 1 August to 31
+      October 2026?
+  app_net_sales_by_month:
+    query:
+      fields:
+        [
+          "oscar_demos_omnise__demo_grill_d_channel_sales.trade_date[month]",
+          oscar_demos_omnise__demo_grill_d_channel_sales.channel_net_sales
+        ]
+      base_view: oscar_demos_omnise__demo_grill_d_channel_sales
+      filters:
+        oscar_demos_omnise__demo_grill_d_channel_sales.trade_date:
+          between_dates: [ 2025-11-01, 2026-10-31 ]
+        oscar_demos_omnise__demo_grill_d_channel_sales.channel:
+          is: Grill'd app
+      topic: demo_grill_d_channel_mix
+    prompt: How did Grill'd app net sales change from 1 June 2026 against 1 November
+      2025 to 31 May 2026?

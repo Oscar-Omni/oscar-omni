@@ -1,28 +1,154 @@
 # Reference this view as oscar_demos_omnise__demo_grill_d_trading_dayparts
+label: Trading dayparts
+description: Synthetic sample. One row per restaurant per trading day per
+  daypart traded, 1 Nov 2025 to 31 Oct 2026, AUD. Lunch, Afternoon and Dinner at
+  every restaurant; Late night only at trial restaurants from their start date.
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_grill_d_trading_dayparts
 
 dimensions:
-  trade_date: {}
-  brand: {}
-  state: {}
-  lga_code: {}
-  format: {}
-  daypart: {}
-  net_sales_aud: {}
-  gross_sales_inc_gst_aud: {}
-  delivery_net_sales_aud: {}
-  order_count: {}
-  crew_hours: {}
-  labour_cost_aud: {}
-
   trading_id:
+    label: Trading ID
     format: ID
+    hidden: true
+    primary_key: true
+
+  trade_date:
+    label: Trade date
+    description: Trading day. Every restaurant closed on 25 Dec 2025.
 
   restaurant_id:
+    label: Restaurant ID
     format: ID
+    hidden: true
+
+  brand:
+    hidden: true
+
+  state:
+    hidden: true
+
+  lga_code:
+    hidden: true
+
+  format:
+    hidden: true
+
+  daypart:
+    label: Daypart
+    description: Lunch 11:00 to 14:00, Afternoon 14:00 to 17:00, Dinner 17:00 to
+      21:00, Late night 21:00 to 23:00 (trial restaurants only, delivery only).
+    synonyms: [ trading period, lunch, afternoon, dinner, late night ]
+
+  net_sales_aud:
+    hidden: true
+
+  gross_sales_inc_gst_aud:
+    hidden: true
+
+  delivery_net_sales_aud:
+    hidden: true
+
+  order_count:
+    hidden: true
+
+  crew_hours:
+    hidden: true
+
+  labour_cost_aud:
+    hidden: true
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
+
+  net_sales:
+    sql: ${net_sales_aud}
+    label: Net sales
+    format: '"A$"#,##0'
+    description: Net sales ex GST, after discounts and before delivery platform
+      commission, all channels and dayparts.
+    aggregate_type: sum
+    synonyms: [ sales, revenue, takings ex GST ]
+
+  gross_sales_inc_gst:
+    sql: ${gross_sales_inc_gst_aud}
+    label: Gross sales inc GST
+    format: '"A$"#,##0'
+    description: Sales including GST, as tills and platforms report them. Never the
+      denominator for labour %.
+    aggregate_type: sum
+    synonyms: [ gross sales, sales inc GST, receipts, till sales ]
+
+  labour_cost:
+    sql: ${labour_cost_aud}
+    label: Labour cost
+    format: '"A$"#,##0'
+    description: Crew wages including penalty rates, super and on costs.
+    aggregate_type: sum
+    synonyms: [ wages, payroll cost, crew cost ]
+
+  labour_hours:
+    sql: ${crew_hours}
+    label: Labour hours
+    format: "#,##0"
+    description: Paid crew hours worked.
+    aggregate_type: sum
+    synonyms: [ hours worked, crew hours ]
+
+  orders:
+    sql: ${order_count}
+    label: Orders
+    format: "#,##0"
+    description: Orders, all channels.
+    aggregate_type: sum
+    synonyms: [ transactions, tickets ]
+
+  delivery_net_sales:
+    sql: ${delivery_net_sales_aud}
+    label: Delivery net sales
+    format: '"A$"#,##0'
+    description: Net sales through Uber Eats and DoorDash.
+    aggregate_type: sum
+    synonyms: [ delivery sales, aggregator sales, Uber and DoorDash sales ]
+
+  labour_pct:
+    sql: ${labour_cost} / NULLIF(${net_sales}, 0)
+    label: Labour % of net sales
+    format: PERCENT_1
+    description: The governed labour % definition, labour cost over net sales ex GST
+      before delivery commission. Never computed over gross sales inc GST.
+    synonyms:
+      [
+        labour %,
+        labour percent,
+        wage %,
+        labour to sales,
+        labour cost %,
+        labour ratio
+      ]
+
+  delivery_share:
+    sql: ${delivery_net_sales} / NULLIF(${net_sales}, 0)
+    label: Delivery share
+    format: PERCENT_1
+    description: Share of net sales through delivery platforms.
+    synonyms: [ delivery mix, aggregator mix ]
+
+  avg_order_value:
+    sql: ${net_sales} / NULLIF(${orders}, 0)
+    label: Average order value
+    format: '"A$"#,##0.00'
+    description: Average net sales ex GST per order.
+    synonyms: [ AOV, average ticket, average check ]
+
+  sessions_traded:
+    sql: ${trading_id}
+    label: Sessions traded
+    format: "#,##0"
+    description: Restaurant dayparts traded. Filtered to Late night it counts trial nights.
+    aggregate_type: count_distinct
+    synonyms: [ nights traded, late nights, sessions ]

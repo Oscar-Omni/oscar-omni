@@ -1,0 +1,122 @@
+base_view: oscar_demos_omnise__demo_grill_d_trading_dayparts
+label: Store trading (synthetic)
+group_label: Grill'd
+description: Synthetic Grill'd and Coco Black store trading, one row per
+  restaurant per trading day per daypart, sales, orders and labour, 1 Nov 2025
+  to 31 Oct 2026, AUD.
+
+joins:
+  oscar_demos_omnise__demo_grill_d_restaurants: {}
+  oscar_demos_omnise__demo_grill_d_local_areas: {}
+
+relationships:
+  - join_from_view: oscar_demos_omnise__demo_grill_d_trading_dayparts
+    join_to_view: oscar_demos_omnise__demo_grill_d_restaurants
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_grill_d_trading_dayparts.restaurant_id} =
+      ${oscar_demos_omnise__demo_grill_d_restaurants.restaurant_id}
+    relationship_type: many_to_one
+
+  - join_from_view: oscar_demos_omnise__demo_grill_d_trading_dayparts
+    join_to_view: oscar_demos_omnise__demo_grill_d_local_areas
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_grill_d_trading_dayparts.lga_code} =
+      ${oscar_demos_omnise__demo_grill_d_local_areas.code}
+    relationship_type: many_to_one
+
+ai_context: |
+  Synthetic sample of 175 Grill'd and 8 Coco Black restaurants on real Australian LGAs, 1 Nov 2025 to 31 Oct 2026, money in AUD. Say the data is synthetic.
+  One row per restaurant per trading day per daypart.
+  Labour % means Labour % of net sales (labour_pct): labour cost over net sales ex GST before delivery commission. Always use the labour_pct field; never compute labour % yourself and never divide by gross_sales_inc_gst.
+  Net sales is ex GST. Gross sales inc GST is what tills report and is never a labour denominator.
+  When you break labour % down by state, local area or restaurant, also state the network figure (all restaurants) for each period, from labour_pct over the same dates, so it can be checked against the dashboard KPI.
+  Late night (21:00 to 23:00) exists only at trial restaurants, those with Late night trial start set (1 Aug, 1 Sep or 1 Oct 2026).
+  Take State, Brand and Format from Restaurants and the local area from Local areas. Restaurant names are invented.
+  When asked to compare periods, use the exact dates given and name both periods.
+  Channel and commission questions belong to the Channel mix topic, which has no labour.
+
+sample_queries:
+  labour_pct_by_state_two_periods:
+    query:
+      fields:
+        [
+          "oscar_demos_omnise__demo_grill_d_trading_dayparts.trade_date[month]",
+          oscar_demos_omnise__demo_grill_d_restaurants.state,
+          oscar_demos_omnise__demo_grill_d_trading_dayparts.labour_pct
+        ]
+      base_view: oscar_demos_omnise__demo_grill_d_trading_dayparts
+      filters:
+        oscar_demos_omnise__demo_grill_d_trading_dayparts.trade_date:
+          between_dates: [ 2026-05-01, 2026-10-31 ]
+      topic: demo_grill_d_store_trading
+    prompt: What was labour % of net sales by state from 1 August to 31 October
+      2026, against 1 May to 31 July 2026?
+  victorian_lgas_labour_aug_oct_2026:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_grill_d_local_areas.name,
+          oscar_demos_omnise__demo_grill_d_trading_dayparts.labour_pct,
+          oscar_demos_omnise__demo_grill_d_trading_dayparts.net_sales
+        ]
+      base_view: oscar_demos_omnise__demo_grill_d_trading_dayparts
+      filters:
+        oscar_demos_omnise__demo_grill_d_trading_dayparts.trade_date:
+          between_dates: [ 2026-08-01, 2026-10-31 ]
+        oscar_demos_omnise__demo_grill_d_restaurants.state:
+          is: Victoria
+      sorts:
+        - field: oscar_demos_omnise__demo_grill_d_trading_dayparts.labour_pct
+          desc: true
+      topic: demo_grill_d_store_trading
+    prompt: Which Victorian local areas had the highest labour % from 1 August to 31
+      October 2026?
+  late_night_labour_oct_2026:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_grill_d_restaurants.restaurant_name,
+          oscar_demos_omnise__demo_grill_d_trading_dayparts.labour_pct,
+          oscar_demos_omnise__demo_grill_d_trading_dayparts.net_sales,
+          oscar_demos_omnise__demo_grill_d_trading_dayparts.labour_cost
+        ]
+      base_view: oscar_demos_omnise__demo_grill_d_trading_dayparts
+      filters:
+        oscar_demos_omnise__demo_grill_d_trading_dayparts.trade_date:
+          between_dates: [ 2026-10-01, 2026-10-31 ]
+        oscar_demos_omnise__demo_grill_d_trading_dayparts.daypart:
+          is: Late night
+      topic: demo_grill_d_store_trading
+    prompt: What was labour % in the Late night daypart at trial restaurants in
+      October 2026?
+  trial_start_by_month:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_grill_d_restaurants.late_night_trial_start,
+          "oscar_demos_omnise__demo_grill_d_trading_dayparts.trade_date[month]",
+          oscar_demos_omnise__demo_grill_d_trading_dayparts.labour_pct
+        ]
+      base_view: oscar_demos_omnise__demo_grill_d_trading_dayparts
+      filters:
+        oscar_demos_omnise__demo_grill_d_trading_dayparts.trade_date:
+          between_dates: [ 2026-05-01, 2026-10-31 ]
+      topic: demo_grill_d_store_trading
+    prompt: How did labour % at trial restaurants change in the month after their
+      late night trial started?
+  coco_black_net_sales:
+    query:
+      fields:
+        [
+          "oscar_demos_omnise__demo_grill_d_trading_dayparts.trade_date[month]",
+          oscar_demos_omnise__demo_grill_d_trading_dayparts.net_sales
+        ]
+      base_view: oscar_demos_omnise__demo_grill_d_trading_dayparts
+      filters:
+        oscar_demos_omnise__demo_grill_d_trading_dayparts.trade_date:
+          between_dates: [ 2025-11-01, 2026-10-31 ]
+        oscar_demos_omnise__demo_grill_d_restaurants.brand:
+          is: Coco Black
+      topic: demo_grill_d_store_trading
+    prompt: What was net sales for Coco Black from 1 March to 31 October 2026
+      against 1 November 2025 to 28 February 2026?

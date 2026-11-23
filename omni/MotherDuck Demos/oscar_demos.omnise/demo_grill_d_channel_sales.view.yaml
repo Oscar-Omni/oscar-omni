@@ -1,24 +1,87 @@
 # Reference this view as oscar_demos_omnise__demo_grill_d_channel_sales
+label: Channel sales
+description: Synthetic sample. One row per restaurant per trading day per
+  daypart per order channel. Totals equal Trading dayparts net sales for the
+  same restaurants and dates.
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_grill_d_channel_sales
 
 dimensions:
-  trade_date: {}
-  state: {}
-  daypart: {}
-  channel: {}
-  channel_group: {}
-  net_sales_aud: {}
-  order_count: {}
-  platform_commission_aud: {}
-
   channel_sale_id:
+    label: Channel sale ID
     format: ID
+    hidden: true
+    primary_key: true
+
+  trade_date:
+    label: Trade date
 
   restaurant_id:
+    label: Restaurant ID
     format: ID
+    hidden: true
+
+  state:
+    hidden: true
+
+  daypart:
+    label: Daypart
+    description: Lunch, Afternoon, Dinner or Late night.
+
+  channel:
+    label: Channel
+    description: Dine in, Takeaway, Grill'd app, Uber Eats or DoorDash.
+    synonyms: [ order channel, dine in, takeaway, app, Uber Eats, Uber, DoorDash ]
+
+  channel_group:
+    label: Channel group
+    description: In store (Dine in, Takeaway, Grill'd app) or Delivery (Uber Eats,
+      DoorDash).
+    synonyms: [ delivery vs in store ]
+
+  net_sales_aud:
+    hidden: true
+
+  order_count:
+    hidden: true
+
+  platform_commission_aud:
+    hidden: true
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
+
+  channel_net_sales:
+    sql: ${net_sales_aud}
+    label: Channel net sales
+    format: '"A$"#,##0'
+    description: Net sales ex GST by channel; same definition as Trading dayparts net sales.
+    aggregate_type: sum
+    synonyms: [ channel sales, sales by channel ]
+
+  channel_orders:
+    sql: ${order_count}
+    label: Channel orders
+    format: "#,##0"
+    description: Orders in the channel.
+    aggregate_type: sum
+
+  platform_commission:
+    sql: ${platform_commission_aud}
+    label: Platform commission
+    format: '"A$"#,##0'
+    description: Commission charged by Uber Eats and DoorDash, ex GST. Synthetic rates.
+    aggregate_type: sum
+    synonyms: [ commission, aggregator fees, platform fees, delivery fees ]
+
+  commission_pct_of_net_sales:
+    sql: ${platform_commission} / NULLIF(${channel_net_sales}, 0)
+    label: Commission % of net sales
+    format: PERCENT_1
+    description: Commission over net sales in the rows selected; filter to Delivery
+      for the platform rate.
+    synonyms: [ commission rate, fee rate ]

@@ -1,19 +1,48 @@
 # Reference this view as oscar_demos_omnise__demo_grill_d_restaurants
+label: Restaurants
+description: Synthetic sample of 175 Grill'd and 8 Coco Black restaurants on
+  real ABS 2024 LGAs. Names are invented (LGA name plus a number).
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_grill_d_restaurants
 
 dimensions:
-  restaurant_name: {}
-  brand: {}
-  state: {}
-  lga_code: {}
-  format: {}
-  late_night_trial_start: {}
-
   restaurant_id:
+    label: Restaurant ID
     format: ID
+    primary_key: true
+
+  restaurant_name:
+    label: Restaurant
+    description: Invented restaurant name, LGA plus a number, for example Casey 1.
+    synonyms: [ store, site ]
+
+  brand:
+    label: Brand
+    description: Grill'd or Coco Black.
+    synonyms: [ Grill'd, Coco Black ]
+
+  state:
+    label: State
+    description: Full state or territory name, for example Victoria.
+
+  lga_code:
+    label: LGA code
+    hidden: true
+
+  format:
+    label: Format
+    description: CBD, High street or Shopping centre.
+    synonyms: [ store type, CBD, high street, shopping centre ]
+
+  late_night_trial_start:
+    label: Late night trial start
+    description: First Late night trading day for the 26 trial restaurants, 1 Aug, 1
+      Sep or 1 Oct 2026. Empty for restaurants not in the trial.
+    synonyms: [ late night trial, late trading, extended hours, trial start, trial wave ]
 
 measures:
   count:
+    label: Restaurants
     aggregate_type: count

@@ -1,14 +1,34 @@
 # Reference this view as oscar_demos_omnise__demo_grill_d_local_areas
+label: Local areas
+description: ABS 2024 local government areas with at least one restaurant, with
+  the catalog interior point.
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_grill_d_local_areas
 
 dimensions:
-  code: {}
-  name: {}
-  state: {}
-  longitude: {}
-  latitude: {}
+  code:
+    label: LGA code
+    description: ABS 2024 LGA code; use for LGA region maps.
+    primary_key: true
+
+  name:
+    label: Local area (LGA)
+    description: ABS 2024 local government area name, for example Casey or Kingston (Vic.).
+    synonyms: [ LGA, local area, council area ]
+
+  state:
+    label: LGA state
+    description: State of the local area; use Restaurants State for state questions.
+
+  longitude:
+    label: Longitude
+    hidden: true
+
+  latitude:
+    label: Latitude
+    hidden: true
 
 measures:
   count:
