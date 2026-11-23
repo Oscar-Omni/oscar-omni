@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: oscar_demos_omnise__demo_mantel_group_partner_scenario_slots
 label: Retention planner slots (synthetic)
 group_label: Saltbush Super

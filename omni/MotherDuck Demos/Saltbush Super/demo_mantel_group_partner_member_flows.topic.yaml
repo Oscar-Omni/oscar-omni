@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: oscar_demos_omnise__demo_mantel_group_partner_member_months
 label: Member flows (synthetic)
 group_label: Saltbush Super
