@@ -1,35 +1,152 @@
 # Reference this view as oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions
+label: Project hour transactions
+description: Synthetic sample shaped like Dynamics 365 F&O hour journals. One
+  row per technician per working day per service order or indirect activity, 1
+  Nov 2025 to 31 Oct 2026, NZD ex GST, NZ time. Every attended hour is posted
+  somewhere.
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_ab_equipment_ltd_project_hour_transactions
 
 dimensions:
-  trans_date: {}
-  personnel_number: {}
-  sales_region: {}
-  island: {}
-  ta_code: {}
-  qty_hours: {}
-  recoverable_qty_hours: {}
-  job_qty_hours: {}
-  sales_amount_nzd: {}
-  cost_amount_nzd: {}
-
   transaction_id:
+    label: Transaction ID
     format: ID
+    hidden: true
+    primary_key: true
+
+  trans_date:
+    label: Transaction date
+    description: Working day the hours were posted, NZ time.
+
+  personnel_number:
+    label: Personnel number
+    format: ID
+    hidden: true
 
   site_id:
+    label: Site ID
     format: ID
+    hidden: true
+
+  sales_region:
+    hidden: true
+
+  island:
+    hidden: true
+
+  ta_code:
+    hidden: true
 
   service_order_id:
+    label: Service order ID
     format: ID
+    hidden: true
 
   line_property_id:
+    label: Line property
     format: ID
+    description: D365 line property of the hours. Chargeable is billed to the
+      customer, Warranty to the manufacturer; Internal is PDI and fit-out,
+      rework and own fleet; Indirect is training, waiting for parts and
+      housekeeping.
+    synonyms: [ chargeable, warranty, internal, indirect, non chargeable ]
 
   category_id:
+    label: Project category
     format: ID
+    description: D365 project category the hours were posted to.
+    synonyms:
+      [
+        category,
+        PDI,
+        pre delivery inspection,
+        fit-out,
+        rework,
+        training,
+        waiting for parts,
+        housekeeping
+      ]
+
+  qty_hours:
+    hidden: true
+
+  recoverable_qty_hours:
+    hidden: true
+
+  job_qty_hours:
+    hidden: true
+
+  sales_amount_nzd:
+    hidden: true
+
+  cost_amount_nzd:
+    hidden: true
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
+
+  attended_hours:
+    sql: ${qty_hours}
+    label: Attended hours
+    format: "#,##0"
+    description: Every hour technicians posted, all four line properties. The
+      utilisation denominator.
+    aggregate_type: sum
+    synonyms: [ clocked hours, paid hours, hours on the clock ]
+
+  recoverable_hours:
+    sql: ${recoverable_qty_hours}
+    label: Recoverable hours
+    format: "#,##0"
+    description: Hours billed to a customer (Chargeable) or a manufacturer
+      (Warranty). The utilisation numerator.
+    aggregate_type: sum
+    synonyms: [ billable hours, chargeable plus warranty hours ]
+
+  job_hours:
+    sql: ${job_qty_hours}
+    label: Job hours
+    format: "#,##0"
+    description: Hours on any service order, including Internal PDI and fit-out,
+      rework and own fleet. Not a utilisation numerator.
+    aggregate_type: sum
+    synonyms: [ hours on service orders ]
+
+  labour_sales:
+    sql: ${sales_amount_nzd}
+    label: Labour sales
+    format: '"NZ$"#,##0'
+    description: Workshop and field labour billed to customers and manufacturers,
+      NZD ex GST.
+    aggregate_type: sum
+    synonyms: [ labour revenue, workshop revenue, labour billed ]
+
+  labour_cost:
+    sql: ${cost_amount_nzd}
+    label: Labour cost
+    format: '"NZ$"#,##0'
+    description: Loaded technician cost of every attended hour, NZD.
+    aggregate_type: sum
+    synonyms: [ technician cost, wage cost ]
+
+  technician_utilisation:
+    sql: ${recoverable_hours} / NULLIF(${attended_hours}, 0)
+    label: Technician utilisation
+    format: PERCENT_1
+    description: The governed definition. Recoverable hours (line property
+      Chargeable or Warranty) over attended hours (every hour posted). Internal
+      hours (PDI and fit-out, rework, own fleet) and Indirect hours count in the
+      denominator only. The KPI, every chart, Omni's AI and the app read this
+      one field.
+    synonyms:
+      [
+        utilisation,
+        tech utilisation,
+        workshop utilisation,
+        recovery,
+        productive utilisation
+      ]

@@ -1,15 +1,37 @@
 # Reference this view as oscar_demos_omnise__demo_ab_equipment_ltd_local_areas
+label: Territorial authorities
+description: Stats NZ 2025 territorial authorities with at least one operational
+  site. Exact catalog codes and names; the point is the catalog interior point.
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_ab_equipment_ltd_local_areas
 
 dimensions:
-  code: {}
-  name: {}
-  state: {}
-  longitude: {}
-  latitude: {}
+  code:
+    label: TA code
+    format: ID
+    description: Stats NZ TA2025 code as three character text.
+    primary_key: true
+
+  name:
+    label: Territorial authority
+    description: Stats NZ territorial authority name, for example Hamilton City.
+    synonyms: [ TA, territorial authority, district, council, city ]
+
+  state:
+    label: Country
+    hidden: true
+
+  longitude:
+    label: Longitude
+    hidden: true
+
+  latitude:
+    label: Latitude
+    hidden: true
 
 measures:
   count:
+    hidden: true
     aggregate_type: count

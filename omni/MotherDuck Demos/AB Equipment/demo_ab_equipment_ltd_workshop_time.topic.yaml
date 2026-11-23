@@ -1,0 +1,148 @@
+base_view: oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions
+label: Workshop time (synthetic)
+group_label: AB Equipment
+description: Synthetic D365 shaped project hour transactions for 18 AB Equipment
+  style workshops on real NZ territorial authorities. One row per technician per
+  working day per service order or indirect activity, 1 Nov 2025 to 31 Oct 2026,
+  NZD ex GST.
+
+joins:
+  oscar_demos_omnise__demo_ab_equipment_ltd_workers: {}
+  oscar_demos_omnise__demo_ab_equipment_ltd_operational_sites: {}
+  oscar_demos_omnise__demo_ab_equipment_ltd_local_areas: {}
+  oscar_demos_omnise__demo_ab_equipment_ltd_service_orders:
+    oscar_demos_omnise__demo_ab_equipment_ltd_customers: {}
+
+relationships:
+  - join_from_view: oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions
+    join_to_view: oscar_demos_omnise__demo_ab_equipment_ltd_workers
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions.personnel_number}
+      = ${oscar_demos_omnise__demo_ab_equipment_ltd_workers.personnel_number}
+    relationship_type: many_to_one
+
+  - join_from_view: oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions
+    join_to_view: oscar_demos_omnise__demo_ab_equipment_ltd_operational_sites
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions.site_id}
+      = ${oscar_demos_omnise__demo_ab_equipment_ltd_operational_sites.site_id}
+    relationship_type: many_to_one
+
+  - join_from_view: oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions
+    join_to_view: oscar_demos_omnise__demo_ab_equipment_ltd_local_areas
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions.ta_code}
+      = ${oscar_demos_omnise__demo_ab_equipment_ltd_local_areas.code}
+    relationship_type: many_to_one
+
+  - join_from_view: oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions
+    join_to_view: oscar_demos_omnise__demo_ab_equipment_ltd_service_orders
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions.service_order_id}
+      =
+      ${oscar_demos_omnise__demo_ab_equipment_ltd_service_orders.service_order_id}
+    relationship_type: many_to_one
+
+  - join_from_view: oscar_demos_omnise__demo_ab_equipment_ltd_service_orders
+    join_to_view: oscar_demos_omnise__demo_ab_equipment_ltd_customers
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_ab_equipment_ltd_service_orders.customer_account}
+      = ${oscar_demos_omnise__demo_ab_equipment_ltd_customers.customer_account}
+    relationship_type: many_to_one
+
+ai_context: |
+  Synthetic sample shaped like Dynamics 365 Finance & Operations project hour transactions for 18 workshops on real New Zealand territorial authorities, 1 Nov 2025 to 31 Oct 2026, money in NZD ex GST, NZ time. Say the data is synthetic.
+  One row per technician per working day per service order or indirect activity; every attended hour is posted.
+  Technician utilisation means the technician_utilisation field: recoverable hours (line property Chargeable or Warranty) over attended hours. Always use that field. Never compute utilisation yourself and never count Internal hours (PDI and fit-out, rework, own fleet maintenance) as recoverable.
+  Job hours are not utilisation. Attended hours include Indirect time (training, waiting for parts, housekeeping).
+  When you break utilisation down by region, workshop or territorial authority, also state the network figure (all workshops) for each period from technician_utilisation over the same dates, so it can be checked against the dashboard KPI.
+  Region means Operational sites > Region (sales_region). Workshop, branch or service centre means Operational sites > Workshop (site_name). TA, territorial authority, district or council means Territorial authorities > Territorial authority.
+  To explain a change in utilisation, break attended hours down by line property and project category; do not invent causes such as staff shortages that the data does not show.
+  Site and customer names are invented. When asked to compare periods, use the exact dates given and name both periods.
+  Sales, parts and fill rate questions belong to the Sales and parts topic; customer job turnaround belongs to the Service jobs topic.
+
+sample_queries:
+  utilisation_by_region_two_periods:
+    query:
+      fields:
+        [
+          "oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transaction\
+            s.trans_date[month]",
+          oscar_demos_omnise__demo_ab_equipment_ltd_operational_sites.sales_region,
+          oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions.technician_utilisation
+        ]
+      base_view: oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions
+      filters:
+        oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions.trans_date:
+          between_dates: [ 2026-05-01, 2026-10-31 ]
+      topic: demo_ab_equipment_ltd_workshop_time
+    prompt: What was technician utilisation by region from 1 August to 31 October
+      2026, against 1 May to 31 July 2026?
+  workshops_aug_oct_2026:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_ab_equipment_ltd_operational_sites.site_name,
+          oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions.technician_utilisation,
+          oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions.attended_hours
+        ]
+      base_view: oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions
+      filters:
+        oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions.trans_date:
+          between_dates: [ 2026-08-01, 2026-10-31 ]
+      sorts:
+        - field: oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions.technician_utilisation
+      topic: demo_ab_equipment_ltd_workshop_time
+    prompt: Which workshops had the lowest technician utilisation from 1 August to
+      31 October 2026?
+  hamilton_pdi_hours_by_month:
+    query:
+      fields:
+        [
+          "oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transaction\
+            s.trans_date[month]",
+          oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions.attended_hours
+        ]
+      base_view: oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions
+      filters:
+        oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions.trans_date:
+          between_dates: [ 2026-05-01, 2026-10-31 ]
+        oscar_demos_omnise__demo_ab_equipment_ltd_operational_sites.site_name:
+          is: Hamilton 1
+        oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions.category_id:
+          is: PDI and fit-out
+      topic: demo_ab_equipment_ltd_workshop_time
+    prompt: How many hours did Hamilton 1 post to PDI and fit-out each month from
+      May to October 2026?
+  central_north_hours_by_line_property:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_ab_equipment_ltd_operational_sites.site_name,
+          oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions.line_property_id,
+          "oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transaction\
+            s.trans_date[month]",
+          oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions.attended_hours
+        ]
+      base_view: oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions
+      filters:
+        oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions.trans_date:
+          between_dates: [ 2026-05-01, 2026-10-31 ]
+        oscar_demos_omnise__demo_ab_equipment_ltd_operational_sites.sales_region:
+          is: Central North
+      topic: demo_ab_equipment_ltd_workshop_time
+    prompt: In Central North, what were technicians booking their time to by
+      workshop from 1 May to 31 October 2026?
+  labour_sales_by_workshop:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_ab_equipment_ltd_operational_sites.site_name,
+          oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions.labour_sales
+        ]
+      base_view: oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions
+      filters:
+        oscar_demos_omnise__demo_ab_equipment_ltd_project_hour_transactions.trans_date:
+          between_dates: [ 2026-08-01, 2026-10-31 ]
+      topic: demo_ab_equipment_ltd_workshop_time
+    prompt: What were labour sales by workshop from 1 August to 31 October 2026?
