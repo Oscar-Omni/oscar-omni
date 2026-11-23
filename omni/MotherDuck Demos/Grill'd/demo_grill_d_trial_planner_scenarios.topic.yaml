@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: oscar_demos_omnise__demo_grill_d_trial_scenarios
 label: Trial planner scenarios (synthetic)
 group_label: Grill'd

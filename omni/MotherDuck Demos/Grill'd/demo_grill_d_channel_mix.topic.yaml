@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: oscar_demos_omnise__demo_grill_d_channel_sales
 label: Channel mix (synthetic)
 group_label: Grill'd
