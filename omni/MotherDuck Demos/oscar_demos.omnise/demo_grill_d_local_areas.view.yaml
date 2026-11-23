@@ -1,0 +1,15 @@
+# Reference this view as oscar_demos_omnise__demo_grill_d_local_areas
+catalog: oscar_demos
+schema: omnise
+table_name: demo_grill_d_local_areas
+
+dimensions:
+  code: {}
+  name: {}
+  state: {}
+  longitude: {}
+  latitude: {}
+
+measures:
+  count:
+    aggregate_type: count

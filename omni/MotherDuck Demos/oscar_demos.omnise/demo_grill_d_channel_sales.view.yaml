@@ -1,0 +1,24 @@
+# Reference this view as oscar_demos_omnise__demo_grill_d_channel_sales
+catalog: oscar_demos
+schema: omnise
+table_name: demo_grill_d_channel_sales
+
+dimensions:
+  trade_date: {}
+  state: {}
+  daypart: {}
+  channel: {}
+  channel_group: {}
+  net_sales_aud: {}
+  order_count: {}
+  platform_commission_aud: {}
+
+  channel_sale_id:
+    format: ID
+
+  restaurant_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

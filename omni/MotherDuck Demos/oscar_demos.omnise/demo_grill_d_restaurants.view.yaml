@@ -1,0 +1,19 @@
+# Reference this view as oscar_demos_omnise__demo_grill_d_restaurants
+catalog: oscar_demos
+schema: omnise
+table_name: demo_grill_d_restaurants
+
+dimensions:
+  restaurant_name: {}
+  brand: {}
+  state: {}
+  lga_code: {}
+  format: {}
+  late_night_trial_start: {}
+
+  restaurant_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

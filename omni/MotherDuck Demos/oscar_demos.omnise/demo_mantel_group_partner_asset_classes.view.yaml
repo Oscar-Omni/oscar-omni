@@ -1,0 +1,25 @@
+# Reference this view as oscar_demos_omnise__demo_mantel_group_partner_asset_classes
+catalog: oscar_demos
+schema: omnise
+table_name: demo_mantel_group_partner_asset_classes
+
+dimensions:
+  asset_class: {}
+  sleeve: {}
+  listing: {}
+  liquidity_days: {}
+  saa_weight: {}
+  actual_weight: {}
+  min_weight: {}
+  max_weight: {}
+  expected_return: {}
+  volatility: {}
+  fum_aud: {}
+  sort_order: {}
+
+  asset_class_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

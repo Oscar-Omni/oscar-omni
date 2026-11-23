@@ -1,0 +1,28 @@
+# Reference this view as oscar_demos_omnise__demo_grill_d_trading_dayparts
+catalog: oscar_demos
+schema: omnise
+table_name: demo_grill_d_trading_dayparts
+
+dimensions:
+  trade_date: {}
+  brand: {}
+  state: {}
+  lga_code: {}
+  format: {}
+  daypart: {}
+  net_sales_aud: {}
+  gross_sales_inc_gst_aud: {}
+  delivery_net_sales_aud: {}
+  order_count: {}
+  crew_hours: {}
+  labour_cost_aud: {}
+
+  trading_id:
+    format: ID
+
+  restaurant_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count
