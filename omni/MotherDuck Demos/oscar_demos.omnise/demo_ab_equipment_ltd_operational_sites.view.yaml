@@ -1,0 +1,20 @@
+# Reference this view as oscar_demos_omnise__demo_ab_equipment_ltd_operational_sites
+catalog: oscar_demos
+schema: omnise
+table_name: demo_ab_equipment_ltd_operational_sites
+
+dimensions:
+  site_name: {}
+  site_type: {}
+  sales_region: {}
+  island: {}
+  ta_code: {}
+  longitude: {}
+  latitude: {}
+
+  site_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

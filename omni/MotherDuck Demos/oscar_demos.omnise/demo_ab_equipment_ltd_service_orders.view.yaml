@@ -1,0 +1,28 @@
+# Reference this view as oscar_demos_omnise__demo_ab_equipment_ltd_service_orders
+catalog: oscar_demos
+schema: omnise
+table_name: demo_ab_equipment_ltd_service_orders
+
+dimensions:
+  created_date: {}
+  completed_date: {}
+  sales_region: {}
+  customer_account: {}
+  item_number: {}
+  product_line: {}
+  service_order_type: {}
+  order_status: {}
+  days_to_complete: {}
+
+  service_order_id:
+    format: ID
+
+  site_id:
+    format: ID
+
+  line_property_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

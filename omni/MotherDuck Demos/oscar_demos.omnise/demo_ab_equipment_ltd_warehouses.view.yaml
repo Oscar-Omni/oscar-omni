@@ -1,0 +1,18 @@
+# Reference this view as oscar_demos_omnise__demo_ab_equipment_ltd_warehouses
+catalog: oscar_demos
+schema: omnise
+table_name: demo_ab_equipment_ltd_warehouses
+
+dimensions:
+  warehouse_name: {}
+  warehouse_type: {}
+
+  warehouse_id:
+    format: ID
+
+  site_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count
