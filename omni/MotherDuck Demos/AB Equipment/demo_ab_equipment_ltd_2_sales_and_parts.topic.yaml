@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: oscar_demos_omnise__demo_ab_equipment_ltd_2_sales_order_lines
 label: Sales and parts (synthetic)
 group_label: AB Equipment

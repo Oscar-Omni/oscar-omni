@@ -1,3 +1,5 @@
+hidden: true
+
 base_view: oscar_demos_omnise__demo_ab_equipment_ltd_2_project_hour_transactions
 label: Workshop time (synthetic)
 group_label: AB Equipment
