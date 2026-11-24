@@ -1,0 +1,17 @@
+# Reference this view as oscar_demos_omnise__demo_betfair_australia_sessions
+catalog: oscar_demos
+schema: omnise
+table_name: demo_betfair_australia_sessions
+
+dimensions:
+  session_week: {}
+  channel: {}
+  login_count: {}
+  customer_week_key: {}
+
+  customer_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

@@ -1,0 +1,33 @@
+# Reference this view as oscar_demos_omnise__demo_betfair_australia_settlements
+catalog: oscar_demos
+schema: omnise
+table_name: demo_betfair_australia_settlements
+
+dimensions:
+  settled_date: {}
+  settled_week: {}
+  customer_week_key: {}
+  code_group: {}
+  channel: {}
+  matched_volume_aud: {}
+  commission_aud: {}
+  new_customer_flag: {}
+  week2_eligible_flag: {}
+  week2_retained_flag: {}
+  week4_eligible_flag: {}
+  week4_retained_flag: {}
+  bonus_paid_aud: {}
+  cohort_week_number: {}
+  home_lga_code: {}
+  home_state: {}
+  acquisition_source: {}
+
+  customer_id:
+    format: ID
+
+  event_type_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count

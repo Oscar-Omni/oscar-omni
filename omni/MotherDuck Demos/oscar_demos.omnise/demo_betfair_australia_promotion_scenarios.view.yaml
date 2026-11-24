@@ -1,0 +1,17 @@
+# Reference this view as oscar_demos_omnise__demo_betfair_australia_promotion_scenarios
+catalog: oscar_demos
+schema: omnise
+table_name: demo_betfair_australia_promotion_scenarios
+
+dimensions:
+  slot_order: {}
+  default_label: {}
+  editable: {}
+  default_assumptions_json: {}
+
+  scenario_id:
+    format: ID
+
+measures:
+  count:
+    aggregate_type: count
