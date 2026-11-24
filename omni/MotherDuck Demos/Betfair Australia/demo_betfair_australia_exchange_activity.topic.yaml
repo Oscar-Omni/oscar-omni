@@ -1,0 +1,141 @@
+base_view: oscar_demos_omnise__demo_betfair_australia_settlements
+label: Exchange activity (synthetic)
+group_label: Betfair Australia
+description: Synthetic exchange settlements shaped like Betfair Australia's
+  warehouse. One row per customer per settled day per event type per channel
+  with a matched bet, Mon 6 Jan 2025 to Sun 22 Nov 2026, AUD, Melbourne time.
+  The governed home of active customers, turnover, commission and new customer
+  retention.
+
+joins:
+  oscar_demos_omnise__demo_betfair_australia_customers: {}
+  oscar_demos_omnise__demo_betfair_australia_event_types: {}
+  oscar_demos_omnise__demo_betfair_australia_local_areas: {}
+
+relationships:
+  - join_from_view: oscar_demos_omnise__demo_betfair_australia_settlements
+    join_to_view: oscar_demos_omnise__demo_betfair_australia_customers
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_betfair_australia_settlements.customer_id} =
+      ${oscar_demos_omnise__demo_betfair_australia_customers.customer_id}
+    relationship_type: many_to_one
+
+  - join_from_view: oscar_demos_omnise__demo_betfair_australia_settlements
+    join_to_view: oscar_demos_omnise__demo_betfair_australia_event_types
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_betfair_australia_settlements.event_type_id}
+      = ${oscar_demos_omnise__demo_betfair_australia_event_types.event_type_id}
+    relationship_type: many_to_one
+
+  - join_from_view: oscar_demos_omnise__demo_betfair_australia_settlements
+    join_to_view: oscar_demos_omnise__demo_betfair_australia_local_areas
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_betfair_australia_settlements.home_lga_code}
+      = ${oscar_demos_omnise__demo_betfair_australia_local_areas.code}
+    relationship_type: many_to_one
+
+ai_context: |
+  Synthetic sample shaped like Betfair Australia's exchange warehouse, Mon 6 Jan 2025 to Sun 22 Nov 2026, money in AUD, Melbourne time, weeks run Monday to Sunday. Say the data is synthetic.
+  One row per customer per settled day per event type per channel with a matched bet.
+  Active, actives, active customers, WAU, weekly active users and mobile actives always mean the weekly_active_customers field: a customer with a matched bet settled in the week. Never count logins as activity and never compute actives yourself with a count of customers or rows; always use the field. For one week it gives that week's actives; over a longer period it gives the average week.
+  Mobile means channel = Mobile app. Turnover means turnover (matched stake). Commission means commission. The effective commission rate is not Betfair's published rate.
+  New customers are first ever matched bets; a cohort is the joining week. Retention, still active two weeks later and stickiness mean week2_retention, filtered on the joining week with settled_date. Week 4 means week4_retention. To compare cohorts, filter settled_date to each joining week and use new_customers and week2_retention.
+  Cup Week 2026 is Mon 2 to Sun 8 Nov 2026 and Cup Week 2025 is Mon 3 to Sun 9 Nov 2025. Week 2 of those cohorts is 16 to 22 Nov 2026 and 17 to 23 Nov 2025.
+  State means local_areas.state; LGA, council or area means local_areas.name. Source or paid social means customers.acquisition_source.
+  When comparing periods use the exact dates given and name both periods. Do not invent causes beyond the data.
+  Logins and sessions belong to the App sessions topic; they are app usage, not actives.
+
+sample_queries:
+  cup_week_mobile_actives_2026:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_betfair_australia_settlements.weekly_active_customers
+        ]
+      base_view: oscar_demos_omnise__demo_betfair_australia_settlements
+      filters:
+        oscar_demos_omnise__demo_betfair_australia_settlements.settled_date:
+          between_dates: [ 2026-11-02, 2026-11-08 ]
+        oscar_demos_omnise__demo_betfair_australia_settlements.channel:
+          is: Mobile app
+      topic: demo_betfair_australia_exchange_activity
+    prompt: How many weekly active customers did we have on the mobile app in Cup
+      Week 2026 (2 to 8 November 2026)?
+  cup_week_mobile_actives_2025:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_betfair_australia_settlements.weekly_active_customers
+        ]
+      base_view: oscar_demos_omnise__demo_betfair_australia_settlements
+      filters:
+        oscar_demos_omnise__demo_betfair_australia_settlements.settled_date:
+          between_dates: [ 2025-11-03, 2025-11-09 ]
+        oscar_demos_omnise__demo_betfair_australia_settlements.channel:
+          is: Mobile app
+      topic: demo_betfair_australia_exchange_activity
+    prompt: How many weekly active customers did we have on the mobile app in Cup
+      Week 2025 (3 to 9 November 2025)?
+  cup_week_2026_cohort_by_state:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_betfair_australia_local_areas.state,
+          oscar_demos_omnise__demo_betfair_australia_settlements.new_customers,
+          oscar_demos_omnise__demo_betfair_australia_settlements.week2_retention
+        ]
+      base_view: oscar_demos_omnise__demo_betfair_australia_settlements
+      filters:
+        oscar_demos_omnise__demo_betfair_australia_settlements.settled_date:
+          between_dates: [ 2026-11-02, 2026-11-08 ]
+        oscar_demos_omnise__demo_betfair_australia_settlements.channel:
+          is: Mobile app
+      topic: demo_betfair_australia_exchange_activity
+    prompt: What was week 2 retention of new mobile customers by state for the Cup
+      Week 2026 cohort (joined 2 to 8 November 2026)?
+  cup_week_2025_cohort_by_state:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_betfair_australia_local_areas.state,
+          oscar_demos_omnise__demo_betfair_australia_settlements.new_customers,
+          oscar_demos_omnise__demo_betfair_australia_settlements.week2_retention
+        ]
+      base_view: oscar_demos_omnise__demo_betfair_australia_settlements
+      filters:
+        oscar_demos_omnise__demo_betfair_australia_settlements.settled_date:
+          between_dates: [ 2025-11-03, 2025-11-09 ]
+        oscar_demos_omnise__demo_betfair_australia_settlements.channel:
+          is: Mobile app
+      topic: demo_betfair_australia_exchange_activity
+    prompt: What was week 2 retention of new mobile customers by state for the Cup
+      Week 2025 cohort (joined 3 to 9 November 2025)?
+  commission_by_channel_spring_2026:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_betfair_australia_settlements.channel,
+          oscar_demos_omnise__demo_betfair_australia_settlements.commission
+        ]
+      base_view: oscar_demos_omnise__demo_betfair_australia_settlements
+      filters:
+        oscar_demos_omnise__demo_betfair_australia_settlements.settled_date:
+          between_dates: [ 2026-09-07, 2026-11-22 ]
+      topic: demo_betfair_australia_exchange_activity
+    prompt: What was commission by channel from 7 September to 22 November 2026?
+  lowest_retention_lgas_spring_2026:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_betfair_australia_local_areas.name,
+          oscar_demos_omnise__demo_betfair_australia_local_areas.state,
+          oscar_demos_omnise__demo_betfair_australia_settlements.new_customers,
+          oscar_demos_omnise__demo_betfair_australia_settlements.week2_retention
+        ]
+      base_view: oscar_demos_omnise__demo_betfair_australia_settlements
+      filters:
+        oscar_demos_omnise__demo_betfair_australia_settlements.settled_date:
+          between_dates: [ 2026-09-07, 2026-11-08 ]
+      topic: demo_betfair_australia_exchange_activity
+    prompt: Which LGAs had the lowest week 2 retention for customers joining between
+      7 September and 8 November 2026?

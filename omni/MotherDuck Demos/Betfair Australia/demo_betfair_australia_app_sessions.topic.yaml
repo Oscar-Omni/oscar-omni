@@ -1,0 +1,62 @@
+base_view: oscar_demos_omnise__demo_betfair_australia_sessions
+label: App sessions (synthetic)
+group_label: Betfair Australia
+description: Synthetic login sessions for the same customers, one row per
+  customer per week per login channel. App usage, not an actives source.
+
+joins:
+  oscar_demos_omnise__demo_betfair_australia_customers:
+    oscar_demos_omnise__demo_betfair_australia_local_areas: {}
+
+relationships:
+  - join_from_view: oscar_demos_omnise__demo_betfair_australia_sessions
+    join_to_view: oscar_demos_omnise__demo_betfair_australia_customers
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_betfair_australia_sessions.customer_id} =
+      ${oscar_demos_omnise__demo_betfair_australia_customers.customer_id}
+    relationship_type: many_to_one
+
+  - join_from_view: oscar_demos_omnise__demo_betfair_australia_customers
+    join_to_view: oscar_demos_omnise__demo_betfair_australia_local_areas
+    join_type: always_left
+    on_sql: ${oscar_demos_omnise__demo_betfair_australia_customers.home_lga_code} =
+      ${oscar_demos_omnise__demo_betfair_australia_local_areas.code}
+    relationship_type: many_to_one
+
+ai_context: |
+  Same synthetic customers and window as Exchange activity. One row per customer per week per login channel with a login. Say the data is synthetic.
+  login_weekly_actives counts people who logged in, including people who only checked a balance or a result. It is not active customers. If asked for actives, active customers, WAU or weekly active users, say the governed measure is weekly_active_customers in the Exchange activity topic and use that topic instead. When you answer with login figures, say plainly that they are logins, not actives.
+  Mobile means channel = Mobile app. Cohort means customers.cohort_week, the joining week.
+
+sample_queries:
+  mobile_logins_by_week_spring_2026:
+    query:
+      fields:
+        [
+          "oscar_demos_omnise__demo_betfair_australia_sessions.session_week[w\
+            eek]",
+          oscar_demos_omnise__demo_betfair_australia_sessions.login_weekly_actives
+        ]
+      base_view: oscar_demos_omnise__demo_betfair_australia_sessions
+      filters:
+        oscar_demos_omnise__demo_betfair_australia_sessions.session_week:
+          between_dates: [ 2026-09-07, 2026-11-22 ]
+        oscar_demos_omnise__demo_betfair_australia_sessions.channel:
+          is: Mobile app
+      topic: demo_betfair_australia_app_sessions
+    prompt: How many customers logged in on the mobile app each week from 7
+      September to 22 November 2026?
+  cup_cohort_logins_week2:
+    query:
+      fields: [ oscar_demos_omnise__demo_betfair_australia_sessions.login_weekly_actives ]
+      base_view: oscar_demos_omnise__demo_betfair_australia_sessions
+      filters:
+        oscar_demos_omnise__demo_betfair_australia_sessions.session_week:
+          between_dates: [ 2026-11-16, 2026-11-22 ]
+        oscar_demos_omnise__demo_betfair_australia_sessions.channel:
+          is: Mobile app
+        oscar_demos_omnise__demo_betfair_australia_customers.cohort_week:
+          between_dates: [ 2026-11-02, 2026-11-08 ]
+      topic: demo_betfair_australia_app_sessions
+    prompt: Of customers in the 2 November 2026 cohort, how many logged in on mobile
+      in the week of 16 November 2026?

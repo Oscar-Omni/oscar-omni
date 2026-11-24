@@ -1,15 +1,46 @@
 # Reference this view as oscar_demos_omnise__demo_betfair_australia_event_types
+label: Event types
+description: Exchange event types, racing codes and sports.
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_betfair_australia_event_types
 
 dimensions:
-  event_type_name: {}
-  code_group: {}
-  sport_group: {}
-
   event_type_id:
+    label: Event type ID
     format: ID
+    hidden: true
+    primary_key: true
+
+  event_type_name:
+    label: Racing code or sport
+    description: Thoroughbred racing, Harness racing, Greyhound racing, AFL, NRL,
+      Cricket, Soccer, Tennis or Basketball.
+    synonyms:
+      [
+        racing code,
+        sport,
+        event type,
+        thoroughbred,
+        harness,
+        greyhound,
+        AFL,
+        NRL,
+        cricket,
+        soccer,
+        tennis,
+        basketball
+      ]
+
+  code_group:
+    label: Code group
+    description: Six chart groups. Thoroughbred, Harness, Greyhound, AFL, NRL and
+      Other sport.
+
+  sport_group:
+    label: Racing or sport
+    description: Racing or Sport.
 
 measures:
   count:

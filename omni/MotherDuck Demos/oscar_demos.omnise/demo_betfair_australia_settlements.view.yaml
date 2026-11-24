@@ -1,33 +1,225 @@
 # Reference this view as oscar_demos_omnise__demo_betfair_australia_settlements
+label: Settlements
+description: Synthetic sample shaped like Betfair Australia's exchange
+  warehouse. One row per customer per settled day per event type per channel
+  with at least one matched bet, Mon 6 Jan 2025 to Sun 22 Nov 2026, Melbourne
+  time, AUD. New customer cohort flags sit on each customer's first matched row.
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_betfair_australia_settlements
 
 dimensions:
-  settled_date: {}
-  settled_week: {}
-  customer_week_key: {}
-  code_group: {}
-  channel: {}
-  matched_volume_aud: {}
-  commission_aud: {}
-  new_customer_flag: {}
-  week2_eligible_flag: {}
-  week2_retained_flag: {}
-  week4_eligible_flag: {}
-  week4_retained_flag: {}
-  bonus_paid_aud: {}
-  cohort_week_number: {}
-  home_lga_code: {}
-  home_state: {}
-  acquisition_source: {}
-
   customer_id:
+    label: Customer ID
     format: ID
+    description: Synthetic exchange customer id, C plus seven digits. No names.
+
+  settled_date:
+    label: Settled date
+    description: Day the markets settled, Melbourne time. The dashboard date. Weeks
+      run Monday to Sunday.
+    synonyms: [ date, settlement date, bet date ]
+
+  settled_week:
+    label: Settled week
+    description: Monday of the settled date's week.
+    hidden: true
+
+  customer_week_key:
+    label: Customer week key
+    description: customer_id and settled week; the distinct count behind weekly
+      active customers.
+    hidden: true
 
   event_type_id:
+    label: Event type ID
     format: ID
+    hidden: true
+
+  code_group:
+    hidden: true
+
+  channel:
+    label: Channel
+    description: Channel the bets were matched through. Mobile app, Web or API.
+      Mobile means Mobile app.
+    synonyms: [ mobile, app, web, desktop, API, platform ]
+
+  matched_volume_aud:
+    hidden: true
+
+  commission_aud:
+    hidden: true
+
+  new_customer_flag:
+    hidden: true
+
+  week2_eligible_flag:
+    hidden: true
+
+  week2_retained_flag:
+    hidden: true
+
+  week4_eligible_flag:
+    hidden: true
+
+  week4_retained_flag:
+    hidden: true
+
+  bonus_paid_aud:
+    hidden: true
+
+  cohort_week_number:
+    label: Weeks since joining
+    description: Whole weeks from the customer's joining week (cohort week) to the
+      settled week. 0 in the joining week, 2 in week 2.
+    synonyms: [ cohort week number, customer age in weeks, weeks since first bet ]
+
+  home_lga_code:
+    hidden: true
+
+  home_state:
+    hidden: true
+
+  acquisition_source:
+    hidden: true
+
+  row_key:
+    sql: ${customer_id} || '|' || CAST(${settled_date} AS VARCHAR) || '|' ||
+      ${event_type_id} || '|' || ${channel}
+    label: Settlement row key
+    hidden: true
+    primary_key: true
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
+
+  customer_weeks:
+    sql: ${customer_week_key}
+    label: Active customer weeks
+    format: "#,##0"
+    hidden: true
+    aggregate_type: count_distinct
+
+  active_weeks:
+    sql: ${settled_week}
+    label: Weeks in period
+    format: "#,##0"
+    hidden: true
+    aggregate_type: count_distinct
+
+  weekly_active_customers:
+    sql: ${customer_weeks} * 1.0 / NULLIF(${active_weeks}, 0)
+    label: Weekly active customers
+    format: "#,##0"
+    description: The governed definition of an active customer. A customer with at
+      least one matched bet settled in a Monday to Sunday week, Melbourne time.
+      Distinct customer weeks over distinct weeks, so one week gives that week's
+      actives and a longer period gives the average week. Logins never count. A
+      customer active on two channels counts once in the total and once in each
+      channel. The dashboard, Omni's AI, Claude through Omni's MCP server,
+      workbooks and the planner app all read this one field.
+    synonyms:
+      [
+        actives,
+        active customers,
+        WAU,
+        weekly active users,
+        weekly actives,
+        mobile actives,
+        active on mobile
+      ]
+
+  turnover:
+    sql: ${matched_volume_aud}
+    label: Turnover
+    format: '"A$"#,##0'
+    description: Matched stake on settled bets, AUD.
+    aggregate_type: sum
+    synonyms: [ matched volume, volume, handle ]
+
+  commission:
+    sql: ${commission_aud}
+    label: Commission
+    format: '"A$"#,##0'
+    description: Commission charged on customers' net market winnings, AUD.
+    aggregate_type: sum
+    synonyms: [ revenue, commission revenue ]
+
+  commission_rate:
+    sql: ${commission} / NULLIF(${turnover}, 0)
+    label: Effective commission rate
+    format: PERCENT_2
+    description: Commission over turnover in the rows selected. An effective rate on
+      matched stake, not Betfair's published commission rate on net winnings.
+    synonyms: [ effective commission, take rate ]
+
+  new_customers:
+    sql: ${new_customer_flag}
+    label: New customers
+    format: "#,##0"
+    description: Customers whose first ever matched bet settled in the period.
+      Account openings without a matched bet do not count.
+    aggregate_type: sum
+    synonyms: [ first time bettors, new actives, acquisitions ]
+
+  week2_cohort_customers:
+    sql: ${week2_eligible_flag}
+    label: Week 2 cohort customers
+    format: "#,##0"
+    description: New customers old enough to measure week 2, cohorts up to the week
+      of 2 Nov 2026.
+    aggregate_type: sum
+
+  week2_retained_customers:
+    sql: ${week2_retained_flag}
+    label: Week 2 retained customers
+    format: "#,##0"
+    description: New customers with a matched bet in the second week after their
+      joining week.
+    aggregate_type: sum
+    synonyms: [ retained customers, retained in week 2 ]
+
+  week2_retention:
+    sql: ${week2_retained_customers} * 1.0 / NULLIF(${week2_cohort_customers}, 0)
+    label: Week 2 retention
+    format: PERCENT_1
+    description: Share of new customers with a matched bet in the second week after
+      their joining week (joining week is week 0), on the governed active
+      definition. Filter the settled date on the joining week.
+    synonyms: [ retention, still active two weeks later, stickiness ]
+
+  week4_cohort_customers:
+    sql: ${week4_eligible_flag}
+    label: Week 4 cohort customers
+    format: "#,##0"
+    hidden: true
+    aggregate_type: sum
+
+  week4_retained_customers:
+    sql: ${week4_retained_flag}
+    label: Week 4 retained customers
+    format: "#,##0"
+    description: New customers with a matched bet in the fourth week after their
+      joining week.
+    aggregate_type: sum
+
+  week4_retention:
+    sql: ${week4_retained_customers} * 1.0 / NULLIF(${week4_cohort_customers}, 0)
+    label: Week 4 retention
+    format: PERCENT_1
+    description: Share of new customers with a matched bet in the fourth week after
+      joining. Measurable for cohorts up to the week of 19 Oct 2026.
+    synonyms: [ still active four weeks later ]
+
+  bonus_paid:
+    sql: ${bonus_paid_aud}
+    label: Bonus paid
+    format: '"A$"#,##0'
+    description: Sign up bonus credit paid to new customers, counted in their
+      joining week, AUD.
+    aggregate_type: sum
+    synonyms: [ bonus, sign up bonus, promotion cost, promo spend ]

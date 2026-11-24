@@ -1,14 +1,36 @@
 # Reference this view as oscar_demos_omnise__demo_betfair_australia_local_areas
+label: Home areas
+description: ABS 2024 local government areas that are home to synthetic exchange
+  customers, with exact catalog codes and interior points.
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_betfair_australia_local_areas
 
 dimensions:
-  code: {}
-  name: {}
-  state: {}
-  longitude: {}
-  latitude: {}
+  code:
+    label: LGA code
+    format: ID
+    description: ABS LGA 2024 code, five character text. The au-lga map region.
+    primary_key: true
+
+  name:
+    label: LGA
+    description: Local government area name as the ABS catalog carries it.
+    synonyms: [ LGA, council, local area, home area, area ]
+
+  state:
+    label: State
+    description: Full state or territory name, for example Victoria or Queensland.
+    synonyms: [ state, home state, territory ]
+
+  longitude:
+    label: Longitude
+    description: Catalog interior point of the LGA, never an address.
+
+  latitude:
+    label: Latitude
+    description: Catalog interior point of the LGA.
 
 measures:
   count:

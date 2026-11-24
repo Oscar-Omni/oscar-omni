@@ -1,16 +1,30 @@
 # Reference this view as oscar_demos_omnise__demo_betfair_australia_promotion_scenarios
+label: Promotion scenarios
+description: Three fixed scenario slots for the synthetic Autumn Carnival
+  promotion planner app. Not operational data.
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_betfair_australia_promotion_scenarios
 
 dimensions:
-  slot_order: {}
-  default_label: {}
-  editable: {}
-  default_assumptions_json: {}
-
   scenario_id:
+    label: Scenario
     format: ID
+    primary_key: true
+    synonyms: [ scenario, slot, plan ]
+
+  slot_order:
+    label: Slot order
+
+  default_label:
+    label: Default label
+
+  editable:
+    label: Editable
+
+  default_assumptions_json:
+    label: Default assumptions
 
 measures:
   count:

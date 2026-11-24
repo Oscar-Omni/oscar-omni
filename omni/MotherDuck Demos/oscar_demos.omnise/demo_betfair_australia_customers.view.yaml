@@ -1,18 +1,44 @@
 # Reference this view as oscar_demos_omnise__demo_betfair_australia_customers
+label: Customers
+description: One row per synthetic exchange customer with a matched bet in the
+  window. Ids only, no names or contact details.
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_betfair_australia_customers
 
 dimensions:
-  home_lga_code: {}
-  first_matched_date: {}
-  cohort_week: {}
-  acquisition_source: {}
-  acquisition_offer: {}
-
   customer_id:
+    label: Customer ID
     format: ID
+    primary_key: true
+
+  home_lga_code:
+    hidden: true
+
+  first_matched_date:
+    label: First matched date
+    description: Date of the customer's first ever matched bet.
+
+  cohort_week:
+    label: Cohort week
+    description: Monday of the week of the customer's first matched bet. The cohort
+      a new customer belongs to.
+    synonyms: [ cohort, joining week, sign up week ]
+
+  acquisition_source:
+    label: Acquisition source
+    description: Organic, Referral, Affiliate or Paid social.
+    synonyms: [ source, paid social, affiliate, referral, organic, marketing channel ]
+
+  acquisition_offer:
+    label: Sign up offer
+    description: Sign up offer the customer took, for example Cup Week bonus 2026
+      (synthetic offers).
+    synonyms: [ offer, promotion, promo, Cup Week bonus ]
 
 measures:
   count:
+    label: Customers
+    hidden: true
     aggregate_type: count

@@ -1,0 +1,22 @@
+base_view: oscar_demos_omnise__demo_betfair_australia_promotion_scenarios
+label: Promotion planner scenarios (synthetic)
+group_label: Betfair Australia
+description: Three fixed scenario slots for the synthetic Autumn Carnival
+  promotion planner app.
+
+joins: {}
+
+ai_context: |
+  Three fixed scenario slots for the synthetic Autumn Carnival promotion planner. Saved values live in the input columns saved_label and saved_assumptions keyed on scenario_id. Not operational data.
+
+sample_queries:
+  saved_scenarios:
+    query:
+      fields:
+        [
+          oscar_demos_omnise__demo_betfair_australia_promotion_scenarios.scenario_id,
+          oscar_demos_omnise__demo_betfair_australia_promotion_scenarios.default_label
+        ]
+      base_view: oscar_demos_omnise__demo_betfair_australia_promotion_scenarios
+      topic: demo_betfair_australia_promotion_planner_scenarios
+    prompt: Which promotion scenarios are saved?

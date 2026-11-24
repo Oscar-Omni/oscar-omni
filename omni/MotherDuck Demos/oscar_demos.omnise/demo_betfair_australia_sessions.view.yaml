@@ -1,17 +1,71 @@
 # Reference this view as oscar_demos_omnise__demo_betfair_australia_sessions
+label: Sessions
+description: Synthetic login sessions. One row per customer per week per login
+  channel with at least one login, Melbourne time. App usage, not activity. API
+  access has no sessions.
+
 catalog: oscar_demos
 schema: omnise
 table_name: demo_betfair_australia_sessions
 
 dimensions:
-  session_week: {}
-  channel: {}
-  login_count: {}
-  customer_week_key: {}
-
   customer_id:
+    label: Customer ID
     format: ID
+
+  session_week:
+    label: Login week
+    description: Monday of the login week, Melbourne time.
+    synonyms: [ week, session week ]
+
+  channel:
+    label: Login channel
+    description: Mobile app or Web. Mobile means Mobile app.
+    synonyms: [ mobile, web ]
+
+  login_count:
+    hidden: true
+
+  customer_week_key:
+    hidden: true
+
+  row_key:
+    sql: ${customer_week_key} || '|' || ${channel}
+    label: Session row key
+    hidden: true
+    primary_key: true
 
 measures:
   count:
+    hidden: true
     aggregate_type: count
+
+  login_customer_weeks:
+    sql: ${customer_week_key}
+    format: "#,##0"
+    hidden: true
+    aggregate_type: count_distinct
+
+  login_weeks:
+    sql: ${session_week}
+    format: "#,##0"
+    hidden: true
+    aggregate_type: count_distinct
+
+  login_weekly_actives:
+    sql: ${login_customer_weeks} * 1.0 / NULLIF(${login_weeks}, 0)
+    label: Login weekly actives
+    format: "#,##0"
+    description: Customers who logged in during a Monday to Sunday week, averaged
+      over weeks. App usage, not active customers. It counts people who only
+      checked a balance or a result. For actives use weekly_active_customers in
+      Exchange activity.
+    synonyms: [ logged in customers, logged in users, users who logged in ]
+
+  logins:
+    sql: ${login_count}
+    label: Logins
+    format: "#,##0"
+    description: Login count.
+    aggregate_type: sum
+    synonyms: [ sessions, app opens ]
